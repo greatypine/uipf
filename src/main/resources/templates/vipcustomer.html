@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+	<link type="text/css" th:href="@{/static/css/index/user.css}" rel="stylesheet" media="screen"/>
+<body>
+<div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
+	<table id="systemvipcustomer_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
+		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:20,toolbar:'#tb_cron_option'" pagination="true">
+	</table>
+	<div id="tb_cron_option" style="padding: 5px; height: auto">
+		<div style="margin-bottom: 5px">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="systemvipcustomer.query()">查询</a> 
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemvipcustomer.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="systemvipcustomer.remove()">删除</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="systemvipcustomer.clear()">清空</a>
+		</div>
+		<div id="cron_bar">
+			<form id="systemvipcustomerform">
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+				客户名称：<input id="queryname" name="customerName" class="easyui-textbox" style="width: 120px; height: 22px;"/>
+				客户电话：<input id="queryphone" name="customerPhone" class="easyui-textbox" style="width: 120px; height: 22px;"/>
+				用户状态：<input id="querystatus" name="status" class="easyui-combobox status" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'value',textField:'name'"/>
+				创建时间：起始 <input id="querycreateTime" name="createTime" class="easyui-datebox" style="width: 120px; height: 22px;"/>
+				截止<input id="queryendTime" name="endTime" class="easyui-datebox" style="width: 120px; height: 22px;"/>
+			</form>
+		</div>
+	</div>
+</div>
+	<div id="systemvipcustomerdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#systemvipcustomer_dlg-buttons">
+		<form id="systemvipcustomerdlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname">客户名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="customerName" name="customerName" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">客户手机：</td>
+	    			<td class="tdnamebox">
+	    				<input id="customerPhone" name="customerPhone" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">生日：</td>
+	    			<td class="tdnamebox">
+	    				<input id="brithday" name="brithday" class="easyui-datebox" style="width: 100%;" data-options="required:false,editable:false"/>
+	    			</td>
+	    			<td class="tdname">性别：</td>
+	    			<td class="tdnamebox">
+	    				<input name="sex" id="sex" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">邮箱：</td>
+	    			<td class="tdnamebox">
+	    				<input id="email" name="email" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    			<td class="tdname">状态：</td>
+	    			<td class="tdnamebox">
+	    				<input name="status" id="status" class="easyui-combobox status" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'name'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">省份：</td>
+	    			<td class="tdnamebox">
+	    				<input id="provinceId" name="provinceId" class="easyui-combobox" style="width: 100%;" data-options="required:false,editable:false,valueField:'id',textField:'name'"/>
+	    			</td>
+	    			<td class="tdname">城市：</td>
+	    			<td class="tdnamebox">
+	    				<input id="cityId1" name="cityId" class="easyui-combobox" style="width: 100%;" data-options="required:false,editable:false,valueField:'id',textField:'name'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">区域：</td>
+	    			<td class="tdnamebox">
+	    				<input id="countyId" name="countyId" class="easyui-combobox" style="width: 100%;" data-options="required:false,editable:false,valueField:'id',textField:'name'"/>
+	    			</td>
+	    			<td class="tdname">详细地址：</td>
+	    			<td class="tdnamebox">
+	    				<input id="address" name="address" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">实际金额：</td>
+	    			<td class="tdnamebox">
+	    				<input id="actualAmount" name="actualAmount" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    			<td class="tdname">赠送金额：</td>
+	    			<td class="tdnamebox">
+	    				<input id="giveAmount" name="giveAmount" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+			<input id="id" name="id" value="" type="hidden" />
+		</form>
+	</div>
+	<div id="systemvipcustomer_dlg-buttons">
+		<a shiro:hasAnyRoles="sadmin,q_admin,h_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.complate()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#systemvipcustomerdlg-fm').form('clear');$('#systemvipcustomerdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+</body>
+<script type="text/javascript" th:src="@{/static/js/index/vipcustomer.js}"></script>
+</html>

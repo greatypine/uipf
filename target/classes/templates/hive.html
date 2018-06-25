@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+	<link type="text/css" th:href="@{/static/css/workflow/hive.css}" rel="stylesheet" media="screen"/>
+	<script type="text/javascript" th:src="@{/static/easyUI/datagrid-detailview.js}"></script>
+<body>
+<div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
+	<table id="hive_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
+		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:20,toolbar:'#tb_cron_option'" pagination="true">
+	</table>
+	<div id="tb_cron_option" style="padding: 5px; height: auto">
+		<div style="margin-bottom: 5px">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="hive.query()">查询</a> 
+			<a shiro:hasPermission="user:create" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="hive.add()">添加</a> 
+			<a shiro:hasPermission="user:delete" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="hive.remove()">删除</a>
+		</div>
+		<div id="cron_bar">
+			<form id="hiveform">
+				脚本名称: <input id="queryname" name="name" class="easyui-text" style="width: 120px; height: 22px;"/>
+				脚本状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
+							<option value="-1">请选择</option>
+							<option value="1">开启</option>
+							<option value="0">关闭</option>
+						</select>
+				结果校验:<select id="queryischeck" name="ischeck" class="easyui-combobox" style="width: 120px; height: 22px;">
+							<option value="-1">请选择</option>
+							<option value="1">开启</option>
+							<option value="0">关闭</option>
+						 </select>
+				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/> 
+			</form>
+		</div>
+	</div>
+</div>
+	<div id="hivedlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#hive_dlg-buttons">
+		<form id="hivedlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname">操作名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="name" name="name" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">状态：</td>
+	    			<td class="tdnamebox">
+	    				<input name="status" id="status" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:1,text:'开启'},{value:0,text:'关闭'}]"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">文件目录：</td>
+	    			<td class="tdnamebox">
+	    				<input id="filepath" name="filepath" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    			<td class="tdname">操作日期：</td>
+	    			<td class="tdnamebox"><input name="diffDay_d" id="diffDay_d" class="easyui-datebox" style="width: 100%;" data-options="editable:false"/></td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">链接地址：</td>
+	    			<td class="tdnamebox">
+	    				<input id="url" name="url" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">数据库：</td>
+	    			<td class="tdnamebox"><input name="dbname" id="dbname" class="easyui-textbox" style="width: 100%;" data-options="required:true"/></td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">用户名：</td>
+	    			<td class="tdnamebox">
+	    				<input id="user" name="user" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">密码：</td>
+	    			<td class="tdnamebox"><input name="pass" id="pass" class="easyui-textbox" style="width: 100%;" data-options="required:true"/></td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">目标表：</td>
+	    			<td class="tdnamebox">
+	    				<input id="tablename" name="tablename" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">是否导入：</td>
+	    			<td class="tdnamebox"><input name="isimport" id="isimport" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:1,text:'开启'},{value:0,text:'关闭'}]"/></td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">执行类型：</td>
+	    			<td class="tdnamebox"><input name="exetype" id="exetype" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:0,text:'impala'},{value:1,text:'hive'}]"/></td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname" colspan="1">描述：</td>
+	    			<td class="tdnamebox" colspan="3">
+	    				<input id="remark" name="remark" data-options="multiline:false,required:false" class="easyui-textbox" style="width: 100%;"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname" colspan="1">hive脚本：</td>
+	    			<td class="tdnamebox" colspan="3">
+	    				<input id="hql" name="hql" data-options="multiline:true,required:true" class="easyui-textbox" style="width: 100%; height: 150px"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+	    	<input name="diffDay" id="diffDay" class="easyui-textbox" style="width: 100%;" type="hidden" data-options="required:false"/>
+			<input id="id" name="id" value="" type="hidden" />
+		</form>
+	</div>
+	<div id="hive_dlg-buttons">
+		<a shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="hive.complate()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#hivedlg-fm').form('clear');$('#hivedlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+</body>
+<script type="text/javascript" th:src="@{/static/js/workflow/hive.js}"></script>
+</html>

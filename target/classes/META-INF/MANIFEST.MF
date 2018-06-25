@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Implementation-Title: Hadoop-workFlow
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: princejwg
+Implementation-Vendor-Id: com.gasq.bdp.logn
+Build-Jdk: 1.8.0_144
+Implementation-URL: http://projects.spring.io/spring-boot/Hadoop-workF
+ low/
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+Main-Class: com.gasq.bdp.logn.Application
+

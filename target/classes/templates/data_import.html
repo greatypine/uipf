@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+	<link type="text/css" th:href="@{/static/css/workflow/dataimport.css}" rel="stylesheet" media="screen"/>
+	<script type="text/javascript" th:src="@{/static/easyUI/datagrid-detailview.js}"></script>
+<body>
+<div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
+	<table id="dataimport_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
+		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:20,toolbar:'#tb_cron_option'" pagination="true">
+	</table>
+	<div id="tb_cron_option" style="padding: 5px; height: auto">
+		<div style="margin-bottom: 5px">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="dataimport.query()">查询</a> 
+			<a shiro:hasPermission="user:create" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="dataimport.add()">添加</a> 
+			<a shiro:hasPermission="user:delete" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="dataimport.remove()">删除</a>
+			<a shiro:hasPermission="user:query" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="dataimport.clear()">清空</a>
+		</div>
+		<div id="cron_bar">
+			<form id="dataimportform">
+				名称: <input id="queryname" name="name" class="easyui-text" style="width: 120px; height: 22px;"/>
+				类型: <input name="type" id="querytype" class="importtype easyui-combobox" style="width: 120px; height: 22px;" data-options="valueField:'value',textField:'name'"/>
+				状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
+							<option value="-1">请选择</option>
+							<option value="1">开启</option>
+							<option value="0">关闭</option>
+						</select>
+				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;" data-options="prompt:'大于等于所选时间'"/> 
+			</form>
+		</div>
+	</div>
+</div>
+	<div id="dataimportdlg" class="easyui-dialog" style="width: 45%; overflow: hidden;" data-options="modal:true" closed="true" buttons="#dataimport_dlg-buttons">
+		<form id="dataimportdlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname">操作名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="name" name="name" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">状态：</td>
+	    			<td class="tdnamebox">
+	    				<input name="status" id="status" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:1,text:'开启'},{value:0,text:'关闭'}]"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">输入路径：</td>
+	    			<td class="tdnamebox">
+	    				<input id="inputpath" name="inputpath" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    			<td class="tdname">文件名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="filename" name="filename" class="easyui-textbox" style="width: 100%;" data-options="required:true,prompt:'带文件后缀'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">输入格式：</td>
+	    			<td class="tdnamebox"><input name="type" id="type" class="importtype easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'name'"/></td>
+	    			<td class="tdname">文件后缀：</td>
+	    			<td class="tdnamebox"><input name="nametype" id="nametype" class="easyui-combobox" style="width: 100%;" data-options="required:false,editable:false,valueField:'value',textField:'text',data:[{value:'',text:'不选'},{value:'yyyyMMddHHmmss',text:'yyyyMMddHHmmss'},{value:'yyyyMMdd',text:'yyyyMMdd'},{value:'yyyy/MM/dd/HH/mm/ss',text:'yyyy/MM/dd/HH/mm/ss'},{value:'yyyy/MM/dd',text:'yyyy/MM/dd'}]"/></td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">输出对象：</td>
+	    			<td class="tdnamebox"><input id="outputParams" name="outputParams" class="easyui-combobox" style="width: 100%;"  data-options="required:true,editable:false,valueField:'id',textField:'name'"/></td>
+	    			<td class="tdname">起始行号：</td>
+	    			<td class="tdnamebox"><input name="startindex" id="startindex" class="easyui-textbox" style="width: 100%;"  data-options="prompt:'只对excel起作用'"/></td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname" colspan="1">描述：</td>
+	    			<td class="tdnamebox" colspan="3">
+	    				<input id="remark" name="remark" data-options="multiline:true,required:false" class="easyui-textbox" style="width: 100%;height:80px;"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+	    	<input name="diffDay" id="diffDay" class="easyui-textbox" style="width: 100%;" type="hidden" data-options="required:false"/>
+			<input id="id" name="id" value="" type="hidden" />
+		</form>
+	</div>
+	<div id="dataimport_dlg-buttons">
+		<a shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="dataimport.complate()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dataimportdlg-fm').form('clear');$('#dataimportdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="inputparamsdlg" class="easyui-dialog"  data-options="modal:true" style="width: 30%;height:80%; overflow: hidden;" closed="true">
+		<ul id="inputparams_tree" class="easyui-tree" data-options=""></ul>
+	</div> 
+</body>
+<script type="text/javascript" th:src="@{/static/js/workflow/dataimport.js}"></script>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+<link type="text/css" th:href="@{/static/css/workflow/sqlInsertOrUpdate.css}" rel="stylesheet" media="screen"/>
+<script type="text/javascript" th:src="@{/static/easyUI/datagrid-cellediting.js}"></script>
+<script type="text/javascript" th:src="@{/static/easyUI/datagrid-detailview.js}"></script>
+<body>
+<div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
+	<table id="sqlInsertOrUpdate_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
+		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:20,toolbar:'#tb_cron_option'" pagination="true">
+	</table>
+	<div id="tb_cron_option" style="padding: 5px; height: auto">
+		<div style="margin-bottom: 5px">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="sqlInsertOrUpdate.query()">查询</a> 
+			<a shiro:hasPermission="user:create" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="sqlInsertOrUpdate.add()">添加</a> 
+			<a shiro:hasPermission="user:delete" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="sqlInsertOrUpdate.remove()">删除</a>
+		</div>
+		<div id="cron_bar">
+			<form id="sqlInsertOrUpdateform">
+				脚本名称: <input id="queryname" name="name" class="easyui-text" style="width: 120px; height: 22px;"/>
+				脚本状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
+							<option value="-1">请选择</option>
+							<option value="1">开启</option>
+							<option value="0">关闭</option>
+						</select>
+				更新时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/> 
+			</form>
+		</div>
+	</div>
+</div>
+	<div id="sqlInsertOrUpdatedlg" class="easyui-dialog"  data-options="modal:true" style="width: 62%; overflow: hidden;" closed="true" buttons="#sqlInsertOrUpdate_dlg-buttons">
+		<form id="sqlInsertOrUpdatedlg-fm" th:method="post" style="margin: 0; padding: 0.2%">
+			<table style="width: 100%;">
+	    		<tr>
+	    			<td class="tdname">名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="name" name="name" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">状态：</td>
+	    			<td class="tdnamebox">
+	    				<input name="status" id="status" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:1,text:'开启'},{value:0,text:'关闭'}]"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">数据源：</td>
+	    			<td class="tdnamebox">
+	    				<input name="dbCode" id="dbCode" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text'"/>
+	    			</td>
+	    			<td class="tdname">表名：</td>
+	    			<td class="tdnamebox">
+	    				<input id="tableName" name="tableName" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'id',textField:'text'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">插入/更新：</td>
+	    			<td class="tdnamebox">
+	    				<input name="isbatch" id="isbatch" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:0,text:'插入/更新'},{value:1,text:'仅插入'},{value:2,text:'仅更新'}]"/>
+	    			</td>
+	    			<td class="tdname">输入参数：</td>
+	    			<td class="tdnamebox">
+	    				<input id="inputParams" name="inputParams" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'id',textField:'code'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">批量数：</td>
+	    			<td class="tdnamebox">
+	    				<input id="batchsize" name="batchsize" class="easyui-textbox" style="width: 100%;" data-options="required:false,prompt:'仅在不更新时起效，默认为1000'"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+			<input id="id" name="id" value="" type="hidden" />
+		</form>
+    	<div id="condition_div" class="easyui-panel" title="查询关键字" style="width:100%;height:200px;">
+	    	<table id="condition_table" class="easyui-datagrid" style="width: 100%; height: 100%;" data-options="singleSelect: true,rownumbers:true,fit:true,toolbar:'#condition_btn'" >
+			</table>
+			<div id="condition_btn" style="height:auto">
+				<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="sqlInsertOrUpdate.addConditionForm()">添加</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="sqlInsertOrUpdate.removeConditionForm()">删除</a>
+			</div>
+    	</div>
+    	<div id="updatekeys_condition_div" class="easyui-panel" title="更新字段" style="width:100%;height:200px;">
+	    	<table id="updatekeys_condition_table" class="easyui-datagrid" style="width: 100%; height: 100%;" data-options="singleSelect: true,rownumbers:true,fit:true,toolbar:'#updatekeys_condition_btn'" >
+			</table>
+			<div id="updatekeys_condition_btn" style="height:auto">
+				<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="sqlInsertOrUpdate.addColumnsForm()">添加</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="sqlInsertOrUpdate.removeColumnsForm()">删除</a>
+			</div>
+    	</div>
+	</div>
+	<div id="sqlInsertOrUpdate_dlg-buttons">
+		<a shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="sqlInsertOrUpdate.complate()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#sqlInsertOrUpdatedlg-fm').form('clear');$('#sqlInsertOrUpdatedlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="updateColumnsdlg" class="easyui-dialog"  data-options="modal:true" style="width: 50%;height:50%; overflow: hidden;" closed="true">
+		<table id="updateColumns_table" class="easyui-datagrid" style="width: 80%; height: 90%;"
+			data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:20">
+		</table>
+	</div>
+	
+	<div id="updateKeysdlg" class="easyui-dialog"  data-options="modal:true" style="width: 50%;height:50%; overflow: hidden;" closed="true">
+		<table id="updateKeys_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
+			data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:20" >
+		</table>
+	</div>
+	<div id="inputparamsdlg" class="easyui-dialog"  data-options="modal:true" style="width: 30%;height:80%; overflow: hidden;" closed="true">
+		<ul id="inputparams_tree" class="easyui-tree" data-options=""></ul>
+	</div> 
+</body>
+<script type="text/javascript" th:src="@{/static/js/workflow/sqlInsertOrUpdate.js}"></script>
+</html>

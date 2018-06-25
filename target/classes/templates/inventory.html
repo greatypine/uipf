@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+	<link type="text/css" th:href="@{/static/css/workflow/shell.css}" rel="stylesheet" media="screen"/>
+	<script type="text/javascript" th:src="@{/static/easyUI/datagrid-detailview.js}"></script>
+<body>
+<div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
+	<table id="inventory_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
+		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:30,toolbar:'#tb_cron_option'" pagination="true">
+	</table>
+	<div id="tb_cron_option" style="padding: 5px; height: auto">
+		<div style="margin-bottom: 5px">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="inventory.query()">查询</a> 
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="inventory.add()">添加</a> 
+			<a id="append" shiro:hasAnyRoles="sadmin,generalManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="inventory.append()">入库</a>
+			<a id="delivery" shiro:hasAnyRoles="sadmin,generalManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="inventory.delivery()">出库</a> 
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="inventory.remove()">删除</a>
+		</div>
+		<div id="cron_bar">
+			<form id="inventoryform">
+				产品名称: <input id="queryname" name="inventoryname" class="easyui-text" style="width: 120px; height: 22px;"/>
+				脚本状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
+							<option value="-1">请选择</option>
+							<option value="0">正常</option>
+							<option value="99">下架</option>
+						</select>
+				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/> 
+			</form>
+		</div>
+	</div>
+</div>
+	<div id="inventorydlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#inventory_dlg-buttons">
+		<form id="inventorydlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname">产品名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="name" name="name" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">产品编号：</td>
+	    			<td class="tdnamebox">
+	    				<input id="code" name="code" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">厂商：</td>
+	    			<td class="tdnamebox" colspan="3">
+	    				<input id="factory" name="factory" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    		</tr>
+	    		<tr id="iuinfo">
+	    			<td class="tdname">产品数量：</td>
+	    			<td class="tdnamebox"><input name="inventory" id="inventory" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2,prompt:'填写数字可以为小数 eg:0.85'"/></td>
+	    			<td class="tdname">规格（单位）：</td>
+	    			<td class="tdnamebox">
+	    				<input id="units" name="units" class="easyui-textbox" style="width: 100%;" data-options="required:true,prompt:'对应的产品单位 （片、盒）'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">单价：</td>
+	    			<td class="tdnamebox">
+	    				<input id="price" name="price" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2,prompt:'产品的单件进货价（盒单位对应）'"/>
+	    			</td>
+	    			<td class="tdname">状态：</td>
+	    			<td class="tdnamebox">
+	    				<input name="status" id="status" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:0,text:'正常'},{value:99,text:'关闭'}]"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname" colspan="1">描述：</td>
+	    			<td class="tdnamebox" colspan="3">
+	    				<input id="remark" name="remark" data-options="multiline:true,required:false" class="easyui-textbox" style="width: 100%;"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+			<input id="id" name="id" value="" type="hidden" />
+		</form>
+	</div>
+	<div id="inventory_dlg-buttons">
+		<a shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="inventory.complate()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#inventorydlg-fm').form('clear');$('#inventorydlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	
+	<div id="modifyInventorydlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#modifyInventory_dlg-buttons">
+		<form id="modifyInventorydlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname">产品名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="name" name="name" class="easyui-textbox" style="width: 100%;" data-options="required:false,readonly:true"/>
+	    			</td>
+	    			<td class="tdname">产品编号：</td>
+	    			<td class="tdnamebox">
+	    				<input id="code" name="code" class="easyui-textbox" style="width: 100%;" data-options="required:false,readonly:true"/>
+	    			</td>
+	    		</tr>
+	    		<tr id="iuinfo">
+	    			<td class="tdname">产品数量：</td>
+	    			<td class="tdnamebox"><input name="inventory" id="newinventory" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2,prompt:'填写数字可以为小数 eg:0.85'"/></td>
+	    			<td class="tdname">规格（单位）：</td>
+	    			<td class="tdnamebox">
+	    				<input id="units" name="units" class="easyui-textbox" style="width: 100%;" data-options="required:false,prompt:'对应的产品单位 （片、盒）',readonly:true"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+			<input id="id" name="id" value="" type="hidden" />
+		</form>
+	</div>
+	<div id="modifyInventory_dlg-buttons">
+		<a id="doappend" shiro:hasAnyRoles="sadmin,generalManager,q_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="inventory.doAppend()" style="width: 90px">确认入库</a> 
+		<a id="dodelivery" shiro:hasAnyRoles="sadmin,generalManager,q_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="inventory.doDelivery()" style="width: 90px">确认出库</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#modifyInventorydlg-fm').form('clear');$('#modifyInventorydlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+</body>
+<script type="text/javascript" th:src="@{/static/js/index/inventory.js}"></script>
+</html>

@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gasq.bdp.logn.mapper.TSysTimerJobSqlInsertUpdateMapper">
+  <resultMap id="BaseResultMap" type="com.gasq.bdp.logn.model.TSysTimerJobSqlInsertUpdate">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="db_code" jdbcType="VARCHAR" property="dbCode" />
+    <result column="table_name" jdbcType="VARCHAR" property="tableName" />
+    <result column="isbatch" jdbcType="INTEGER" property="isbatch" />
+    <result column="batchSize" jdbcType="INTEGER" property="batchsize" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="update_columns" jdbcType="INTEGER" property="updateColumns" />
+    <result column="update_keys" jdbcType="INTEGER" property="updateKeys" />
+    <result column="input_params" jdbcType="INTEGER" property="inputParams" />
+    <result column="input_type" jdbcType="INTEGER" property="inputType" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="createUser" jdbcType="VARCHAR" property="createuser" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="updateUser" jdbcType="VARCHAR" property="updateuser" />
+    <result column="groupName" jdbcType="VARCHAR" property="groupname" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, db_code, table_name, isbatch, batchSize, status, update_columns, update_keys, 
+    input_params, input_type, createTime, updateTime, createUser, remark, updateUser, 
+    groupName
+  </sql>
+  <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TSysTimerJobSqlInsertUpdateExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_sys_timer_job_sql_insert_update
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_sys_timer_job_sql_insert_update
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_sys_timer_job_sql_insert_update
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gasq.bdp.logn.model.TSysTimerJobSqlInsertUpdateExample">
+    delete from t_sys_timer_job_sql_insert_update
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gasq.bdp.logn.model.TSysTimerJobSqlInsertUpdate">
+    insert into t_sys_timer_job_sql_insert_update (id, name, db_code, 
+      table_name, isbatch, batchSize, 
+      status, update_columns, update_keys, 
+      input_params, input_type, createTime, 
+      updateTime, createUser, remark, 
+      updateUser, groupName)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{dbCode,jdbcType=VARCHAR}, 
+      #{tableName,jdbcType=VARCHAR}, #{isbatch,jdbcType=INTEGER}, #{batchsize,jdbcType=INTEGER}, 
+      #{status,jdbcType=BIT}, #{updateColumns,jdbcType=INTEGER}, #{updateKeys,jdbcType=INTEGER}, 
+      #{inputParams,jdbcType=INTEGER}, #{inputType,jdbcType=INTEGER}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{createuser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{updateuser,jdbcType=VARCHAR}, #{groupname,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TSysTimerJobSqlInsertUpdate">
+    insert into t_sys_timer_job_sql_insert_update
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="dbCode != null">
+        db_code,
+      </if>
+      <if test="tableName != null">
+        table_name,
+      </if>
+      <if test="isbatch != null">
+        isbatch,
+      </if>
+      <if test="batchsize != null">
+        batchSize,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="updateColumns != null">
+        update_columns,
+      </if>
+      <if test="updateKeys != null">
+        update_keys,
+      </if>
+      <if test="inputParams != null">
+        input_params,
+      </if>
+      <if test="inputType != null">
+        input_type,
+      </if>
+      <if test="createtime != null">
+        createTime,
+      </if>
+      <if test="updatetime != null">
+        updateTime,
+      </if>
+      <if test="createuser != null">
+        createUser,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="updateuser != null">
+        updateUser,
+      </if>
+      <if test="groupname != null">
+        groupName,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="dbCode != null">
+        #{dbCode,jdbcType=VARCHAR},
+      </if>
+      <if test="tableName != null">
+        #{tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="isbatch != null">
+        #{isbatch,jdbcType=INTEGER},
+      </if>
+      <if test="batchsize != null">
+        #{batchsize,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="updateColumns != null">
+        #{updateColumns,jdbcType=INTEGER},
+      </if>
+      <if test="updateKeys != null">
+        #{updateKeys,jdbcType=INTEGER},
+      </if>
+      <if test="inputParams != null">
+        #{inputParams,jdbcType=INTEGER},
+      </if>
+      <if test="inputType != null">
+        #{inputType,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null">
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createuser != null">
+        #{createuser,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="updateuser != null">
+        #{updateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="groupname != null">
+        #{groupname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gasq.bdp.logn.model.TSysTimerJobSqlInsertUpdateExample" resultType="java.lang.Long">
+    select count(*) from t_sys_timer_job_sql_insert_update
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_sys_timer_job_sql_insert_update
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dbCode != null">
+        db_code = #{record.dbCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tableName != null">
+        table_name = #{record.tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isbatch != null">
+        isbatch = #{record.isbatch,jdbcType=INTEGER},
+      </if>
+      <if test="record.batchsize != null">
+        batchSize = #{record.batchsize,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=BIT},
+      </if>
+      <if test="record.updateColumns != null">
+        update_columns = #{record.updateColumns,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateKeys != null">
+        update_keys = #{record.updateKeys,jdbcType=INTEGER},
+      </if>
+      <if test="record.inputParams != null">
+        input_params = #{record.inputParams,jdbcType=INTEGER},
+      </if>
+      <if test="record.inputType != null">
+        input_type = #{record.inputType,jdbcType=INTEGER},
+      </if>
+      <if test="record.createtime != null">
+        createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updatetime != null">
+        updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createuser != null">
+        createUser = #{record.createuser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateuser != null">
+        updateUser = #{record.updateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupname != null">
+        groupName = #{record.groupname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_sys_timer_job_sql_insert_update
+    set id = #{record.id,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      db_code = #{record.dbCode,jdbcType=VARCHAR},
+      table_name = #{record.tableName,jdbcType=VARCHAR},
+      isbatch = #{record.isbatch,jdbcType=INTEGER},
+      batchSize = #{record.batchsize,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=BIT},
+      update_columns = #{record.updateColumns,jdbcType=INTEGER},
+      update_keys = #{record.updateKeys,jdbcType=INTEGER},
+      input_params = #{record.inputParams,jdbcType=INTEGER},
+      input_type = #{record.inputType,jdbcType=INTEGER},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      createUser = #{record.createuser,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      updateUser = #{record.updateuser,jdbcType=VARCHAR},
+      groupName = #{record.groupname,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gasq.bdp.logn.model.TSysTimerJobSqlInsertUpdate">
+    update t_sys_timer_job_sql_insert_update
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="dbCode != null">
+        db_code = #{dbCode,jdbcType=VARCHAR},
+      </if>
+      <if test="tableName != null">
+        table_name = #{tableName,jdbcType=VARCHAR},
+      </if>
+      <if test="isbatch != null">
+        isbatch = #{isbatch,jdbcType=INTEGER},
+      </if>
+      <if test="batchsize != null">
+        batchSize = #{batchsize,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="updateColumns != null">
+        update_columns = #{updateColumns,jdbcType=INTEGER},
+      </if>
+      <if test="updateKeys != null">
+        update_keys = #{updateKeys,jdbcType=INTEGER},
+      </if>
+      <if test="inputParams != null">
+        input_params = #{inputParams,jdbcType=INTEGER},
+      </if>
+      <if test="inputType != null">
+        input_type = #{inputType,jdbcType=INTEGER},
+      </if>
+      <if test="createtime != null">
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null">
+        updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createuser != null">
+        createUser = #{createuser,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="updateuser != null">
+        updateUser = #{updateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="groupname != null">
+        groupName = #{groupname,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gasq.bdp.logn.model.TSysTimerJobSqlInsertUpdate">
+    update t_sys_timer_job_sql_insert_update
+    set name = #{name,jdbcType=VARCHAR},
+      db_code = #{dbCode,jdbcType=VARCHAR},
+      table_name = #{tableName,jdbcType=VARCHAR},
+      isbatch = #{isbatch,jdbcType=INTEGER},
+      batchSize = #{batchsize,jdbcType=INTEGER},
+      status = #{status,jdbcType=BIT},
+      update_columns = #{updateColumns,jdbcType=INTEGER},
+      update_keys = #{updateKeys,jdbcType=INTEGER},
+      input_params = #{inputParams,jdbcType=INTEGER},
+      input_type = #{inputType,jdbcType=INTEGER},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      createUser = #{createuser,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      updateUser = #{updateuser,jdbcType=VARCHAR},
+      groupName = #{groupname,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.gasq.bdp.logn.model.TSysTimerJobSqlInsertUpdateExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_sys_timer_job_sql_insert_update
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
+ 		SELECT a.id,a.name,a.db_code as dbCode,a.input_params as inputParams,a.table_name as tableName,
+		a.input_type as inputType,a.isbatch,a.batchsize,a.`status`,a.remark,a.updateTime as updatetime,a.update_columns as updateColumns,
+		a.update_keys as updateKeys,concat(b.name,'-',b.code) as dbname,c.`code` as inputParamsName,a.createuser,a.createtime,a.updateuser
+		 from t_sys_timer_job_sql_insert_update a 
+		LEFT JOIN t_sys_datasource b on a.db_code=b.`code`
+		LEFT JOIN t_sys_data c on a.input_params = c.id
+		where 1=1 
+		<if test="groupname!='' and groupname!=null">
+ 				and a.groupname=#{groupname}
+	 	</if>
+	 	<if test="role=='user'">
+	 		<if test="createuser!='' and createuser!=null">
+				and a.createuser=#{createuser}
+	 		</if>
+	 	</if>
+		order by a.updateTime desc 
+		<if test="index !=null and pageSize!=null">
+			limit #{index},#{pageSize}
+		</if>
+ </select>
+ <select id="getMaxId" resultType="java.lang.Integer">
+ 		select (max(id)+1) as id from t_sys_timer_job_sql_insert_update
+ </select>
+</mapper>

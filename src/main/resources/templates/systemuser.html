@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+	<link type="text/css" th:href="@{/static/css/index/user.css}" rel="stylesheet" media="screen"/>
+<body>
+<div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
+	<table id="systemuser_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
+		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:20,toolbar:'#tb_cron_option'" pagination="true">
+	</table>
+	<div id="tb_cron_option" style="padding: 5px; height: auto">
+		<div style="margin-bottom: 5px">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="systemuser.query()">查询</a> 
+			<a shiro:hasAnyRoles="sadmin,q_admin,h_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemuser.add()">添加</a> 
+			<a shiro:hasRole="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="systemuser.remove()">删除</a>
+		</div>
+		<div id="cron_bar">
+			<form id="systemuserform">
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+				用户名称：<input id="queryname" name="name" class="easyui-textbox" style="width: 120px; height: 22px;"/>
+				角色：<input id="queryroleid" name="roleid" class="easyui-combobox roleids" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'roleid',textField:'roleName'"/>
+				用户状态：<input id="querystatus" name="status" class="easyui-combobox userstatus" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'value',textField:'name'"/>
+				治疗时间：起始 <input id="querycreateTime" name="createTime" class="easyui-datebox" style="width: 120px; height: 22px;"/>
+				截止<input id="queryendTime" name="endTime" class="easyui-datebox" style="width: 120px; height: 22px;"/>
+			</form>
+		</div>
+	</div>
+</div>
+	<div id="systemuserdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#systemuser_dlg-buttons">
+		<form id="systemuserdlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname">角色名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="username" name="username" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">密码：</td>
+	    			<td class="tdnamebox">
+	    				<input id="password" name="password" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    		</tr>
+	    		<tr shiro:hasRole="h_option">
+	    			<td class="tdname">角色名称：</td>
+	    			<td class="tdnamebox" colspan="3">
+	    				<input id="username" name="username" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">角色：</td>
+	    			<td class="tdnamebox">
+	    				<input id="roleids" name="roleids" class="easyui-combobox roleids" style="width: 100%;" data-options="required:true,multiple:true,editable:true,valueField:'roleid',textField:'roleName'"/>
+	    			</td>
+	    			<td class="tdname">状态：</td>
+	    			<td class="tdnamebox">
+	    				<input name="status" id="status" class="easyui-combobox status" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">公司：</td>
+	    			<td class="tdnamebox">
+	    				<input id="companyid" name="companyid" class="easyui-combobox companylist" style="width: 100%;" data-options="required:true,editable:false,valueField:'companyid',textField:'companyName'"/>
+	    			</td>
+	    			<td class="tdname">身份证：</td>
+	    			<td class="tdnamebox">
+	    				<input id="cardId" name="cardId" class="easyui-textbox" style="width: 100%;" data-options=""/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			
+	    			<td class="tdname">电话：</td>
+	    			<td class="tdnamebox">
+	    				<input id="phonenum" name="phonenum" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    			<td class="tdname">邮箱：</td>
+	    			<td class="tdnamebox">
+	    				<input id="email" name="email" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">昵称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="nickname" name="nickname" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    			<td class="tdname">地址：</td>
+	    			<td class="tdnamebox">
+	    				<input id="address" name="address" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">年龄：</td>
+	    			<td class="tdnamebox">
+	    				<input id="age" name="age" class="easyui-numberbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    			<td class="tdname">性别：</td>
+	    			<td class="tdnamebox">
+	    				<input name="sex" id="sex" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text'"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+			<input id="id" name="id" value="" type="hidden" />
+		</form>
+	</div>
+	<div id="systemuser_dlg-buttons">
+		<a shiro:hasAnyRoles="sadmin,q_admin,h_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemuser.complate()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#systemuserdlg-fm').form('clear');$('#systemuserdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+</body>
+<script type="text/javascript" th:src="@{/static/js/index/user.js}"></script>
+</html>

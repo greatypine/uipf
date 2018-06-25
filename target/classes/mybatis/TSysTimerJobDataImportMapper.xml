@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gasq.bdp.logn.mapper.TSysTimerJobDataImportMapper">
+  <resultMap id="BaseResultMap" type="com.gasq.bdp.logn.model.TSysTimerJobDataImport">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="inputpath" jdbcType="VARCHAR" property="inputpath" />
+    <result column="filename" jdbcType="VARCHAR" property="filename" />
+    <result column="name_type" jdbcType="VARCHAR" property="nameType" />
+    <result column="output_params" jdbcType="INTEGER" property="outputParams" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="startindex" jdbcType="INTEGER" property="startindex" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="createUser" jdbcType="VARCHAR" property="createuser" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="updateUser" jdbcType="VARCHAR" property="updateuser" />
+    <result column="groupName" jdbcType="VARCHAR" property="groupname" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, inputpath, filename, name_type, output_params, type, startindex, status, 
+    createTime, createUser, updateTime, updateUser, groupName, remark
+  </sql>
+  <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TSysTimerJobDataImportExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_sys_timer_job_data_import
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_sys_timer_job_data_import
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_sys_timer_job_data_import
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gasq.bdp.logn.model.TSysTimerJobDataImportExample">
+    delete from t_sys_timer_job_data_import
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gasq.bdp.logn.model.TSysTimerJobDataImport">
+    insert into t_sys_timer_job_data_import (id, name, inputpath, 
+      filename, name_type, output_params, 
+      type, startindex, status, 
+      createTime, createUser, updateTime, 
+      updateUser, groupName, remark
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{inputpath,jdbcType=VARCHAR}, 
+      #{filename,jdbcType=VARCHAR}, #{nameType,jdbcType=VARCHAR}, #{outputParams,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{startindex,jdbcType=INTEGER}, #{status,jdbcType=BIT}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{createuser,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}, 
+      #{updateuser,jdbcType=VARCHAR}, #{groupname,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TSysTimerJobDataImport">
+    insert into t_sys_timer_job_data_import
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="inputpath != null">
+        inputpath,
+      </if>
+      <if test="filename != null">
+        filename,
+      </if>
+      <if test="nameType != null">
+        name_type,
+      </if>
+      <if test="outputParams != null">
+        output_params,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="startindex != null">
+        startindex,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="createtime != null">
+        createTime,
+      </if>
+      <if test="createuser != null">
+        createUser,
+      </if>
+      <if test="updatetime != null">
+        updateTime,
+      </if>
+      <if test="updateuser != null">
+        updateUser,
+      </if>
+      <if test="groupname != null">
+        groupName,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="inputpath != null">
+        #{inputpath,jdbcType=VARCHAR},
+      </if>
+      <if test="filename != null">
+        #{filename,jdbcType=VARCHAR},
+      </if>
+      <if test="nameType != null">
+        #{nameType,jdbcType=VARCHAR},
+      </if>
+      <if test="outputParams != null">
+        #{outputParams,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="startindex != null">
+        #{startindex,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=BIT},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createuser != null">
+        #{createuser,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null">
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateuser != null">
+        #{updateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="groupname != null">
+        #{groupname,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gasq.bdp.logn.model.TSysTimerJobDataImportExample" resultType="java.lang.Long">
+    select count(*) from t_sys_timer_job_data_import
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_sys_timer_job_data_import
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.inputpath != null">
+        inputpath = #{record.inputpath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.filename != null">
+        filename = #{record.filename,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nameType != null">
+        name_type = #{record.nameType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.outputParams != null">
+        output_params = #{record.outputParams,jdbcType=INTEGER},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.startindex != null">
+        startindex = #{record.startindex,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=BIT},
+      </if>
+      <if test="record.createtime != null">
+        createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createuser != null">
+        createUser = #{record.createuser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updatetime != null">
+        updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateuser != null">
+        updateUser = #{record.updateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupname != null">
+        groupName = #{record.groupname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_sys_timer_job_data_import
+    set id = #{record.id,jdbcType=INTEGER},
+      name = #{record.name,jdbcType=VARCHAR},
+      inputpath = #{record.inputpath,jdbcType=VARCHAR},
+      filename = #{record.filename,jdbcType=VARCHAR},
+      name_type = #{record.nameType,jdbcType=VARCHAR},
+      output_params = #{record.outputParams,jdbcType=INTEGER},
+      type = #{record.type,jdbcType=INTEGER},
+      startindex = #{record.startindex,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=BIT},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      createUser = #{record.createuser,jdbcType=VARCHAR},
+      updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      updateUser = #{record.updateuser,jdbcType=VARCHAR},
+      groupName = #{record.groupname,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gasq.bdp.logn.model.TSysTimerJobDataImport">
+    update t_sys_timer_job_data_import
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="inputpath != null">
+        inputpath = #{inputpath,jdbcType=VARCHAR},
+      </if>
+      <if test="filename != null">
+        filename = #{filename,jdbcType=VARCHAR},
+      </if>
+      <if test="nameType != null">
+        name_type = #{nameType,jdbcType=VARCHAR},
+      </if>
+      <if test="outputParams != null">
+        output_params = #{outputParams,jdbcType=INTEGER},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="startindex != null">
+        startindex = #{startindex,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=BIT},
+      </if>
+      <if test="createtime != null">
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createuser != null">
+        createUser = #{createuser,jdbcType=VARCHAR},
+      </if>
+      <if test="updatetime != null">
+        updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateuser != null">
+        updateUser = #{updateuser,jdbcType=VARCHAR},
+      </if>
+      <if test="groupname != null">
+        groupName = #{groupname,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gasq.bdp.logn.model.TSysTimerJobDataImport">
+    update t_sys_timer_job_data_import
+    set name = #{name,jdbcType=VARCHAR},
+      inputpath = #{inputpath,jdbcType=VARCHAR},
+      filename = #{filename,jdbcType=VARCHAR},
+      name_type = #{nameType,jdbcType=VARCHAR},
+      output_params = #{outputParams,jdbcType=INTEGER},
+      type = #{type,jdbcType=INTEGER},
+      startindex = #{startindex,jdbcType=INTEGER},
+      status = #{status,jdbcType=BIT},
+      createTime = #{createtime,jdbcType=TIMESTAMP},
+      createUser = #{createuser,jdbcType=VARCHAR},
+      updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      updateUser = #{updateuser,jdbcType=VARCHAR},
+      groupName = #{groupname,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.gasq.bdp.logn.model.TSysTimerJobDataImportExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_sys_timer_job_data_import
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="querySqlpagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
+ 		SELECT a.id,a.inputpath,a.name,a.type,a.filename,a.name_type as nametype,a.output_params as outputParams,a.`status`,a.createtime,a.createuser,a.updatetime,a.updateuser
+		,a.groupname,a.remark,b.`code`,b.`name` as outputParamsName,c.name as typename,a.startindex
+ 		from t_sys_timer_job_data_import a 
+ 		LEFT JOIN t_sys_data b on a.output_params = b.id 
+ 		LEFT JOIN v_export_type c on a.type = c.value 
+		where 1=1 
+		<if test="groupname!='' and groupname!=null">
+ 				and a.groupname=#{groupname}
+	 	</if>
+	 	<if test="role=='user'">
+	 		<if test="createuser!='' and createuser!=null">
+				and a.createuser=#{createuser}
+	 		</if>
+	 	</if>
+		order by a.updateTime desc 
+		<if test="index !=null and pageSize!=null">
+			limit #{index},#{pageSize}
+		</if>
+ </select>
+</mapper>

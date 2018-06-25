@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="linkresource(title)">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" type="text/css" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/static/css/font-awesome-4.6.3/css/font-awesome.min.css}"/>
+<!-- 	<link rel="stylesheet" type="text/css" th:href="@{/static/easyUI/themes/default/easyui.css}"/> -->
+	<link rel="stylesheet" type="text/css" th:href="@{/static/easyUI/themes/ui-cupertino/easyui.css}"/>
+	<link type="text/css" th:href="@{/static/easyUI/themes/icon.css}" rel="stylesheet" media="screen"/>
+	<link type="text/css" th:href="@{/static/easyUI/themes/color.css}" rel="stylesheet" media="screen"/>
+<!-- 	<link type="text/css" th:href="@{/static/easyUI/themes/mobile.css}" rel="stylesheet" media="screen"/> -->
+<!-- 	<link rel="stylesheet" th:href="@{/static/images/ionicons-2.0.1/css/ionicons.min.css}"/> -->
+<!-- 	<link id="easyuiTheme" rel="stylesheet" th:href="@{/static/easyUI/uimaker/easyui.css}"/> -->
+<!-- 	<link rel="stylesheet" th:href="@{/static/css/common.css}"/> -->
+	<script type="text/javascript" th:src="@{/static/Jquery/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{/static/bootstrap/js/bootstrap.min.js}"></script>
+	<script type="text/javascript" th:src="@{/static/jquery-cookie/jquery.cookie.js}"></script>
+	<script type="text/javascript" th:src="@{/static/easyUI/jquery.easyui.min.js}"></script>
+<!-- 	<script type="text/javascript" th:src="@{/static/easyUI/jquery.easyui.mobile.js}"></script> -->
+	<script type="text/javascript" th:src="@{/static/easyUI/easyui-lang-zh_CN.js}"></script>
+	<script type="text/javascript" th:src="@{/static/activeMQ/amq_jquery_adapter.js}"></script>
+	<script type="text/javascript" th:src="@{/static/activeMQ/amq.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/CommonUtils.js}"></script>
+	<script th:inline="javascript">
+		var path=[[${path}]];
+		var content=[[${content}]];
+		var user = [[${session.user}]];
+		var CU = new CommonUtils();
+		var cu = CU;
+		var amq = org.activemq.Amq;
+// 		console.log(user);
+	</script>
+</head>
+</html>

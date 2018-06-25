@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC
+"-//mybatis.org//DTD MyBatis Generator Configuration 
+1.0//EN"
+"http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd"
+>
+<generatorConfiguration>
+	<!-- 制定mysql的驱动包的路径 千万别放中文路径下 -->
+	<classPathEntry location="e:\oraclefile\java\jar\mysql\mysql-connector-java\5.1.44\mysql-connector-java-5.1.44.jar" />
+	
+
+	<!-- 配置数据源和生成的代码所存放的位置 -->
+	<context id="context1" targetRuntime="MyBatis3">
+<!-- 		<plugin type="com.gasq.bdp.logn.utils.MySQLLimitPlugin"></plugin> -->
+		<plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
+		<!--关闭注释 -->
+	    <commentGenerator>
+	        <property name="suppressAllComments" value="true"/>
+	        <property name="mergeable" value="false"></property>
+	    </commentGenerator>
+<!-- 		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.30.0.1:3306/gabdp-wf" userId="sjyx" password="Gnkjsjyx2017!" /> -->
+<!-- <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1:3306/wechat-wf" userId="root" password="123456" /> -->
+<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://123.207.141.154:3306/wechat-wf" userId="root" password="Ltn_wechat2018" />
+		<!-- 类型转换 -->
+        <javaTypeResolver>
+            <!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） -->
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+		<!-- 所生成的实体类的位置默认资源包src -->
+		<javaModelGenerator targetPackage="com.gasq.bdp.logn.model" targetProject="weChat-wf" ><property name="trimStrings" value="true"/></javaModelGenerator>
+		<!-- 所生成的sqlMap的影射文件的位置,默认资源包src -->
+		<sqlMapGenerator targetPackage="com.gasq.bdp.logn.mapper.xml" targetProject="weChat-wf" />
+		<javaClientGenerator targetPackage="com.gasq.bdp.logn.mapper" targetProject="weChat-wf" type="XMLMAPPER" />
+<!-- 			<table schema="" tableName="t_sys_timer_workflow"> </table> -->
+<!-- 			<table schema="" tableName="t_sys_timer_schedule_workflow"> </table> -->
+<!-- 			<table schema="" tableName="t_sys_timer_scheduleconfig"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_log"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_jobconfig"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_sqoop"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_sql_query"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_mongo_query"> </table> -->
+<!-- <table schema="" tableName="t_sys_mongo_query_keys"> </table> -->
+<!-- <table schema="" tableName="t_customer_subscribe"> </table> -->
+		
+<!-- 		<table schema="" tableName="t_sys_timer_job_sql_insert_update"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_sql_update_keys"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_datasource"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_sql_update_columns"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_sql"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_data_export"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_data_import"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_mongo"> </table> -->
+<!-- <table schema="" tableName="t_sys_timer_wf_exe_info"> </table> -->
+<!-- <table schema="" tableName="t_sys_role"></table>  -->
+<!-- <table schema="" tableName="t_sys_role_permission"></table>  -->
+<!-- <table schema="" tableName="t_sys_permission"></table>  -->
+<!-- <table schema="" tableName="t_sys_user"></table>  -->
+<!-- <table schema="" tableName="t_sys_user_ext"></table>  -->
+<!-- <table schema="" tableName="t_sys_user_role"></table> -->
+<!-- <table schema="" tableName="t_company"></table>  -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_hive"> </table> -->
+<!-- 		<table schema="" tableName="t_ltn_customer"> </table> -->
+<!-- <table schema="" tableName="t_vip_customer"> </table> -->
+<!-- <table schema="" tableName="t_vip_customer_log"> </table> -->
+<table schema="" tableName="t_customer_consumpton_log"> </table>
+<!-- 		<table schema="" tableName="t_consumpton_project"> </table> -->
+<!-- <table schema="" tableName="t_inventory_log"> </table> -->
+<!-- <table schema="" tableName="t_customer_subscribe_log"> </table> -->
+<!-- 		<table schema="" tableName="t_inventory"> </table> -->
+<!-- 		<table schema="" tableName="t_ltn_customer_consumpton_amount"> </table> -->
+<!-- 				<table schema="" tableName="t_score_exchange"> </table> -->
+<!-- 				<table schema="" tableName="t_project"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_role_menu"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_exeShell"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_sftp"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_elasticSearch"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_data_columns"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_data"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_menu"> </table> -->
+<!-- 		<table schema="" tableName="t_sys_timer_job_hive" enableCountByExample="true" -->
+<!-- 			enableUpdateByExample="true" enableDeleteByExample="true" -->
+<!-- 			enableSelectByExample="true" selectByExampleQueryId="true"> -->
+<!-- 		</table> -->
+	</context>
+</generatorConfiguration>
