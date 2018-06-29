@@ -112,6 +112,11 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 		BigDecimal movePayment = bean.getMovePayment();//移动支付
 		BigDecimal cashIncome = bean.getCashIncome();//现金收入
 		BigDecimal creditCashIncome = bean.getCreditCashIncome();//刷卡收入
+		if(arrears==null) arrears = new BigDecimal(0);
+		if(repayment==null) repayment = new BigDecimal(0);
+		if(movePayment==null) movePayment = new BigDecimal(0);
+		if(cashIncome==null) cashIncome = new BigDecimal(0);
+		if(creditCashIncome==null) creditCashIncome = new BigDecimal(0);
 		//总收入：还款金额+移动支付+现金收入+刷卡收入-欠款
 		BigDecimal total = repayment.add(movePayment).add(cashIncome).add(creditCashIncome).subtract(arrears);
 		BigDecimal discount = new BigDecimal(bean.getDiscount());

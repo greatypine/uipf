@@ -12,10 +12,11 @@
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="ccac.query()">查询</a> 
 			<a shiro:hasPermission="user:create" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="ccac.add()">添加</a> 
-			<a id="export" shiro:hasPermission="user:execute" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-large-smartart" plain="true" onclick="ccac.exportData()">导出</a>
 			<a id="jiesuanpt" shiro:hasAnyRoles="sadmin,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.ptcommit()">普通结算</a>
 			<a id="jiesuanhy" shiro:hasAnyRoles="sadmin,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.hycommit()">会员结算</a>
-			<a id="jiesuanfx" shiro:hasAnyRoles="sadmin,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.fxcommit()">分销结算</a> 
+			<a id="jiesuanfx" shiro:hasAnyRoles="sadmin,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.fxcommit()">分销结算</a>
+<!-- 			<a id="print" shiro:hasAnyRoles="sadmin,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-print" plain="true" onclick="ccac.printData()">打印</a> -->
+			<a id="export" shiro:hasPermission="user:execute" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-large-smartart" plain="true" onclick="ccac.exportData()">导出</a>
 			<a shiro:hasAnyRoles="sadmin,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="ccac.remove()">删除</a>
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="ccac.clear()">清空</a>
 		</div>
@@ -170,6 +171,34 @@
 		<a id="projectListcomplate" shiro:hasAnyRoles="sadmin,q_admin,q_counselor" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.projectListcomplate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#projectListdlg').form('clear');$('#projectListdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
+<div id="test" style="display: none;">
+      <table style="width: 241mm;height: 93mm;margin: auto;border: 1px solid #000;">
+          <tr>
+              <td>姓名：</td><td><input name="name" value="张三1"/></td>
+          </tr>
+          <tr>
+              <td>年龄：</td><td><input name="age" value="80"/></td>
+          </tr>
+      </table>
+      <table style="width: 241mm;height: 93mm;margin: auto;border: 1px solid #000;">
+          <tr>
+              <td>姓名：</td><td><input name="name" value="张三2"/></td>
+          </tr>
+          <tr>
+              <td>年龄：</td><td><input name="age" value="80"/></td>
+          </tr>
+      </table>
+      <table style="width: 241mm;height: 93mm;margin: auto;border: 1px solid #000;">
+          <tr>
+              <td>姓名：</td><td><input name="name" value="张三3"/></td>
+          </tr>
+          <tr>
+              <td>年龄：</td><td><input name="age" value="80"/></td>
+          </tr>
+      </table>
+</div>
 </body>
+<script type="text/javascript" th:src="@{/static/Jquery/jquery.jqprint-0.3.js}"></script>
+<script type="text/javascript" th:src="@{/static/Jquery/jquery-migrate-1.2.1.min.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/workflow/customerConsumptonAmountMaintenance.js}"></script>
 </html>

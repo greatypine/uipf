@@ -62,7 +62,6 @@ function Myinventory(){
 					$("#inventorydlg").dialog("open").dialog("center").dialog("setTitle","更新产品");
 					row.status = row.status==true?1:0;
 					$("#inventorydlg-fm").form("clear").form("load",row);
-					$("#iuinfo").hide();
 				},
 				onSelect:function(index,row){
 					if(row.status==0){
@@ -133,6 +132,7 @@ function Myinventory(){
 				if (r){
 					$.ajax({
 						data :{id:row.id},
+						type:"POST",
 						url : content+"/inventory/delete",
 						error : function(data) {
 							$.messager.alert('提示信息','服务器连接超时请重试!','error'); 

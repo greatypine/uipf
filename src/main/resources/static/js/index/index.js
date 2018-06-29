@@ -6,24 +6,24 @@ $(function(){
 
 function init(){
 	initdata();
-	if(user.user.roleids.indexOf("4")!=-1){//管理员
-		indexOption.initUserSubscribeListener();//监听用户登录信息
-		indexOption.initUserLoginInfoListener();//监听用户登录信息
-	}
-	if(user.user.roleids.indexOf("1")!=-1) {//门店店长
-		indexOption.initUserSubscribeListener();//监听用户登录信息
-		indexOption.initUserLoginInfoListener();//监听用户登录信息
-	}
-	if(user.user.roleids.indexOf("10")!=-1) {//前台
-		indexOption.initUserSubscribeListener();//监听用户登录信息
-	}
-	if(user.user.roleids.indexOf("11")!=-1) {//前台
-		indexOption.initCounsolerSubscribeListener();//监听用户登录信息
-	}
+//	if(user.user.roleids.indexOf("4")!=-1){//管理员
+//		indexOption.initUserSubscribeListener();//监听用户登录信息
+//		indexOption.initUserLoginInfoListener();//监听用户登录信息
+//	}
+//	if(user.user.roleids.indexOf("1")!=-1) {//门店店长
+//		indexOption.initUserSubscribeListener();//监听用户登录信息
+//		indexOption.initUserLoginInfoListener();//监听用户登录信息
+//	}
+//	if(user.user.roleids.indexOf("10")!=-1) {//前台
+//		indexOption.initUserSubscribeListener();//监听用户登录信息
+//	}
+//	if(user.user.roleids.indexOf("11")!=-1) {//前台
+//		indexOption.initCounsolerSubscribeListener();//监听用户登录信息
+//	}
 }
 
 function initdata(){
-	amq.init({ uri: content+'/amq', logging: true, timeout: 45, clientId:(new Date()).getTime().toString() });
+//	amq.init({ uri: content+'/amq', logging: true, timeout: 45, clientId:(new Date()).getTime().toString() });
 	indexOption = new IndexOption();
 	indexOption.queryMenus({"pid":0});
 	$(".loginOut").bind("click",function(){

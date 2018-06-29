@@ -77,9 +77,9 @@ public class TInventoryServiceImpl implements TInventoryService {
 	public boolean delete(int id) {
 		TSysUser user = SystemUserInfo.getSystemUser().getUser();
 		TInventory bean = inventoryMapper.selectByPrimaryKey(id);
-		boolean g = inventoryMapper.deleteByPrimaryKey(id)>0?true:false;
 		TInventoryLog ilog = new TInventoryLog(bean.getId(),InitProperties.INVENTORY_OPTION_DELETE,null,null,null,user.getCompanyid(),bean.getInventory(),user.getUsername());
 		inventoryLogService.saveOrUpdate(ilog);
+		boolean g = inventoryMapper.deleteByPrimaryKey(id)>0?true:false;
 		return g;
 	}
 

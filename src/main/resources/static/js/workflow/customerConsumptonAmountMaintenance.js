@@ -626,5 +626,17 @@ function CustomerConsumptonAmount(){
 			$.messager.alert('提示','请先选中要操作的数据！','error');
 		}
 	};
+	/**
+	 * 打印
+	 */
+	this.printData = function(){
+		$("#test").show().jqprint({
+			debug: false,
+            importCSS: true,
+            printContainer: true,
+            operaSupport: false,
+            printTime : 6000
+		});
+	};
 }
 
