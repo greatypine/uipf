@@ -13,12 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gasq.bdp.logn.mapper.TInventoryLogMapper;
+import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TInventoryLog;
 import com.gasq.bdp.logn.model.TInventoryLogExample;
 import com.gasq.bdp.logn.model.TInventoryLogExample.Criteria;
 import com.gasq.bdp.logn.service.TInventoryLogService;
 import com.gasq.bdp.logn.utils.DateUtil;
+import com.gasq.bdp.logn.utils.WorkFlowUtil;
 
 @Service
 public class TInventoryLogServiceImpl implements TInventoryLogService {
@@ -74,9 +76,18 @@ public class TInventoryLogServiceImpl implements TInventoryLogService {
 		int number = (bean.getRows()==0) ? 10 : bean.getRows();
 		start = (intPage - 1) * number;
 		Map<String, Object> params= new  HashMap<String, Object>();
+		if(bean.getCompanyid()!=null) {
+			params.put("companyid", bean.getCompanyid());
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				params.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+			}
+		}
+		if(bean.getCreateTime()!=null) {
+			params.put("createTime", bean.getCreateTime());
+		}
 		params.put("index", start);
 		params.put("pageSize", number);
-		params.put("companyid", SystemUserInfo.getSystemUser().getUser().getCompanyid());
 		list = TInventoryLogMapper.queryPagingList(params);
 		if(list==null) list = new ArrayList<Map<String,Object>>(); 
 		result.put("rows",list);

@@ -46,13 +46,11 @@ function Myinventorylog(){
 			});
 	};
 	this.query = function(){
-		var name = $("#queryname").val();
-		var status = ($("#querystatus").combobox("getValue")<0)?null:$("#querystatus").combobox("getValue");
+		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager")?$("#querycompanyid").combobox("getValue"):null;
 		var createTime = ($("#querycreateTime").datebox('getValue')=="")?null:$("#querycreateTime").datebox('getValue');
 		var params = {};
-		if(name!="") {params.inventorylogName = name;}
-		params.status = status;
-		if(createTime!="" && createTime!=null) {params.createtime = createTime;}
+		params.companyid = companyid;
+		if(createTime!="" && createTime!=null) {params.createTime = createTime;}
 		inventorylog_table.datagrid("load",params);
 	};
 	this.getParams = function(){

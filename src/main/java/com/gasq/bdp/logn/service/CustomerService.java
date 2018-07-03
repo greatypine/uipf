@@ -40,9 +40,11 @@ public interface CustomerService {
 
 		List<Map<String, Object>> queryExportDataList(TLtnCustomer customer);
 
-		Map<String, Object> countConsumptionReport(String datetype, String starttime, String endtime);
+		Map<String, Object> countConsumptionReport(Integer companyid, String datetype, String starttime, String endtime);
 
 		boolean saveOrUpdateTFMCust(TLtnCustomer bean) throws SchedulerException;
 
-		Map<String, Object> queryCountConsumptionReportList(String datetype, String starttime, String endtime);
+		Map<String, Object> queryCountConsumptionReportList(Integer companyid, String datetype, String starttime, String endtime);
+
+		boolean refundCust(int id) throws WorkFlowStateException;
 }

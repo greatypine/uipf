@@ -118,6 +118,13 @@ public class TProjectServiceImpl implements TSysProjectService {
 		if(bean.getRemark()!=null) {
 			params.put("remark", bean.getRemark());
 		}
+		if(bean.getCompanyId()!=null) {
+			params.put("companyid", bean.getCompanyId());
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				params.put("companyid", SystemUserInfo.getSystemUser().getCompany().getId());
+			}
+		}
 		list = projectMapper.queryPagingList(params);
 		if(list==null) list = new ArrayList<Map<String,Object>>(); 
 		result.put("rows",list);

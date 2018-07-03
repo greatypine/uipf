@@ -126,7 +126,7 @@ function CommonUtils(){
 			for (var i = 0; i < roles.length; i++) {
 				var flags = flag.split(",");
 				for ( var role in flags) {
-					if(roles[i].roleSign==role) return true;
+					if(roles[i].roleSign==flags[role]) return true;
 				}
 			}
 		}

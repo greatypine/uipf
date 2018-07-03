@@ -105,11 +105,21 @@ public class CustomerConsumptonAmountController {
 		return null;
 	 }
     
-//	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION},logical=Logical.OR)
+	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER},logical=Logical.OR)
 	@RequestMapping(value = "/deleteCust",method=RequestMethod.POST)
 	public boolean deleteCust(Integer id) {
 		try {
 			return customerService.delete(id);
+		} catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+		return false;
+	 }
+	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER},logical=Logical.OR)
+	@RequestMapping(value = "/refundCust",method=RequestMethod.POST)
+	public boolean refundCust(Integer id) {
+		try {
+			return customerService.refundCust(id);
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -202,18 +212,18 @@ public class CustomerConsumptonAmountController {
 	
 //    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/countConsumptionReport",method=RequestMethod.POST)
-	public Map<String, Object> countConsumptionReport(String datetype,String starttime,String endtime) {
+	public Map<String, Object> countConsumptionReport(Integer companyid,String datetype,String starttime,String endtime) {
 		try {
-			return customerService.countConsumptionReport(datetype,starttime,endtime);
+			return customerService.countConsumptionReport(companyid,datetype,starttime,endtime);
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
 	@RequestMapping(value = "/queryCountConsumptionReportList",method=RequestMethod.POST)
-	public Map<String, Object> queryCountConsumptionReportList(String datetype,String starttime,String endtime) {
+	public Map<String, Object> queryCountConsumptionReportList(Integer companyid,String datetype,String starttime,String endtime) {
 		try {
-			return customerService.queryCountConsumptionReportList(datetype,starttime,endtime);
+			return customerService.queryCountConsumptionReportList(companyid,datetype,starttime,endtime);
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}

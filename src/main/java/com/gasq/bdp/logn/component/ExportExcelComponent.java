@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import com.gasq.bdp.logn.iexception.WorkFlowJobException;
 import com.gasq.bdp.logn.model.TLtnCustomer;
 import com.gasq.bdp.logn.service.CustomerService;
 import com.gasq.bdp.logn.utils.CommonUtils;
-import com.gasq.bdp.logn.utils.DateUtil;
 
 /**
  * @author Ju_weigang

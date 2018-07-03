@@ -6,24 +6,20 @@ $(function(){
 
 function init(){
 	initdata();
-//	if(user.user.roleids.indexOf("4")!=-1){//管理员
-//		indexOption.initUserSubscribeListener();//监听用户登录信息
-//		indexOption.initUserLoginInfoListener();//监听用户登录信息
-//	}
-//	if(user.user.roleids.indexOf("1")!=-1) {//门店店长
-//		indexOption.initUserSubscribeListener();//监听用户登录信息
-//		indexOption.initUserLoginInfoListener();//监听用户登录信息
-//	}
-//	if(user.user.roleids.indexOf("10")!=-1) {//前台
-//		indexOption.initUserSubscribeListener();//监听用户登录信息
-//	}
-//	if(user.user.roleids.indexOf("11")!=-1) {//前台
+	if(cu.hasRoles("sadmin,q_area_shopManager,generalManager,q_admin,h_admin")){//管理员
+		indexOption.initUserSubscribeListener();//监听预约
+		indexOption.initUserLoginInfoListener();//监听用户登录信息
+	}
+	if(cu.hasRoles("q_receptionist")) {//前台
+		indexOption.initUserSubscribeListener();//监听用户登录信息
+	}
+//	if(cu.hasRoles("q_area_shopManager,q_admin,q_receptionist")) {//前台
 //		indexOption.initCounsolerSubscribeListener();//监听用户登录信息
 //	}
 }
 
 function initdata(){
-//	amq.init({ uri: content+'/amq', logging: true, timeout: 45, clientId:(new Date()).getTime().toString() });
+	amq.init({ uri: content+'/amq', logging: true, timeout: 45, clientId:(new Date()).getTime().toString() });
 	indexOption = new IndexOption();
 	indexOption.queryMenus({"pid":0});
 	$(".loginOut").bind("click",function(){
@@ -32,6 +28,17 @@ function initdata(){
 	$(".changepwd").bind("click",function(){
 		indexOption.changepwd();
 	});
+	var wh = $(window).height();
+	if(wh>1100){
+		$("#north").css("height","4%");
+	}else if(wh>900 && wh<1100){
+		$("#north").css("height","5%");
+	}else if(wh >700 && wh <900){
+		$("#north").css("height","6%");
+	}else if(wh <700){
+		$("#north").css("height","7%");
+	}
+	$(".l-btn-text").css({"font-size":"16px","padding-top":"5px"});
 }
 
 function IndexOption(){
@@ -97,7 +104,7 @@ function IndexOption(){
 	            }
 	        }
 	    };
-	    amq.addListener('user_msg','topic://user_msg',myUserHandler.rcvMessage);
+	    amq.addListener(user.user.companyid+'user_msg','topic://'+user.user.companyid+'user_msg',myUserHandler.rcvMessage);
 	};
 	this.initUserSubscribeListener = function(){
 	    var myUserHandler ={
@@ -106,17 +113,17 @@ function IndexOption(){
 	        	cu.bottomRight(message.textContent);
 	        }
 	    };
-	    amq.addListener('back_subscribe_msg','topic://back_subscribe_msg',myUserHandler.rcvMessage);
+	    amq.addListener(user.user.companyid+'back_subscribe_msg','topic://'+user.user.companyid+'back_subscribe_msg',myUserHandler.rcvMessage);
 	};
-	this.initCounsolerSubscribeListener = function(){
-		 var myUserHandler ={
-	        rcvMessage: function(message){
-	            //接收到消息后，自己的业务处理逻辑 (new Date()).getTime().toString()
-	        	var tcs = message.textContent.split("|");
-	        	if(tcs[0]==user.user.id) cu.bottomRight(tcs[1]);
-	        }
-	    };
-	    amq.addListener('before_subscribe_msg','topic://before_subscribe_msg',myUserHandler.rcvMessage);
-	};
+//	this.initCounsolerSubscribeListener = function(){
+//		 var myUserHandler ={
+//	        rcvMessage: function(message){
+//	            //接收到消息后，自己的业务处理逻辑 (new Date()).getTime().toString()
+//	        	var tcs = message.textContent.split("|");
+//	        	if(tcs[0]==user.user.id) cu.bottomRight(tcs[1]);
+//	        }
+//	    };
+//	    amq.addListener(user.user.companyid+'before_subscribe_msg','topic://before_subscribe_msg',myUserHandler.rcvMessage);
+//	};
 	
 }

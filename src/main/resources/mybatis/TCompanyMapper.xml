@@ -384,4 +384,59 @@
          and a.pid=${record.pid}
        </if>
    </select>
+   
+ <select id="countConsumptionReport" parameterType="java.util.Map" resultType="java.util.Map">
+  	SELECT
+  	<if test="datetype!=null and datetype!=''">
+		<if test="datetype==1">
+			DATE_FORMAT(a.createTime, '%Y') datetime,
+		</if>
+		<if test="datetype==2">
+			DATE_FORMAT(a.createTime, '%Y%m') datetime,
+		</if>
+		<if test="datetype==3">
+			DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
+		</if>
+	</if>
+	<if test="datetype==null or datetype==''">
+		DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
+	</if>
+		(sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 0,ifnull(b.total_amount, 0),0),0)) / 10000) c_total_amount,
+		(sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 1,ifnull(b.total_amount, 0),0),0)) / 10000) f_total_amount,
+		sum(ifnull(b.total_amount, 0)) / 10000 AS total_amont,
+		sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 0, 1, 0),0)) CHUZHEN,
+		sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 1, 1, 0),0)) FUZHEN,
+		sum(IF (a.`status` = 99,1,0)) employeeWastageOrder,
+		count(a.id) employeeTotalOrder,
+		tsu.nickname
+	FROM
+		t_ltn_customer a
+	LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_ltn_customer_consumpton_amount b LEFT JOIN t_ltn_customer b1 ON b.customer_id = b1.id WHERE b1.`status` = 1 GROUP BY b.customer_id) b on a.id = b.id
+	LEFT JOIN t_sys_user tsu on a.counsoler = tsu.id
+	where 1 = 1
+	<if test="starttime!=null and starttime!=''">
+		and DATE_FORMAT(a.createTime, '%Y-%m-%d') &gt;= #{starttime}
+	</if>
+	<if test="endtime!=null and endtime!=''">
+		and DATE_FORMAT(a.createTime, '%Y-%m-%d') &lt;= #{endtime}
+	</if>
+	<if test="companyid!=null">
+		and a.company_id = #{companyid}
+	</if>
+	<if test="datetype!=null and datetype!=''">
+		<if test="datetype==1">
+			GROUP BY DATE_FORMAT(a.createTime, '%Y'),a.counsoler,tsu.nickname
+		</if>
+		<if test="datetype==2">
+			GROUP BY DATE_FORMAT(a.createTime, '%Y%m'),a.counsoler,tsu.nickname
+		</if>
+		<if test="datetype==3">
+			GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d'),a.counsoler,tsu.nickname
+		</if>
+	</if>
+	<if test="datetype==null or datetype==''">
+		GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d'),a.counsoler,tsu.nickname
+	</if>
+	order by datetime asc,total_amont desc
+  </select>
 </mapper>

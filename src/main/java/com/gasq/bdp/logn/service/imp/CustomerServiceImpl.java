@@ -19,15 +19,21 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.gasq.bdp.logn.component.MyScheduler;
 import com.gasq.bdp.logn.iexception.WorkFlowStateException;
+import com.gasq.bdp.logn.mapper.TCompanyMapper;
+import com.gasq.bdp.logn.mapper.TConsumptonProjectMapper;
 import com.gasq.bdp.logn.mapper.TCustomerConsumptonLogMapper;
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeMapper;
+import com.gasq.bdp.logn.mapper.TInventoryMapper;
 import com.gasq.bdp.logn.mapper.TLtnCustomerMapper;
 import com.gasq.bdp.logn.mapper.TSysTimerScheduleconfigMapper;
 import com.gasq.bdp.logn.mapper.TVipCustomerMapper;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
+import com.gasq.bdp.logn.model.TConsumptonProject;
+import com.gasq.bdp.logn.model.TConsumptonProjectExample;
 import com.gasq.bdp.logn.model.TCustomerConsumptonLog;
 import com.gasq.bdp.logn.model.TCustomerSubscribe;
+import com.gasq.bdp.logn.model.TInventory;
 import com.gasq.bdp.logn.model.TLtnCustomer;
 import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmount;
 import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmountExample;
@@ -57,6 +63,10 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired TCustomerSubscribeMapper customerSubscribeMapper;
 	@Autowired TCustomerConsumptonLogMapper customerConsumptonLogMapper;
 	@Autowired TVipCustomerMapper vipCustomerMapper;
+	@Autowired TCompanyMapper companyMapper;
+	@Autowired TInventoryMapper inventoryMapper;
+	@Autowired TConsumptonProjectMapper consumptonProjectMapper;
+//	@Autowired ActiveManager activeManager;
 	
 	@Value("${wf.serverUrlPrefix}")
 	private String wfServerUrlPrefix;
@@ -73,10 +83,29 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	@Transactional(rollbackFor=Exception.class)
 	public boolean delete(int id)throws WorkFlowStateException {
-		TLtnCustomer customer = customerMapper.selectByPrimaryKey(id);
-		customer.setStatus(99);
-		customerMapper.updateByPrimaryKeySelective(customer);
-		return true;
+		try {
+			TLtnCustomer customer = customerMapper.selectByPrimaryKey(id);
+			customer.setStatus(99);
+			customerMapper.updateByPrimaryKeySelective(customer);
+			TLtnCustomerConsumptonAmountExample example = new TLtnCustomerConsumptonAmountExample();
+			example.createCriteria().andCustomerIdEqualTo(id);
+			List<TLtnCustomerConsumptonAmount> ccalists = consumptonAmountService.selectByExample(example);
+			for(TLtnCustomerConsumptonAmount cca : ccalists) {
+				TConsumptonProjectExample example1 = new TConsumptonProjectExample();
+				example1.createCriteria().andConsumptonAmountIdEqualTo(cca.getId());
+				List<TConsumptonProject> cplist = consumptonProjectMapper.selectByExample(example1);
+				for(TConsumptonProject cp : cplist) {
+					Integer projectId = cp.getProjectId();
+					TInventory inventory = inventoryMapper.selectByPrimaryKey(projectId);
+					inventory.setInventory(inventory.getInventory().add(cp.getNumbs()));
+					inventoryMapper.updateByPrimaryKeySelective(inventory);
+				}
+			}
+			return true;
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
+		return false;
 	}
 	
 	@Override
@@ -113,7 +142,7 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 		if(bean.getStatus()==null) {
 			if(WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.Q_ADMIN)) {
-				String statuss = String.join(",","0","1","99");
+				String statuss = String.join(",","0","1","98","99");
 				bean.setStatuss(statuss.split(","));
 			}else {
 				String statuss = String.join(",","0","1");
@@ -156,8 +185,9 @@ public class CustomerServiceImpl implements CustomerService {
 						if(list2!=null && list2.size()>0) {
 							ttamount = list2.get(0).getActualAmount().add(list2.get(0).getGiveAmount());
 							if(ttamount.doubleValue()<totalAmount) {//会员用户余额不足
+								String mess = "用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"账号余额不足，请充值后再进行操作！";
 								result.put("status", false);
-								result.put("mess", "用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"账号余额不足，请充值后再进行操作！");
+								result.put("mess", mess);
 								return result;
 							}
 						}else {
@@ -207,6 +237,7 @@ public class CustomerServiceImpl implements CustomerService {
 			logger.info("用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"，操作失败！请稍后再进行尝试！"+e.getMessage(),e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
+//		activeManager.sendBack(ActiveMQUtil.getTopicDestination(bean.getCompanyId()+InitProperties.BEFORE_SUBSCRIBE_MSG),"");
 		return result;
 	}
 
@@ -223,18 +254,29 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Map<String, Object> countConsumptionReport(String datetype,String starttime, String endtime) {
+	public Map<String, Object> countConsumptionReport(Integer companyid,String datetype,String starttime, String endtime) {
 		Map<String, Object> map = new  HashMap<String, Object>();
 		List<String> years = new ArrayList<String>();
 		List<Double> camount = new ArrayList<Double>();
 		List<Double> famount = new ArrayList<Double>();
-//		List<Integer> chufuzhen = new ArrayList<Integer>();
 		List<Object> chuzhen = new ArrayList<Object>();
 		List<Object> fuzhen = new ArrayList<Object>();
 		map.put("starttime", starttime);
 		map.put("endtime", endtime);
 		map.put("datetype", datetype);
 		map.put("companyid", SystemUserInfo.getSystemUser().getUser().getCompanyid());
+		String companyname = "";
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+			companyname = companyMapper.selectByPrimaryKey(companyid).getName();
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+				companyname = SystemUserInfo.getSystemUser().getCompany().getName();
+			}else {
+				companyname = "所有门店";
+			}
+		}
 		List<Map<String, Object>> listmaps = customerMapper.countConsumptionReport(map);
 		if(listmaps!=null && listmaps.size()>0) {
 			for (Map<String, Object> lm : listmaps) {
@@ -243,21 +285,19 @@ public class CustomerServiceImpl implements CustomerService {
 				famount.add(new BigDecimal(lm.get("f_total_amount").toString()).doubleValue());
 				chuzhen.add(new BigDecimal(lm.get("CHUZHEN").toString()).intValue());
 				fuzhen.add(new BigDecimal(lm.get("FUZHEN").toString()).intValue());
-//				chufuzhen.add(Integer.parseInt(lm.get("chu_fu_zhen").toString()));
 			}
 		}
-		double maxchuzhen = Integer.parseInt(CommonUtils.getArrayMax(chuzhen).toString())*1.25;
-		double maxfuzhen = Integer.parseInt(CommonUtils.getArrayMax(fuzhen).toString())*1.25;
+		double maxchuzhen = (chuzhen.size()<=0)?0.0:Integer.parseInt(CommonUtils.getArrayMax(chuzhen).toString())*1.25;
+		double maxfuzhen = (fuzhen.size()<=0)?0.0:Integer.parseInt(CommonUtils.getArrayMax(fuzhen).toString())*1.25;
 		map.clear();
 		map.put("years", years);
 		map.put("camount", camount);
 		map.put("famount", famount);
 		map.put("chuzhen", chuzhen);
 		map.put("fuzhen", fuzhen);
-//		map.put("chufuzhen", chufuzhen);
 		map.put("max", Math.round(maxchuzhen>=maxfuzhen?maxchuzhen:maxfuzhen));
 		map.put("interval", Math.round((maxchuzhen>=maxfuzhen?maxchuzhen:maxfuzhen)/fuzhen.size()));
-		map.put("series_name", "客户消费统计");
+		map.put("series_name", companyname+"客户消费统计");
 		return map;
 	}
 	
@@ -288,13 +328,17 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Map<String, Object> queryCountConsumptionReportList(String datetype, String starttime, String endtime) {
+	public Map<String, Object> queryCountConsumptionReportList(Integer companyid,String datetype, String starttime, String endtime) {
 		Map<String, Object> map = new  HashMap<String, Object>();
 		map.put("starttime", starttime);
 		map.put("endtime", endtime);
 		map.put("datetype", datetype);
-		if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
-			map.put("companyid", SystemUserInfo.getSystemUser().getUser().getCompanyid());
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+			}
 		}
 		List<Map<String, Object>> listmaps = customerMapper.countConsumptionReport(map);
 		if(listmaps==null || listmaps.size()<=0)listmaps = new ArrayList<Map<String,Object>>();
@@ -302,6 +346,20 @@ public class CustomerServiceImpl implements CustomerService {
 		map.put("rows",listmaps);
 		map.put("total",listmaps.size());
 		return map;
+	}
+
+	@Override
+	@Transactional(rollbackFor=Exception.class)
+	public boolean refundCust(int id)throws WorkFlowStateException {
+		try {
+			TLtnCustomer customer = customerMapper.selectByPrimaryKey(id);
+			customer.setStatus(98);
+			customerMapper.updateByPrimaryKeySelective(customer);
+			return true;
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
+		return false;
 	}
 
 }

@@ -1,6 +1,5 @@
 var countreports;
 var reports;
-var cu;
 var systemuser_table;
 $(function(){
 	initData();
@@ -8,10 +7,12 @@ $(function(){
 function initData(){
 	countreports = new CountReport();
 	reports = new Reports();
-	cu = new CommonUtils();
 	countreports.initDatas();
 	countreports.initCompant();
 	countreports.initDataGridCompant(null);
+	$(".companylist").combobox({
+		url:content+'/company/queryMapBeanList'
+	});
 }
 function CountReport(){
 	this.initDataGridCompant = function(params){

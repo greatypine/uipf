@@ -12,12 +12,13 @@
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="ccac.query()">查询</a> 
 			<a shiro:hasPermission="user:create" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="ccac.add()">添加</a> 
-			<a id="jiesuanpt" shiro:hasAnyRoles="sadmin,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.ptcommit()">普通结算</a>
-			<a id="jiesuanhy" shiro:hasAnyRoles="sadmin,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.hycommit()">会员结算</a>
-			<a id="jiesuanfx" shiro:hasAnyRoles="sadmin,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.fxcommit()">分销结算</a>
-<!-- 			<a id="print" shiro:hasAnyRoles="sadmin,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-print" plain="true" onclick="ccac.printData()">打印</a> -->
+			<a id="jiesuanpt" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.ptcommit()">普通结算</a>
+			<a id="jiesuanhy" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.hycommit()">会员结算</a>
+			<a id="jiesuanfx" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.fxcommit()">分销结算</a>
+<!-- 			<a id="print" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-print" plain="true" onclick="ccac.printData()">打印</a> -->
 			<a id="export" shiro:hasPermission="user:execute" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-large-smartart" plain="true" onclick="ccac.exportData()">导出</a>
-			<a shiro:hasAnyRoles="sadmin,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="ccac.remove()">删除</a>
+			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="ccac.remove()">关闭</a>
+			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="ccac.refund()">退款</a>
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="ccac.clear()">清空</a>
 		</div>
 		<div id="cron_bar">
@@ -29,7 +30,7 @@
 							<option value="-1" selected="selected">全部</option>
 							<option value="0">未结算</option>
 							<option value="1">已结算</option>
-							<option shiro:hasAnyRoles="sadmin,q_admin,q_area_shopManager,generalManager" value="99">已关闭</option>
+							<option shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_area_shopManager,generalManager" value="99">已关闭</option>
 						 </select>
 				初复诊：<select id="queryChuFuZhen" name="chuFuZhen" class="easyui-combobox" style="width: 120px; height: 22px;">
 							<option value="-1">请选择</option>
@@ -69,11 +70,11 @@
 	    			<td class="tdname">治疗师：</td>
 	    			<td class="tdnamebox"><input name="therapeutist" id="therapeutist" class="easyui-combobox therapeutist" style="width: 100%" data-options="editable:false,valueField:'id',textField:'nickname'"/></td>
 	    		</tr>
-	    		<tr shiro:hasRole="q_counselor">
+	    		<tr shiro:hasRole="sadmin,q_area_shopManager,q_admin,q_counselor">
 		    		<td class="tdname">回访时间：</td>
 	    			<td class="tdnamebox"><input name="remindtime" id="remindtime" class="easyui-datebox" style="width: 100%;" data-options="required:false"/></td>
 	    		</tr>
-	    		<tr shiro:hasAnyRoles="sadmin,q_admin,q_receptionist">
+	    		<tr shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_receptionist">
 		    		<td class="tdname">回访时间：</td>
 		    		<td class="tdnamebox"><input name="remindtime" id="remindtime" class="easyui-datebox" style="width: 100%;" data-options="required:false"/></td>
 		    		<td class="tdname">咨询师：</td>
@@ -91,7 +92,7 @@
 		</form>
 	</div>
 	<div id="ccac_dlg-buttons">
-		<a id="basecomplate" shiro:hasAnyRoles="sadmin,q_admin,q_counselor" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.complate()" style="width: 90px">确认</a> 
+		<a id="basecomplate" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_counselor" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.complate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#ccacdlg-fm').form('clear');$('#ccacdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 	
@@ -143,7 +144,7 @@
     	</div>
 	</div>
 	<div id="ccacdetail_dlg-buttons">
-		<a id="baseproductcomplate" shiro:hasAnyRoles="sadmin,q_admin,q_counselor" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.amountcomplate()" style="width: 90px">确认</a>
+		<a id="baseproductcomplate" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_counselor" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.amountcomplate()" style="width: 90px">确认</a>
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#ccacdetaildlg-fm').form('clear');$('#ccacdetaildlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 	<div id="project_tb" style="height:auto">
@@ -168,7 +169,7 @@
 		</form>
 	</div>
 	<div id="projectList_dlg-buttons">
-		<a id="projectListcomplate" shiro:hasAnyRoles="sadmin,q_admin,q_counselor" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.projectListcomplate()" style="width: 90px">确认</a> 
+		<a id="projectListcomplate" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_counselor" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.projectListcomplate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#projectListdlg').form('clear');$('#projectListdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 <div id="test" style="display: none;">

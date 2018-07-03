@@ -350,6 +350,9 @@
 	<if test="discount !=null">
 		and p.discount=#{discount}
 	</if>
+	<if test="companyid !=null">
+		and p.company_id=#{companyid}
+	</if>
 	<if test="remark !=null">
 		and p.remark like concat('%',#{remark},'%')
 	</if>

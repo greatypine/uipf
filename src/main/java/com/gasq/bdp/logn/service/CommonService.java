@@ -30,4 +30,10 @@ public interface CommonService {
 
 	List<Map<String, Object>> getView(TCompany bean);
 
+	Map<String, Object> queryEmployeeTreatOrderReport(Integer type, Integer companyid, String datetype,
+			String starttime, String endtime);
+
+	Map<String, Object> queryEmployeeTreatOrderDataDetail(Integer type, Integer companyid, String datetype,
+			String starttime, String endtime);
+
 }

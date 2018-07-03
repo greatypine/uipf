@@ -12,8 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gasq.bdp.logn.component.ActiveManager;
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeMapper;
 import com.gasq.bdp.logn.model.InitProperties;
+import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TCustomerSubscribe;
 import com.gasq.bdp.logn.model.TCustomerSubscribeExample;
@@ -22,7 +24,9 @@ import com.gasq.bdp.logn.model.TCustomerSubscribeLog;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.service.CustomerSubscribeService;
 import com.gasq.bdp.logn.service.SubscribeLogService;
+import com.gasq.bdp.logn.utils.ActiveMQUtil;
 import com.gasq.bdp.logn.utils.DateUtil;
+import com.gasq.bdp.logn.utils.WorkFlowUtil;
 
 /**
  * @author 巨伟刚
@@ -34,7 +38,7 @@ import com.gasq.bdp.logn.utils.DateUtil;
 public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 	@Autowired TCustomerSubscribeMapper customerSubscribeMapper;
 	@Autowired SubscribeLogService subscribeLogService;
-//	@Autowired ActiveManager activeManager;
+	@Autowired ActiveManager activeManager;
 
 	@Override
 	public long countByExample(TCustomerSubscribeExample example) {
@@ -113,6 +117,13 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 		if(bean.getRemark()!=null) {
 			params.put("remark", bean.getRemark());
 		}
+		if(bean.getCompanyId()!=null) {
+			params.put("companyid", bean.getCompanyId());
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				params.put("companyid", SystemUserInfo.getSystemUser().getCompany().getId());
+			}
+		}
 		list = customerSubscribeMapper.queryPagingList(params);
 		if(list==null) list = new ArrayList<Map<String,Object>>(); 
 		result.put("rows",list);
@@ -140,8 +151,8 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 			bean.setStatus(0);
 			customerSubscribeMapper.insertSelective(bean);
 			subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_ADD,user.getUsername()));
-//			String mess = "后台用户："+SystemUserInfo.getSystemUser().getUser().getNickname()+",在"+DateUtil.getAllCurrentDate()+"成功预约了一个客户！";
-//			activeManager.sendBack(ActiveMQUtil.getTopicDestination(InitProperties.Moniter_USER),mess);
+			String mess = "后台用户："+SystemUserInfo.getSystemUser().getUser().getNickname()+",在"+DateUtil.getAllCurrentDate()+"成功预约了一个客户！";
+			activeManager.sendBack(ActiveMQUtil.getTopicDestination(bean.getCompanyId()+InitProperties.BACK_SUBSCRIBE_MSG),mess);
 		}
 		return true;
 	}

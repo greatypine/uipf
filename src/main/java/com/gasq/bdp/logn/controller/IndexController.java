@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gasq.bdp.logn.component.ActiveManager;
+import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.TSysUser;
@@ -35,6 +37,7 @@ import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.service.TSysMenuService;
 import com.gasq.bdp.logn.service.TSysTimerJobconfigService;
 import com.gasq.bdp.logn.service.TSysUserService;
+import com.gasq.bdp.logn.utils.ActiveMQUtil;
 import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.UserthreadLocal;
@@ -48,7 +51,7 @@ public class IndexController {
 	TSysUserService userService;
 	@Autowired
     TSysTimerJobconfigService jobconfigService;
-//	@Autowired ActiveManager activeManager;
+	@Autowired ActiveManager activeManager;
 	@Autowired EmailManager emailService;
 	// 错误信息
 	Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -154,8 +157,8 @@ public class IndexController {
 			String mess = "用户："+systemUser.getUser().getNickname()+" 在"+DateUtil.getAllCurrentDate()+"登录成功!";
 			SecurityUtils.getSubject().getSession().setAttribute("user", systemUser);
 			logger.info(mess);
-//			emailService.sendSimpleEmail(InitProperties.EMAIL_SENDER, InitProperties.EMAIL_TARGET, "测试",mess);
-//			activeManager.sendBack(ActiveMQUtil.getTopicDestination(InitProperties.Moniter_USER), mess);
+//			emailService.sendSimpleEmail(InitProperties.EMAIL_SENDER, InitProperties.EMAIL_TARGET, "痘卫士-登录信息",mess);
+			activeManager.sendBack(ActiveMQUtil.getTopicDestination(systemUser.getUser().getCompanyid()+InitProperties.Moniter_USER), mess);
 			return "redirect:/homepage";
 		} else {
 			token.clear();
@@ -359,6 +362,14 @@ public class IndexController {
 		return "countConSumptionInfo";
 	}
 	
+	@RequestMapping("/goEmployeeTreatCount")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_RECEPTIONIST }, logical = Logical.OR)
+	public String goEmployeeTreatCount(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		return "countEmployeeTreat";
+	}
+	
 	@RequestMapping("/goScoreExchange")
 	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_RECEPTIONIST }, logical = Logical.OR)
 	public String goScoreExchange(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
@@ -414,7 +425,7 @@ public class IndexController {
 	}
 	
 	@RequestMapping("/goSubscribeLog")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_RECEPTIONIST }, logical = Logical.OR)
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_RECEPTIONIST,RoleSign.H_ADMIN }, logical = Logical.OR)
 	public String goSubscribeLog(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
 		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
 		mmap.addAttribute("content", request.getContextPath());

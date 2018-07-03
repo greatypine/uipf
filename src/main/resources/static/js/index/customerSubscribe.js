@@ -94,11 +94,13 @@ function MycustomerSubscribe(){
 			});
 	};
 	this.query = function(){
+		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager")?$("#querycompanyid").combobox("getValue"):null;
 		var name = $("#queryname").textbox("getValue");
 		var createTime = ($("#querycreateTime").datebox('getValue')=="")?null:$("#querycreateTime").datebox('getValue');
 		var params = {};
 		if(name!="") {params.customerName = name;}
 		if(createTime!="" && createTime!=null) {params.createtime = createTime;}
+		params.companyId = companyid;
 		customerSubscribe_table.datagrid("load",params);
 	};
 	this.getParams = function(){

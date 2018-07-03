@@ -10,7 +10,7 @@
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="systempermission.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,q_admin,h_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systempermission.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systempermission.add()">添加</a> 
 			<a shiro:hasRole="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="systempermission.remove()">删除</a>
 		</div>
 		<div id="cron_bar">
@@ -44,7 +44,7 @@
 		</form>
 	</div>
 	<div id="systempermission_dlg-buttons">
-		<a shiro:hasAnyRoles="sadmin,q_admin,h_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systempermission.complate()" style="width: 90px">确认</a> 
+		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systempermission.complate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#systempermissiondlg-fm').form('clear');$('#systempermissiondlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 </body>

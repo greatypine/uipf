@@ -1,12 +1,10 @@
 var subscribelog;
-var cu;
 var subscribelog_table;
 $(function(){
 	initData();
 });
 function initData(){
 	subscribelog = new Mysubscribelog();
-	cu = new CommonUtils();
 	subscribelog.initCompant();
 	$(".companylist").combobox({
 		url:content+'/company/queryMapBeanList'
@@ -47,13 +45,11 @@ function Mysubscribelog(){
 			});
 	};
 	this.query = function(){
-		var name = $("#queryname").val();
-		var status = ($("#querystatus").combobox("getValue")<0)?null:$("#querystatus").combobox("getValue");
+		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager")?$("#querycompanyid").combobox("getValue"):null;
 		var createTime = ($("#querycreateTime").datebox('getValue')=="")?null:$("#querycreateTime").datebox('getValue');
 		var params = {};
-		if(name!="") {params.subscribelogName = name;}
-		params.status = status;
-		if(createTime!="" && createTime!=null) {params.createtime = createTime;}
+		params.companyid = companyid;
+		if(createTime!="" && createTime!=null) {params.createTime = createTime;}
 		subscribelog_table.datagrid("load",params);
 	};
 	this.getParams = function(){

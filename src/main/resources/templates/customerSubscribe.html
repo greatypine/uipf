@@ -12,12 +12,13 @@
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="customerSubscribe.query()">查询</a> 
 			<a shiro:hasAnyRoles="sadmin,h_option,h_admin,h_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="customerSubscribe.add()">添加</a>
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="customerSubscribe.reception()">接诊</a>  
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="customerSubscribe.reception()">接诊</a>  
 			<a shiro:hasAnyRoles="sadmin,h_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="customerSubscribe.remove()">删除</a>
 		</div>
 		<div id="cron_bar">
 			<form id="customerSubscribeform">
-				产品名称: <input id="queryname" name="customerName" class="easyui-textbox" style="width: 120px; height: 22px;"/>
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+				客户名称: <input id="queryname" name="customerName" class="easyui-textbox" style="width: 120px; height: 22px;"/>
 				创建时间: <input id="querycreateTime" name="createTime" class="easyui-datebox" style="width: 120px; height: 22px;"/> 
 			</form>
 		</div>
@@ -149,7 +150,7 @@
 		</form>
 	</div>
 	<div id="ccac_dlg-buttons">
-		<a id="basecomplate" shiro:hasAnyRoles="sadmin,q_receptionist,q_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="customerSubscribe.doReception()" style="width: 90px">确认</a> 
+		<a id="basecomplate" shiro:hasAnyRoles="sadmin,q_receptionist,q_admin,q_area_shopManager" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="customerSubscribe.doReception()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#ccacdlg-fm').form('clear');$('#ccacdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 </body>

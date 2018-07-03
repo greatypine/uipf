@@ -11,11 +11,12 @@
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="project.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="project.add()">添加</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="project.remove()">删除</a>
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="project.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="project.remove()">删除</a>
 		</div>
 		<div id="cron_bar">
 			<form id="projectform">
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
 				产品名称: <input id="queryname" name="projectname" class="easyui-text" style="width: 120px; height: 22px;"/>
 				脚本状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
 							<option value="-1">请选择</option>

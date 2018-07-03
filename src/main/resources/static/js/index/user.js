@@ -89,7 +89,7 @@ function systemuser(){
 		$('#systemuserform').form('clear');
 	};
 	this.add = function(){
-		$("#systemuserdlg").dialog("open").dialog("center").dialog("setTitle","添加systemuser任务");
+		$("#systemuserdlg").dialog("open").dialog("center").dialog("setTitle","添加用户窗口");
 		$("#systemuserdlg-fm").form("clear");
 		cu.initClearCombobox("roleids");
 		cu.initClearCombobox("companyid");

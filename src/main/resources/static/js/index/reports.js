@@ -14,8 +14,8 @@ function Reports(){
 				    if(a.length>1){
 				    	title = a[0].name;
 				    	if(title.length>6) val = title.substring(0,4)+"年"+title.substring(4,6)+"月"+title.substring(6,title.length)+"日";
-				    	else if(title.length>4 && title.length<=6) if(title.length>6) val = title.substring(0,4)+"年"+title.substring(4,6)+"月";
-				    	else if(title.length<=4) if(title.length>6) val = title+"年"
+				    	else if(title.length>4 && title.length<=6) val = title.substring(0,4)+"年"+title.substring(4,6)+"月";
+				    	else if(title.length<=4) val = title+"年"
 				    	var sbane = "";
 				    		sbane = a[0].marker+a[0].seriesName+"："+(a[0].value*10000).toFixed(2)+"元</br>";
 				    		sbane += a[1].marker+a[1].seriesName+"："+(a[1].value*10000).toFixed(2)+"元</br>";
@@ -184,6 +184,170 @@ function Reports(){
 		}
 		customerConsumption.setOption(option);
 	}
+	this.initEmployeeTreatOrder = function(data){
+		var employeeTreatOrder = echarts.init(document.getElementById("customerConsumption"),theme);
+		var option = {	
+			tooltip : {
+				trigger : "axis",
+				show : true,
+				formatter: function(a,b,c){
+				    var title = "";
+				    var val = "";
+				    if(a.length>1){
+				    	title = a[0].name;
+				    	if(title.length>6) val = title.substring(0,4)+"年"+title.substring(4,6)+"月"+title.substring(6,title.length)+"日";
+				    	else if(title.length>4 && title.length<=6) val = title.substring(0,4)+"年"+title.substring(4,6)+"月";
+				    	else if(title.length<=4) val = title+"年"
+				    	var sbane = "";
+				    		sbane += a[1].seriesName+"："+(a[1].value)+"</br>";
+				    		sbane += a[0].seriesName+"："+(a[0].value*10000).toFixed(2)+"元</br>";
+				    		sbane += a[2].seriesName+"："+(a[2].value)+"</br>";
+				    	val += "</br>"+sbane
+				    }
+				    return val; 
+		        }
+			},
+			toolbox: {
+		        show: true,
+		        orient: 'vertical',
+		        left: 'right',
+		        top: 'center',
+		        feature: {
+		            mark: {show: true},
+		            dataView: {show: false, readOnly: false},
+		            magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+		            restore: {show: true},
+		            saveAsImage: {show: true}
+		        }
+		    },
+			calculable : true,
+			xAxis : [ {
+				type : "category",
+				data : data.years,
+				axisLabel : {
+					// rotate:45, //刻度旋转45度角
+					textStyle : {
+						fontSize : 12,
+					},
+					interval : 0
+//					formatter : function(params){
+//			          return formatAxisLabelExt(params,fontnumber);
+//					}
+				},
+				axisPointer: {
+	                type: 'shadow'
+	            }
+			} ],
+			grid : {
+				x : 70,
+				y : 70,
+				x2 : 90,
+				y2 : 30,
+			},
+			yAxis : [
+				{
+				type : "value",
+//				show : false,
+				name: '接诊金额',
+		        splitLine:{show: false},
+				axisLabel : {
+					// rotate:45, //刻度旋转45度角
+					textStyle : {
+						fontSize : 12,
+					},
+					interval : 0,
+					formatter: function(val){
+						return '￥'+Number(val)*10000;
+					}
+				}
+			},
+	        {
+	            type: 'value',
+	            name: '接诊总人数',
+	            min: 0,
+	            max: data.max,
+	            interval: data.interval,
+	            axisLabel: {
+	                formatter: '{value} 人'
+	            }
+	        } ],
+			series : [ {
+				name:"接诊总金额",
+				type : "bar",
+				data : data.total_amont,
+				itemStyle : {
+					normal : {
+						label : {
+							show : true,
+							position : 'top',
+							formatter : function(val){
+								return '￥'+(Number(val.value)*10000).toFixed(2);
+							}
+						},
+						labelLine : {
+							show : true,
+						},
+						areaStyle : {
+							type : "default"
+						}
+					}
+				}
+			},
+			 {
+				name:"接诊人姓名",
+				type : "bar",
+				data : data.nickname,
+				itemStyle : {
+					normal : {
+						label : {
+							show : true,
+							position : 'top',
+							formatter : '{c}'
+						},
+						labelLine : {
+							show : true,
+						},
+						areaStyle : {
+							type : "default"
+						}
+					}
+				}
+			},
+			{
+				name:"总接诊人数",
+				type : "line",
+				data : data.employeeTotalOrder,
+				itemStyle : {
+					normal : {
+						label : {
+							show : true,
+							position : 'top',
+							formatter : '{c}'
+						},
+						labelLine : {
+							show : true,
+						},
+						areaStyle : {
+							type : "default"
+						}
+					}
+				}
+			}
+			],
+			title : {
+				text :data.series_name,
+				x:'center',
+				textStyle : {
+					fontFamily : '"微软雅黑",Verdana,Arial,Helvetica,sans-serif',
+					fontWeight : 'normal',
+				}
+			},
+			backgroundColor : "#ECF1F4"
+		}
+		employeeTreatOrder.setOption(option);
+	};
+	
+	
 	this.initDataTable = function(params){
 		//预编译模板
 		rm_datatable = $('#rm_datatable').DataTable({

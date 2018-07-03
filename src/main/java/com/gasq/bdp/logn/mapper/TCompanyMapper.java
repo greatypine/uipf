@@ -48,4 +48,6 @@ public interface TCompanyMapper {
 	List<Map<String, Object>> queryProjectInventory(@Param("record") TCompany bean);
 
 	List<Map<String, Object>> getView(@Param("record") TCompany bean);
+
+	List<Map<String, Object>> countConsumptionReport(Map<String, Object> map);
 }

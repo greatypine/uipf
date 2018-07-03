@@ -22,19 +22,17 @@
 				<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="countreports.query()">查询</a> 
 			</form>
 		</div>
-<!-- 		<div class="easyui-accordion" data-options="multiple:true" style="width:100%;height:auto;"> -->
-			<div title="客户消费统计图" class="easyui-panel" data-options="iconCls:'icon-large-chart'" style="width:100%;height:auto;">
+			<div title="员工接诊计图" class="easyui-panel" data-options="iconCls:'icon-large-chart'" style="width:100%;height:auto;">
 				<div id="customerConsumption" class="countReport"></div>
 			</div>
-<!-- 		</div> -->
 	</div>
 	<div data-options="region:'south'" style="height:42%;">
-		<table id="countquery_table" class="easyui-datagrid"  title="客户消费统计报表" style="width: 80%; height: 100%;"
+		<table id="countquery_table" class="easyui-datagrid"  title="员工接诊计报表" style="width: 80%; height: 100%;"
 			data-options="singleSelect: true,rownumbers:true,fit:true,iconCls:'icon-list'" pagination="true">
 		</table>
 	</div>
 </div>
 </body>
 <script type="text/javascript" th:src="@{/static/js/index/reports.js}"></script>
-<script type="text/javascript" th:src="@{/static/js/index/countReports.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/index/countEmployeeTreatReports.js}"></script>
 </html>

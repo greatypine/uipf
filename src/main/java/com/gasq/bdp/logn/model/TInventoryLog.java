@@ -3,6 +3,8 @@ package com.gasq.bdp.logn.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class TInventoryLog extends ParamsObject{
     /**
 	 * 
@@ -27,6 +29,7 @@ public class TInventoryLog extends ParamsObject{
 
     private String createUser;
 
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createTime;
 
     public Integer getId() {

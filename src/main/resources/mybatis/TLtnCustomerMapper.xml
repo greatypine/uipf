@@ -548,6 +548,7 @@
  		<if test="record.endtime!=null">
 			and a.createtime &lt;= #{record.endtime}
  		</if>
+ 		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text
 		order by a.updateTime desc 
 		<if test="record.rows !=null and record.page!=null">
 			limit #{record.page},#{record.rows}
@@ -558,7 +559,10 @@
   	<if test="record.id==null">
   		select sum(cc.total_amount) as total_amount from t_ltn_customer a left join t_ltn_customer_consumpton_amount cc on a.id = cc.customer_id
 		WHERE
-		a.company_id = #{record.companyId}
+		a.status = 1 
+		<if test="record.companyId!=null">
+			and a.company_id = #{record.companyId}
+		</if>
   	
   	</if>
   	<if test="record.id!=null">
@@ -572,11 +576,13 @@
 			INNER JOIN t_ltn_customer b1 ON b.customer_id = b1.id
 			WHERE b.customer_id=#{record.id} 
 			AND b1.company_id = #{record.companyId} 
+			and b1.status=1
 		) AS one_total_amount
 	FROM
 		t_ltn_customer a
 		left join t_ltn_customer_consumpton_amount cc on a.id = cc.customer_id
 	WHERE
+		a.status = 1 and
 		a.company_id = #{record.companyId}
   	</if>
   </select>

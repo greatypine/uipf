@@ -14,9 +14,6 @@ function initData(){
 		$("#consumpton_project_list").hide();
 		$("#ccacdetaildlg").css("height","45%");
 	}
-	ccac = new CustomerConsumptonAmount();
-	ccac.initCompant();
-	ccac.initProjectDg({"consumptonAmountId":-1});
 	$(".therapeutist").combobox({
 		url:content+'/common/queryCosmetologist?id='+user.user.companyid
 	});
@@ -27,12 +24,14 @@ function initData(){
 			$("#discount").numberbox("setValue",Number(record.discount)*100);
 		}
 	});
-	$('#remindtime').datebox().datebox('calendar').calendar({
-		validator: function(date){
-			var now = new Date();
-			return date>now;
-		}
-	});
+	if(cu.hasRoles("sadmin,q_area_shopManager,generalManager,q_admin")){
+		$('#remindtime').datebox().datebox('calendar').calendar({
+			validator: function(date){
+				var now = new Date();
+				return date>now;
+			}
+		});
+	}
 	$(".counsoler").combobox({
 		url:content+'/common/queryCounsoler?id='+user.user.companyid
 	});
@@ -45,6 +44,9 @@ function initData(){
 	$("#inventoryId").combobox({
 		url:content+'/common/queryProjectInventory?id='+user.user.companyid
 	});
+	ccac = new CustomerConsumptonAmount();
+	ccac.initCompant();
+	ccac.initProjectDg({"consumptonAmountId":-1});
 }
 function CustomerConsumptonAmount(){
 	this.initProjectDg = function(params){
@@ -129,8 +131,8 @@ function CustomerConsumptonAmount(){
 		                loadMsg:'正在加载，请稍后...',
 		                height:'auto',
 		                columns:[[
-		                	 	{field:'projectName',title:'产品',width:"12%",align:'center'},
-		                	 	{field:'projectAmount',title:'产品金额',width:"8%",align:'center',formatter:function(val,row){
+		                	 	{field:'projectName',title:'套餐名称',width:"12%",align:'center'},
+		                	 	{field:'projectAmount',title:'套餐金额',width:"8%",align:'center',formatter:function(val,row){
 						        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 						        }},
 						        {field:'discount',title:'折扣',width:"8%",align:'center',formatter:function(val,row){
@@ -165,7 +167,7 @@ function CustomerConsumptonAmount(){
 		            		$('#ddv-'+ccac._index).datagrid("unselectAll");
 		            		$('#ddv-'+ccac._index).datagrid("uncheckAll");
 	                		var row = $("#ccac_table").datagrid("getSelected");
-		                	if(row.status){
+		                	if(row.status==1){
 		                		$.messager.alert('提示','消费订单已完成！不可再次操作！','warning');
 		                		return ;
 		                	}else{
@@ -184,7 +186,7 @@ function CustomerConsumptonAmount(){
 		                handler: function(){
 		                	var crow=$('#ddv-'+ccac.index).datagrid('getSelected');
 		                	var row = $("#ccac_table").datagrid("getSelected");
-		                	if(row.status){ 
+		                	if(row.status==1){ 
 		                		$.messager.alert('提示','消费订单已完成！不可再次操作！','warning');
 		                		return ;
 		                	}else{
@@ -199,7 +201,7 @@ function CustomerConsumptonAmount(){
 		                iconCls: 'icon-remove',
 		                handler: function(){
 		                	var row = $("#ccac_table").datagrid("getSelected");
-		                	if(row.status){ 
+		                	if(row.status==1){
 		                		$.messager.alert('提示','消费订单已完成！不可再次操作！','warning');
 		                		return ;
 		                	}
@@ -239,7 +241,7 @@ function CustomerConsumptonAmount(){
 					$("#ccacdlg").dialog("open").dialog("center").dialog("setTitle","更新用户信息");
 					$("#ccacdlg-fm").form("clear").form("load",row);
 					var st = row.status;
-					if(st){
+					if(st==1){
 						cu.disableForm("ccacdlg-fm",true);
 						$("#basecomplate").hide();
 					}else{
@@ -250,7 +252,7 @@ function CustomerConsumptonAmount(){
 				onSelect:function(index,row){
 					ccac.index = index;
 //					$('#ccac_table').datagrid("clearSelections");
-					if(row.status || (!row.status && row.totalConsumptonAmount<=0)){
+					if(row.status==1 || (row.status!=1 && row.totalConsumptonAmount<=0)){
 		        		$("#jiesuanfx").linkbutton('disable');
 		        		$("#jiesuanpt").linkbutton('disable');
 		        		$("#jiesuanhy").linkbutton('disable');
@@ -472,12 +474,41 @@ function CustomerConsumptonAmount(){
 	this.remove = function(){
 		var row=$('#ccac_table').datagrid('getSelected');
 		if(row){
-			$.messager.confirm('提示信息', '你确认要删除此项配置吗?', function(r){
+			$.messager.confirm('提示信息', '你确认要删除此条消费记录吗?', function(r){
 				if (r){
 					$.ajax({
 						type:"POST",
 						data :{id:row.id},
 						url : content+"/ccac/deleteCust",
+						error : function(data) {
+							$.messager.alert('提示信息','服务器连接超时请重试!','error'); 
+							return false;
+						},
+						success : function(data) {
+							if(data){//成功
+								$.messager.alert('提示信息','删除成功!');
+								cu.clearSelected("ccac_table");
+								$('#ccac_table').datagrid('reload');
+							}else{
+								$.messager.alert('提示信息','删除失败!','warning');
+							}
+						}
+					});
+				}
+			});
+		}else{
+			$.messager.alert('提示','请先选中要操作的数据！','error');
+		}
+	};
+	this.refund = function(){
+		var row=$('#ccac_table').datagrid('getSelected');
+		if(row){
+			$.messager.confirm('提示信息', '你确认要退款此条消费记录吗?', function(r){
+				if (r){
+					$.ajax({
+						type:"POST",
+						data :{id:row.id},
+						url : content+"/ccac/refundCust",
 						error : function(data) {
 							$.messager.alert('提示信息','服务器连接超时请重试!','error'); 
 							return false;
