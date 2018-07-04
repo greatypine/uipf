@@ -36,4 +36,10 @@ public interface CommonService {
 	Map<String, Object> queryEmployeeTreatOrderDataDetail(Integer type, Integer companyid, String datetype,
 			String starttime, String endtime);
 
+	Map<String, Object> queryBackEmployeeOrderDataDetail(Integer type, Integer companyid, String datetype,
+			String starttime, String endtime);
+
+	Map<String, Object> queryBackEmployeeOrderReport(Integer type, Integer companyid, String datetype, String starttime,
+			String endtime);
+
 }

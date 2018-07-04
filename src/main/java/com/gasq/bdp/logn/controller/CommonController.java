@@ -131,6 +131,28 @@ public class CommonController {
 		}
     	return null;
 	 }
+    
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test },logical=Logical.OR)
+    @RequestMapping(value = "/queryBackEmployeeOrderReport",method=RequestMethod.POST)
+	public Map<String, Object> queryBackEmployeeOrderReport(Integer type,Integer companyid,String datetype,String starttime,String endtime) {
+		try {
+			return commonService.queryBackEmployeeOrderReport(type,companyid,datetype,starttime,endtime);
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test },logical=Logical.OR)
+    @RequestMapping(value = "/queryBackEmployeeOrderDataDetail",method=RequestMethod.POST)
+	public Map<String, Object> queryBackEmployeeOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime) {
+		try {
+			return commonService.queryBackEmployeeOrderDataDetail(type,companyid,datetype,starttime,endtime);
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    
 }
 
 	

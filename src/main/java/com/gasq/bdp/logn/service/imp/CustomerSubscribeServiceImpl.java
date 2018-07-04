@@ -11,6 +11,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.gasq.bdp.logn.component.ActiveManager;
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeMapper;
@@ -64,11 +66,18 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 	}
 
 	@Override
+	@Transactional(rollbackFor=Exception.class)
 	public boolean delete(int id) {
-		TCustomerSubscribe subscribe = customerSubscribeMapper.selectByPrimaryKey(id);
-		subscribe.setStatus(99);
-		this.saveOrUpdate(subscribe);
-		return true;
+		try {
+			TCustomerSubscribe subscribe = customerSubscribeMapper.selectByPrimaryKey(id);
+			subscribe.setStatus(99);
+			this.saveOrUpdate(subscribe);
+			subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(subscribe.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_CLOSE,SystemUserInfo.getSystemUser().getUser().getUsername()));
+			return true;
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
+		return false;
 	}
 
 	@Override
@@ -132,29 +141,35 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 	}
 
 	@Override
+	@Transactional(rollbackFor=Exception.class)
 	public boolean saveOrUpdate(TCustomerSubscribe bean) {
-		bean.setUpdateTime(DateUtil.getSysCurrentDate());
-		TSysUser user = SystemUserInfo.getSystemUser().getUser();
-		if(bean.getId()!=null) {
-			bean.setUpdateUser(user.getUsername());
-			customerSubscribeMapper.updateByPrimaryKeySelective(bean);
-			if(bean.getStatus()==1) {
-				subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_RECEPTION,user.getUsername()));
-			}else if(bean.getStatus()==0) {
-				subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_EDIT,user.getUsername()));
-			}else if(bean.getStatus()==99) {
-				subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_CLOSE,user.getUsername()));
+		try {
+			bean.setUpdateTime(DateUtil.getSysCurrentDate());
+			TSysUser user = SystemUserInfo.getSystemUser().getUser();
+			if(bean.getId()!=null) {
+				bean.setUpdateUser(user.getUsername());
+				customerSubscribeMapper.updateByPrimaryKeySelective(bean);
+				if(bean.getStatus()==1) {
+					subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_RECEPTION,user.getUsername()));
+				}else if(bean.getStatus()==0) {
+					subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_EDIT,user.getUsername()));
+				}else if(bean.getStatus()==99) {
+					subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_CLOSE,user.getUsername()));
+				}
+			}else {
+				bean.setCreateTime(DateUtil.getSysCurrentDate());
+				bean.setCreateUser(user.getUsername());
+				bean.setStatus(0);
+				customerSubscribeMapper.insertSelective(bean);
+				subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_ADD,user.getUsername()));
+				String mess = "后台用户："+SystemUserInfo.getSystemUser().getUser().getNickname()+",在"+DateUtil.getAllCurrentDate()+"成功预约了一个客户！";
+				activeManager.sendBack(ActiveMQUtil.getTopicDestination(bean.getCompanyId()+InitProperties.BACK_SUBSCRIBE_MSG),mess);
 			}
-		}else {
-			bean.setCreateTime(DateUtil.getSysCurrentDate());
-			bean.setCreateUser(user.getUsername());
-			bean.setStatus(0);
-			customerSubscribeMapper.insertSelective(bean);
-			subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_ADD,user.getUsername()));
-			String mess = "后台用户："+SystemUserInfo.getSystemUser().getUser().getNickname()+",在"+DateUtil.getAllCurrentDate()+"成功预约了一个客户！";
-			activeManager.sendBack(ActiveMQUtil.getTopicDestination(bean.getCompanyId()+InitProperties.BACK_SUBSCRIBE_MSG),mess);
+			return true;
+		}catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-		return true;
+		return false;
 	}
 
 }

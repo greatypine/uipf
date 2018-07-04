@@ -44,6 +44,7 @@ function initData(){
 	$("#inventoryId").combobox({
 		url:content+'/common/queryProjectInventory?id='+user.user.companyid
 	});
+	
 	ccac = new CustomerConsumptonAmount();
 	ccac.initCompant();
 	ccac.initProjectDg({"consumptonAmountId":-1});
@@ -162,6 +163,10 @@ function CustomerConsumptonAmount(){
 		                    text:'添加消费记录',
 		                iconCls: 'icon-add',
 		                handler: function(){
+		                	if(cu.hasRoles("h_option")){
+		                		$.messager.alert('提示','消费订单不可操作！','warning');
+		                		return ;
+		                	}
 		                	$('#ddv-'+ccac.index).datagrid("unselectAll");
 		            		$('#ddv-'+ccac.index).datagrid("uncheckAll");
 		            		$('#ddv-'+ccac._index).datagrid("unselectAll");
@@ -185,21 +190,36 @@ function CustomerConsumptonAmount(){
 		                iconCls: 'icon-edit',
 		                handler: function(){
 		                	var crow=$('#ddv-'+ccac.index).datagrid('getSelected');
-		                	var row = $("#ccac_table").datagrid("getSelected");
-		                	if(row.status==1){ 
-		                		$.messager.alert('提示','消费订单已完成！不可再次操作！','warning');
+		                	if(!crow){
+		                		$.messager.alert('提示','请先选中要操作的数据！','warning');
 		                		return ;
+		                	}
+		                	var row = $("#ccac_table").datagrid("getSelected");
+		                	project_dg.datagrid("load",{"consumptonAmountId":crow.id});
+					    	$("#consumptonAmountId").val($("#ccacdid").val());
+					    	$("#baseproductcomplate").hide();
+					    	ccac.customerAmountEdit(crow);
+		                	if(row.status==1 || cu.hasRoles("h_option")){
+		                		$("#baseproductcomplate").hide();
+		                		cu.disableForm("ccacdetaildlg-fm",true);
+		                		$("#project_tb .easyui-linkbutton").linkbutton('disable');
 		                	}else{
 		                		$("#baseproductcomplate").show();
 		                		cu.disableForm("ccacdetaildlg-fm",false);
 		                		$("#project_tb .easyui-linkbutton").linkbutton('enable');
 		                	}
-		                	if(CU.hasPermission("update")){ccac.customerAmountAdd(index);
-		                	}else $.messager.alert('提示','没有操作权限！','warning');
+		                	ccac.customerId = crow.customerId;
+		                	if(!CU.hasPermission("update")){
+		                		$.messager.alert('提示','没有操作权限！','warning');
+		                	}
 		                }},'-',{
 		                text:'删除消费记录',
 		                iconCls: 'icon-remove',
 		                handler: function(){
+		                	if(cu.hasRoles("h_option")){
+		                		$.messager.alert('提示','消费订单不可操作！','warning');
+		                		return ;
+		                	}
 		                	var row = $("#ccac_table").datagrid("getSelected");
 		                	if(row.status==1){
 		                		$.messager.alert('提示','消费订单已完成！不可再次操作！','warning');
@@ -215,7 +235,7 @@ function CustomerConsumptonAmount(){
 				    	$("#baseproductcomplate").hide();
 				    	ccac.customerAmountEdit(row);
 				    	var row1 = $("#ccac_table").datagrid("getSelected");
-	                	if(row1.status){
+	                	if(row1.status==1 || cu.hasRoles("h_option")){
 	                		$("#baseproductcomplate").hide();
 	                		cu.disableForm("ccacdetaildlg-fm",true);
 	                		$("#project_tb .easyui-linkbutton").linkbutton('disable');
@@ -289,7 +309,7 @@ function CustomerConsumptonAmount(){
 	};
 	this.getRequestParams = function(){
 		var params = {};
-		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager")?$("#querycompanyid").combobox("getValue"):null;
+		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager,h_option")?$("#querycompanyid").combobox("getValue"):null;
 		var customername = $("#queryname").textbox("getValue");
 		var therapeutist = ($("#userid").combobox("getValue")<=0)?null:$("#userid").combobox("getValue")==""?null:$("#userid").combobox("getValue");
 		var chuFuZhen = ($("#queryChuFuZhen").combobox('getValue')<=0)?null:$("#queryChuFuZhen").combobox("getValue")==""?null:$("#queryChuFuZhen").combobox("getValue");
@@ -543,7 +563,7 @@ function CustomerConsumptonAmount(){
 	this.customerAmountEdit = function(row){
 		cu.initClearCombobox("projectId");
 		$("#ccacdetaildlg-fm").form("clear").form("load",row);
-		$("#ccacdetaildlg").dialog("open").dialog("center").dialog("setTitle","添加消费记录");
+		$("#ccacdetaildlg").dialog("open").dialog("center").dialog("setTitle","修改消费记录");
 	};
 	this.customerAmountRemove = function(index){
 		var row=$('#ddv-'+index).datagrid('getSelected');

@@ -121,7 +121,7 @@ public class TProjectServiceImpl implements TSysProjectService {
 		if(bean.getCompanyId()!=null) {
 			params.put("companyid", bean.getCompanyId());
 		}else {
-			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.H_OPTION)) {
 				params.put("companyid", SystemUserInfo.getSystemUser().getCompany().getId());
 			}
 		}

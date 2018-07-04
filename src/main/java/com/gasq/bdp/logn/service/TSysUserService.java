@@ -15,7 +15,7 @@ public interface TSysUserService {
 
     Map<String, Object> queryPagingList(TSysUser bean);
 
-	boolean saveOrUpdate(TSysUser bean) throws WorkFlowStateException;
+	Integer saveOrUpdate(TSysUser bean) throws WorkFlowStateException;
 
 	boolean delete(int id);
 

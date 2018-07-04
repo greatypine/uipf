@@ -439,4 +439,60 @@
 	</if>
 	order by datetime asc,total_amont desc
   </select>
+  
+   <select id="countSubscribeReport" parameterType="java.util.Map" resultType="java.util.Map">
+  	SELECT
+  	<if test="datetype!=null and datetype!=''">
+		<if test="datetype==1">
+			DATE_FORMAT(tcs.create_time, '%Y') datetime,
+		</if>
+		<if test="datetype==2">
+			DATE_FORMAT(tcs.create_time, '%Y%m') datetime,
+		</if>
+		<if test="datetype==3">
+			DATE_FORMAT(tcs.create_time, '%Y%m%d') datetime,
+		</if>
+	</if>
+	<if test="datetype==null or datetype==''">
+		DATE_FORMAT(tcs.create_time, '%Y%m%d') datetime,
+	</if>
+		tsu.nickname,
+		tc.`name` as companyname,
+		count(tcs.id) totalOrder,
+		sum(if(tcs.`status`=1,1,0)) secuessOrder,
+		sum(if(tcs.`status`=99,1,0)) wastageOrder,
+		sum(if(tcs.`status`=0,1,0)) unfinishedOrder
+	FROM
+		t_customer_subscribe tcs
+	LEFT JOIN t_sys_user tsu ON tcs.create_user = tsu.username
+	LEFT JOIN t_company tc ON tcs.company_id = tc.id
+	LEFT JOIN v_root_in vri on tcs.root_in = vri.`value` and vri.companyid = tcs.company_id
+	LEFT JOIN v_sex vs on tcs.sex=vs.`value`  and vs.companyid = tcs.company_id
+	LEFT JOIN v_subscribe vss on tcs.`status` = vss.`value` and vss.companyid= tcs.company_id
+	where 1 = 1
+	<if test="starttime!=null and starttime!=''">
+		and DATE_FORMAT(tcs.create_time, '%Y-%m-%d') &gt;= #{starttime}
+	</if>
+	<if test="endtime!=null and endtime!=''">
+		and DATE_FORMAT(tcs.create_time, '%Y-%m-%d') &lt;= #{endtime}
+	</if>
+	<if test="companyid!=null">
+		and tcs.company_id = #{companyid}
+	</if>
+	<if test="datetype!=null and datetype!=''">
+		<if test="datetype==1">
+			GROUP BY DATE_FORMAT(tcs.create_time, '%Y'),tsu.nickname,tcs.company_id
+		</if>
+		<if test="datetype==2">
+			GROUP BY DATE_FORMAT(tcs.create_time, '%Y%m'),tsu.nickname,tcs.company_id
+		</if>
+		<if test="datetype==3">
+			GROUP BY DATE_FORMAT(tcs.create_time, '%Y%m%d'),tsu.nickname,tcs.company_id
+		</if>
+	</if>
+	<if test="datetype==null or datetype==''">
+		GROUP BY DATE_FORMAT(tcs.create_time, '%Y%m%d'),tsu.nickname,tcs.company_id
+	</if>
+	ORDER BY datetime asc,totalOrder desc
+  </select>
 </mapper>

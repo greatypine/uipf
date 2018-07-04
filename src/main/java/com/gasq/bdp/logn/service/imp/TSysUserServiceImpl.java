@@ -139,7 +139,7 @@ public class TSysUserServiceImpl implements TSysUserService {
 		if(bean.getCompanyid()!=null) {
 			params.put("companyid", bean.getCompanyid());
 		}else {
-			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.H_OPTION)) {
 				params.put("companyid", SystemUserInfo.getSystemUser().getCompany().getId());
 			}
 		}
@@ -152,11 +152,14 @@ public class TSysUserServiceImpl implements TSysUserService {
 
 	@Override
 	@Transactional(rollbackFor=Exception.class)
-	public boolean saveOrUpdate(TSysUser bean) throws WorkFlowStateException{
+	public Integer saveOrUpdate(TSysUser bean) throws WorkFlowStateException{
 		try {
 			bean.setUpdateTime(DateUtil.getSysCurrentDate());
 			bean.setGroupName(SystemUserInfo.getSystemUser().getUser().getGroupName());
 			if(StringUtils.isBlank(bean.getNickname())) bean.setNickname(bean.getUsername());
+			TSysUserExample userexample = new TSysUserExample();
+			userexample.createCriteria().andUsernameEqualTo(bean.getUsername());
+			long countuser = mapper.countByExample(userexample);
 			if(bean.getId()!=null) {
 				TSysUserRoleExample urx = new TSysUserRoleExample();
 				urx.createCriteria().andUserIdEqualTo(bean.getId());
@@ -182,6 +185,7 @@ public class TSysUserServiceImpl implements TSysUserService {
 				}
 				mapper.updateByPrimaryKeySelective(bean);
 			}else {
+				if(countuser>0) return 1;
 				bean.setCreateTime(DateUtil.getSysCurrentDate());
 				String pwd = bean.getPassword();
 				String md5pwd = CommonUtils.change2MD5(pwd);
@@ -201,10 +205,11 @@ public class TSysUserServiceImpl implements TSysUserService {
 					sysUserRoleMapper.insert(urbean);
 				}
 			}
+			return 0;
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-		return true;
+		return 2;
 	}
 
 	@Override

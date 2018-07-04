@@ -113,7 +113,7 @@ public class CommonServiceImpl implements CommonService {
 		map.put("total_amont", total_amont);
 		map.put("max", Math.round(maxchuzhen));
 		map.put("interval", Math.round(maxfuzhen));
-		map.put("series_name", companyname+"客户消费统计");
+		map.put("series_name", companyname+"员工接诊统计");
 		return map;
 	}
 
@@ -140,4 +140,77 @@ public class CommonServiceImpl implements CommonService {
 		return map;
 	}
 
+	@Override
+	public Map<String, Object> queryBackEmployeeOrderDataDetail(Integer type, Integer companyid, String datetype,
+			String starttime, String endtime) {
+		Map<String, Object> map = new  HashMap<String, Object>();
+		map.put("starttime", starttime);
+		map.put("endtime", endtime);
+		map.put("datetype", datetype);
+		map.put("type", type);
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+			}
+		}
+		List<Map<String, Object>> listmaps = companyMapper.countSubscribeReport(map);
+		if(listmaps==null || listmaps.size()<=0)listmaps = new ArrayList<Map<String,Object>>();
+		map.clear();
+		map.put("rows",listmaps);
+		map.put("total",listmaps.size());
+		return map;
+	}
+	@Override
+	public Map<String, Object> queryBackEmployeeOrderReport(Integer type, Integer companyid, String datetype,
+			String starttime, String endtime) {
+		Map<String, Object> map = new  HashMap<String, Object>();
+		List<String> years = new ArrayList<String>();
+		List<String> nickname = new ArrayList<String>();
+		List<Object> totalOrder = new ArrayList<Object>();
+		List<Integer> secuessOrder = new ArrayList<Integer>();
+		List<Integer> wastageOrder = new ArrayList<Integer>();
+		List<Integer> unfinishedOrder = new ArrayList<Integer>();
+		map.put("starttime", starttime);
+		map.put("endtime", endtime);
+		map.put("datetype", datetype);
+		map.put("type", type);
+		map.put("companyid", SystemUserInfo.getSystemUser().getUser().getCompanyid());
+		String companyname = "";
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+			companyname = companyMapper.selectByPrimaryKey(companyid).getName();
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+				companyname = SystemUserInfo.getSystemUser().getCompany().getName();
+			}else {
+				companyname = "所有门店";
+			}
+		}
+		List<Map<String, Object>> listmaps = companyMapper.countSubscribeReport(map);
+		if(listmaps!=null && listmaps.size()>0) {
+			for (Map<String, Object> lm : listmaps) {
+				years.add(lm.get("datetime").toString());
+				nickname.add(lm.get("nickname").toString());
+				totalOrder.add(new BigDecimal(lm.get("totalOrder").toString()).intValue());
+				secuessOrder.add(new BigDecimal(lm.get("secuessOrder").toString()).intValue());
+				wastageOrder.add(new BigDecimal(lm.get("wastageOrder").toString()).intValue());
+				unfinishedOrder.add(new BigDecimal(lm.get("unfinishedOrder").toString()).intValue());
+			}
+		}
+		double max = (totalOrder.size()<=0)?0.0:Integer.parseInt(CommonUtils.getArrayMax(totalOrder).toString())*1.25;
+		map.clear();
+		map.put("years", years);
+		map.put("nickname", nickname);
+		map.put("totalOrder", totalOrder);
+		map.put("secuessOrder", secuessOrder);
+		map.put("wastageOrder", wastageOrder);
+		map.put("unfinishedOrder", unfinishedOrder);
+		map.put("max", Math.round(max));
+		map.put("interval", Math.round(max));
+		map.put("series_name", companyname+"员工预约统计");
+		return map;
+	}
 }

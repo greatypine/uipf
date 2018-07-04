@@ -11,7 +11,7 @@
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="ccac.query()">查询</a> 
-			<a shiro:hasPermission="user:create" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="ccac.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="ccac.add()">添加</a> 
 			<a id="jiesuanpt" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.ptcommit()">普通结算</a>
 			<a id="jiesuanhy" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.hycommit()">会员结算</a>
 			<a id="jiesuanfx" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-add" plain="true" onclick="ccac.fxcommit()">分销结算</a>
@@ -23,7 +23,7 @@
 		</div>
 		<div id="cron_bar">
 			<form id="ccacform">
-				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager,h_option">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
 				客户名称：<input id="queryname" name="customername" class="easyui-textbox" style="width: 120px; height: 22px;"/>
 				治疗师：<input name="therapeutist" id="userid" class="easyui-combobox therapeutist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'id',textField:'nickname'"/>
 				状态：<select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
@@ -148,8 +148,8 @@
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#ccacdetaildlg-fm').form('clear');$('#ccacdetaildlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 	<div id="project_tb" style="height:auto">
-		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="ccac.addProjectList()">添加</a>
-		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="ccac.removeaProjectList()">删除</a>
+		<a id="project_tb_a" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="ccac.addProjectList()">添加</a>
+		<a id="project_tb_d" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="ccac.removeaProjectList()">删除</a>
 	</div>
 	
 	<div id="projectListdlg" class="easyui-dialog"  data-options="modal:true" style="width: 55%; overflow: hidden;" closed="true" buttons="#projectList_dlg-buttons">

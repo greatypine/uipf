@@ -56,13 +56,22 @@ public class UserController {
     @ApiImplicitParam(name = "bean", value = "用户实体对象TSysUser", required = true, dataType = "TSysUser")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
-	public boolean saveOrUpdate(TSysUser bean) {
+	public Map<String,Object> saveOrUpdate(TSysUser bean) {
 		try {
-			return sysUserService.saveOrUpdate(bean);
+			int x = sysUserService.saveOrUpdate(bean);
+			if(x==0) {
+				paramMap.put("status", true);
+			}else if(x==1) {
+				paramMap.put("status", false);
+				paramMap.put("mess", "用户《"+bean.getUsername()+"》已经存在！请确认后重新操作。");
+			}else{
+				paramMap.put("status", false);
+				paramMap.put("mess", "操作失败请稍后再次操作。");
+			}
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
-		return false;
+		return paramMap;
 	 }
     
     @ApiOperation(value="删除用户配置信息", notes="删除用户配置信息（管理员、操作）")

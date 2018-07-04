@@ -447,4 +447,12 @@ public class IndexController {
 		mmap.addAttribute("content", request.getContextPath());
 		return "vipcustomerquery";
 	}
+	
+	@RequestMapping("/goCountBackEployeeOrder")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.QUERY, RoleSign.Test }, logical = Logical.OR)
+	public String goCountBackEployeeOrder(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		return "countBackEmployee";
+	}
 }

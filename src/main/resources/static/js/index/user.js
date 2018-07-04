@@ -58,6 +58,7 @@ function systemuser(){
 					cu.initClearCombobox("status");
 					cu.initClearCombobox("sex");
 					$("#systemuserdlg-fm").form("clear").form("load",row);
+					$("#username").textbox({"editable":false});
 				},
 				onSelect:function(index,row){
 				
@@ -68,7 +69,7 @@ function systemuser(){
 	};
 	this.query = function(){
 		var params = {};
-		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager")?$("#querycompanyid").combobox("getValue"):null;
+		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager,h_option")?$("#querycompanyid").combobox("getValue"):null;
 		var name = $("#queryname").textbox("getValue");
 		var roleid = ($("#queryroleid").combobox("getValue")<0)?null:$("#queryroleid").combobox("getValue");
 		var status = ($("#querystatus").combobox('getValue')<0)?null:$("#querystatus").combobox("getValue");
@@ -95,6 +96,7 @@ function systemuser(){
 		cu.initClearCombobox("companyid");
 		cu.initClearCombobox("status");
 		cu.initClearCombobox("sex");
+		$("#username").textbox({"editable":true});
 	};
 	this.complate = function(){
 		$('#systemuserdlg-fm').form('submit',{
@@ -103,14 +105,15 @@ function systemuser(){
 				return $(this).form('enableValidation').form('validate');
 			},
 			success: function(result){
-				if(result){
+				var data = eval('(' + result + ')');
+				if(data.status){
 					$('#systemuserdlg-fm').form('clear');
 					$.messager.alert('提示','操作成功');
 					$.messager.progress('close');
 					$('#systemuserdlg').dialog('close');
 					$('#systemuser_table').datagrid('reload');
 				}else{
-					$.messager.alert('提示','操作失败','warning');
+					$.messager.alert('提示',data.mess,'warning');
 					$.messager.progress('close');
 				}
 			}

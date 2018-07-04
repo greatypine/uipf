@@ -59,9 +59,9 @@ function MycustomerSubscribe(){
 				        {field:'rootInName',title:'来源',width:"12%",align:'center'},
 				        {field:'companyName',title:'所属公司',width:"7%",align:'center'},
 				        {field:'project',title:'预约项目',width:"12%",align:'center'},
-				        {field:'subscribeDate',title:'约镇时间',width:"8%",align:'center'},
+				        {field:'subscribeDate',title:'约诊时间',width:"8%",align:'center'},
 				        {field:'createUser',title:'创建人',width:"6%",align:'center'},
-				        {field:'createTime',title:'创建时间',width:"10%",align:'center',formatter:function(val,row){
+				        {field:'createTime',title:'预约时间',width:"10%",align:'center',formatter:function(val,row){
 				        	return CU.DateTimeFormatter(val,1);
 				        }},
 				        {field:'updateUser',title:'更新人',width:"6%",align:'center'},

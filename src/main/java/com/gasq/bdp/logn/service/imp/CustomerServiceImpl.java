@@ -133,10 +133,8 @@ public class CustomerServiceImpl implements CustomerService {
 		start = (intPage - 1) * number;
 		bean.setPage(start);
 		bean.setRows(number);
-		if(bean.getCompanyId()!=null) {
-			bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
-		}else {
-			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+		if(bean.getCompanyId()==null) {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.H_OPTION)) {
 				bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
 			}
 		}

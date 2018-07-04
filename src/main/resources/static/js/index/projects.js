@@ -70,7 +70,7 @@ function MyProject(){
 			});
 	};
 	this.query = function(){
-		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager")?$("#querycompanyid").combobox("getValue"):null;
+		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager,h_option")?$("#querycompanyid").combobox("getValue"):null;
 		var name = $("#queryname").val();
 		var status = ($("#querystatus").combobox("getValue")<0)?null:$("#querystatus").combobox("getValue");
 		var createTime = ($("#querycreateTime").datebox('getValue')=="")?null:$("#querycreateTime").datebox('getValue');
