@@ -3,8 +3,6 @@ package com.gasq.bdp.logn.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 public class TProject extends ParamsObject{
     /**
 	 * 
@@ -21,16 +19,16 @@ public class TProject extends ParamsObject{
 
     private Double discount;
 
+    private Integer projectNums;
+
     private Integer companyId;
 
     private String imageUrl;
 
     private String remark;
 
-    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createtime;
 
-    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date updatetime;
 
     private String createuser;
@@ -75,6 +73,14 @@ public class TProject extends ParamsObject{
 
     public void setDiscount(Double discount) {
         this.discount = discount;
+    }
+
+    public Integer getProjectNums() {
+        return projectNums;
+    }
+
+    public void setProjectNums(Integer projectNums) {
+        this.projectNums = projectNums;
     }
 
     public Integer getCompanyId() {

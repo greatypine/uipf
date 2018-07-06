@@ -7,7 +7,7 @@ $(function(){
 function initData(){
 	customerSubscribe = new MycustomerSubscribe();
 	var st = null;
-	if(user.user.roleids.indexOf("1")!=-1 || user.user.roleids.indexOf("10")!=-1 || user.user.roleids.indexOf("6")!=-1){
+	if(cu.hasRoles("q_area_shopManager,q_admin,q_receptionist,q_counselor")){
 		st = 0;
 	}
 	var initQueryParams={status:st};
@@ -24,13 +24,15 @@ function initData(){
 	$(".counsoler").combobox({
 		url:content+'/common/queryCounsoler?id='+user.user.companyid
 	});
-	$("#subscribeDate").datetimebox().datetimebox('calendar').calendar({
-		validator: function(date){
-			var now = new Date();
-			now.setTime(now.getTime()-24*60*60*1000);
-			return date>=now;
-		}
-	});
+	if(cu.hasRoles("sadmin,generalManager,h_admin,h_option")){
+		$("#subscribeDate").datetimebox().datetimebox('calendar').calendar({
+			validator: function(date){
+				var now = new Date();
+				now.setTime(now.getTime()-24*60*60*1000);
+				return date>=now;
+			}
+		});
+	}
 	amq.init({uri: content+'/amq', logging: true, timeout: 20, clientId:(new Date()).getTime().toString()});
 }
 function MycustomerSubscribe(){
@@ -45,8 +47,9 @@ function MycustomerSubscribe(){
 		        queryParams:params,
 		        columns:[[
 		        	 	{field:'id',title:'编号',hidden:true},
-				        {field:'customerName',title:'客户姓名',width:"12%"},
-				        {field:'customerPhone',title:'客户手机',width:"10%"},
+				        {field:'customerName',title:'客户姓名',width:"10%",align:'center'},
+				        {field:'statusName',title:'订单状态',width:"10%",align:'center'},
+				        {field:'customerPhone',title:'客户手机',width:"8%",align:'center'},
 				        {field:'sex',title:'性别',width:"5%",align:'center',formatter:function(val,row){
 				        	if(val==0){
 					        	return '<font color="FF0033">女</font>';
@@ -56,16 +59,12 @@ function MycustomerSubscribe(){
 					        	return '<font color="00CC33">未知</font>';
 					        }
 				        }},
-				        {field:'rootInName',title:'来源',width:"12%",align:'center'},
-				        {field:'companyName',title:'所属公司',width:"7%",align:'center'},
+				        {field:'rootInName',title:'来源',width:"8%",align:'center'},
+				        {field:'companyName',title:'所属公司',width:"10%",align:'center'},
 				        {field:'project',title:'预约项目',width:"12%",align:'center'},
 				        {field:'subscribeDate',title:'约诊时间',width:"8%",align:'center'},
 				        {field:'createUser',title:'创建人',width:"6%",align:'center'},
 				        {field:'createTime',title:'预约时间',width:"10%",align:'center',formatter:function(val,row){
-				        	return CU.DateTimeFormatter(val,1);
-				        }},
-				        {field:'updateUser',title:'更新人',width:"6%",align:'center'},
-				        {field:'updateTime',title:'更新时间',width:"10%",align:'center',formatter:function(val,row){
 				        	return CU.DateTimeFormatter(val,1);
 				        }}
 		        ]],
@@ -85,6 +84,9 @@ function MycustomerSubscribe(){
 					else if(row.sex==1)row.sexName="男";
 					else row.sexName="未知";
 					$("#customerSubscribedlg-fm").form("clear").form("load",row);
+					if(row.status==1){
+						$("#basecomplate").hide();
+					}
 				},
 				onSelect:function(index,row){
 				
@@ -110,6 +112,7 @@ function MycustomerSubscribe(){
 		$('#customerSubscribeform').form('clear');
 	};
 	this.add = function(){
+		$("#basecomplate").show();
 		$("#customerSubscribedlg-fm").form("clear");
 		cu.initClearCombobox("rootIn");
 		cu.initClearCombobox("sex");

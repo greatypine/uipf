@@ -54,6 +54,22 @@ function CommonUtils(){
 	/**
 	 * 返回yyyy-mm-dd hh:mm:ss格式
 	 */
+	this.getCurrentYear = function(){
+		var t = new Date();
+		var y = t.getFullYear();
+        return y;
+	};
+	/**
+	 * 返回yyyy-mm-dd hh:mm:ss格式
+	 */
+	this.getCurrentMonth = function(){
+		var t = new Date();
+        var m = t.getMonth() + 1;
+        return (m < 10 ? '0' + m : m);
+	};
+	/**
+	 * 返回yyyy-mm-dd hh:mm:ss格式
+	 */
 	this.getCurrentDateTime = function(){
 		var t = new Date();
 		var y = t.getFullYear();

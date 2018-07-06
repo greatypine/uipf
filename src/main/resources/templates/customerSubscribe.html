@@ -11,9 +11,9 @@
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="customerSubscribe.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,h_option,h_admin,h_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="customerSubscribe.add()">添加</a>
+			<a shiro:hasAnyRoles="sadmin,h_option,h_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="customerSubscribe.add()">添加</a>
 			<a shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="customerSubscribe.reception()">接诊</a>  
-			<a shiro:hasAnyRoles="sadmin,h_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="customerSubscribe.remove()">删除</a>
+			<a shiro:hasAnyRoles="sadmin,h_admin,h_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="customerSubscribe.remove()">关闭</a>
 		</div>
 		<div id="cron_bar">
 			<form id="customerSubscribeform">
@@ -69,7 +69,7 @@
 	    				<input id="subscribeDate" name="subscribeDate" class="easyui-datetimebox" style="width: 100%;" data-options="required:true"/>
 	    			</td>
 	    		</tr>
-	    		<tr shiro:hasAnyRoles="q_admin,q_receptionist">
+	    		<tr shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin,q_area_shopManager">
 	    			<td class="tdname">预约项目：</td>
 	    			<td class="tdnamebox">
 	    				<input id="project" name="project" class="easyui-textbox" style="width: 100%;" data-options=""/>
@@ -81,11 +81,15 @@
 	    		</tr>
 	    		<tr shiro:hasAnyRoles="h_admin,h_option">
 	    			<td class="tdname" colspan="1">公司：</td>
-	    			<td class="tdnamebox" colspan="3">
+	    			<td class="tdnamebox">
 	    				<input id="companyId" name="companyId" class="easyui-combobox companylist" style="width: 100%;" data-options="required:true,editable:false,valueField:'companyid',textField:'companyName'"/>
 	    			</td>
+	    			<td class="tdname">预约状态：</td>
+	    			<td class="tdnamebox">
+	    				<input id="status" name="statusName" class="easyui-textbox" style="width: 100%;" data-options="editable:false"/>
+	    			</td>
 	    		</tr>
-	    		<tr shiro:hasAnyRoles="q_admin,q_receptionist">
+	    		<tr shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin,q_area_shopManager">
 	    			<td class="tdname" colspan="1">公司：</td>
 	    			<td class="tdnamebox" colspan="3">
 	    				<input id="companyId" name="companyId" style="width: 100%;" hidden="true"/>
@@ -99,6 +103,7 @@
 	    			</td>
 	    		</tr>
 	    	</table>
+	    	<input name="status" value="" type="hidden" />
 			<input id="csid" name="id" value="" type="hidden" />
 		</form>
 	</div>

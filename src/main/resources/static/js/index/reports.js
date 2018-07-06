@@ -468,6 +468,57 @@ function Reports(){
 		employeeTreatOrder.setOption(option);
 	};
 	
+	this.queryCountInventoryPie = function(data){
+		var charts = echarts.init(document.getElementById("customerConsumption"),theme);
+		var option = {
+			    tooltip : {
+			        trigger: 'item',
+			        formatter: "{a} <br/>{b} : {c}元 ({d}%)"
+			    },
+			    legend: {
+			        orient: 'vertical',
+			        left: 'left',
+			        data: data.productName
+			    },
+			    toolbox: {
+			        show: true,
+			        orient: 'vertical',
+			        left: 'right',
+			        top: 'center',
+			        feature: {
+			            saveAsImage: {show: true}
+			        }
+			    },
+			    series : [
+			        {
+			            name: '产品消费',
+			            type: 'pie',
+			            radius : '55%',
+			            center: ['50%', '60%'],
+			            selectedMode: 'single',
+			            data:data.data,
+			            itemStyle: {
+			                emphasis: {
+			                    shadowBlur: 10,
+			                    shadowOffsetX: 0,
+			                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+			                }
+			            }
+			        }
+			    ],
+			    title : {
+					text :data.series_name,
+					x:'center',
+					textStyle : {
+						fontFamily : '"微软雅黑",Verdana,Arial,Helvetica,sans-serif',
+						fontWeight : 'normal',
+					}
+				},
+				backgroundColor : "#ECF1F4"
+			};
+		charts.setOption(option);
+	};
+	
 	this.initDataTable = function(params){
 		//预编译模板
 		rm_datatable = $('#rm_datatable').DataTable({

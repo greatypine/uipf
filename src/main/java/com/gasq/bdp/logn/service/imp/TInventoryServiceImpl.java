@@ -151,11 +151,13 @@ public class TInventoryServiceImpl implements TInventoryService {
 			if(bean.getId()!=null) {
 				bean.setUpdateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
 				inventoryMapper.updateByPrimaryKeySelective(bean);
+				TInventoryLog ilog = new TInventoryLog(bean.getId(),InitProperties.INVENTORY_OPTION_UPDATE,null,null,null,user.getCompanyid(),bean.getInventory(),user.getUsername());
+				inventoryLogService.saveOrUpdate(ilog);
 			}else {
 				bean.setCreatetime(DateUtil.getSysCurrentDate());
 				bean.setCreateuser(user.getUsername());
 				inventoryMapper.insertSelective(bean);
-				TInventoryLog ilog = new TInventoryLog(bean.getId(),InitProperties.INVENTORY_OPTION_ORDER_BACK,null,null,null,user.getCompanyid(),bean.getInventory(),user.getUsername());
+				TInventoryLog ilog = new TInventoryLog(bean.getId(),InitProperties.INVENTORY_OPTION_ADD,null,null,null,user.getCompanyid(),bean.getInventory(),user.getUsername());
 				inventoryLogService.saveOrUpdate(ilog);
 			}
 		} catch (Exception e) {

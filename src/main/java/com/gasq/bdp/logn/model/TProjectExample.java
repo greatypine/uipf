@@ -416,6 +416,66 @@ public class TProjectExample {
             return (Criteria) this;
         }
 
+        public Criteria andProjectNumsIsNull() {
+            addCriterion("project_nums is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsIsNotNull() {
+            addCriterion("project_nums is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsEqualTo(Integer value) {
+            addCriterion("project_nums =", value, "projectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsNotEqualTo(Integer value) {
+            addCriterion("project_nums <>", value, "projectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsGreaterThan(Integer value) {
+            addCriterion("project_nums >", value, "projectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsGreaterThanOrEqualTo(Integer value) {
+            addCriterion("project_nums >=", value, "projectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsLessThan(Integer value) {
+            addCriterion("project_nums <", value, "projectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsLessThanOrEqualTo(Integer value) {
+            addCriterion("project_nums <=", value, "projectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsIn(List<Integer> values) {
+            addCriterion("project_nums in", values, "projectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsNotIn(List<Integer> values) {
+            addCriterion("project_nums not in", values, "projectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsBetween(Integer value1, Integer value2) {
+            addCriterion("project_nums between", value1, value2, "projectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectNumsNotBetween(Integer value1, Integer value2) {
+            addCriterion("project_nums not between", value1, value2, "projectNums");
+            return (Criteria) this;
+        }
+
         public Criteria andCompanyIdIsNull() {
             addCriterion("company_id is null");
             return (Criteria) this;

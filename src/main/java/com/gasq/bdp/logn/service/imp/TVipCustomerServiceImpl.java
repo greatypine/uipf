@@ -3,6 +3,7 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,6 +115,8 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 			TSysUser user = SystemUserInfo.getSystemUser().getUser();
 			bean.setCompanyId(user.getCompanyid());
 			bean.setUpdateUser(user.getUsername());
+			if(bean.getGiveAmount()==null) bean.setGiveAmount(new BigDecimal(0));
+			if(bean.getActualAmount()==null) bean.setActualAmount(new BigDecimal(0));
 			if(bean.getId()!=null) {
 				bean.setUpdateTime(DateUtil.getSysCurrentDate());
 				mapper.updateByPrimaryKeySelective(bean);

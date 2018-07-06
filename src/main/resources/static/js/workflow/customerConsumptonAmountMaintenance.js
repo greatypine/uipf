@@ -122,8 +122,8 @@ function CustomerConsumptonAmount(){
 		        },
 			    onExpandRow: function(index,row){
 			    	var srow = $("#ccac_table").datagrid("getSelected");
+			    	$("#ccac_table").datagrid("selectRow", index);
 			    	ccac.index = index;
-		        	$("#ccac_table").datagrid("selectRow", index);
 		            $('#ddv-'+index).datagrid({
 		                url:content+"/ccac/queryCustomerAmountList?customerId="+row.id,
 		                fitColumns:true,

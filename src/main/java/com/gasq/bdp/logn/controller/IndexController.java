@@ -455,4 +455,12 @@ public class IndexController {
 		mmap.addAttribute("content", request.getContextPath());
 		return "countBackEmployee";
 	}
+	
+	@RequestMapping("/goCountInventory")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR }, logical = Logical.OR)
+	public String goCountInventory(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		return "countInventory";
+	}
 }

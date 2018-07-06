@@ -495,4 +495,141 @@
 	</if>
 	ORDER BY datetime asc,totalOrder desc
   </select>
+  
+  <select id="queryCountInventory" parameterType="java.util.Map" resultType="java.util.Map">
+  	SELECT
+  	<if test="datetype!=null and datetype!=''">
+		<if test="datetype==1">
+			DATE_FORMAT(til.create_time, '%Y') datetime,
+		</if>
+		<if test="datetype==2">
+			DATE_FORMAT(til.create_time, '%Y%m') datetime,
+		</if>
+	</if>
+	<if test="datetype==null or datetype==''">
+		DATE_FORMAT(til.create_time, '%Y%m') datetime,
+	</if>
+		tc.`name` as companyName,
+		ti.`name` productName,
+		ti.inventory currentInventoryNumbs,
+		ti.units,
+		ti.inventory*ti.price currentInventoryMonery,
+		sum(if(til.option_type=4,ifnull(til.numbs,0),0))* ti.price addInventoryMonery,
+		sum(if(til.option_type=5,ifnull(til.numbs,0),0))* ti.price removeInventoryMonery,
+		sum(if(til.option_type=6,ifnull(til.numbs,0),0))* ti.price useInventoryMonery,
+		sum(if(til.option_type=7,ifnull(til.numbs,0),0))* ti.price backInventoryMonery,
+		sum(if(til.option_type=4,ifnull(til.numbs,0),0)) addNumbs,
+		sum(if(til.option_type=5,ifnull(til.numbs,0),0)) removeNumbs,
+		sum(if(til.option_type=6,ifnull(til.numbs,0),0)) orderUseNumbs,
+		sum(if(til.option_type=7,ifnull(til.numbs,0),0)) orderBackNumbs
+	FROM
+		t_inventory ti
+	LEFT JOIN t_inventory_log til ON ti.id = til.product_id
+	LEFT JOIN t_company tc on ti.companyid=tc.id
+	where 1 = 1 and til.product_id is not null
+	<if test="year!=null and month!=null">
+		and DATE_FORMAT(til.create_time, '%Y%m') = concat(#{year},#{month})
+	</if>
+	<if test="month==null and year!=null">
+		and DATE_FORMAT(til.create_time, '%Y') = #{year}
+	</if>
+	<if test="companyid!=null">
+		and ti.companyid = #{companyid}
+	</if>
+	<if test="datetype!=null and datetype!=''">
+		<if test="datetype==1">
+			GROUP BY DATE_FORMAT(til.create_time, '%Y'),ti.id,ti.companyid
+		</if>
+		<if test="datetype==2">
+			GROUP BY DATE_FORMAT(til.create_time, '%Y%m'),ti.id,ti.companyid
+		</if>
+	</if>
+	<if test="datetype==null or datetype==''">
+		GROUP BY DATE_FORMAT(til.create_time, '%Y%m'),ti.id,ti.companyid
+	</if>
+	ORDER BY datetime asc,currentInventoryNumbs desc,companyName
+  </select>
+  
+  <select id="queryCountInventoryPie" parameterType="java.util.Map" resultType="java.util.Map">
+		select @rownum:=@rownum+1 as rownum,btemp.* from (
+			SELECT 
+				<if test="datetype!=null and datetype!=''">
+					<if test="datetype==1">
+						DATE_FORMAT(til.create_time, '%Y') datetime,
+					</if>
+					<if test="datetype==2">
+						DATE_FORMAT(til.create_time, '%Y%m') datetime,
+					</if>
+				</if>
+				tc.`name` as companyName,
+				ti.`name` as name,
+				sum(if(til.option_type=6 or til.option_type=5 ,ifnull(til.numbs,0),0))* ti.price value
+			 from t_inventory ti
+			LEFT JOIN t_inventory_log til ON ti.id = til.product_id
+			LEFT JOIN t_company tc on ti.companyid=tc.id
+			where 1=1 
+				<if test="year!=null and month!=null">
+					and DATE_FORMAT(til.create_time, '%Y%m') = concat(#{year},#{month,jdbcType=VARCHAR})
+				</if>
+				<if test="month==null and year!=null">
+					and DATE_FORMAT(til.create_time, '%Y') = #{year}
+				</if>
+				<if test="companyid!=null">
+					and ti.companyid = #{companyid}
+				</if>
+				<if test="datetype!=null and datetype!=''">
+					<if test="datetype==1">
+						GROUP BY ti.id,ti.companyid,DATE_FORMAT(til.create_time, '%Y')
+					</if>
+					<if test="datetype==2">
+						GROUP BY ti.id,ti.companyid,DATE_FORMAT(til.create_time, '%Y%m')
+					</if>
+				</if>
+			ORDER BY value desc
+			LIMIT 10
+		) btemp,(select @rownum:=0) t 
+		
+		UNION
+		
+		SELECT 11 as rownum,temp1.datetime,temp1.companyName,'其他' as productName,sum(temp1.value) value from (
+			SELECT @rownum1:=@rownum1+1 as rownum1,temp.* from (
+				SELECT 
+				<if test="datetype!=null and datetype!=''">
+					<if test="datetype==1">
+						DATE_FORMAT(til.create_time, '%Y') datetime,
+					</if>
+					<if test="datetype==2">
+						DATE_FORMAT(til.create_time, '%Y%m') datetime,
+					</if>
+				</if>
+					tc.`name` as companyName,
+					ti.`name`  as name,
+					sum(if(til.option_type=6 or til.option_type=5 ,ifnull(til.numbs,0),0))* ti.price value
+				 from t_inventory ti
+				LEFT JOIN t_inventory_log til ON ti.id = til.product_id
+				LEFT JOIN t_company tc on ti.companyid=tc.id
+				where 1=1 
+				<if test="year!=null and month!=null">
+					and DATE_FORMAT(til.create_time, '%Y%m') = concat(#{year},#{month,jdbcType=VARCHAR})
+				</if>
+				<if test="month==null and year!=null">
+					and DATE_FORMAT(til.create_time, '%Y') = #{year}
+				</if>
+				<if test="companyid!=null">
+					and ti.companyid = #{companyid}
+				</if>
+				<if test="datetype!=null and datetype!=''">
+					<if test="datetype==1">
+						GROUP BY ti.id,ti.companyid,DATE_FORMAT(til.create_time, '%Y')
+					</if>
+					<if test="datetype==2">
+						GROUP BY ti.id,ti.companyid,DATE_FORMAT(til.create_time, '%Y%m')
+					</if>
+				</if>
+				ORDER BY value desc
+			) temp,(select @rownum1:=0) t 
+		) temp1 where temp1.rownum1>10
+	GROUP BY temp1.datetime,temp1.companyName
+	ORDER BY rownum
+  </select>
 </mapper>

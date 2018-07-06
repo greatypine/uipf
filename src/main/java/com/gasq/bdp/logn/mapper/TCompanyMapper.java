@@ -52,4 +52,8 @@ public interface TCompanyMapper {
 	List<Map<String, Object>> countConsumptionReport(Map<String, Object> map);
 
 	List<Map<String, Object>> countSubscribeReport(Map<String, Object> map);
+
+	List<Map<String, Object>> queryCountInventory(Map<String, Object> map);
+
+	List<Map<String, Object>> queryCountInventoryPie(Map<String, Object> map);
 }

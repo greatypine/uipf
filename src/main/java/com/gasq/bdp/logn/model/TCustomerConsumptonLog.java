@@ -3,7 +3,12 @@ package com.gasq.bdp.logn.model;
 import java.math.BigDecimal;
 
 public class TCustomerConsumptonLog extends TCustomerConsumptonLogKey {
-    private String customerName;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String customerName;
 
     private String customerPhone;
 

@@ -42,4 +42,8 @@ public interface CommonService {
 	Map<String, Object> queryBackEmployeeOrderReport(Integer type, Integer companyid, String datetype, String starttime,
 			String endtime);
 
+	Map<String, Object> queryCountInventory(Integer companyid, String datetype, Integer year, Integer month);
+
+	Map<String, Object> queryCountInventoryPie(Integer companyid, String datetype, Integer year, Integer month);
+
 }

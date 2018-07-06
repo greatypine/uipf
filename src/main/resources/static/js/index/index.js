@@ -54,6 +54,11 @@ function IndexOption(){
 	        	var isLeaf = tree('isLeaf', node.target);  
 	        	if(!isLeaf) {return ;}
 			},
+			formatter:function(node){
+				var s = '';
+				s = '<font size="2">'+node.text+'</font>';
+				return s;
+			},
 			onClick: function(node){
 				var state=node.state;
 	            if(state !="open"){

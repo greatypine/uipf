@@ -20,7 +20,7 @@
 	    </commentGenerator>
 <!-- 		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.30.0.1:3306/gabdp-wf" userId="sjyx" password="Gnkjsjyx2017!" /> -->
 <!-- <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1:3306/wechat-wf" userId="root" password="123456" /> -->
-<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://123.207.141.154:3306/wechat-wf" userId="root" password="Ltn_wechat2018" />
+<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.144.165.77:3306/weChat-wf" userId="root" password="Dws@2018mysqldb_" />
 		<!-- 类型转换 -->
         <javaTypeResolver>
             <!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） -->
@@ -62,7 +62,7 @@
 <!-- 		<table schema="" tableName="t_ltn_customer"> </table> -->
 <!-- <table schema="" tableName="t_vip_customer"> </table> -->
 <!-- <table schema="" tableName="t_vip_customer_log"> </table> -->
-<table schema="" tableName="t_customer_consumpton_log"> </table>
+<!-- <table schema="" tableName="t_customer_consumpton_log"> </table> -->
 <!-- 		<table schema="" tableName="t_consumpton_project"> </table> -->
 <!-- <table schema="" tableName="t_inventory_log"> </table> -->
 <!-- <table schema="" tableName="t_customer_subscribe_log"> </table> -->
@@ -70,6 +70,9 @@
 <!-- 		<table schema="" tableName="t_ltn_customer_consumpton_amount"> </table> -->
 <!-- 				<table schema="" tableName="t_score_exchange"> </table> -->
 <!-- 				<table schema="" tableName="t_project"> </table> -->
+				<table schema="" tableName="t_customer_porject"> </table>
+				<table schema="" tableName="t_customer_project_log"> </table>
+				<table schema="" tableName="t_customer_comment"> </table>
 <!-- 		<table schema="" tableName="t_sys_role_menu"> </table> -->
 <!-- 		<table schema="" tableName="t_sys_timer_job_exeShell"> </table> -->
 <!-- 		<table schema="" tableName="t_sys_timer_job_sftp"> </table> -->

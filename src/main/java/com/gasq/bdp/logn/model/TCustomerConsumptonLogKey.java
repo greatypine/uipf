@@ -2,8 +2,13 @@ package com.gasq.bdp.logn.model;
 
 import java.util.Date;
 
-public class TCustomerConsumptonLogKey {
-    private Integer id;
+public class TCustomerConsumptonLogKey extends ParamsObject{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private Integer id;
 
     private Date createTime;
 

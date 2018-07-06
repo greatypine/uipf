@@ -152,6 +152,27 @@ public class CommonController {
 		}
     	return null;
 	 }
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.QUERY },logical=Logical.OR)
+    @RequestMapping(value = "/queryCountInventory",method=RequestMethod.POST)
+	public Map<String, Object> queryCountInventory(Integer companyid,String datetype,Integer year,Integer month) {
+		try {
+			return commonService.queryCountInventory(companyid,datetype,year,month);
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.QUERY },logical=Logical.OR)
+    @RequestMapping(value = "/queryCountInventoryPie",method=RequestMethod.POST)
+	public Map<String, Object> queryCountInventoryPie(Integer companyid,String datetype,Integer year,Integer month) {
+		try {
+			return commonService.queryCountInventoryPie(companyid,datetype,year,month);
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
     
 }
 

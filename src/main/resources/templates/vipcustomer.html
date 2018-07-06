@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:include="include :: linkresource('首页')"></head>
 	<link type="text/css" th:href="@{/static/css/index/user.css}" rel="stylesheet" media="screen"/>
+	<script type="text/javascript" th:src="@{/static/easyUI/datagrid-detailview.js}"></script>
 <body>
 <div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
 	<table id="systemvipcustomer_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
@@ -96,6 +97,28 @@
 	<div id="systemvipcustomer_dlg-buttons">
 		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.complate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#systemvipcustomerdlg-fm').form('clear');$('#systemvipcustomerdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="productsdlg" class="easyui-dialog"  data-options="modal:true" style="width: 85%; overflow: hidden;height: 50%;" closed="true" buttons="#productsdlg-buttons">
+		<table id="project_dg" class="easyui-datagrid" style="width: 100%;padding: 1%;height: auto;"
+			data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:5" pagination="true">
+		</table>
+	</div>
+	<div id="productsdlg-buttons">
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#productsdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="commentsdlg" class="easyui-dialog"  data-options="modal:true" style="width: 85%; overflow: hidden;height: 50%;" closed="true" buttons="#commentsdlg-buttons">
+		<table id="comments_dg" class="easyui-datagrid" style="width: 100%;padding: 1%;height: auto;"
+			data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:10,toolbar:'#comments_option'" pagination="true">
+		</table>
+		<div id="comments_option" style="padding: 5px; height: auto">
+			<div style="margin-bottom: 5px">
+				<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemvipcustomer.add()">添加</a> 
+				<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="systemvipcustomer.remove()">删除</a>
+			</div>
+		</div>
+	</div>
+	<div id="commentsdlg-buttons">
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#commentsdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 </body>
 <script type="text/javascript" th:src="@{/static/js/index/vipcustomer.js}"></script>

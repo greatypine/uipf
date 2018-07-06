@@ -213,4 +213,62 @@ public class CommonServiceImpl implements CommonService {
 		map.put("series_name", companyname+"员工预约统计");
 		return map;
 	}
+
+	@Override
+	public Map<String, Object> queryCountInventory(Integer companyid, String datetype, Integer year, Integer month) {
+		Map<String, Object> map = new  HashMap<String, Object>();
+		map.put("year", year);
+		if(month!=null) map.put("month", (month>0&&month<10)?"0"+month:month);
+		map.put("datetype", datetype);
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+			}
+		}
+		List<Map<String, Object>> listmaps = companyMapper.queryCountInventory(map);
+		if(listmaps==null || listmaps.size()<=0)listmaps = new ArrayList<Map<String,Object>>();
+		map.clear();
+		map.put("rows",listmaps);
+		map.put("total",listmaps.size());
+		return map;
+	}
+	
+	@Override
+	public Map<String, Object> queryCountInventoryPie(Integer companyid, String datetype, Integer year, Integer month) {
+		Map<String, Object> map = new  HashMap<String, Object>();
+		List<String> productName = new ArrayList<String>();
+		List<Double> totalInputMonery = new ArrayList<Double>();
+		map.put("year", year);
+		if(month!=null) map.put("month", (month>0&&month<10)?"0"+month:month);
+		map.put("datetype", datetype);
+		String companyname = "";
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+			companyname = companyMapper.selectByPrimaryKey(companyid).getName();
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+				companyname = SystemUserInfo.getSystemUser().getCompany().getName();
+			}else {
+				companyname = "所有门店";
+			}
+		}
+		List<Map<String, Object>> listmaps = companyMapper.queryCountInventoryPie(map);
+		if(listmaps!=null && listmaps.size()>0) {
+			for (Map<String, Object> lm : listmaps) {
+				productName.add(lm.get("name").toString());
+				totalInputMonery.add(new BigDecimal(lm.get("value").toString()).doubleValue());	
+			}
+		}
+		double max = (totalInputMonery.size()<=0)?0.0:totalInputMonery.get(0)*1.25;
+		map.clear();
+		map.put("productName", productName);
+		map.put("data", listmaps);
+		map.put("max", Math.round(max));
+		map.put("interval", Math.round(max));
+		map.put("series_name", companyname+"消费金额占比");
+		return map;
+	}
 }
