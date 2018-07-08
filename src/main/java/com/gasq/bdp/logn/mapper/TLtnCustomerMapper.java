@@ -42,4 +42,6 @@ public interface TLtnCustomerMapper {
 	List<Map<String, Object>> countConsumptionReport(Map<String, Object> map);
 
 	Map<String, Object> getConsumptionProjects(Integer id);
+
+	Integer countByBean(@Param("record") TLtnCustomer bean);
 }

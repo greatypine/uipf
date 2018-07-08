@@ -71,8 +71,8 @@
 <!-- 				<table schema="" tableName="t_score_exchange"> </table> -->
 <!-- 				<table schema="" tableName="t_project"> </table> -->
 				<table schema="" tableName="t_customer_porject"> </table>
-				<table schema="" tableName="t_customer_project_log"> </table>
-				<table schema="" tableName="t_customer_comment"> </table>
+<!-- 				<table schema="" tableName="t_customer_project_log"> </table> -->
+<!-- 				<table schema="" tableName="t_customer_comment"> </table> -->
 <!-- 		<table schema="" tableName="t_sys_role_menu"> </table> -->
 <!-- 		<table schema="" tableName="t_sys_timer_job_exeShell"> </table> -->
 <!-- 		<table schema="" tableName="t_sys_timer_job_sftp"> </table> -->

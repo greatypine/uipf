@@ -404,4 +404,42 @@
 		limit #{index},#{pageSize}
 	</if>
 </select>
+<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select count(*) from (
+		SELECT
+			p.id,p.company_id as companyId,p.create_time as createTime,p.create_user as createUser,p.customer_name customerName,p.customer_phone as customerPhone,p.project,p.remark,p.root_in as rootIn,
+			p.sex as sex,DATE_FORMAT(p.subscribe_date,'%Y-%m-%d %H:%i:%S') as subscribeDate,p.update_time as updateTime,p.update_user as updateUser,p.status,vsb.text statusName,
+			tc.`name` as companyName,vri.`name` as rootInName
+		FROM
+			t_customer_subscribe p
+		LEFT JOIN t_company tc on p.company_id=tc.id
+		LEFT JOIN v_root_in vri on p.root_in=vri.`value`
+		<if test="companyid !=null">
+		 and vri.companyid=#{companyid}
+		</if>
+		LEFT JOIN v_subscribe vsb on p.status=vsb.`value`
+		<if test="companyid !=null">
+		 and vsb.companyid=#{companyid}
+		</if> 
+		where 1=1 
+		<if test="customername !=null and customername!=''">
+			and p.customer_name like concat('%',#{customername},'%')
+		</if>
+		<if test="customerphone !=null and customerphone!=''">
+			and p.customer_phone like concat('%',#{customerphone},'%')
+		</if>
+		<if test="updatetime !=null and updatetime!=''">
+			and p.update_time &gt;= #{updatetime}
+		</if>
+		<if test="remark !=null">
+			and p.remark like concat('%',#{remark},'%')
+		</if>
+		<if test="companyid !=null">
+			and p.company_id=#{companyid}
+		</if>
+		<if test="status !=null">
+			and p.status=#{status}
+		</if>
+	) temp
+</select>
 </mapper>

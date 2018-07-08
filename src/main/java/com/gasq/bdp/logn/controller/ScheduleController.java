@@ -33,7 +33,7 @@ public class ScheduleController {
 	 * 加载菜单
 	 * @return
 	 */
-    @ApiOperation(value="查询列表定时器配置信息列表", notes="查询列表定时器配置信息列表（所以用户）")
+    @ApiOperation(value="查询列表定时器配置信息列表", notes="查询列表定时器配置信息列表")
     @ApiImplicitParam(name = "bean", value = "定时器实体对象TSysTimerLog", required = false, dataType = "TSysTimerLog")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
     @RequestMapping(value = "/getList",method=RequestMethod.POST)

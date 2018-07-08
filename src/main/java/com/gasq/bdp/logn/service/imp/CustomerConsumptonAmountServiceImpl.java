@@ -99,39 +99,47 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 		bean.setCompanyid(SystemUserInfo.getSystemUser().getUser().getCompanyid());
 		list = customerConsumptonAmountMapper.queryPagingList(bean);
 		if(list==null || list.size()<=0)list = new ArrayList<Map<String,Object>>(); 
+		Integer count = customerConsumptonAmountMapper.countByBean(bean);
 		result.put("rows",list);
-		result.put("total",list.size());
+		result.put("total",count);
 		return result;
 	}
 
 	@Override
+	@Transactional(rollbackFor=Exception.class)
 	public TLtnCustomerConsumptonAmount saveOrUpdate(TLtnCustomerConsumptonAmount bean) {
-		bean.setUpdatetime(DateUtil.getSysCurrentDate());
-		BigDecimal arrears = bean.getArrears();//欠款
-		BigDecimal repayment = bean.getRepayment();//还款金额
-		BigDecimal movePayment = bean.getMovePayment();//移动支付
-		BigDecimal cashIncome = bean.getCashIncome();//现金收入
-		BigDecimal creditCashIncome = bean.getCreditCashIncome();//刷卡收入
-		if(arrears==null) arrears = new BigDecimal(0);
-		if(repayment==null) repayment = new BigDecimal(0);
-		if(movePayment==null) movePayment = new BigDecimal(0);
-		if(cashIncome==null) cashIncome = new BigDecimal(0);
-		if(creditCashIncome==null) creditCashIncome = new BigDecimal(0);
-		//总收入：还款金额+移动支付+现金收入+刷卡收入-欠款
-		BigDecimal total = repayment.add(movePayment).add(cashIncome).add(creditCashIncome).subtract(arrears);
-		BigDecimal discount = new BigDecimal(bean.getDiscount());
-		discount = discount.divide(new BigDecimal(100));
-		bean.setDiscount(discount.doubleValue());
-		bean.setTotalAmount(total);
-		if(bean.getId()!=null) {
-			bean.setUpdateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
-			customerConsumptonAmountMapper.updateByPrimaryKeySelective(bean);
-		}else {
-			bean.setCreateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
-			bean.setCreatetime(DateUtil.getSysCurrentDate());
-			customerConsumptonAmountMapper.insertSelective(bean);
+		try {
+			
+			bean.setUpdatetime(DateUtil.getSysCurrentDate());
+			BigDecimal arrears = bean.getArrears();//欠款
+			BigDecimal repayment = bean.getRepayment();//还款金额
+			BigDecimal movePayment = bean.getMovePayment();//移动支付
+			BigDecimal cashIncome = bean.getCashIncome();//现金收入
+			BigDecimal creditCashIncome = bean.getCreditCashIncome();//刷卡收入
+			if(arrears==null) arrears = new BigDecimal(0);
+			if(repayment==null) repayment = new BigDecimal(0);
+			if(movePayment==null) movePayment = new BigDecimal(0);
+			if(cashIncome==null) cashIncome = new BigDecimal(0);
+			if(creditCashIncome==null) creditCashIncome = new BigDecimal(0);
+			//总收入：还款金额+移动支付+现金收入+刷卡收入-欠款
+			BigDecimal total = repayment.add(movePayment).add(cashIncome).add(creditCashIncome).subtract(arrears);
+			BigDecimal discount = new BigDecimal(bean.getDiscount());
+			discount = discount.divide(new BigDecimal(100));
+			bean.setDiscount(discount.doubleValue());
+			bean.setTotalAmount(total);
+			if(bean.getId()!=null) {
+				bean.setUpdateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
+				customerConsumptonAmountMapper.updateByPrimaryKeySelective(bean);
+			}else {
+				bean.setCreateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
+				bean.setCreatetime(DateUtil.getSysCurrentDate());
+				customerConsumptonAmountMapper.insertSelective(bean);
+			}
+			return bean;
+		}catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-		return bean;
+		return null;
 	}
 
 }

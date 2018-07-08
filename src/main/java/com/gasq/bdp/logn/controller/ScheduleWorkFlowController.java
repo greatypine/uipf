@@ -30,7 +30,7 @@ public class ScheduleWorkFlowController {
     @Autowired
     TSysTimerScheduleWorkflowService scheduleWorkflowService;
     
-    @ApiOperation(value="查询定时器工作流列表", notes="查询定时器工作流列表（所以用户）")
+    @ApiOperation(value="查询定时器工作流列表", notes="查询定时器工作流列表")
     @ApiImplicitParam(name = "scheduleId", value = "定时器实体对象id", required = true, dataType = "Integer",paramType="body")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/getlist",method=RequestMethod.POST)

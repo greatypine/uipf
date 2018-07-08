@@ -225,6 +225,66 @@ public class TCustomerPorjectExample {
             return (Criteria) this;
         }
 
+        public Criteria andOrderIdIsNull() {
+            addCriterion("order_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdIsNotNull() {
+            addCriterion("order_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdEqualTo(Integer value) {
+            addCriterion("order_id =", value, "orderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdNotEqualTo(Integer value) {
+            addCriterion("order_id <>", value, "orderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdGreaterThan(Integer value) {
+            addCriterion("order_id >", value, "orderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("order_id >=", value, "orderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdLessThan(Integer value) {
+            addCriterion("order_id <", value, "orderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdLessThanOrEqualTo(Integer value) {
+            addCriterion("order_id <=", value, "orderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdIn(List<Integer> values) {
+            addCriterion("order_id in", values, "orderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdNotIn(List<Integer> values) {
+            addCriterion("order_id not in", values, "orderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdBetween(Integer value1, Integer value2) {
+            addCriterion("order_id between", value1, value2, "orderId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrderIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("order_id not between", value1, value2, "orderId");
+            return (Criteria) this;
+        }
+
         public Criteria andProjectIdIsNull() {
             addCriterion("project_id is null");
             return (Criteria) this;
@@ -285,6 +345,66 @@ public class TCustomerPorjectExample {
             return (Criteria) this;
         }
 
+        public Criteria andProjectTypeIsNull() {
+            addCriterion("project_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeIsNotNull() {
+            addCriterion("project_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeEqualTo(Integer value) {
+            addCriterion("project_type =", value, "projectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeNotEqualTo(Integer value) {
+            addCriterion("project_type <>", value, "projectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeGreaterThan(Integer value) {
+            addCriterion("project_type >", value, "projectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("project_type >=", value, "projectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeLessThan(Integer value) {
+            addCriterion("project_type <", value, "projectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("project_type <=", value, "projectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeIn(List<Integer> values) {
+            addCriterion("project_type in", values, "projectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeNotIn(List<Integer> values) {
+            addCriterion("project_type not in", values, "projectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeBetween(Integer value1, Integer value2) {
+            addCriterion("project_type between", value1, value2, "projectType");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("project_type not between", value1, value2, "projectType");
+            return (Criteria) this;
+        }
+
         public Criteria andProjectNumsIsNull() {
             addCriterion("project_nums is null");
             return (Criteria) this;
@@ -342,6 +462,126 @@ public class TCustomerPorjectExample {
 
         public Criteria andProjectNumsNotBetween(Integer value1, Integer value2) {
             addCriterion("project_nums not between", value1, value2, "projectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsIsNull() {
+            addCriterion("total_project_nums is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsIsNotNull() {
+            addCriterion("total_project_nums is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsEqualTo(Integer value) {
+            addCriterion("total_project_nums =", value, "totalProjectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsNotEqualTo(Integer value) {
+            addCriterion("total_project_nums <>", value, "totalProjectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsGreaterThan(Integer value) {
+            addCriterion("total_project_nums >", value, "totalProjectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsGreaterThanOrEqualTo(Integer value) {
+            addCriterion("total_project_nums >=", value, "totalProjectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsLessThan(Integer value) {
+            addCriterion("total_project_nums <", value, "totalProjectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsLessThanOrEqualTo(Integer value) {
+            addCriterion("total_project_nums <=", value, "totalProjectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsIn(List<Integer> values) {
+            addCriterion("total_project_nums in", values, "totalProjectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsNotIn(List<Integer> values) {
+            addCriterion("total_project_nums not in", values, "totalProjectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsBetween(Integer value1, Integer value2) {
+            addCriterion("total_project_nums between", value1, value2, "totalProjectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalProjectNumsNotBetween(Integer value1, Integer value2) {
+            addCriterion("total_project_nums not between", value1, value2, "totalProjectNums");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineIsNull() {
+            addCriterion("deadline is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineIsNotNull() {
+            addCriterion("deadline is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineEqualTo(Date value) {
+            addCriterion("deadline =", value, "deadline");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineNotEqualTo(Date value) {
+            addCriterion("deadline <>", value, "deadline");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineGreaterThan(Date value) {
+            addCriterion("deadline >", value, "deadline");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineGreaterThanOrEqualTo(Date value) {
+            addCriterion("deadline >=", value, "deadline");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineLessThan(Date value) {
+            addCriterion("deadline <", value, "deadline");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineLessThanOrEqualTo(Date value) {
+            addCriterion("deadline <=", value, "deadline");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineIn(List<Date> values) {
+            addCriterion("deadline in", values, "deadline");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineNotIn(List<Date> values) {
+            addCriterion("deadline not in", values, "deadline");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineBetween(Date value1, Date value2) {
+            addCriterion("deadline between", value1, value2, "deadline");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeadlineNotBetween(Date value1, Date value2) {
+            addCriterion("deadline not between", value1, value2, "deadline");
             return (Criteria) this;
         }
 

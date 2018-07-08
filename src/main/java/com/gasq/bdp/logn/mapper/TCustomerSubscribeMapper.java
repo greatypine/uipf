@@ -34,4 +34,6 @@ public interface TCustomerSubscribeMapper {
     int updateByPrimaryKey(TCustomerSubscribe record);
 
 	List<Map<String, Object>> queryPagingList(Map<String, Object> params);
+
+	Integer countByBean(Map<String, Object> params);
 }

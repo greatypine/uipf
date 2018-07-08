@@ -19,7 +19,11 @@ public class TProject extends ParamsObject{
 
     private Double discount;
 
+    private Integer projectType;
+
     private Integer projectNums;
+
+    private Integer deadline;
 
     private Integer companyId;
 
@@ -75,12 +79,28 @@ public class TProject extends ParamsObject{
         this.discount = discount;
     }
 
+    public Integer getProjectType() {
+        return projectType;
+    }
+
+    public void setProjectType(Integer projectType) {
+        this.projectType = projectType;
+    }
+
     public Integer getProjectNums() {
         return projectNums;
     }
 
     public void setProjectNums(Integer projectNums) {
         this.projectNums = projectNums;
+    }
+
+    public Integer getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(Integer deadline) {
+        this.deadline = deadline;
     }
 
     public Integer getCompanyId() {

@@ -145,8 +145,9 @@ public class TSysUserServiceImpl implements TSysUserService {
 		}
 		list = mapper.queryPagingList(params);
 		if(list==null) list = new ArrayList<Map<String,Object>>(); 
+		Integer count = mapper.countByBean(params);
 		result.put("rows",list);
-		result.put("total",list.size());
+		result.put("total",count);
 		return result;
 	}
 

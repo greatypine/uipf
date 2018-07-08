@@ -250,7 +250,7 @@ function systemvipcustomer(){
 			$.messager.alert('提示','没有相应的产品！','warning');
 			return ;
 		}
-		var params = {"customerId":id};
+		var params = {"vipId":id};
 		systemvipcustomer.initCommentDg(params);
 		$("#commentsdlg").dialog("open").dialog("center").dialog("setTitle","客户留言列表");
 	};
@@ -259,17 +259,78 @@ function systemvipcustomer(){
 			fitColumns:true,
 	        singleSelect:true,
 	        rownumbers:true,
-	        pageList: [10, 20],
+	        pageSize:5,
+	        pageList: [5, 10],
 	        loadMsg:'正在加载，请稍后...',
 	        collapsible:false,
-			url: content+'/consumptonProject/queryList',
+			url: content+'/customerComment/queryList',
 			queryParams:params,
 			columns:[[
-		        {field:'name',width:"40%",align:'center',title:"产品"},
-	    	 	{field:'numbs',title:'数量',width:"30%",align:'center',editor:{type:'numberbox',options:{precision:2}}},
-	    	 	{field:'units',width:"30%",align:'center',title:"单位"}
+		        {field:'nickname',width:"10%",align:'center',title:"评论人"},
+		        {field:'create_time',width:"15%",align:'center',title:"评论时间",formatter:function(val,row){
+		        	return CU.DateTimeFormatter(val,1);
+		        }},
+	    	 	{field:'remark',width:"75%",align:'left',title:"评论留言"}
 	    	]]
 		});
+	};
+	this.addcomment = function(){
+		var row = $("#systemvipcustomer_table").datagrid("getSelected");
+		if(row){
+			$("#customercommentdlg").dialog("open").dialog("center").dialog("setTitle","添加客户信息");
+			$("#customercommentdlg-fm").form("clear");
+			$("#vip_id").val(row.id);
+		}else{
+			$.messager.alert('提示','请先选中要操作的数据！','error');
+		}
+	};
+	this.customerCommentComplate =function(){
+		$('#customercommentdlg-fm').form('submit',{
+			url:content+"/customerComment/saveOrUpdate",
+			onSubmit:function(){
+				return $(this).form('enableValidation').form('validate');
+			},
+			success: function(result){
+				if(result || result=="true"){
+					$('#customercommentdlg-fm').form('clear');
+					$.messager.alert('提示','操作成功');
+					$.messager.progress('close');
+					$('#customercommentdlg').dialog('close');
+					$('#comments_dg').datagrid('reload');
+				}else{
+					$.messager.alert('提示','操作失败','warning');
+					$.messager.progress('close');
+				}
+			}
+		});
+	};
+	this.removecomment = function(){
+		var row=$('#comments_dg').datagrid('getSelected');
+		if(row){
+			$.messager.confirm('提示信息', '你确认要删除此项配置吗?', function(r){
+				if (r){
+					$.ajax({
+						type:"POST",
+						data :{id:row.id},
+						url : content+"/customerComment/delete",
+						error : function(data) {
+							$.messager.alert('提示信息','服务器连接超时请重试!','error'); 
+							return false;
+						},
+						success : function(data) {
+							if(data){//成功
+								$.messager.alert('提示信息','删除成功!');
+								$('#comments_dg').datagrid('reload');
+							}else{
+								$.messager.alert('提示信息','删除失败!','warning');
+							}
+						}
+					});
+				}
+			});
+		}else{
+			$.messager.alert('提示','请先选中要操作的数据！','error');
+		}
 	};
 	this.query = function(){
 		var params = {};
@@ -358,4 +419,34 @@ function systemvipcustomer(){
 	this.clear = function(){
 		$("#systemvipcustomerform").form("clear");
 	}
+	this.swipingCard = function(){
+		var row=$('#systemvipcustomer_table').datagrid('getSelected');
+		if(row){
+			var params = {"vipId":row.id};
+			systemvipcustomer.initProjectsDg(params);
+			$("#projectsdlg").dialog("open").dialog("center").dialog("setTitle","客户项目列表");
+		}else{
+			$.messager.alert('提示','请先选中要操作的数据！','error');
+		}
+	};
+	this.initProjectsDg = function(){
+		$("#projects_dg").datagrid({
+			fitColumns:true,
+	        singleSelect:true,
+	        rownumbers:true,
+	        pageSize:5,
+	        pageList: [5, 10],
+	        loadMsg:'正在加载，请稍后...',
+	        collapsible:false,
+			url: content+'/customerProject/queryList',
+			queryParams:params,
+			columns:[[
+		        {field:'nickname',width:"10%",align:'center',title:"评论人"},
+		        {field:'create_time',width:"15%",align:'center',title:"评论时间",formatter:function(val,row){
+		        	return CU.DateTimeFormatter(val,1);
+		        }},
+	    	 	{field:'remark',width:"75%",align:'left',title:"评论留言"}
+	    	]]
+		});
+	};
 }

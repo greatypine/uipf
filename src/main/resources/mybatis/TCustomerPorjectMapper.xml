@@ -4,8 +4,12 @@
   <resultMap id="BaseResultMap" type="com.gasq.bdp.logn.model.TCustomerPorject">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="vip_id" jdbcType="INTEGER" property="vipId" />
+    <result column="order_id" jdbcType="INTEGER" property="orderId" />
     <result column="project_id" jdbcType="INTEGER" property="projectId" />
+    <result column="project_type" jdbcType="INTEGER" property="projectType" />
     <result column="project_nums" jdbcType="INTEGER" property="projectNums" />
+    <result column="total_project_nums" jdbcType="INTEGER" property="totalProjectNums" />
+    <result column="deadline" jdbcType="TIMESTAMP" property="deadline" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_user" jdbcType="VARCHAR" property="updateUser" />
@@ -70,7 +74,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, vip_id, project_id, project_nums, create_user, create_time, update_user, update_time
+    id, vip_id, order_id, project_id, project_type, project_nums, total_project_nums, 
+    deadline, create_user, create_time, update_user, update_time
   </sql>
   <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TCustomerPorjectExample" resultMap="BaseResultMap">
     select
@@ -103,12 +108,16 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.gasq.bdp.logn.model.TCustomerPorject">
-    insert into t_customer_porject (id, vip_id, project_id, 
-      project_nums, create_user, create_time, 
-      update_user, update_time)
-    values (#{id,jdbcType=INTEGER}, #{vipId,jdbcType=INTEGER}, #{projectId,jdbcType=INTEGER}, 
-      #{projectNums,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+    insert into t_customer_porject (id, vip_id, order_id, 
+      project_id, project_type, project_nums, 
+      total_project_nums, deadline, create_user, 
+      create_time, update_user, update_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{vipId,jdbcType=INTEGER}, #{orderId,jdbcType=INTEGER}, 
+      #{projectId,jdbcType=INTEGER}, #{projectType,jdbcType=INTEGER}, #{projectNums,jdbcType=INTEGER}, 
+      #{totalProjectNums,jdbcType=INTEGER}, #{deadline,jdbcType=TIMESTAMP}, #{createUser,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.gasq.bdp.logn.model.TCustomerPorject">
     insert into t_customer_porject
@@ -119,11 +128,23 @@
       <if test="vipId != null">
         vip_id,
       </if>
+      <if test="orderId != null">
+        order_id,
+      </if>
       <if test="projectId != null">
         project_id,
       </if>
+      <if test="projectType != null">
+        project_type,
+      </if>
       <if test="projectNums != null">
         project_nums,
+      </if>
+      <if test="totalProjectNums != null">
+        total_project_nums,
+      </if>
+      <if test="deadline != null">
+        deadline,
       </if>
       <if test="createUser != null">
         create_user,
@@ -145,11 +166,23 @@
       <if test="vipId != null">
         #{vipId,jdbcType=INTEGER},
       </if>
+      <if test="orderId != null">
+        #{orderId,jdbcType=INTEGER},
+      </if>
       <if test="projectId != null">
         #{projectId,jdbcType=INTEGER},
       </if>
+      <if test="projectType != null">
+        #{projectType,jdbcType=INTEGER},
+      </if>
       <if test="projectNums != null">
         #{projectNums,jdbcType=INTEGER},
+      </if>
+      <if test="totalProjectNums != null">
+        #{totalProjectNums,jdbcType=INTEGER},
+      </if>
+      <if test="deadline != null">
+        #{deadline,jdbcType=TIMESTAMP},
       </if>
       <if test="createUser != null">
         #{createUser,jdbcType=VARCHAR},
@@ -180,11 +213,23 @@
       <if test="record.vipId != null">
         vip_id = #{record.vipId,jdbcType=INTEGER},
       </if>
+      <if test="record.orderId != null">
+        order_id = #{record.orderId,jdbcType=INTEGER},
+      </if>
       <if test="record.projectId != null">
         project_id = #{record.projectId,jdbcType=INTEGER},
       </if>
+      <if test="record.projectType != null">
+        project_type = #{record.projectType,jdbcType=INTEGER},
+      </if>
       <if test="record.projectNums != null">
         project_nums = #{record.projectNums,jdbcType=INTEGER},
+      </if>
+      <if test="record.totalProjectNums != null">
+        total_project_nums = #{record.totalProjectNums,jdbcType=INTEGER},
+      </if>
+      <if test="record.deadline != null">
+        deadline = #{record.deadline,jdbcType=TIMESTAMP},
       </if>
       <if test="record.createUser != null">
         create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -207,8 +252,12 @@
     update t_customer_porject
     set id = #{record.id,jdbcType=INTEGER},
       vip_id = #{record.vipId,jdbcType=INTEGER},
+      order_id = #{record.orderId,jdbcType=INTEGER},
       project_id = #{record.projectId,jdbcType=INTEGER},
+      project_type = #{record.projectType,jdbcType=INTEGER},
       project_nums = #{record.projectNums,jdbcType=INTEGER},
+      total_project_nums = #{record.totalProjectNums,jdbcType=INTEGER},
+      deadline = #{record.deadline,jdbcType=TIMESTAMP},
       create_user = #{record.createUser,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_user = #{record.updateUser,jdbcType=VARCHAR},
@@ -223,11 +272,23 @@
       <if test="vipId != null">
         vip_id = #{vipId,jdbcType=INTEGER},
       </if>
+      <if test="orderId != null">
+        order_id = #{orderId,jdbcType=INTEGER},
+      </if>
       <if test="projectId != null">
         project_id = #{projectId,jdbcType=INTEGER},
       </if>
+      <if test="projectType != null">
+        project_type = #{projectType,jdbcType=INTEGER},
+      </if>
       <if test="projectNums != null">
         project_nums = #{projectNums,jdbcType=INTEGER},
+      </if>
+      <if test="totalProjectNums != null">
+        total_project_nums = #{totalProjectNums,jdbcType=INTEGER},
+      </if>
+      <if test="deadline != null">
+        deadline = #{deadline,jdbcType=TIMESTAMP},
       </if>
       <if test="createUser != null">
         create_user = #{createUser,jdbcType=VARCHAR},
@@ -247,8 +308,12 @@
   <update id="updateByPrimaryKey" parameterType="com.gasq.bdp.logn.model.TCustomerPorject">
     update t_customer_porject
     set vip_id = #{vipId,jdbcType=INTEGER},
+      order_id = #{orderId,jdbcType=INTEGER},
       project_id = #{projectId,jdbcType=INTEGER},
+      project_type = #{projectType,jdbcType=INTEGER},
       project_nums = #{projectNums,jdbcType=INTEGER},
+      total_project_nums = #{totalProjectNums,jdbcType=INTEGER},
+      deadline = #{deadline,jdbcType=TIMESTAMP},
       create_user = #{createUser,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_user = #{updateUser,jdbcType=VARCHAR},
@@ -269,4 +334,44 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
+	SELECT
+		p.id,p.vip_id as vipId,p.project_id as projectId,tp.project_name as projectName,p.total_project_nums as totalProjectNums
+		,tvc.customer_name as customerName,tvc.customer_phone customerPhone,p.project_nums as projectNums,p.create_time,p.update_user
+		,p.project_type as projectType,vpt.`name` as projectTypeName,p.deadline
+	FROM
+		`t_customer_porject` p
+	left join t_sys_user tsu on p.create_user=tsu.username
+	left join t_sys_user tsu1 on p.update_user=tsu1.username
+	LEFT JOIN t_project tp on p.project_id= tp.id
+	LEFT JOIN t_vip_customer tvc on p.vip_id=tvc.id
+	LEFT JOIN v_project_type vpt on p.project_type=vpt.`value`
+	where 1=1 
+	<if test="vip_id !=null">
+		and p.vip_id=#{vip_id}
+	</if>
+	order by p.create_time desc 
+	<if test="index !=null and pageSize!=null">
+		limit #{index},#{pageSize}
+	</if>
+</select>
+<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select count(*) from (
+		SELECT
+			p.id,p.vip_id as vipId,p.project_id as projectId,tp.project_name as projectName,p.total_project_nums as totalProjectNums
+			,tvc.customer_name as customerName,tvc.customer_phone customerPhone,p.project_nums as projectNums,p.create_time,p.update_user
+			,p.project_type as projectType,vpt.`name` as projectTypeName,p.deadline
+		FROM
+			`t_customer_porject` p
+		left join t_sys_user tsu on p.create_user=tsu.username
+		left join t_sys_user tsu1 on p.update_user=tsu1.username
+		LEFT JOIN t_project tp on p.project_id= tp.id
+		LEFT JOIN t_vip_customer tvc on p.vip_id=tvc.id
+		LEFT JOIN v_project_type vpt on p.project_type=vpt.`value`
+		where 1=1   
+		<if test="vip_id !=null">
+			and p.vip_id=#{vip_id}
+		</if>
+	) temp
+</select>
 </mapper>

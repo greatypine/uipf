@@ -26,6 +26,8 @@ import com.gasq.bdp.logn.model.TCustomerSubscribeLog;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.service.CustomerSubscribeService;
 import com.gasq.bdp.logn.service.SubscribeLogService;
+import com.gasq.bdp.logn.service.TCustomerCommentService;
+import com.gasq.bdp.logn.service.TVipCustomerService;
 import com.gasq.bdp.logn.utils.ActiveMQUtil;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
@@ -41,6 +43,8 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 	@Autowired TCustomerSubscribeMapper customerSubscribeMapper;
 	@Autowired SubscribeLogService subscribeLogService;
 	@Autowired ActiveManager activeManager;
+	@Autowired TVipCustomerService vipCustomerSergice;
+	@Autowired TCustomerCommentService customerCommentService;
 
 	@Override
 	public long countByExample(TCustomerSubscribeExample example) {
@@ -135,8 +139,9 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 		}
 		list = customerSubscribeMapper.queryPagingList(params);
 		if(list==null) list = new ArrayList<Map<String,Object>>(); 
+		Integer count = customerSubscribeMapper.countByBean(params);
 		result.put("rows",list);
-		result.put("total",countByExample(bean));
+		result.put("total",count);
 		return result;
 	}
 

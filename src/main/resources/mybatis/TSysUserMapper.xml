@@ -423,4 +423,41 @@
 		limit #{index},#{pageSize}
 	</if>
 </select>
+<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select count(*) from(
+		SELECT
+			tsu.id,tsu.username,tsu.`password` as md5passowrd,tsu.nickname,tsu.companyid,tsu.age,tsu.email,tsu.phonenum,tsu.sex,tsu.`status`,tsu.create_time as createTime,tsu.update_time as updateTime,
+			tsu.address,GROUP_CONCAT(tsur.role_id) as roleids,tc.`name` as companyName,tsue.`password` as password,tsu.card_id as cardId,vus.`text` as statusName,vs.text sexName
+		FROM
+			`t_sys_user` tsu
+		LEFT JOIN t_sys_user_role tsur ON tsu.id = tsur.user_id
+		LEFT JOIN t_company tc ON tsu.companyid = tc.id
+		LEFT JOIN t_sys_user_ext tsue ON tsu.id = tsue.user_id
+		LEFT JOIN v_user_status vus ON tsu. STATUS = vus.VALUE and tsu.companyid=vus.companyid
+		LEFT JOIN v_sex vs ON tsu.sex = vs.VALUE  and tsu.companyid=vs.companyid
+		where 1=1 
+		<if test="username !=null and username!=''">
+			and tsu.username=#{username}
+		</if>
+		<if test="type !=null and type!=''">
+			and tsu.type=#{type}
+		</if>
+		<if test="roleid !=null and roleid!=''">
+			and tsr.id=#{roleid}
+		</if>
+		<if test="createTime !=null and createTime!=''">
+			and tsu.create_time &gt;= #{createTime}
+		</if>
+		<if test="endTime !=null and endTime!=''">
+			and tsu.create_time &lt;= #{createTime}
+		</if>
+		<if test="companyid !=null">
+			and tsu.companyid=#{companyid}
+		</if>
+		<if test="status !=null">
+			and tsu.status=#{status}
+		</if>
+		GROUP BY tsu.id,vus.text,vs.text
+	) temp 
+</select>
 </mapper>

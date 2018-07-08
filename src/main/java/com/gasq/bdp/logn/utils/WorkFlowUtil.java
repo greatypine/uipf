@@ -447,13 +447,13 @@ public class WorkFlowUtil {
 	public static void executeReceptionRemind(String name,String group) {
 		try {
 			TLtnCustomerExample example = new TLtnCustomerExample();
-			example.createCriteria().andStatusEqualTo(1).andCompanyIdEqualTo(Integer.parseInt(group)).andRemindtimeEqualTo(DateUtil.parseStr(DateUtil.getDiyStrDateTime(1), DateUtil.DATE_DEFAULT_FORMAT));
+			example.createCriteria().andStatusEqualTo(1).andCompanyIdEqualTo(Integer.parseInt(group)).andRemindtimeEqualTo(DateUtil.parseStr(DateUtil.getDiyStrDateTime(0), DateUtil.DATE_DEFAULT_FORMAT));
 			List<TLtnCustomer> ltnCustomers = SpringApplicationUtils.getBean(TLtnCustomerMapper.class).selectByExample(example);
 			if(ltnCustomers!=null && ltnCustomers.size()>0) {
 				String title = "回访提醒！";
 				StringBuffer context = new StringBuffer();
 				for (TLtnCustomer customer : ltnCustomers) {
-					TSysUser sysUser = SpringApplicationUtils.getBean(TSysUserMapper.class).selectByPrimaryKey((long)customer.getTherapeutist());
+					TSysUser sysUser = SpringApplicationUtils.getBean(TSysUserMapper.class).selectByPrimaryKey((long)customer.getCounsoler());
 					String email = sysUser.getEmail();
 					if(email==null || email=="") continue;
 					String[] toEmailNames = {email};

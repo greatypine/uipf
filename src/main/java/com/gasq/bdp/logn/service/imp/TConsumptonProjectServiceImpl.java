@@ -131,8 +131,9 @@ public class TConsumptonProjectServiceImpl implements TConsumptonProjectService 
 		}
 		list = consumptonProjectMapper.queryPagingList(params);
 		if(list==null || list.size()<=0) list = new ArrayList<Map<String,Object>>(); 
+		Integer count = consumptonProjectMapper.countByBean(params);
 		result.put("rows",list);
-		result.put("total",list.isEmpty()?0:list.size());
+		result.put("total",count);
 		return result;
 	}
 

@@ -35,6 +35,9 @@ public class SubscribeLogServiceImpl implements SubscribeLogService {
 		if(bean.getId()!=null) {
 			c.andIdEqualTo(bean.getId());
 		}
+		if(bean.getId()!=null) {
+			c.andIdEqualTo(bean.getId());
+		}
 		return subscribelogMapper.countByExample(example);
 	}
 
@@ -82,8 +85,9 @@ public class SubscribeLogServiceImpl implements SubscribeLogService {
 		}
 		list = subscribelogMapper.queryPagingList(params);
 		if(list==null) list = new ArrayList<Map<String,Object>>(); 
+		Integer count = subscribelogMapper.countByBean(params);
 		result.put("rows",list);
-		result.put("total",countByExample(bean));
+		result.put("total",count);
 		return result;
 	}
 

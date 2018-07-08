@@ -5,10 +5,12 @@ package com.gasq.bdp.logn.service.imp;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +33,27 @@ import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TConsumptonProject;
 import com.gasq.bdp.logn.model.TConsumptonProjectExample;
+import com.gasq.bdp.logn.model.TCustomerComment;
+import com.gasq.bdp.logn.model.TCustomerCommentExample;
 import com.gasq.bdp.logn.model.TCustomerConsumptonLog;
+import com.gasq.bdp.logn.model.TCustomerPorject;
+import com.gasq.bdp.logn.model.TCustomerPorjectExample;
 import com.gasq.bdp.logn.model.TCustomerSubscribe;
 import com.gasq.bdp.logn.model.TInventory;
 import com.gasq.bdp.logn.model.TLtnCustomer;
 import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmount;
 import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmountExample;
 import com.gasq.bdp.logn.model.TLtnCustomerExample;
+import com.gasq.bdp.logn.model.TProject;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TVipCustomer;
 import com.gasq.bdp.logn.model.TVipCustomerExample;
 import com.gasq.bdp.logn.service.CustomerConsumptonAmountService;
 import com.gasq.bdp.logn.service.CustomerService;
+import com.gasq.bdp.logn.service.TCustomerCommentService;
+import com.gasq.bdp.logn.service.TCustomerProjectService;
+import com.gasq.bdp.logn.service.TSysProjectService;
+import com.gasq.bdp.logn.service.TVipCustomerService;
 import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
@@ -66,6 +77,10 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired TCompanyMapper companyMapper;
 	@Autowired TInventoryMapper inventoryMapper;
 	@Autowired TConsumptonProjectMapper consumptonProjectMapper;
+	@Autowired TCustomerProjectService customerProjectService;
+	@Autowired TVipCustomerService vipCustomerSergice;
+	@Autowired TCustomerCommentService customerCommentService;
+	@Autowired TSysProjectService projectService;
 //	@Autowired ActiveManager activeManager;
 	
 	@Value("${wf.serverUrlPrefix}")
@@ -99,6 +114,9 @@ public class CustomerServiceImpl implements CustomerService {
 					TInventory inventory = inventoryMapper.selectByPrimaryKey(projectId);
 					inventory.setInventory(inventory.getInventory().add(cp.getNumbs()));
 					inventoryMapper.updateByPrimaryKeySelective(inventory);
+					TCustomerPorjectExample cpexample = new TCustomerPorjectExample();
+					cpexample.createCriteria().andOrderIdEqualTo(id).andProjectIdEqualTo(projectId);
+					customerProjectService.deleteByExample(cpexample);
 				}
 			}
 			return true;
@@ -151,9 +169,10 @@ public class CustomerServiceImpl implements CustomerService {
 			bean.setStatuss(statuss.split(","));
 		}
 		list = customerMapper.queryPagingList(bean);
-		if(list==null || list.size()<=0)list = new ArrayList<Map<String,Object>>(); 
+		if(list==null || list.size()<=0)list = new ArrayList<Map<String,Object>>();
+		Integer count = customerMapper.countByBean(bean);
 		result.put("rows",list);
-		result.put("total",list.size());
+		result.put("total",count);
 		return result;
 	}
 
@@ -202,11 +221,57 @@ public class CustomerServiceImpl implements CustomerService {
 				bean.setUpdateuser(user.getUsername());
 				customerMapper.updateByPrimaryKeySelective(bean);
 				logger.info("更改修改用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+",消费记录！");
+				TVipCustomerExample example = new TVipCustomerExample();
+				example.createCriteria().andCustomerPhoneEqualTo(bean.getPhonenumb());
+				List<TVipCustomer> list = vipCustomerSergice.selectByExample(example);
+				if(list.size()>0) {
+					TVipCustomer vip = list.get(0);
+					vip.setCompanyId(bean.getCompanyId());
+					vip.setCustomerName(bean.getCustomername());
+					vip.setCustomerPhone(bean.getPhonenumb());
+					vip.setSex(bean.getSex());
+					vip.setUpdateTime(DateUtil.getSysCurrentDate());
+					vip.setUpdateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
+					vip.setCreateTime(DateUtil.getSysCurrentDate());
+					vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
+					vipCustomerSergice.saveOrUpdate(vip);
+					if(StringUtils.isNotBlank(bean.getRemark())) {
+						TCustomerCommentExample ccexample = new TCustomerCommentExample();
+						ccexample.createCriteria().andVipIdEqualTo(vip.getId()).andRemarkEqualTo(bean.getRemark());
+						List<TCustomerComment> list3 = customerCommentService.selectByExample(ccexample);
+						if(list3.size()<=0) {
+							TCustomerComment cc = new TCustomerComment();
+							cc.setRemark(bean.getRemark());
+							cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
+							cc.setCreateTime(DateUtil.getSysCurrentDate());
+							cc.setVipId(vip.getId());
+							customerCommentService.saveOrUpdate(cc);
+						}
+					}
+				}
 			}else {
 				bean.setCreateuser(user.getUsername());
 				bean.setCreatetime(DateUtil.getSysCurrentDate());
 				customerMapper.insertSelective(bean);
 				logger.info("成功添加用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"消费记录！");
+				TVipCustomer vip = new TVipCustomer();
+				vip.setCompanyId(bean.getCompanyId());
+				vip.setCustomerName(bean.getCustomername());
+				vip.setCustomerPhone(bean.getPhonenumb());
+				vip.setSex(bean.getSex());
+				vip.setStatus(1);
+				vip.setEmail(bean.getCardId());
+				vip.setCreateTime(DateUtil.getSysCurrentDate());
+				vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
+				vipCustomerSergice.saveOrUpdate(vip);
+				if(StringUtils.isNotBlank(bean.getRemark())) {
+					TCustomerComment cc = new TCustomerComment();
+					cc.setRemark(bean.getRemark());
+					cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
+					cc.setCreateTime(DateUtil.getSysCurrentDate());
+					cc.setVipId(vip.getId());
+					customerCommentService.saveOrUpdate(cc);
+				}
 			}
 			if(type!=null) {
 				if(type<3 && bean.getStatus()==1) {//普通线下（移动）支付
@@ -226,6 +291,24 @@ public class CustomerServiceImpl implements CustomerService {
 					vipCustomerMapper.updateByPrimaryKeySelective(tVipCustomer);
 					customerConsumptonLogMapper.insertSelective(new TCustomerConsumptonLog(bean.getId(),bean.getCustomername(),bean.getPhonenumb(),bean.getSex(),new BigDecimal(totalAmount),ttamount.subtract(new BigDecimal(totalAmount)),type,user.getCompanyid(),user.getUsername()));
 					logger.info("用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"，生成支付记录！");
+				}
+				TVipCustomerExample vcexample = new TVipCustomerExample();
+				vcexample.createCriteria().andCustomerPhoneEqualTo(bean.getPhonenumb());
+				List<TVipCustomer> list = vipCustomerMapper.selectByExample(vcexample);
+				if(list.size()>0) {
+					TVipCustomer customer = list.get(0);
+					TLtnCustomerConsumptonAmountExample tccaexample = new TLtnCustomerConsumptonAmountExample();
+					tccaexample.createCriteria().andCustomerIdEqualTo(bean.getId());
+					List<TLtnCustomerConsumptonAmount> listssa = consumptonAmountService.selectByExample(tccaexample);
+					if(listssa.size()>0) {
+						for(TLtnCustomerConsumptonAmount cca : listssa) {
+							TProject tProject = projectService.selectByPrimaryKey((long)cca.getProjectId());
+							Integer deadline = tProject.getDeadline();
+							Date dl = null;
+							if(deadline!=null)dl = DateUtil.getDiyDateMonth(DateUtil.getSysCurrentDate(), deadline);
+							customerProjectService.saveOrUpdate(new TCustomerPorject(customer.getId(),bean.getId(),cca.getProjectId(),tProject.getProjectType(),tProject.getProjectNums(),tProject.getProjectNums(),dl,user.getUsername(),DateUtil.getSysCurrentDate()));
+						}
+					}
 				}
 			}
 			result.put("status", true);
@@ -307,6 +390,23 @@ public class CustomerServiceImpl implements CustomerService {
 			record.setId(bean.getId());
 			record.setStatus(1);
 			customerSubscribeMapper.updateByPrimaryKeySelective(record);
+			TVipCustomer vip = new TVipCustomer();
+			vip.setCompanyId(bean.getCompanyId());
+			vip.setCustomerName(bean.getCustomername());
+			vip.setCustomerPhone(bean.getPhonenumb());
+			vip.setSex(bean.getSex());
+			vip.setStatus(1);
+			vip.setCreateTime(DateUtil.getSysCurrentDate());
+			vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
+			vipCustomerSergice.saveOrUpdate(vip);
+			if(StringUtils.isNotBlank(bean.getRemark())) {
+				TCustomerComment cc = new TCustomerComment();
+				cc.setRemark(bean.getRemark());
+				cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
+				cc.setCreateTime(DateUtil.getSysCurrentDate());
+				cc.setVipId(vip.getId());
+				customerCommentService.saveOrUpdate(cc);
+			}
 			bean.setId(null);
 			bean.setUpdatetime(DateUtil.getSysCurrentDate());
 			bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());

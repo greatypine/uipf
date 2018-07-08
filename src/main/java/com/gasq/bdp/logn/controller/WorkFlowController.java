@@ -28,7 +28,7 @@ public class WorkFlowController {
     @Autowired
     TSysTimerWorkflowService workflowService;
     
-    @ApiOperation(value="分页查询列表更新字段的Key配置信息列表", notes="查询列表更新字段的Key配置信息列表（所以用户）")
+    @ApiOperation(value="分页查询列表更新字段的Key配置信息列表", notes="查询列表更新字段的Key配置信息列表")
     @ApiImplicitParam(name = "bean", value = "更新字段的Key实体对象TSysSqlUpdateColumns", required = false, dataType = "TSysSqlUpdateColumns")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/queryTree",method=RequestMethod.POST)
@@ -39,7 +39,7 @@ public class WorkFlowController {
     	return trees;
 	 }
     
-    @ApiOperation(value="分页查询列表更新字段的Key配置信息列表", notes="查询列表更新字段的Key配置信息列表（所以用户）")
+    @ApiOperation(value="分页查询列表更新字段的Key配置信息列表", notes="查询列表更新字段的Key配置信息列表")
     @ApiImplicitParam(name = "bean", value = "更新字段的Key实体对象TSysSqlUpdateColumns", required = false, dataType = "TSysSqlUpdateColumns")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
@@ -67,7 +67,7 @@ public class WorkFlowController {
     	return b;
 	 }
 	
-	@ApiOperation(value="分页查询列表更新字段的Key配置信息列表", notes="查询列表更新字段的Key配置信息列表（所以用户）")
+	@ApiOperation(value="分页查询列表更新字段的Key配置信息列表", notes="查询列表更新字段的Key配置信息列表")
     @ApiImplicitParam(name = "bean", value = "更新字段的Key实体对象TSysSqlUpdateColumns", required = false, dataType = "TSysSqlUpdateColumns")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/getWorkflowJobList",method=RequestMethod.POST)
@@ -76,7 +76,7 @@ public class WorkFlowController {
     	return result;
 	 }
 	
-	@ApiOperation(value="分页查询列表更新字段的Key配置信息列表", notes="查询列表更新字段的Key配置信息列表（所以用户）")
+	@ApiOperation(value="分页查询列表更新字段的Key配置信息列表", notes="查询列表更新字段的Key配置信息列表")
     @ApiImplicitParam(name = "bean", value = "更新字段的Key实体对象TSysSqlUpdateColumns", required = false, dataType = "TSysSqlUpdateColumns")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/getWorkflowJobType",method=RequestMethod.GET)
@@ -85,7 +85,7 @@ public class WorkFlowController {
     	return result;
 	 }
 	
-	@ApiOperation(value="分页查询列表更新字段的Key配置信息列表", notes="查询列表更新字段的Key配置信息列表（所以用户）")
+	@ApiOperation(value="分页查询列表更新字段的Key配置信息列表", notes="查询列表更新字段的Key配置信息列表")
     @ApiImplicitParam(name = "bean", value = "更新字段的Key实体对象TSysSqlUpdateColumns", required = false, dataType = "TSysSqlUpdateColumns")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/queryWorkflowViewList",method=RequestMethod.POST)

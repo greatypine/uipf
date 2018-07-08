@@ -34,4 +34,6 @@ public interface TLtnCustomerConsumptonAmountMapper {
     int updateByPrimaryKey(TLtnCustomerConsumptonAmount record);
 
 	List<Map<String, Object>> queryPagingList(@Param("record") TLtnCustomerConsumptonAmount bean);
+
+	Integer countByBean(@Param("record") TLtnCustomerConsumptonAmount bean);
 }

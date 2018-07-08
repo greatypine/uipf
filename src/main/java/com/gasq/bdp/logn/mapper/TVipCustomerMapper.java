@@ -39,4 +39,6 @@ public interface TVipCustomerMapper {
 	List<Map<String, Object>> queryMapGridList(@Param("record") TVipCustomer bean);
 
 	List<Map<String, Object>> queryMapGridChildren(@Param("record") TLtnCustomerConsumptonAmount tca);
+
+	Integer countByBean(@Param("record") TVipCustomer bean);
 }

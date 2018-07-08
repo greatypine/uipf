@@ -44,7 +44,7 @@ public class CustomerConsumptonAmountController {
     //错误信
     Map<String,Object> paramMap = new HashMap<String,Object>();
     
-    @ApiOperation(value="查询列表用户消费金额信息列表", notes="查询列表用户消费金额信息列表（所以用户）")
+    @ApiOperation(value="查询列表用户消费金额信息列表", notes="查询列表用户消费金额信息列表")
     @ApiImplicitParam(name = "bean", value = "sql实体对象TLtnCustomer", required = false, dataType = "TLtnCustomer")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
 	@RequestMapping(value = "/queryCustomerList",method=RequestMethod.POST)
@@ -57,7 +57,7 @@ public class CustomerConsumptonAmountController {
     	return null;
 	 }
     
-    @ApiOperation(value="查询列表用户消费金额信息列表", notes="查询列表用户消费金额信息列表（所以用户）")
+    @ApiOperation(value="查询列表用户消费金额信息列表", notes="查询列表用户消费金额信息列表")
     @ApiImplicitParam(name = "bean", value = "sql实体对象TLtnCustomerConsumptonAmount", required = false, dataType = "TLtnCustomerConsumptonAmount")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
 	@RequestMapping(value = "/queryCustomerAmountList",method=RequestMethod.POST)
@@ -139,7 +139,7 @@ public class CustomerConsumptonAmountController {
 	/**
 	 * return total_amount/one_total_amount
 	 */
-    @ApiOperation(value="查询列表用户消费金额信息列表", notes="查询列表用户消费金额信息列表（所以用户）")
+    @ApiOperation(value="查询列表用户消费金额信息列表", notes="查询列表用户消费金额信息列表")
     @ApiImplicitParam(name = "bean", value = "sql实体对象queryAmountSum", required = false, dataType = "queryAmountSum")
 //    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/queryAmountSum",method=RequestMethod.POST)

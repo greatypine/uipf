@@ -34,4 +34,6 @@ public interface TConsumptonProjectMapper {
     int updateByPrimaryKey(TConsumptonProject record);
 
 	List<Map<String, Object>> queryPagingList(Map<String, Object> params);
+
+	Integer countByBean(Map<String, Object> params);
 }

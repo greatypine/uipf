@@ -11,6 +11,9 @@ function initData(){
 	$(".companylist").combobox({
 		url:content+'/company/queryMapBeanList'
 	});
+	$(".projectType").combobox({
+		url:content+'/common/getView?viewname=v_project_type&id='+user.user.companyid
+	});
 }
 function MyProject(){
 	this.initCompant = function(){

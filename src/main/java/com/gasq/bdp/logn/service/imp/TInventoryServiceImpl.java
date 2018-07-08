@@ -136,8 +136,9 @@ public class TInventoryServiceImpl implements TInventoryService {
 		}
 		list = inventoryMapper.queryPagingList(params);
 		if(list==null) list = new ArrayList<Map<String,Object>>(); 
+		Integer count = inventoryMapper.countByBean(params);
 		result.put("rows",list);
-		result.put("total",countByExample(bean));
+		result.put("total",count);
 		return result;
 	}
 

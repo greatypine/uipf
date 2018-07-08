@@ -123,5 +123,10 @@ public class InitProperties{
 	public static final Integer SUBSCRIBE_OPTION_TYPE_CLOSE = 3;
 	public static final Integer SUBSCRIBE_OPTION_TYPE_RECEPTION = 4;
 	public static final Integer SUBSCRIBE_OPTION_TYPE_INFORM = 5;
+	/**
+	 * 客户项目类型
+	 */
+	public static final Integer CUSTOMER_PROJECT_OPTION_TYPE_ADD = 1;
+	public static final Integer CUSTOMER_PROJECT_OPTION_TYPE_SUBTRACT = 2;
 	
 }

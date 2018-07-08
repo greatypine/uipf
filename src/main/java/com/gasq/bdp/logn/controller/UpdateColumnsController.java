@@ -30,7 +30,7 @@ public class UpdateColumnsController {
     Map<String,Object> paramMap = new HashMap<String,Object>();
     
     
-    @ApiOperation(value="分页查询列表更新字段配置信息列表", notes="查询列表更新字段配置信息列表（所以用户）")
+    @ApiOperation(value="分页查询列表更新字段配置信息列表", notes="查询列表更新字段配置信息列表")
     @ApiImplicitParam(name = "bean", value = "更新字段实体对象TSysSqlUpdateColumns", required = false, dataType = "TSysSqlUpdateColumns")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/queryPagingList",method=RequestMethod.POST)
@@ -43,7 +43,7 @@ public class UpdateColumnsController {
     	return null;
 	 }
     
-    @ApiOperation(value="查询列表更新字段配置信息列表", notes="查询列表更新字段配置信息列表（所以用户）")
+    @ApiOperation(value="查询列表更新字段配置信息列表", notes="查询列表更新字段配置信息列表")
     @ApiImplicitParam(name = "bean", value = "更新字段实体对象TSysSqlUpdateColumns", required = false, dataType = "TSysSqlUpdateColumns")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)

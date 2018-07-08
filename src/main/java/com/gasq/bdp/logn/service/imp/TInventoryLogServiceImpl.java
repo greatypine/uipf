@@ -90,8 +90,9 @@ public class TInventoryLogServiceImpl implements TInventoryLogService {
 		params.put("pageSize", number);
 		list = TInventoryLogMapper.queryPagingList(params);
 		if(list==null) list = new ArrayList<Map<String,Object>>(); 
+		Integer count = TInventoryLogMapper.countByBean(params);
 		result.put("rows",list);
-		result.put("total",countByExample(bean));
+		result.put("total",count);
 		return result;
 	}
 

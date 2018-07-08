@@ -323,4 +323,23 @@
 		limit #{index},#{pageSize}
 	</if>
 </select>
+<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select  count(*) from(
+		SELECT
+			til.id,DATE_FORMAT(til.create_time,'%Y-%m-%d %H:%i:%s')as createTime,ti.`code`,ti.`name`,vipt.text as optionName,til.option_type as optionType,tsu.nickname as createUser,
+			til.customername,DATE_FORMAT(til.orderFinishTime,'%Y-%m-%d %H:%i:%s') as orderFinishTime,til.totalAmount,til.numbs
+		FROM
+			t_inventory_log til
+		LEFT JOIN t_inventory ti ON til.product_id = ti.id
+		LEFT JOIN v_inventory_option_type vipt ON til.option_type = vipt.`value`
+		LEFT JOIN t_sys_user tsu on til.create_user=tsu.username
+		where 1=1  
+		<if test="companyid !=null">
+			and til.companyid=#{companyid}
+		</if>
+		<if test="createTime !=null">
+			and til.create_time &gt;= #{createTime}
+		</if>
+	) temp
+</select>
 </mapper>

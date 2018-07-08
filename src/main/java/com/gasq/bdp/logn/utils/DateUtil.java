@@ -595,9 +595,21 @@ public class DateUtil {
 	 */
 	@SuppressWarnings("static-access")
 	public static Date getDiyDateTime(Date date,int difdate) {
-		Calendar calendar = new GregorianCalendar();  
-		calendar.setTime(date);  
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
 		calendar.add(calendar.DATE,difdate);//把日期往后增加一天.整数往后推,负数往前移动  
+		return calendar.getTime();
+	}
+	/**
+	 * 计算自传入日期之后或者之前的日期
+	 * @param date 根据日期
+	 * @param difMonth 天数 整数位之后 负数位之前
+	 */
+	@SuppressWarnings("static-access")
+	public static Date getDiyDateMonth(Date date,int difMonth) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		calendar.add(calendar.MONTH,difMonth); 
 		return calendar.getTime();
 	}
 	/**
@@ -608,12 +620,12 @@ public class DateUtil {
 	@SuppressWarnings("static-access")
 	public static String getDiyStrDateTime(int difdate) {
 		Date date=new Date();//取时间  
-		Calendar calendar = new GregorianCalendar();  
-		calendar.setTime(date);  
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
 		calendar.add(calendar.DATE,difdate);//把日期往后增加一天.整数往后推,负数往前移动  
 		date=calendar.getTime(); //这个时间就是日期往后推一天的结果   
 		SimpleDateFormat formatter = new SimpleDateFormat(DATE_DEFAULT_FORMAT);  
-		String dateString = formatter.format(date);  
+		String dateString = formatter.format(date);
 		return dateString;
 	}
 	/**

@@ -3,7 +3,19 @@ package com.gasq.bdp.logn.model;
 import java.util.Date;
 
 public class TCustomerProjectLog extends ParamsObject{
-    /**
+    public TCustomerProjectLog() {
+		super();
+	}
+
+	public TCustomerProjectLog(Integer cpId, Integer type, String createUser, Date createTime) {
+		super();
+		this.cpId = cpId;
+		this.type = type;
+		this.createUser = createUser;
+		this.createTime = createTime;
+	}
+
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;

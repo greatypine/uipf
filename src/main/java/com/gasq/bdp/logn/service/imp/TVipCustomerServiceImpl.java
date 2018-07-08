@@ -103,8 +103,9 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 		}
 		list = mapper.queryPagingList(bean);
 		if(list==null || list.size()<=0)list = new ArrayList<Map<String,Object>>(); 
+		Integer count = mapper.countByBean(bean);
 		result.put("rows",list);
-		result.put("total",list.size());
+		result.put("total",count);
 		return result;
 	}
 

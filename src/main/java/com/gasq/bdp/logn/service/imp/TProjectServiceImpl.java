@@ -127,8 +127,9 @@ public class TProjectServiceImpl implements TSysProjectService {
 		}
 		list = projectMapper.queryPagingList(params);
 		if(list==null) list = new ArrayList<Map<String,Object>>(); 
+		Integer count = projectMapper.countByBean(params);
 		result.put("rows",list);
-		result.put("total",countByExample(bean));
+		result.put("total",count);
 		return result;
 	}
 

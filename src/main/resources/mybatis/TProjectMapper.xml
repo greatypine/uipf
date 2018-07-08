@@ -7,7 +7,9 @@
     <result column="money" jdbcType="DECIMAL" property="money" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="discount" jdbcType="DOUBLE" property="discount" />
+    <result column="project_type" jdbcType="INTEGER" property="projectType" />
     <result column="project_nums" jdbcType="INTEGER" property="projectNums" />
+    <result column="deadline" jdbcType="INTEGER" property="deadline" />
     <result column="company_id" jdbcType="INTEGER" property="companyId" />
     <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -75,8 +77,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, project_name, money, status, discount, project_nums, company_id, image_url, remark, 
-    createTime, updateTime, createUser, updateUser
+    id, project_name, money, status, discount, project_type, project_nums, deadline, 
+    company_id, image_url, remark, createTime, updateTime, createUser, updateUser
   </sql>
   <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TProjectExample" resultMap="BaseResultMap">
     select
@@ -110,15 +112,17 @@
   </delete>
   <insert id="insert" parameterType="com.gasq.bdp.logn.model.TProject">
     insert into t_project (id, project_name, money, 
-      status, discount, project_nums, 
-      company_id, image_url, remark, 
-      createTime, updateTime, createUser, 
-      updateUser)
+      status, discount, project_type, 
+      project_nums, deadline, company_id, 
+      image_url, remark, createTime, 
+      updateTime, createUser, updateUser
+      )
     values (#{id,jdbcType=BIGINT}, #{projectName,jdbcType=VARCHAR}, #{money,jdbcType=DECIMAL}, 
-      #{status,jdbcType=BIT}, #{discount,jdbcType=DOUBLE}, #{projectNums,jdbcType=INTEGER}, 
-      #{companyId,jdbcType=INTEGER}, #{imageUrl,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
-      #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}, #{createuser,jdbcType=VARCHAR}, 
-      #{updateuser,jdbcType=VARCHAR})
+      #{status,jdbcType=BIT}, #{discount,jdbcType=DOUBLE}, #{projectType,jdbcType=INTEGER}, 
+      #{projectNums,jdbcType=INTEGER}, #{deadline,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, 
+      #{imageUrl,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{createuser,jdbcType=VARCHAR}, #{updateuser,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.gasq.bdp.logn.model.TProject">
     insert into t_project
@@ -138,8 +142,14 @@
       <if test="discount != null">
         discount,
       </if>
+      <if test="projectType != null">
+        project_type,
+      </if>
       <if test="projectNums != null">
         project_nums,
+      </if>
+      <if test="deadline != null">
+        deadline,
       </if>
       <if test="companyId != null">
         company_id,
@@ -179,8 +189,14 @@
       <if test="discount != null">
         #{discount,jdbcType=DOUBLE},
       </if>
+      <if test="projectType != null">
+        #{projectType,jdbcType=INTEGER},
+      </if>
       <if test="projectNums != null">
         #{projectNums,jdbcType=INTEGER},
+      </if>
+      <if test="deadline != null">
+        #{deadline,jdbcType=INTEGER},
       </if>
       <if test="companyId != null">
         #{companyId,jdbcType=INTEGER},
@@ -229,8 +245,14 @@
       <if test="record.discount != null">
         discount = #{record.discount,jdbcType=DOUBLE},
       </if>
+      <if test="record.projectType != null">
+        project_type = #{record.projectType,jdbcType=INTEGER},
+      </if>
       <if test="record.projectNums != null">
         project_nums = #{record.projectNums,jdbcType=INTEGER},
+      </if>
+      <if test="record.deadline != null">
+        deadline = #{record.deadline,jdbcType=INTEGER},
       </if>
       <if test="record.companyId != null">
         company_id = #{record.companyId,jdbcType=INTEGER},
@@ -265,7 +287,9 @@
       money = #{record.money,jdbcType=DECIMAL},
       status = #{record.status,jdbcType=BIT},
       discount = #{record.discount,jdbcType=DOUBLE},
+      project_type = #{record.projectType,jdbcType=INTEGER},
       project_nums = #{record.projectNums,jdbcType=INTEGER},
+      deadline = #{record.deadline,jdbcType=INTEGER},
       company_id = #{record.companyId,jdbcType=INTEGER},
       image_url = #{record.imageUrl,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
@@ -292,8 +316,14 @@
       <if test="discount != null">
         discount = #{discount,jdbcType=DOUBLE},
       </if>
+      <if test="projectType != null">
+        project_type = #{projectType,jdbcType=INTEGER},
+      </if>
       <if test="projectNums != null">
         project_nums = #{projectNums,jdbcType=INTEGER},
+      </if>
+      <if test="deadline != null">
+        deadline = #{deadline,jdbcType=INTEGER},
       </if>
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=INTEGER},
@@ -325,7 +355,9 @@
       money = #{money,jdbcType=DECIMAL},
       status = #{status,jdbcType=BIT},
       discount = #{discount,jdbcType=DOUBLE},
+      project_type = #{projectType,jdbcType=INTEGER},
       project_nums = #{projectNums,jdbcType=INTEGER},
+      deadline = #{deadline,jdbcType=INTEGER},
       company_id = #{companyId,jdbcType=INTEGER},
       image_url = #{imageUrl,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
@@ -349,12 +381,13 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
+    <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
 	SELECT
-		p.id,p.company_id as companyId,p.project_nums as projectNums,p.discount,p.money,p.image_url imageUrl,p.project_name projectName,p.remark,p.`status`,p.createuser,tc.`name` as companyName,p.createtime
+		p.id,p.company_id as companyId,p.project_nums as projectNums,p.discount,p.money,p.image_url imageUrl,p.project_name projectName,p.remark,p.`status`,p.createuser,tc.`name` as companyName,p.createtime,p.project_type as projectType,vpt.`name` as projectTypeName,p.deadline
 	FROM
 		`t_project` p
 	LEFT JOIN t_company tc on p.company_id=tc.id
+	LEFT JOIN v_project_type vpt on p.project_type=vpt.`value` and p.company_id=vpt.companyid
 	where 1=1 
 	<if test="projectname !=null and projectname!=''">
 		and p.project_name like concat('%',#{projectname},'%')
@@ -375,5 +408,31 @@
 	<if test="index !=null and pageSize!=null">
 		limit #{index},#{pageSize}
 	</if>
+</select>
+<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select count(*) from(
+		SELECT
+			p.id,p.company_id as companyId,p.project_nums as projectNums,p.discount,p.money,p.image_url imageUrl,p.project_name projectName,p.remark,p.`status`,p.createuser,tc.`name` as companyName,p.createtime,p.project_type as projectType,vpt.`name` as projectTypeName,p.deadline
+		FROM
+			`t_project` p
+		LEFT JOIN t_company tc on p.company_id=tc.id
+		LEFT JOIN v_project_type vpt on p.project_type=vpt.`value` and p.company_id=vpt.companyid
+		where 1=1 
+		<if test="projectname !=null and projectname!=''">
+			and p.project_name like concat('%',#{projectname},'%')
+		</if>
+		<if test="status !=null">
+			and p.status=#{status}
+		</if>
+		<if test="discount !=null">
+			and p.discount=#{discount}
+		</if>
+		<if test="companyid !=null">
+			and p.company_id=#{companyid}
+		</if>
+		<if test="remark !=null">
+			and p.remark like concat('%',#{remark},'%')
+		</if>
+	) temp
 </select>
 </mapper>

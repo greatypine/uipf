@@ -373,5 +373,26 @@
 		limit #{index},#{pageSize}
 	</if>
 </select>
-  
+ <select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select count(*) from (
+		SELECT
+			p.id,p.companyid,p.`code`,p.`name`,p.factory,p.inventory,p.price,p.`status`,p.units,p.createuser,p.createtime,tc.`name` as companyName,p.updatetime,p.updateuser
+		FROM
+			`t_inventory` p
+		LEFT JOIN t_company tc on p.companyid=tc.id
+		where 1=1  
+		<if test="name !=null and name!=''">
+			and p.name like concat('%',#{name},'%')
+		</if>
+		<if test="factory !=null and factory!=''">
+			and p.factory like concat('%',#{factory},'%')
+		</if>
+		<if test="status !=null">
+			and p.status=#{status}
+		</if>
+		<if test="companyid !=null">
+			and p.companyid=#{companyid}
+		</if>
+	) temp
+</select>
 </mapper>

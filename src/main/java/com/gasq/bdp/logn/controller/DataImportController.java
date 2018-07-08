@@ -34,7 +34,7 @@ public class DataImportController {
     //错误信息
     Map<String,Object> paramMap = new HashMap<String,Object>();
     
-    @ApiOperation(value="根据导入配置对象查询配置列表", notes="根据导入配置对象查询配置列表（所以用户）")
+    @ApiOperation(value="根据导入配置对象查询配置列表", notes="根据导入配置对象查询配置列表")
     @ApiImplicitParam(name = "bean", value = "导入实体对象TSysTimerJobDataImport", required = false, dataType = "TSysTimerJobDataImport")
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)

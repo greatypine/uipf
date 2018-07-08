@@ -3,6 +3,8 @@ package com.gasq.bdp.logn.mapper;
 import com.gasq.bdp.logn.model.TCustomerComment;
 import com.gasq.bdp.logn.model.TCustomerCommentExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
@@ -30,4 +32,8 @@ public interface TCustomerCommentMapper {
     int updateByPrimaryKeySelective(TCustomerComment record);
 
     int updateByPrimaryKey(TCustomerComment record);
+
+	List<Map<String, Object>> queryPagingList(Map<String, Object> params);
+
+	Integer countByBean(Map<String, Object> params);
 }

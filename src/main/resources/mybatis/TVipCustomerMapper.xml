@@ -594,4 +594,86 @@
 		GROUP BY a.id,p.id,tlc.id,tlc.create_time,tvc.id
 		order by a.updateTime desc 
  </select>
+ 
+ <select id="countByBean" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.lang.Integer">
+ 		SELECT count(*) from (
+	 		SELECT
+				a.id,
+				a.company_id as companyId,
+				u.nickname as createUser,
+				DATE_FORMAT(a.brithday,'%Y-%m-%d') as brithday,
+				a.email,
+				a.province_id as provinceId,
+				a.city_id as cityId,
+				a.county_id as countyId,
+				a.address,
+				a.customer_name as customerName,
+				a.customer_phone as customerPhone,
+				a.sex,
+				vs.text as sexName,
+				a.`status`,
+				vvcs.`name` as statusName,
+				vvct.`name` as typeName,
+				DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%S')as createTime,
+				a.give_amount as giveAmount,
+				a.actual_amount as actualAmount,
+				a.update_user as updateUser,
+				DATE_FORMAT(a.update_time,'%Y-%m-%d %H:%i:%S')as updateTime,
+				tp.`name` as provinceName,
+				tc.name as cityName,
+				tcy.name as countyName,
+				concat(ifnull(tp.`name`,''),ifnull(tc.`name`,''),ifnull(tcy.`name`,''),ifnull(a.address,''))as alladdress
+			from t_vip_customer a 
+			LEFT JOIN t_sys_user u on a.create_user=u.username
+			<if test="record.companyId !=null">
+			 and u.companyid=#{record.companyId}
+			</if>
+			left join t_company c on a.company_id = c.id
+			left join v_sex vs on a.sex=vs.value
+			<if test="record.companyId !=null">
+			 and vs.companyid=#{record.companyId}
+			</if>
+			LEFT JOIN v_vip_customer_status vvcs on a.`status` = vvcs.`value`
+			<if test="record.companyId !=null">
+			 and vvcs.companyid=#{record.companyId}
+			</if>
+			LEFT JOIN v_vip_customer_type vvct on a.type = vvct.`value`
+			<if test="record.companyId !=null">
+			 and vvct.companyid=#{record.companyId}
+			</if>
+			LEFT JOIN t_province tp on a.province_id=tp.id
+			LEFT JOIN t_city tc on a.city_id = tc.id
+			LEFT JOIN t_county tcy on a.county_id = tcy.id
+			where 1=1 
+	 		<if test="record.companyId &gt; 0 and record.companyId!=null">
+				and a.company_id=#{record.companyId}
+	 		</if>
+	 		<if test="record.customerPhone !='' and record.customerPhone!=null">
+				and a.customer_phone like concat(#{record.customerPhone},'%')
+	 		</if>
+	 		<if test="record.customerName !='' and record.customerName!=null">
+				and a.customer_name like concat(#{record.customerName},'%')
+	 		</if>
+	 		<if test="record.statuss!=null">
+				and a.status in
+				<foreach item="item" index="index" collection="record.statuss" 
+	                         open="(" separator="," close=")">
+	                        #{item}
+	            </foreach>
+	 		</if>
+	 		<if test="record.type!=null">
+				and a.type = #{record.type}
+	 		</if>
+	 		<if test="record.id!=null">
+				and a.id = #{record.id}
+	 		</if>
+	 		<if test="record.createTime!=null">
+				and a.create_time &gt;= #{record.createTime}
+	 		</if>
+	 		<if test="record.endtime!=null">
+				and a.create_time &lt;= #{record.createTime}
+	 		</if>
+	 		GROUP BY a.id,a.`status`,u.nickname,vs.text,vvcs.`name`,vvct.name
+		) temp 
+ </select>
 </mapper>
