@@ -250,7 +250,6 @@ function CustomerConsumptonAmount(){
 			        	ccac.customerId = row.customerId;
 			        },
 			        onLoadSuccess:function(){
-//			        	$(".logslinkbtn").linkbutton();
 			        	setTimeout(function(){
 			                $('#ccac_table').datagrid('fixDetailRowHeight',index); 
 			            },0); 
