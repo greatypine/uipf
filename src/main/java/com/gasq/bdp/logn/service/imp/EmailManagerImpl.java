@@ -11,6 +11,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
 import com.gasq.bdp.logn.service.EmailManager;
 
 @Service
@@ -112,20 +113,20 @@ public class EmailManagerImpl implements EmailManager{
 	     * @param dataModel      数据
 	     * @throws Exception
 	     */
-	   /* public void sendTemplateMail(String fromEmailName,String toEmailName,String subject,Map<String, Object> dataModel) throws Exception {
-	        MimeMessage mimeMessage = mailSender.createMimeMessage();
-	        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-	        helper.setFrom(fromEmailName);
-	        helper.setTo(toEmailName);
-	        helper.setSubject(subject);
-	        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "template.vm", "UTF-8", dataModel);
-	        helper.setText(text, true);
-	        mailSender.send(mimeMessage);
-	    }*/
+//	   public void sendTemplateMail(String fromEmailName,String toEmailName,String subject,Map<String, Object> dataModel) throws Exception {
+//	        MimeMessage mimeMessage = mailSender.createMimeMessage();
+//	        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+//	        helper.setFrom(fromEmailName);
+//	        helper.setTo(toEmailName);
+//	        helper.setSubject(subject);
+//	        String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "template.vm", "UTF-8", dataModel);
+//	        helper.setText(text, true);
+//	        mailSender.send(mimeMessage);
+//	    }
 	    
 //	    public static void main(String[] args) {
-			//邮件代理类调用邮件发送方法 并记录发送日志
-//			EmailManager proxy = new EmailProxy<EmailManager>(email).getProxy();
-//			proxy.sendSimpleEmail("princejwg.happy@163.com", "328335115@qq.com", "测试邮件", "测试普通邮件！");
+////			邮件代理类调用邮件发送方法 并记录发送日志
+////			EmailManager proxy = new EmailProxy<EmailManager>(email).getProxy();
+////			proxy.sendSimpleEmail("princejwg.happy@163.com", "328335115@qq.com", "测试邮件", "测试普通邮件！");
 //		}
 }

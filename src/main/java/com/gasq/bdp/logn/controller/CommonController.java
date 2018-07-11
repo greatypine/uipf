@@ -123,9 +123,9 @@ public class CommonController {
     
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
     @RequestMapping(value = "/queryEmployeeTreatOrderDataDetail",method=RequestMethod.POST)
-	public Map<String, Object> queryEmployeeTreatOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime) {
+	public Map<String, Object> queryEmployeeTreatOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
 		try {
-			return commonService.queryEmployeeTreatOrderDataDetail(type,companyid,datetype,starttime,endtime);
+			return commonService.queryEmployeeTreatOrderDataDetail(type,companyid,datetype,starttime,endtime,page,rows);
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -144,9 +144,9 @@ public class CommonController {
 	 }
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test },logical=Logical.OR)
     @RequestMapping(value = "/queryBackEmployeeOrderDataDetail",method=RequestMethod.POST)
-	public Map<String, Object> queryBackEmployeeOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime) {
+	public Map<String, Object> queryBackEmployeeOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
 		try {
-			return commonService.queryBackEmployeeOrderDataDetail(type,companyid,datetype,starttime,endtime);
+			return commonService.queryBackEmployeeOrderDataDetail(type,companyid,datetype,starttime,endtime,page,rows);
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -154,9 +154,9 @@ public class CommonController {
 	 }
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.QUERY },logical=Logical.OR)
     @RequestMapping(value = "/queryCountInventory",method=RequestMethod.POST)
-	public Map<String, Object> queryCountInventory(Integer companyid,String datetype,Integer year,Integer month) {
+	public Map<String, Object> queryCountInventory(Integer companyid,String datetype,Integer year,Integer month,Integer page,Integer rows) {
 		try {
-			return commonService.queryCountInventory(companyid,datetype,year,month);
+			return commonService.queryCountInventory(companyid,datetype,year,month,page,rows);
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}

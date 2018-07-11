@@ -56,4 +56,10 @@ public interface TCompanyMapper {
 	List<Map<String, Object>> queryCountInventory(Map<String, Object> map);
 
 	List<Map<String, Object>> queryCountInventoryPie(Map<String, Object> map);
+
+	Integer countByBean(Map<String, Object> map);
+
+	Integer countConsumptionReportByBean(Map<String, Object> map);
+
+	Integer countSubscribeReportByBean(Map<String, Object> map);
 }

@@ -4,6 +4,7 @@
 package com.gasq.bdp.logn.service.imp;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,72 @@ public class TCustomerProjectServiceImpl implements TCustomerProjectService{
 	@Override
 	public int deleteByExample(TCustomerPorjectExample example) {
 		return customerProjectMapper.deleteByExample(example);
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> swipingCardCommit(Integer id) {
+		Map<String, Object> result= new  HashMap<String, Object>();
+		try {
+			TSysUser user = SystemUserInfo.getSystemUser().getUser();
+			TCustomerPorject customerPorject = customerProjectMapper.selectByPrimaryKey(id);
+			if(customerPorject!=null) {
+				Integer type = customerPorject.getProjectType();
+				if(type==1) {//次数卡
+					if(customerPorject.getProjectNums()<=0) {
+						result.put("status", false);
+						result.put("mess", "套餐次数已经用完！");
+					}else {
+						result.put("status", true);
+						customerPorject.setUpdateTime(DateUtil.getSysCurrentDate());
+						customerPorject.setUpdateUser(user.getUsername());
+						customerPorject.setProjectNums(customerPorject.getProjectNums()-1);
+						customerProjectMapper.updateByPrimaryKeySelective(customerPorject);
+						customerProjectLogMapper.insertSelective(new TCustomerProjectLog(customerPorject.getId(),InitProperties.CUSTOMER_PROJECT_OPTION_TYPE_SUBTRACT,user.getNickname(),DateUtil.getSysCurrentDate()));
+					}
+				}else {//时间卡
+					Date deadline = customerPorject.getDeadline();
+					if(deadline.after(DateUtil.getSysCurrentDate())){//结束时间小于当前时间 -- 可用
+						result.put("status", true);
+						customerPorject.setUpdateTime(DateUtil.getSysCurrentDate());
+						customerPorject.setUpdateUser(user.getUsername());
+						customerProjectMapper.updateByPrimaryKeySelective(customerPorject);
+						customerProjectLogMapper.insertSelective(new TCustomerProjectLog(customerPorject.getId(),InitProperties.CUSTOMER_PROJECT_OPTION_TYPE_SUBTRACT,user.getNickname(),DateUtil.getSysCurrentDate()));
+					}else {
+						result.put("status", false);
+						result.put("mess", "套餐有效期已过！");
+					}
+				}
+			}else {
+				result.put("status", false);
+				result.put("mess", "会员用户信息获取失败！");
+			}
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> queryCustomerProjectLogs(TCustomerProjectLog bean) {
+		Map<String, Object> result= new  HashMap<String, Object>();
+		List<Map<String, Object>> list = null;
+		int start = 0;
+		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
+		int number = (bean.getRows()==0) ? 10 : bean.getRows();
+		start = (intPage - 1) * number;
+		Map<String, Object> params= new  HashMap<String, Object>();
+		params.put("index", start);
+		params.put("pageSize", number);
+		if(bean.getCpId()!=null) {
+			params.put("cpid", bean.getCpId());
+		}
+		list = customerProjectLogMapper.queryPagingList(params);
+		if(list==null) list = new ArrayList<Map<String,Object>>(); 
+		Integer count = customerProjectLogMapper.countByBean(params);
+		result.put("rows",list);
+		result.put("total",count);
+		return result;
 	}
 
 }

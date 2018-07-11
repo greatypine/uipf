@@ -438,6 +438,9 @@
 		GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d'),a.counsoler,tsu.nickname
 	</if>
 	order by datetime asc,total_amont desc
+	<if test="index !=null and pageSize!=null">
+		limit #{index},#{pageSize}
+	</if>
   </select>
   
    <select id="countSubscribeReport" parameterType="java.util.Map" resultType="java.util.Map">
@@ -548,6 +551,65 @@
 		GROUP BY DATE_FORMAT(til.create_time, '%Y%m'),ti.id,ti.companyid
 	</if>
 	ORDER BY datetime asc,currentInventoryNumbs desc,companyName
+	<if test="index !=null and pageSize!=null">
+		limit #{index},#{pageSize}
+	</if>
+  </select>
+  
+  <select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+  		select count(*) from(
+  			SELECT
+			  	<if test="datetype!=null and datetype!=''">
+					<if test="datetype==1">
+						DATE_FORMAT(til.create_time, '%Y') datetime,
+					</if>
+					<if test="datetype==2">
+						DATE_FORMAT(til.create_time, '%Y%m') datetime,
+					</if>
+				</if>
+				<if test="datetype==null or datetype==''">
+					DATE_FORMAT(til.create_time, '%Y%m') datetime,
+				</if>
+					tc.`name` as companyName,
+					ti.`name` productName,
+					ti.inventory currentInventoryNumbs,
+					ti.units,
+					ti.inventory*ti.price currentInventoryMonery,
+					sum(if(til.option_type=4,ifnull(til.numbs,0),0))* ti.price addInventoryMonery,
+					sum(if(til.option_type=5,ifnull(til.numbs,0),0))* ti.price removeInventoryMonery,
+					sum(if(til.option_type=6,ifnull(til.numbs,0),0))* ti.price useInventoryMonery,
+					sum(if(til.option_type=7,ifnull(til.numbs,0),0))* ti.price backInventoryMonery,
+					sum(if(til.option_type=4,ifnull(til.numbs,0),0)) addNumbs,
+					sum(if(til.option_type=5,ifnull(til.numbs,0),0)) removeNumbs,
+					sum(if(til.option_type=6,ifnull(til.numbs,0),0)) orderUseNumbs,
+					sum(if(til.option_type=7,ifnull(til.numbs,0),0)) orderBackNumbs
+				FROM
+					t_inventory ti
+				LEFT JOIN t_inventory_log til ON ti.id = til.product_id
+				LEFT JOIN t_company tc on ti.companyid=tc.id
+				where 1 = 1 and til.product_id is not null
+				<if test="year!=null and month!=null">
+					and DATE_FORMAT(til.create_time, '%Y%m') = concat(#{year},#{month})
+				</if>
+				<if test="month==null and year!=null">
+					and DATE_FORMAT(til.create_time, '%Y') = #{year}
+				</if>
+				<if test="companyid!=null">
+					and ti.companyid = #{companyid}
+				</if>
+				<if test="datetype!=null and datetype!=''">
+					<if test="datetype==1">
+						GROUP BY DATE_FORMAT(til.create_time, '%Y'),ti.id,ti.companyid
+					</if>
+					<if test="datetype==2">
+						GROUP BY DATE_FORMAT(til.create_time, '%Y%m'),ti.id,ti.companyid
+					</if>
+				</if>
+				<if test="datetype==null or datetype==''">
+					GROUP BY DATE_FORMAT(til.create_time, '%Y%m'),ti.id,ti.companyid
+				</if>
+  		) temp
+  		
   </select>
   
   <select id="queryCountInventoryPie" parameterType="java.util.Map" resultType="java.util.Map">
@@ -631,5 +693,120 @@
 		) temp1 where temp1.rownum1>10
 	GROUP BY temp1.datetime,temp1.companyName
 	ORDER BY rownum
+  </select>
+  
+  
+  <select id="countConsumptionReportByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
+  	select count(*) from(
+	  	SELECT
+	  	<if test="datetype!=null and datetype!=''">
+			<if test="datetype==1">
+				DATE_FORMAT(a.createTime, '%Y') datetime,
+			</if>
+			<if test="datetype==2">
+				DATE_FORMAT(a.createTime, '%Y%m') datetime,
+			</if>
+			<if test="datetype==3">
+				DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
+			</if>
+		</if>
+		<if test="datetype==null or datetype==''">
+			DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
+		</if>
+			(sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 0,ifnull(b.total_amount, 0),0),0)) / 10000) c_total_amount,
+			(sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 1,ifnull(b.total_amount, 0),0),0)) / 10000) f_total_amount,
+			sum(ifnull(b.total_amount, 0)) / 10000 AS total_amont,
+			sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 0, 1, 0),0)) CHUZHEN,
+			sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 1, 1, 0),0)) FUZHEN,
+			sum(IF (a.`status` = 99,1,0)) employeeWastageOrder,
+			count(a.id) employeeTotalOrder,
+			tsu.nickname
+		FROM
+			t_ltn_customer a
+		LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_ltn_customer_consumpton_amount b LEFT JOIN t_ltn_customer b1 ON b.customer_id = b1.id WHERE b1.`status` = 1 GROUP BY b.customer_id) b on a.id = b.id
+		LEFT JOIN t_sys_user tsu on a.counsoler = tsu.id
+		where 1 = 1
+		<if test="starttime!=null and starttime!=''">
+			and DATE_FORMAT(a.createTime, '%Y-%m-%d') &gt;= #{starttime}
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			and DATE_FORMAT(a.createTime, '%Y-%m-%d') &lt;= #{endtime}
+		</if>
+		<if test="companyid!=null">
+			and a.company_id = #{companyid}
+		</if>
+		<if test="datetype!=null and datetype!=''">
+			<if test="datetype==1">
+				GROUP BY DATE_FORMAT(a.createTime, '%Y'),a.counsoler,tsu.nickname
+			</if>
+			<if test="datetype==2">
+				GROUP BY DATE_FORMAT(a.createTime, '%Y%m'),a.counsoler,tsu.nickname
+			</if>
+			<if test="datetype==3">
+				GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d'),a.counsoler,tsu.nickname
+			</if>
+		</if>
+		<if test="datetype==null or datetype==''">
+			GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d'),a.counsoler,tsu.nickname
+		</if>
+		order by datetime asc,total_amont desc
+	) temp 
+  </select>
+  
+  <select id="countSubscribeReportByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
+  	select count(*) from (
+	  	SELECT
+	  	<if test="datetype!=null and datetype!=''">
+			<if test="datetype==1">
+				DATE_FORMAT(tcs.create_time, '%Y') datetime,
+			</if>
+			<if test="datetype==2">
+				DATE_FORMAT(tcs.create_time, '%Y%m') datetime,
+			</if>
+			<if test="datetype==3">
+				DATE_FORMAT(tcs.create_time, '%Y%m%d') datetime,
+			</if>
+		</if>
+		<if test="datetype==null or datetype==''">
+			DATE_FORMAT(tcs.create_time, '%Y%m%d') datetime,
+		</if>
+			tsu.nickname,
+			tc.`name` as companyname,
+			count(tcs.id) totalOrder,
+			sum(if(tcs.`status`=1,1,0)) secuessOrder,
+			sum(if(tcs.`status`=99,1,0)) wastageOrder,
+			sum(if(tcs.`status`=0,1,0)) unfinishedOrder
+		FROM
+			t_customer_subscribe tcs
+		LEFT JOIN t_sys_user tsu ON tcs.create_user = tsu.username
+		LEFT JOIN t_company tc ON tcs.company_id = tc.id
+		LEFT JOIN v_root_in vri on tcs.root_in = vri.`value` and vri.companyid = tcs.company_id
+		LEFT JOIN v_sex vs on tcs.sex=vs.`value`  and vs.companyid = tcs.company_id
+		LEFT JOIN v_subscribe vss on tcs.`status` = vss.`value` and vss.companyid= tcs.company_id
+		where 1 = 1
+		<if test="starttime!=null and starttime!=''">
+			and DATE_FORMAT(tcs.create_time, '%Y-%m-%d') &gt;= #{starttime}
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			and DATE_FORMAT(tcs.create_time, '%Y-%m-%d') &lt;= #{endtime}
+		</if>
+		<if test="companyid!=null">
+			and tcs.company_id = #{companyid}
+		</if>
+		<if test="datetype!=null and datetype!=''">
+			<if test="datetype==1">
+				GROUP BY DATE_FORMAT(tcs.create_time, '%Y'),tsu.nickname,tcs.company_id
+			</if>
+			<if test="datetype==2">
+				GROUP BY DATE_FORMAT(tcs.create_time, '%Y%m'),tsu.nickname,tcs.company_id
+			</if>
+			<if test="datetype==3">
+				GROUP BY DATE_FORMAT(tcs.create_time, '%Y%m%d'),tsu.nickname,tcs.company_id
+			</if>
+		</if>
+		<if test="datetype==null or datetype==''">
+			GROUP BY DATE_FORMAT(tcs.create_time, '%Y%m%d'),tsu.nickname,tcs.company_id
+		</if>
+	) temp
   </select>
 </mapper>

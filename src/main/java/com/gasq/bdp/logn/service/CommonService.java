@@ -34,15 +34,15 @@ public interface CommonService {
 			String starttime, String endtime);
 
 	Map<String, Object> queryEmployeeTreatOrderDataDetail(Integer type, Integer companyid, String datetype,
-			String starttime, String endtime);
+			String starttime, String endtime,Integer page,Integer rows);
 
 	Map<String, Object> queryBackEmployeeOrderDataDetail(Integer type, Integer companyid, String datetype,
-			String starttime, String endtime);
+			String starttime, String endtime,Integer page,Integer rows);
 
 	Map<String, Object> queryBackEmployeeOrderReport(Integer type, Integer companyid, String datetype, String starttime,
 			String endtime);
 
-	Map<String, Object> queryCountInventory(Integer companyid, String datetype, Integer year, Integer month);
+	Map<String, Object> queryCountInventory(Integer companyid, String datetype, Integer year, Integer month,Integer page,Integer rows);
 
 	Map<String, Object> queryCountInventoryPie(Integer companyid, String datetype, Integer year, Integer month);
 

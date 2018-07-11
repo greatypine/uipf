@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+	<link type="text/css" th:href="@{/static/css/workflow/shell.css}" rel="stylesheet" media="screen"/>
+<body>
+<div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
+	<table id="equipment_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
+		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:30,toolbar:'#tb_cron_option'" pagination="true">
+	</table>
+	<div id="tb_cron_option" style="padding: 5px; height: auto">
+		<div style="margin-bottom: 5px">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="equipment.query()">查询</a> 
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="equipment.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="equipment.remove()">删除</a>
+		</div>
+		<div id="cron_bar">
+			<form id="equipmentform">
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+				设备名称: <input id="queryname" name="name" class="easyui-textbox" style="width: 120px; height: 22px;"/>
+				设备状态: <select id="querystatus" name="status" class="easyui-combobox status" style="width: 120px; height: 22px;"></select>
+				设备类型: <select id="querytype" name="type" class="easyui-combobox type" style="width: 120px; height: 22px;"></select>
+			</form>
+		</div>
+	</div>
+</div>
+	<div id="equipmentdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#equipment_dlg-buttons">
+		<form id="equipmentdlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname">设备名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="name" name="name" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">设备编号：</td>
+	    			<td class="tdnamebox">
+	    				<input id="code" name="code" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">厂商：</td>
+	    			<td class="tdnamebox">
+	    				<input id="factory" name="factory" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">单价：</td>
+	    			<td class="tdnamebox">
+	    				<input id="buyPrice" name="buyPrice" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2,prompt:'设备的最终购买价格'"/>
+	    			</td>
+	    		</tr>
+	    		<tr id="iuinfo">
+	    			<td class="tdname">购买时间：</td>
+	    			<td class="tdnamebox"><input name="buyDate" id="buyDate" class="easyui-datebox" style="width: 100%;" data-options="required:true"/></td>
+	    			<td class="tdname">购买人：</td>
+	    			<td class="tdnamebox">
+	    				<input id="buyUser" name="buyUser" class="easyui-combobox buyUser" style="width: 100%;" data-options="required:true,valueField:'id',textField:'nickname'"/>
+	    			</td>
+	    		</tr>
+	    		<tr id="iuinfo">
+	    			<td class="tdname">管理者：</td>
+	    			<td class="tdnamebox"><input name="manager" id="manager" class="easyui-combobox" style="width: 100%;" data-options="required:true,valueField:'id',textField:'nickname'"/></td>
+	    			<td class="tdname">折旧年限：</td>
+	    			<td class="tdnamebox">
+	    				<input id="depreciationLife" name="depreciationLife" class="easyui-textbox" style="width: 100%;" data-options="required:true,prompt:'设备可使用时长（以月为单位）'"/>
+	    			</td>
+	    		</tr>
+	    		<tr id="iuinfo">
+	    			<td class="tdname">设备类型：</td>
+	    			<td class="tdnamebox"><input name="type" id="type" class="easyui-combobox type" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text'"/></td>
+	    			<td class="tdname">设备状态：</td>
+	    			<td class="tdnamebox">
+	    				<input id="status" name="status" class="easyui-combobox status" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text'"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+			<input id="id" name="id" value="" type="hidden" />
+		</form>
+	</div>
+	<div id="equipment_dlg-buttons">
+		<a shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="equipment.complate()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#equipmentdlg-fm').form('clear');$('#equipmentdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+
+</body>
+<script type="text/javascript" th:src="@{/static/js/index/equipment.js}"></script>
+</html>

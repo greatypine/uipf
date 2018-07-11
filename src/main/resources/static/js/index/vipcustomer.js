@@ -100,11 +100,11 @@ function systemvipcustomer(){
 			        	phonenumb:row.customerPhone
 					},
 			        columns:[[
-			        	 	{field:'customername',title:'客户名称',width:"5%",align:'center'},
+			        	 	{field:'customername',title:'就诊人',width:"5%",align:'center'},
 					        {field:'statusName',title:'结算状态',width:"5%",align:'center'},
-					        {field:'counsolerName',title:'咨询师',width:"4%",align:'center'},
-					        {field:'therapeutistName',title:'治疗师',width:"4%",align:'center'},
-					        {field:'chuFuZhen',title:'初复诊',width:"4%",align:'center',formatter:function(val,row){
+					        {field:'counsolerName',title:'咨询师',width:"5%",align:'center'},
+					        {field:'therapeutistName',title:'治疗师',width:"5%",align:'center'},
+					        {field:'chuFuZhen',title:'初复诊',width:"5%",align:'center',formatter:function(val,row){
 					        	if(val==0){
 						        	return '<font color="FF0033">初诊</font>'
 						        }else{
@@ -112,23 +112,23 @@ function systemvipcustomer(){
 						        }
 					        }},
 					        {field:'typeName',title:'结算类型',width:"5%",align:'center'},
-					        {field:'totalConsumptonAmount',title:'总消费金额',width:"6%",align:'center',formatter:function(val,row){
+					        {field:'totalConsumptonAmount',title:'总消费金额',width:"7%",align:'center',formatter:function(val,row){
 					        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 					        }},
-					        {field:'remindtime',title:'回访时间',width:"6%",align:'center'},
+					        {field:'remindtime',title:'回访时间',width:"7%",align:'center'},
 					        {field:'subscribeName',title:'预约人',width:"6%",align:'center'},
-					        {field:'createTime',title:'接诊时间',width:"12%",align:'center',formatter:function(val,row){
+					        {field:'createTime',title:'接诊时间',width:"11%",align:'center',formatter:function(val,row){
 					        	return CU.DateTimeFormatter(val,1);
 					        }},
-					        {field:'updateUser',title:'更新人',width:"4%",align:'center'},
-					        {field:'updateTime',title:'完成时间',width:"12%",align:'center',formatter:function(val,row){
+//					        {field:'updateUser',title:'更新人',width:"4%",align:'center'},
+					        {field:'updateTime',title:'完成时间',width:"11%",align:'center',formatter:function(val,row){
 					        	return CU.DateTimeFormatter(val,1);
 					        }},
 					        {field:'products',title:'产品',align:'center',width:"8%",
 					        	formatter:function(value, row, index){
 				            	return '<a id="'+row.id+'" href="javascripte:void(0)" onClick="systemvipcustomer.queryProducts(this.id)" class="productslinkbtn easyui-linkbutton" data-options="plain:true,iconCls:\'icon-more\'">产品列表</a>';
 				            }},
-					        {field:'remark',title:'描述',width:"18%",align:'center'}
+					        {field:'remark',title:'描述',width:"19%",align:'center'}
 			        ]],
 					onSelect:function(index,row){
 					},

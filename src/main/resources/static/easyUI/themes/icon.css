@@ -64,6 +64,18 @@
 .icon-lock{
 	background:url('icons/lock.png') no-repeat center center;
 }
+.icon-card{
+	background:url('icons/card.png') no-repeat center center;
+}
+.icon-fenxiao{
+	background:url('icons/fenxiao.png') no-repeat center center;
+}
+.icon-pay{
+	background:url('icons/pay.png') no-repeat center center;
+}
+.icon-vip{
+	background:url('icons/vip.png') no-repeat center center;
+}
 .icon-more{
 	background:url('icons/more.png') no-repeat center center;
 }

@@ -26,5 +26,4 @@ public abstract class ParamsObject extends BaseBean{
 	private static final long serialVersionUID = 1L;
 	private int page;
 	private int rows;
-	
 }

@@ -463,4 +463,20 @@ public class IndexController {
 		mmap.addAttribute("content", request.getContextPath());
 		return "countInventory";
 	}
+	
+	@RequestMapping("/goEquipment")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR }, logical = Logical.OR)
+	public String goEquipment(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		return "equipment";
+	}
+	
+	@RequestMapping("/goCompany")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR }, logical = Logical.OR)
+	public String goCompany(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		return "company";
+	}
 }

@@ -3,6 +3,8 @@ package com.gasq.bdp.logn.mapper;
 import com.gasq.bdp.logn.model.TCustomerProjectLog;
 import com.gasq.bdp.logn.model.TCustomerProjectLogExample;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
@@ -30,4 +32,8 @@ public interface TCustomerProjectLogMapper {
     int updateByPrimaryKeySelective(TCustomerProjectLog record);
 
     int updateByPrimaryKey(TCustomerProjectLog record);
+
+	List<Map<String, Object>> queryPagingList(Map<String, Object> params);
+
+	Integer countByBean(Map<String, Object> params);
 }

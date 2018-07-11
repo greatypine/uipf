@@ -337,7 +337,7 @@
   <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
 	SELECT
 		p.id,p.vip_id as vipId,p.project_id as projectId,tp.project_name as projectName,p.total_project_nums as totalProjectNums
-		,tvc.customer_name as customerName,tvc.customer_phone customerPhone,p.project_nums as projectNums,p.create_time,p.update_user
+		,tvc.customer_name as customerName,tvc.customer_phone customerPhone,p.project_nums as projectNums,p.create_time,tsu1.nickname as updateUser,p.update_time
 		,p.project_type as projectType,vpt.`name` as projectTypeName,p.deadline
 	FROM
 		`t_customer_porject` p
@@ -359,7 +359,7 @@
 	select count(*) from (
 		SELECT
 			p.id,p.vip_id as vipId,p.project_id as projectId,tp.project_name as projectName,p.total_project_nums as totalProjectNums
-			,tvc.customer_name as customerName,tvc.customer_phone customerPhone,p.project_nums as projectNums,p.create_time,p.update_user
+			,tvc.customer_name as customerName,tvc.customer_phone customerPhone,p.project_nums as projectNums,p.create_time,tsu1.nickname as updateUser,p.update_time
 			,p.project_type as projectType,vpt.`name` as projectTypeName,p.deadline
 		FROM
 			`t_customer_porject` p

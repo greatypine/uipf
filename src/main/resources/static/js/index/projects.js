@@ -44,6 +44,9 @@ function MyProject(){
 				        	if(Number(val)==1) return "没折扣";
 				        	return Number(val)*100+"折"
 				        }},
+				        {field:'projectTypeName',title:'消费类型',width:"10%",align:'center'},
+				        {field:'projectNums',title:'次数',width:"10%",align:'center'},
+				        {field:'deadline',title:'期限（月）',width:"10%",align:'center'},
 				        {field:'companyId',title:'数据库',width:"5%",align:'center',hidden:true},
 				        {field:'createuser',title:'创建人',width:"8%",align:'center'},
 				        {field:'createtime',title:'创建时间',width:"13%",align:'center',formatter:function(val,row){

@@ -3,6 +3,8 @@ var ccac_table;
 var flag = true;
 var editIndex = undefined;
 var project_dg;
+var projects_dg;
+var projectlogs_dg;
 $(function(){
 	initData();
 });
@@ -48,7 +50,9 @@ function initData(){
 	ccac = new CustomerConsumptonAmount();
 	ccac.initCompant();
 	ccac.initProjectDg({"consumptonAmountId":-1});
-}
+	ccac.initProjectsDg({"phonenumb":-1});
+	ccac.initProjectLogsDg({"cpId":-1});
+};
 function CustomerConsumptonAmount(){
 	this.initProjectDg = function(params){
 		project_dg = $("#project_dg").datagrid({
@@ -81,11 +85,11 @@ function CustomerConsumptonAmount(){
 		        	 	{field:'id',title:'编号',hidden:true},
 //				        {field:'companyName',title:'公司名称',width:"7%"},
 		        	 	{field:'customername',title:'客户名称',width:"5%",align:'center'},
-		        	 	{field:'phonenumb',title:'电话号码',width:"8%",align:'center'},
-		        	 	{field:'sexName',title:'性别',width:"2%",align:'center'},
+		        	 	{field:'phonenumb',title:'电话号码',width:"7%",align:'center'},
+		        	 	{field:'sexName',title:'性别',width:"4%",align:'center'},
 				        {field:'statusName',title:'结算状态',width:"5%",align:'center'},
-				        {field:'counsolerName',title:'咨询师',width:"4%",align:'center'},
-				        {field:'therapeutistName',title:'治疗师',width:"4%",align:'center'},
+				        {field:'counsolerName',title:'咨询师',width:"5%",align:'center'},
+				        {field:'therapeutistName',title:'治疗师',width:"5%",align:'center'},
 				        {field:'chuFuZhen',title:'初复诊',width:"4%",align:'center',formatter:function(val,row){
 				        	if(val==0){
 					        	return '<font color="FF0033">初诊</font>'
@@ -93,21 +97,21 @@ function CustomerConsumptonAmount(){
 					        	return '<font color="33CC33">复诊</font>'
 					        }
 				        }},
-				        {field:'typeName',title:'结算类型',width:"5%",align:'center'},
-				        {field:'totalConsumptonAmount',title:'总消费金额',width:"6%",align:'center',formatter:function(val,row){
+				        {field:'typeName',title:'结算类型',width:"6%",align:'center'},
+				        {field:'totalConsumptonAmount',title:'总消费金额',width:"7%",align:'center',formatter:function(val,row){
 				        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 				        }},
 				        {field:'remindtime',title:'回访时间',width:"6%",align:'center'},
 				        {field:'subscribeName',title:'预约人',width:"4%",align:'center'},
 //				        {field:'createUser',title:'创建人',width:"6%",align:'center'},
-				        {field:'createTime',title:'接诊时间',width:"10%",align:'center',formatter:function(val,row){
+				        {field:'createTime',title:'接诊时间',width:"12%",align:'center',formatter:function(val,row){
 				        	return CU.DateTimeFormatter(val,1);
 				        }},
-				        {field:'updateUser',title:'更新人',width:"4%",align:'center'},
-				        {field:'updateTime',title:'完成时间',width:"10%",align:'center',formatter:function(val,row){
+//				        {field:'updateUser',title:'更新人',width:"4%",align:'center'},
+				        {field:'updateTime',title:'完成时间',width:"12%",align:'center',formatter:function(val,row){
 				        	return CU.DateTimeFormatter(val,1);
 				        }},
-				        {field:'remark',title:'描述',width:"18%",align:'center'}
+				        {field:'remark',title:'描述',width:"17%",align:'left'}
 		        ]],
 		        view: detailview,
 		        collapsible:false,
@@ -275,16 +279,20 @@ function CustomerConsumptonAmount(){
 		        		$("#jiesuanfx").linkbutton('disable');
 		        		$("#jiesuanpt").linkbutton('disable');
 		        		$("#jiesuanhy").linkbutton('disable');
-		        	}else{
+		        		$("#jiesuansk").linkbutton('enable');
+		        	}else if(row.status==0){
 		        		$("#jiesuanfx").linkbutton('enable');
 		        		$("#jiesuanpt").linkbutton('enable');
 		        		$("#jiesuanhy").linkbutton('enable');
+		        		$("#jiesuansk").linkbutton('disable');
+		        	}else{
+		        		$("#jiesuanfx").linkbutton('disable');
+		        		$("#jiesuanpt").linkbutton('disable');
+		        		$("#jiesuanhy").linkbutton('disable');
+		        		$("#jiesuansk").linkbutton('disable');
 		        	}
 				},
 				onLoadSuccess:function(data){
-					if(ccac.index!=null){
-		        		$('#ccac_table').datagrid('expandRow',ccac.index);
-		        	}
 					ccac.calculateAmount(null);
 				}
 			});
@@ -460,7 +468,111 @@ function CustomerConsumptonAmount(){
 		}else{
 			$.messager.alert('提示','请先选中要操作的数据！','error');
 		}
-	}
+	};
+	this.querySwipingCardCommit = function(){
+		$("#projectsdlg").dialog("open").dialog("center").dialog("setTitle","用户套餐列表");
+		ccac.querySwipingCardProjects();
+	};
+	
+	this.querySwipingCardProjects = function(){
+		var row=$('#ccac_table').datagrid('getSelected');
+		if(row){
+			$("#querycphone").textbox("setValue",row.phonenumb);
+		}
+		var params = {"phonenumb":$("#querycphone").textbox("getValue")};
+		projects_dg.datagrid("load",params);
+		var params1 = {"cpId":-1};
+		projectlogs_dg.datagrid("load",params1);
+	};
+	
+	this.initProjectsDg = function(params){
+		projects_dg = $('#projects_dg').datagrid({
+			url: content+"/customerProject/queryCustomerAmountListByCustomerPhone",
+			fitColumns:true,
+	        singleSelect:true,
+	        rownumbers:true,
+	        pageSize: 10,
+	        pageList: [10, 20],
+	        loadMsg:'正在加载，请稍后...',
+	        queryParams:params,
+	        columns:[[
+	        		{field:'projectName',title:'套餐名称',width:"14%",align:'center'},
+	        		{field:'projectTypeName',title:'套餐卡类型',width:"8%",align:'center'},
+	        		{field:'totalProjectNums',title:'套餐总次数',width:"10%",align:'center'},
+	        		{field:'projectNums',title:'套餐剩余次数',width:"10%",align:'center'},
+	        		{field:'create_time',title:'套餐开始时间',width:"12%",align:'center',formatter:function(val,row){
+	        			return CU.DateTimeFormatter(val,1);
+	        		}},
+	        		{field:'deadline',title:'套餐到期时间',width:"14%",align:'center',formatter:function(val,row){
+			        	return CU.DateTimeFormatter(val,1);
+			        }},
+			        {field:'updateUser',title:'上次刷卡人',width:"8%",align:'center'},
+			        {field:'update_time',title:'上次刷卡时间',width:"12%",align:'center',formatter:function(val,row){
+			        	return CU.DateTimeFormatter(val,1);
+			        }},
+			        {field:'comments',title:'刷卡消费',width:"10%",align:'center',
+			        	formatter:function(value, row, index){
+		            	return '<a id="sc_'+row.id+'" href="javascripte:void(0)" onClick="ccac.swipingCardCommit(this.id)" class="projectslinkbtn easyui-linkbutton" data-options="plain:true,iconCls:\'icon-card\'">刷卡消费</a>';
+		            }}
+	        ]],
+			onDblClickRow:function(index,row){
+			},
+			onSelect:function(index,row){
+				var params = {"cpId":row.id};
+				projectlogs_dg.datagrid("load",params);
+			},
+			onLoadSuccess:function(data){
+				$(".projectslinkbtn").linkbutton();
+			}
+		});
+	};
+	
+	this.initProjectLogsDg = function(params){
+		projectlogs_dg = $('#projectlogs_dg').datagrid({
+			url: content+"/customerProject/queryCustomerProjectLogs",
+			fitColumns:true,
+	        pageSize: 10,
+	        pageList: [10, 20],
+	        loadMsg:'正在加载，请稍后...',
+	        queryParams:params,
+	        columns:[[
+		        	{field:'create_user',title:'操作刷卡人',width:"40%",align:'center'},
+		        	{field:'create_time',title:'刷卡时间',width:"30%",align:'center',formatter:function(val,row){
+		        		return CU.DateTimeFormatter(val,1);
+		        	}},
+	        		{field:'typeName',title:'类型',width:"30%",align:'center'}
+	        ]]
+		});
+	};
+	this.swipingCardCommit = function(id){
+		id = id.split("_")[1];
+		$.messager.confirm('提示信息', '确认要刷卡结算吗?', function(r){
+			if (r){
+				$("#"+id).linkbutton("disable");
+				$.ajax({
+					type:"POST",
+					datType: "JSON",
+					data :{"id":id},
+					url : content+"/customerProject/swipingCardCommit",
+					error : function(data) {
+						$.messager.alert('提示信息','服务器连接超时请重试!','error');
+						$("#"+id).linkbutton("enable");
+						return false;
+					},
+					success : function(data) {
+						$("#"+id).linkbutton("enable");
+						if(data.status){//成功
+							$.messager.alert('提示信息','刷卡成功!');
+							$('#projects_dg').datagrid('reload');
+							$('#projectlogs_dg').datagrid('reload');
+						}else{
+							$.messager.alert('提示信息',data.mess,'warning');
+						}
+					}
+				});
+			}
+		});	
+	};
 	this.ptcommit = function(){
 		var row=$('#ccac_table').datagrid('getSelected');
 		if(row){

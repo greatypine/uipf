@@ -9,6 +9,7 @@ import java.util.Map;
 import com.gasq.bdp.logn.iexception.WorkFlowStateException;
 import com.gasq.bdp.logn.model.TCustomerPorject;
 import com.gasq.bdp.logn.model.TCustomerPorjectExample;
+import com.gasq.bdp.logn.model.TCustomerProjectLog;
 
 /**
  * @author Ju_weigang
@@ -27,5 +28,9 @@ public interface TCustomerProjectService {
 	int deleteByExample(TCustomerPorjectExample example);
 
 	List<TCustomerPorject> selectByExample(TCustomerPorjectExample example);
+
+	Map<String, Object> swipingCardCommit(Integer id);
+
+	Map<String, Object> queryCustomerProjectLogs(TCustomerProjectLog customerProjectLog);
 
 }

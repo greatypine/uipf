@@ -381,7 +381,7 @@
       order by ${orderByClause}
     </if>
   </select>
-    <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
+<select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
 	SELECT
 		p.id,p.company_id as companyId,p.project_nums as projectNums,p.discount,p.money,p.image_url imageUrl,p.project_name projectName,p.remark,p.`status`,p.createuser,tc.`name` as companyName,p.createtime,p.project_type as projectType,vpt.`name` as projectTypeName,p.deadline
 	FROM

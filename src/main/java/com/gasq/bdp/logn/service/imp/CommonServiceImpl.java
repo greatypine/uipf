@@ -119,12 +119,18 @@ public class CommonServiceImpl implements CommonService {
 
 	@Override
 	public Map<String, Object> queryEmployeeTreatOrderDataDetail(Integer type, Integer companyid, String datetype,
-			String starttime, String endtime) {
+			String starttime, String endtime,Integer page,Integer rows) {
 		Map<String, Object> map = new  HashMap<String, Object>();
 		map.put("starttime", starttime);
 		map.put("endtime", endtime);
 		map.put("datetype", datetype);
 		map.put("type", type);
+		int start = 0;
+		int intPage = (page==0) ? 1 : page;
+		int number = (rows==0) ? 10 : rows;
+		start = (intPage - 1) * number;
+		map.put("index", start);
+		map.put("pageSize", number);
 		if(companyid!=null) {
 			map.put("companyid", companyid);
 		}else {
@@ -134,20 +140,27 @@ public class CommonServiceImpl implements CommonService {
 		}
 		List<Map<String, Object>> listmaps = companyMapper.countConsumptionReport(map);
 		if(listmaps==null || listmaps.size()<=0)listmaps = new ArrayList<Map<String,Object>>();
+		Integer count = companyMapper.countConsumptionReportByBean(map);
 		map.clear();
 		map.put("rows",listmaps);
-		map.put("total",listmaps.size());
+		map.put("total",count);
 		return map;
 	}
 
 	@Override
 	public Map<String, Object> queryBackEmployeeOrderDataDetail(Integer type, Integer companyid, String datetype,
-			String starttime, String endtime) {
+			String starttime, String endtime,Integer page,Integer rows) {
 		Map<String, Object> map = new  HashMap<String, Object>();
 		map.put("starttime", starttime);
 		map.put("endtime", endtime);
 		map.put("datetype", datetype);
 		map.put("type", type);
+		int start = 0;
+		int intPage = (page==0) ? 1 : page;
+		int number = (rows==0) ? 10 : rows;
+		start = (intPage - 1) * number;
+		map.put("index", start);
+		map.put("pageSize", number);
 		if(companyid!=null) {
 			map.put("companyid", companyid);
 		}else {
@@ -157,9 +170,10 @@ public class CommonServiceImpl implements CommonService {
 		}
 		List<Map<String, Object>> listmaps = companyMapper.countSubscribeReport(map);
 		if(listmaps==null || listmaps.size()<=0)listmaps = new ArrayList<Map<String,Object>>();
+		Integer count = companyMapper.countSubscribeReportByBean(map);
 		map.clear();
 		map.put("rows",listmaps);
-		map.put("total",listmaps.size());
+		map.put("total",count);
 		return map;
 	}
 	@Override
@@ -215,11 +229,17 @@ public class CommonServiceImpl implements CommonService {
 	}
 
 	@Override
-	public Map<String, Object> queryCountInventory(Integer companyid, String datetype, Integer year, Integer month) {
+	public Map<String, Object> queryCountInventory(Integer companyid, String datetype, Integer year, Integer month,Integer page,Integer rows) {
 		Map<String, Object> map = new  HashMap<String, Object>();
 		map.put("year", year);
 		if(month!=null) map.put("month", (month>0&&month<10)?"0"+month:month);
 		map.put("datetype", datetype);
+		int start = 0;
+		int intPage = (page==0) ? 1 : page;
+		int number = (rows==0) ? 10 : rows;
+		start = (intPage - 1) * number;
+		map.put("index", start);
+		map.put("pageSize", number);
 		if(companyid!=null) {
 			map.put("companyid", companyid);
 		}else {
@@ -229,9 +249,10 @@ public class CommonServiceImpl implements CommonService {
 		}
 		List<Map<String, Object>> listmaps = companyMapper.queryCountInventory(map);
 		if(listmaps==null || listmaps.size()<=0)listmaps = new ArrayList<Map<String,Object>>();
+		Integer count = companyMapper.countByBean(map);
 		map.clear();
 		map.put("rows",listmaps);
-		map.put("total",listmaps.size());
+		map.put("total",count);
 		return map;
 	}
 	
