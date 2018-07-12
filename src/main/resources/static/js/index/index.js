@@ -56,7 +56,7 @@ function IndexOption(){
 			},
 			formatter:function(node){
 				var s = '';
-				s = '<font size="2">'+node.text+'</font>';
+				s = '<font size="3">'+node.text+'</font>';
 				return s;
 			},
 			onClick: function(node){
@@ -71,6 +71,7 @@ function IndexOption(){
 	            	var content_ = '<iframe frameborder="0" src="'+content+node.jsp+'" style="width:100%;height:99.3%;padding:0;margin:0;"></iframe>';
 	            	$('#cnt-tabs').tabs('add',{
 	            		title:node.text,
+	            		iconCls:node.iconCls,
 	            		content:content_,
 	            		fit:true,
 	            		width:"100%",

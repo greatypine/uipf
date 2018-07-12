@@ -29,11 +29,9 @@ public interface TCompanyMapper {
 
     int updateByExample(@Param("record") TCompany record, @Param("example") TCompanyExample example);
 
-    int updateByPrimaryKeySelective(TCompany record);
+    int updateByPrimaryKeySelective(@Param("record") TCompany record);
 
-    int updateByPrimaryKey(TCompany record);
-
-	List<Map<String, Object>> queryMapBeanList(TCompany bean);
+    int updateByPrimaryKey(@Param("record") TCompany record);
 
 	List<Map<String, Object>> queryRootIn(@Param("record") TCompany bean);
 
@@ -51,15 +49,21 @@ public interface TCompanyMapper {
 
 	List<Map<String, Object>> countConsumptionReport(Map<String, Object> map);
 
+	Integer countConsumptionReportByBean(Map<String, Object> map);
+
 	List<Map<String, Object>> countSubscribeReport(Map<String, Object> map);
+
+	Integer countSubscribeReportByBean(Map<String, Object> map);
 
 	List<Map<String, Object>> queryCountInventory(Map<String, Object> map);
 
-	List<Map<String, Object>> queryCountInventoryPie(Map<String, Object> map);
-
 	Integer countByBean(Map<String, Object> map);
 
-	Integer countConsumptionReportByBean(Map<String, Object> map);
+	List<Map<String, Object>> queryCountInventoryPie(Map<String, Object> map);
 
-	Integer countSubscribeReportByBean(Map<String, Object> map);
+	List<Map<String, Object>> queryPagingList(Map<String, Object> params);
+
+	Integer countCompanyByBean(Map<String, Object> params);
+
+	List<Map<String, Object>> queryMapBeanList(@Param("record") TCompany bean);
 }

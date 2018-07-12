@@ -20,6 +20,8 @@ public class TCompany extends ParamsObject{
 
     private Integer countyId;
 
+    private String detailAddress;
+
     private Boolean status;
 
     private String remark;
@@ -35,8 +37,25 @@ public class TCompany extends ParamsObject{
     private String viewname;
     
     private Integer pid;
+    
+    
+    public Integer getPid() {
+		return pid;
+	}
 
-    public Integer getId() {
+	public void setPid(Integer pid) {
+		this.pid = pid;
+	}
+
+	public String getViewname() {
+		return viewname;
+	}
+
+	public void setViewname(String viewname) {
+		this.viewname = viewname;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -82,6 +101,14 @@ public class TCompany extends ParamsObject{
 
     public void setCountyId(Integer countyId) {
         this.countyId = countyId;
+    }
+
+    public String getDetailAddress() {
+        return detailAddress;
+    }
+
+    public void setDetailAddress(String detailAddress) {
+        this.detailAddress = detailAddress == null ? null : detailAddress.trim();
     }
 
     public Boolean getStatus() {
@@ -131,21 +158,4 @@ public class TCompany extends ParamsObject{
     public void setUpdateuser(String updateuser) {
         this.updateuser = updateuser == null ? null : updateuser.trim();
     }
-
-	public String getViewname() {
-		return viewname;
-	}
-
-	public void setViewname(String viewname) {
-		this.viewname = viewname;
-	}
-
-	public Integer getPid() {
-		return pid;
-	}
-
-	public void setPid(Integer pid) {
-		this.pid = pid;
-	}
-    
 }

@@ -6,6 +6,17 @@ $(function(){
 function initData(){
 	systemvipcustomer = new systemvipcustomer();
 	systemvipcustomer.initCompant();
+	
+	$("#messtype").combobox({
+		url:content+'/common/getView?viewname=v_message_type',
+		onSelect: function (row) {
+			if (row != null) {
+				$("#messid").combobox({
+					url:content+'/common/getView?viewname=v_message&pid='+row.value
+				});
+			}
+		}
+	});
 	$(".companylist").combobox({
 		url:content+'/company/queryMapBeanList'
 	});
@@ -52,6 +63,7 @@ function systemvipcustomer(){
 	        queryParams:{
 			},
 	        columns:[[
+//	        	{field:'ck',checkbox:true},
 	        	{field:'id',title:'编号',hidden:true},
 		        {field:'customerName',title:'用户名称',width:"7%",align:'center'},
 		        {field:'customerPhone',title:'电话号码',width:"7%",align:'center'},
@@ -66,13 +78,13 @@ function systemvipcustomer(){
 		        {field:'giveAmount',title:'赠送金额',width:"6%",align:'center',formatter:function(val,row){
 		        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 		        }},
-		        {field:'comments',title:'留言',width:"6%",align:'center',
+		        {field:'comments',title:'留言',width:"5%",align:'center',
 		        	formatter:function(value, row, index){
 	            	return '<a id="'+row.id+'" href="javascripte:void(0)" onClick="systemvipcustomer.queryComments(this.id)" class="productslinkbtn easyui-linkbutton" data-options="plain:true,iconCls:\'icon-more\'">留言</a>';
 	            }},
 		        {field:'createUser',title:'创建人',width:"6%",align:'center'},
-		        {field:'createTime',title:'创建时间',width:"11%",align:'center'},
-		        {field:'updateTime',title:'更新时间',width:"11%",align:'center'}
+		        {field:'createTime',title:'创建时间',width:"10%",align:'center'},
+		        {field:'updateTime',title:'更新时间',width:"10%",align:'center'}
 	        ]],
 	        view: detailview,
 	        collapsible:false,
@@ -447,6 +459,27 @@ function systemvipcustomer(){
 		        }},
 	    	 	{field:'remark',width:"75%",align:'left',title:"评论留言"}
 	    	]]
+		});
+	};
+	this.sendMessByEmail = function(){
+		$("#smessagedlg").dialog("open").dialog("center").dialog("setTitle","选择邮件");
+	};
+	this.exeSendMessByEmail = function(){
+		$('#smessagedlg-fm').form('submit',{
+			url:content+"/vipcustomer/sendMessage",
+			onSubmit:function(){
+				return $(this).form('enableValidation').form('validate');
+			},
+			success: function(result){
+				var data = eval('(' + result + ')');
+				if(data.status){
+					$.messager.alert('提示',data.mess);
+					$.messager.progress('close');
+				}else{
+					$.messager.alert('提示',data.mess,'warning');
+					$.messager.progress('close');
+				}
+			}
 		});
 	};
 }

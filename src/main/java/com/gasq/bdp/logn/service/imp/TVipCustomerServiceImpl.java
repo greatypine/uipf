@@ -9,22 +9,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import com.gasq.bdp.logn.iexception.WorkFlowJobException;
 import com.gasq.bdp.logn.mapper.TLtnCustomerConsumptonAmountMapper;
+import com.gasq.bdp.logn.mapper.TMessageMapper;
 import com.gasq.bdp.logn.mapper.TVipCustomerLogMapper;
 import com.gasq.bdp.logn.mapper.TVipCustomerMapper;
 import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmount;
+import com.gasq.bdp.logn.model.TMessage;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TVipCustomer;
 import com.gasq.bdp.logn.model.TVipCustomerExample;
+import com.gasq.bdp.logn.model.TVipCustomerExample.Criteria;
 import com.gasq.bdp.logn.model.TVipCustomerLog;
+import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.service.TVipCustomerService;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
@@ -40,6 +47,11 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 	@Autowired TVipCustomerMapper mapper;
 	@Autowired TVipCustomerLogMapper customerLogMapper;
 	@Autowired TLtnCustomerConsumptonAmountMapper consumptonAmountMapper;
+	@Autowired TMessageMapper messagemapper;
+	@Autowired EmailManager emailManager;
+	
+	@Value("${spring.mail.username}")
+	private String sourceEmail;
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
@@ -181,5 +193,63 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 //		tca.setCompanyid(SystemUserInfo.getSystemUser().getUser().getCompanyid());
 		List<Map<String, Object>> children = mapper.queryMapGridChildren(tca);
 		return children;
+	}
+
+	@Override
+	public Map<String, Object> sendMessage(TVipCustomer bean) throws WorkFlowJobException {
+		Map<String, Object> result= new  HashMap<String, Object>();
+		try {
+			TVipCustomerExample example = new TVipCustomerExample();
+			Criteria c = example.createCriteria();
+			if(StringUtils.isNotBlank(bean.getCustomerName())) {
+				c.andCustomerNameLike("%"+bean.getCustomerName()+"%");
+			}
+			if(StringUtils.isNotBlank(bean.getCustomerPhone())) {
+				c.andCustomerPhoneLike("%"+bean.getCustomerPhone()+"%");
+			}
+			if(bean.getStatus()!=null) {
+				c.andStatusEqualTo(bean.getStatus());
+			}else {
+				if(WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.Q_ADMIN)) {
+					ArrayList<Integer> arrayList = new ArrayList<Integer>();
+					arrayList.add(1);
+					arrayList.add(99);
+					c.andStatusIn(arrayList);
+				}else {
+					c.andStatusEqualTo(1);
+				}
+			}
+			if(bean.getCreateTime()!=null) {
+				c.andCreateTimeGreaterThanOrEqualTo(bean.getCreateTime());
+			}
+			if(bean.getEndtime()!=null) {
+				c.andCreateTimeLessThan(bean.getEndtime());
+			}
+			if(bean.getCompanyId()!=null) {
+				c.andCompanyIdEqualTo(bean.getCompanyId());
+			}else {
+				if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+					c.andCompanyIdEqualTo(SystemUserInfo.getSystemUser().getCompany().getId());
+				}
+			}
+			c.andEmailIsNotNull();
+			c.andEmailNotEqualTo("");
+			List<TVipCustomer> list = mapper.selectByExample(example);
+			Object[] emails = null;
+			if(list.size()>0) {
+				emails = list.stream().map(f->f.getEmail()).distinct().toArray();
+				TMessage message = messagemapper.selectByPrimaryKey(bean.getMessid());
+				if(bean.getMesstype()==1) {//邮件
+					emailManager.sendSimpleEmail(sourceEmail, emails, message.getTitle(), message.getMessage());
+				}else if(bean.getType()==2) {//短信
+					
+				}
+			}
+			result.put("status", true);
+			result.put("mess", "发送消息成功！共发送消息【"+emails.length+"】条！");
+		} catch (Exception e) {
+			throw new WorkFlowJobException("发送消息失败！"+e.getMessage(),e);
+		}
+		return result;
 	}
 }

@@ -4,14 +4,15 @@
 	<link type="text/css" th:href="@{/static/css/workflow/shell.css}" rel="stylesheet" media="screen"/>
 <body>
 <div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
-	<table id="equipment_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
-		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:30,toolbar:'#tb_cron_option'" pagination="true">
+	<table id="equipment_table"  title="设备统计金额：" class="easyui-datagrid" style="width: 80%; height: 100%;"
+		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:30,toolbar:'#tb_cron_option',iconCls:'icon-monery'" pagination="true">
 	</table>
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="equipment.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="equipment.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="equipment.add()">添加</a> 
 			<a shiro:hasAnyRoles="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="equipment.remove()">删除</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="equipment.clearForm()">清空</a>
 		</div>
 		<div id="cron_bar">
 			<form id="equipmentform">
@@ -75,7 +76,7 @@
 		</form>
 	</div>
 	<div id="equipment_dlg-buttons">
-		<a shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="equipment.complate()" style="width: 90px">确认</a> 
+		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="equipment.complate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#equipmentdlg-fm').form('clear');$('#equipmentdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 

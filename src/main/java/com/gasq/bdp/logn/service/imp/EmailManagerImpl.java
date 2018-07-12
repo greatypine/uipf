@@ -31,12 +31,12 @@ public class EmailManagerImpl implements EmailManager{
 	     * @param subject       邮件主题
 	     * @param content       邮件内容
 	     */
-	    public void sendSimpleEmail(String fromEmailName,String[] toEmailName,String subject,String content){
+	    public void sendSimpleEmail(String fromEmailName,Object[] toEmailName,String subject,String content){
 	       SimpleMailMessage message = new SimpleMailMessage();
 	       if(toEmailName.length>0){
-	    	   for (String emailaddr : toEmailName) {
+	    	   for (Object emailaddr : toEmailName) {
 	    		   message.setFrom(fromEmailName);//发送者.
-	    	       message.setTo(emailaddr);//接收者.
+	    	       message.setTo(emailaddr.toString());//接收者.
 	    	       message.setSubject(subject);//邮件主题.
 	    	       message.setText(content);//邮件内容.
 	    	       mailSender.send(message);//发送邮件

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+	<link type="text/css" th:href="@{/static/css/workflow/shell.css}" rel="stylesheet" media="screen"/>
+	<script type="text/javascript" th:src="@{/static/easyUI/datagrid-detailview.js}"></script>
+<body>
+<div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
+	<table id="message_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
+		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:30,toolbar:'#tb_cron_option'" pagination="true">
+	</table>
+	<div id="tb_cron_option" style="padding: 5px; height: auto">
+		<div style="margin-bottom: 5px">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="message.query()">查询</a> 
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="message.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="message.remove()">删除</a>
+		</div>
+		<div id="cron_bar">
+			<form id="messageform">
+				消息名称: <input id="queryname" name="messagename" class="easyui-textbox" style="width: 120px; height: 22px;"/>
+				消息状态: <input id="querystatus" name="status" class="easyui-textbox status" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'value',textField:'name'"/>
+			</form>
+		</div>
+	</div>
+</div>
+	<div id="messagedlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#message_dlg-buttons">
+		<form id="messagedlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname">消息名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="name" name="name" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname">状态：</td>
+	    			<td class="tdnamebox">
+	    				<input name="status" id="status" class="easyui-combobox status" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'name'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">消息类型：</td>
+	    			<td class="tdnamebox">
+	    				<input id="type" name="type" class="easyui-combobox type" style="width: 100%;" data-options="required:false,editable:false,valueField:'value',textField:'text'"/>
+	    			</td>
+	    			<td class="tdname">消息标题：</td>
+	    			<td class="tdnamebox">
+	    				<input id="title" name="title" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname" colspan="1">描述：</td>
+	    			<td class="tdnamebox" colspan="3">
+	    				<input id="message" name="message" data-options="multiline:true,required:false,prompt:'内容可以为文本或者html代码'" class="easyui-textbox" style="width: 100%;"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+			<input id="id" name="id" value="" type="hidden" />
+		</form>
+	</div>
+	<div id="message_dlg-buttons">
+		<a  shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="message.complate()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#messagedlg-fm').form('clear');$('#messagedlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+</body>
+<script type="text/javascript" th:src="@{/static/js/index/message.js}"></script>
+</html>

@@ -37,7 +37,7 @@ public interface TSysMenuMapper {
 
 	List<Map<String, Object>> selectAllMenusByRole(@Param("pid") Integer pid,@Param("roleid") Integer roleid,@Param("companyid") int companyid);
 
-	String getNextCode(@Param("pcode") String code);
+	String getNextCode(@Param("pcode") String code, @Param("companyid") Integer companyid);
 
 	Integer getMaxId();
 

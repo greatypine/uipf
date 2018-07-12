@@ -36,6 +36,7 @@ import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TConsumptonProject;
 import com.gasq.bdp.logn.model.TConsumptonProjectExample;
 import com.gasq.bdp.logn.model.TCustomerComment;
+import com.gasq.bdp.logn.model.TCustomerCommentExample;
 import com.gasq.bdp.logn.model.TCustomerConsumptonLog;
 import com.gasq.bdp.logn.model.TCustomerPorject;
 import com.gasq.bdp.logn.model.TCustomerPorjectExample;
@@ -249,6 +250,11 @@ public class CustomerServiceImpl implements CustomerService {
 					List<TVipCustomer> list = vipCustomerMapper.selectByExample(vcexample);
 					if(list.size()>0) {
 						TVipCustomer customer = list.get(0);
+						if(StringUtils.isNotBlank(bean.getCustomername()))customer.setCustomerName(bean.getCustomername());
+						if(StringUtils.isNotBlank(bean.getPhonenumb()))customer.setCustomerPhone(bean.getPhonenumb());
+						if(StringUtils.isNotBlank(bean.getCardId()))customer.setEmail(bean.getCardId());
+						if(bean.getSex()!=null)customer.setSex(bean.getSex());
+						vipCustomerMapper.updateByPrimaryKeySelective(customer);
 						TLtnCustomerConsumptonAmountExample tccaexample = new TLtnCustomerConsumptonAmountExample();
 						tccaexample.createCriteria().andCustomerIdEqualTo(bean.getId());
 						List<TLtnCustomerConsumptonAmount> listssa = consumptonAmountService.selectByExample(tccaexample);
@@ -262,12 +268,17 @@ public class CustomerServiceImpl implements CustomerService {
 							}
 						}
 						if(StringUtils.isNotBlank(bean.getRemark())) {
-							TCustomerComment cc = new TCustomerComment();
-							cc.setRemark(bean.getRemark());
-							cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
-							cc.setCreateTime(DateUtil.getSysCurrentDate());
-							cc.setVipId(customer.getId());
-							customerCommentService.insertSelective(cc);
+							TCustomerCommentExample tccexample = new TCustomerCommentExample();
+							tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(bean.getId());
+							long l = customerCommentService.countByExample(tccexample);
+							if(l<=0) {
+								TCustomerComment cc = new TCustomerComment();
+								cc.setRemark(bean.getRemark());
+								cc.setVipId(customer.getId());
+								cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
+								cc.setCreateTime(DateUtil.getSysCurrentDate());
+								customerCommentService.insertSelective(cc);
+							}
 						}
 					}else {
 						TVipCustomer vip = new TVipCustomer();
@@ -281,12 +292,17 @@ public class CustomerServiceImpl implements CustomerService {
 						vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
 						vipCustomerMapper.insertSelective(vip);
 						if(StringUtils.isNotBlank(bean.getRemark())) {
-							TCustomerComment cc = new TCustomerComment();
-							cc.setRemark(bean.getRemark());
-							cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
-							cc.setCreateTime(DateUtil.getSysCurrentDate());
-							cc.setVipId(vip.getId());
-							customerCommentService.insertSelective(cc);
+							TCustomerCommentExample tccexample = new TCustomerCommentExample();
+							tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(bean.getId());
+							long l = customerCommentService.countByExample(tccexample);
+							if(l<=0) {
+								TCustomerComment cc = new TCustomerComment();
+								cc.setRemark(bean.getRemark());
+								cc.setVipId(vip.getId());
+								cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
+								cc.setCreateTime(DateUtil.getSysCurrentDate());
+								customerCommentService.insertSelective(cc);
+							}
 						}
 						TLtnCustomerConsumptonAmountExample tccaexample = new TLtnCustomerConsumptonAmountExample();
 						tccaexample.createCriteria().andCustomerIdEqualTo(bean.getId());
@@ -316,7 +332,23 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public Map<String, Object> queryAmountSum(TLtnCustomer bean) {
-		bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
+		if(bean.getCompanyId()==null) {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.H_OPTION)) {
+				bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
+			}
+		}
+		if(bean.getStatus()==null) {
+			if(WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.Q_ADMIN)) {
+				String statuss = String.join(",","0","1","98","99");
+				bean.setStatuss(statuss.split(","));
+			}else {
+				String statuss = String.join(",","0","1");
+				bean.setStatuss(statuss.split(","));
+			}
+		}else {
+			String statuss = String.join(",",bean.getStatus().toString());
+			bean.setStatuss(statuss.split(","));
+		}
 		return customerMapper.queryAmountSum(bean);
 	}
 
@@ -392,12 +424,17 @@ public class CustomerServiceImpl implements CustomerService {
 			vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
 			vipCustomerMapper.insertSelective(vip);
 			if(StringUtils.isNotBlank(bean.getRemark())) {
-				TCustomerComment cc = new TCustomerComment();
-				cc.setRemark(bean.getRemark());
-				cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
-				cc.setCreateTime(DateUtil.getSysCurrentDate());
-				cc.setVipId(vip.getId());
-				customerCommentService.insertSelective(cc);
+				TCustomerCommentExample tccexample = new TCustomerCommentExample();
+				tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(bean.getId());
+				long l = customerCommentService.countByExample(tccexample);
+				if(l<=0) {
+					TCustomerComment cc = new TCustomerComment();
+					cc.setRemark(bean.getRemark());
+					cc.setVipId(vip.getId());
+					cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
+					cc.setCreateTime(DateUtil.getSysCurrentDate());
+					customerCommentService.insertSelective(cc);
+				}
 			}
 			bean.setId(null);
 			bean.setUpdatetime(DateUtil.getSysCurrentDate());

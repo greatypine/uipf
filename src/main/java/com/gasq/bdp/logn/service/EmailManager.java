@@ -16,11 +16,11 @@ public interface EmailManager {
      * 发送普通邮件
      * 修改application.properties的用户，才能发送。
      * @param fromEmailName 发件邮箱
-     * @param toEmailName   接受邮箱
+     * @param emails   接受邮箱
      * @param subject       邮件主题
      * @param content       邮件内容
      */
-	public void sendSimpleEmail(String fromEmailName,String[] toEmailName,String subject,String content);
+	public void sendSimpleEmail(String fromEmailName,Object[] emails,String subject,String content);
 	 /**
      * 发送附件邮件
      * @throws MessagingException

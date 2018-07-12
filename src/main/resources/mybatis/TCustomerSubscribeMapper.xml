@@ -5,6 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
     <result column="customer_phone" jdbcType="VARCHAR" property="customerPhone" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="sex" jdbcType="INTEGER" property="sex" />
     <result column="root_in" jdbcType="INTEGER" property="rootIn" />
     <result column="project" jdbcType="VARCHAR" property="project" />
@@ -76,8 +77,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, customer_name, customer_phone, sex, root_in, project, subscribe_date, company_id, 
-    status, create_user, create_time, update_user, update_time, remark
+    id, customer_name, customer_phone, email, sex, root_in, project, subscribe_date, 
+    company_id, status, create_user, create_time, update_user, update_time, remark
   </sql>
   <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TCustomerSubscribeExample" resultMap="BaseResultMap">
     select
@@ -109,19 +110,21 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.gasq.bdp.logn.model.TCustomerSubscribe">
+  <insert id="insert"  useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TCustomerSubscribe">
     insert into t_customer_subscribe (id, customer_name, customer_phone, 
-      sex, root_in, project, 
-      subscribe_date, company_id, status, 
-      create_user, create_time, update_user, 
-      update_time, remark)
+      email, sex, root_in, 
+      project, subscribe_date, company_id, 
+      status, create_user, create_time, 
+      update_user, update_time, remark
+      )
     values (#{id,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, #{customerPhone,jdbcType=VARCHAR}, 
-      #{sex,jdbcType=INTEGER}, #{rootIn,jdbcType=INTEGER}, #{project,jdbcType=VARCHAR}, 
-      #{subscribeDate,jdbcType=TIMESTAMP}, #{companyId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
-      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+      #{email,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{rootIn,jdbcType=INTEGER}, 
+      #{project,jdbcType=VARCHAR}, #{subscribeDate,jdbcType=TIMESTAMP}, #{companyId,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TCustomerSubscribe">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"  parameterType="com.gasq.bdp.logn.model.TCustomerSubscribe">
     insert into t_customer_subscribe
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -132,6 +135,9 @@
       </if>
       <if test="customerPhone != null">
         customer_phone,
+      </if>
+      <if test="email != null">
+        email,
       </if>
       <if test="sex != null">
         sex,
@@ -176,6 +182,9 @@
       </if>
       <if test="customerPhone != null">
         #{customerPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
       </if>
       <if test="sex != null">
         #{sex,jdbcType=INTEGER},
@@ -230,6 +239,9 @@
       <if test="record.customerPhone != null">
         customer_phone = #{record.customerPhone,jdbcType=VARCHAR},
       </if>
+      <if test="record.email != null">
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
       <if test="record.sex != null">
         sex = #{record.sex,jdbcType=INTEGER},
       </if>
@@ -273,6 +285,7 @@
     set id = #{record.id,jdbcType=INTEGER},
       customer_name = #{record.customerName,jdbcType=VARCHAR},
       customer_phone = #{record.customerPhone,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
       sex = #{record.sex,jdbcType=INTEGER},
       root_in = #{record.rootIn,jdbcType=INTEGER},
       project = #{record.project,jdbcType=VARCHAR},
@@ -296,6 +309,9 @@
       </if>
       <if test="customerPhone != null">
         customer_phone = #{customerPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
       </if>
       <if test="sex != null">
         sex = #{sex,jdbcType=INTEGER},
@@ -337,6 +353,7 @@
     update t_customer_subscribe
     set customer_name = #{customerName,jdbcType=VARCHAR},
       customer_phone = #{customerPhone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
       sex = #{sex,jdbcType=INTEGER},
       root_in = #{rootIn,jdbcType=INTEGER},
       project = #{project,jdbcType=VARCHAR},
@@ -368,7 +385,7 @@
 	SELECT
 		p.id,p.company_id as companyId,p.create_time as createTime,p.create_user as createUser,p.customer_name customerName,p.customer_phone as customerPhone,p.project,p.remark,p.root_in as rootIn,
 		p.sex as sex,DATE_FORMAT(p.subscribe_date,'%Y-%m-%d %H:%i:%S') as subscribeDate,p.update_time as updateTime,p.update_user as updateUser,p.status,vsb.text statusName,
-		tc.`name` as companyName,vri.`name` as rootInName
+		tc.`name` as companyName,vri.`name` as rootInName,p.email
 	FROM
 		t_customer_subscribe p
 	LEFT JOIN t_company tc on p.company_id=tc.id

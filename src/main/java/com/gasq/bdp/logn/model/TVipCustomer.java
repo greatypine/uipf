@@ -58,8 +58,29 @@ public class TVipCustomer extends ParamsObject{
     private String remark;
     
     private String[] statuss;
+    
+    private Integer messtype;
+    
+    private Integer messid;
+    
 
-    public Integer getId() {
+    public Integer getMesstype() {
+		return messtype;
+	}
+
+	public void setMesstype(Integer messtype) {
+		this.messtype = messtype;
+	}
+
+	public Integer getMessid() {
+		return messid;
+	}
+
+	public void setMessid(Integer messid) {
+		this.messid = messid;
+	}
+
+	public Integer getId() {
         return id;
     }
 

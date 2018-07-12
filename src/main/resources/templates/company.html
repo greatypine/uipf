@@ -12,20 +12,11 @@
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="company.query()">查询</a> 
 			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="company.add()">添加</a> 
-			<a id="append" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="company.append()">入库</a>
-			<a id="delivery" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="company.delivery()">出库</a> 
-			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="company.remove()">删除</a>
+			<a shiro:hasAnyRoles="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="company.remove()">删除</a>
 		</div>
 		<div id="cron_bar">
 			<form id="companyform">
-				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
-				产品名称: <input id="queryname" name="companyname" class="easyui-text" style="width: 120px; height: 22px;"/>
-				脚本状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
-							<option value="-1">请选择</option>
-							<option value="0">正常</option>
-							<option value="99">下架</option>
-						</select>
-				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/> 
+				公司名称: <input id="queryname" name="companyname" class="easyui-textbox" style="width: 120px; height: 22px;"/>
 			</form>
 		</div>
 	</div>
@@ -34,7 +25,7 @@
 		<form id="companydlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>
-	    			<td class="tdname">产品名称：</td>
+	    			<td class="tdname">公司名称：</td>
 	    			<td class="tdnamebox">
 	    				<input id="name" name="name" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
 	    			</td>
@@ -44,27 +35,29 @@
 	    			</td>
 	    		</tr>
 	    		<tr>
-	    			<td class="tdname">厂商：</td>
-	    			<td class="tdnamebox" colspan="3">
-	    				<input id="factory" name="factory" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
-	    			</td>
-	    		</tr>
-	    		<tr id="iuinfo">
-	    			<td class="tdname">产品数量：</td>
-	    			<td class="tdnamebox"><input name="company" id="company" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2,prompt:'填写数字可以为小数 eg:0.85'"/></td>
-	    			<td class="tdname">规格（单位）：</td>
+	    			<td class="tdname">状态：</td>
 	    			<td class="tdnamebox">
-	    				<input id="units" name="units" class="easyui-textbox" style="width: 100%;" data-options="required:true,prompt:'对应的产品单位 （片、盒）'"/>
+	    				<input name="status" id="status" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:0,text:'关闭'},{value:1,text:'正常'}]"/>
+	    			</td>
+	    			<td class="tdname">省份：</td>
+	    			<td class="tdnamebox">
+	    				<input id="provinceId" name="provinceId" class="easyui-combobox" style="width: 100%;" data-options="required:false,editable:false,valueField:'id',textField:'name'"/>
 	    			</td>
 	    		</tr>
 	    		<tr>
-	    			<td class="tdname">单价：</td>
+	    			<td class="tdname">城市：</td>
 	    			<td class="tdnamebox">
-	    				<input id="price" name="price" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2,prompt:'产品的单件进货价（盒单位对应）'"/>
+	    				<input id="cityId1" name="cityId" class="easyui-combobox" style="width: 100%;" data-options="required:false,editable:false,valueField:'id',textField:'name'"/>
 	    			</td>
-	    			<td class="tdname">状态：</td>
+	    			<td class="tdname">区域：</td>
 	    			<td class="tdnamebox">
-	    				<input name="status" id="status" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:0,text:'正常'},{value:99,text:'关闭'}]"/>
+	    				<input id="countyId" name="countyId" class="easyui-combobox" style="width: 100%;" data-options="required:false,editable:false,valueField:'id',textField:'name'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">详细地址：</td>
+	    			<td class="tdnamebox" colspan="3">
+	    				<input id="address" name="address" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
 	    			</td>
 	    		</tr>
 	    		<tr>
@@ -78,7 +71,7 @@
 		</form>
 	</div>
 	<div id="company_dlg-buttons">
-		<a shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="company.complate()" style="width: 90px">确认</a> 
+		<a  shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="company.complate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#companydlg-fm').form('clear');$('#companydlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 	

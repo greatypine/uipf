@@ -8,6 +8,7 @@
     <result column="province_id" jdbcType="INTEGER" property="provinceId" />
     <result column="city_id" jdbcType="INTEGER" property="cityId" />
     <result column="county_id" jdbcType="INTEGER" property="countyId" />
+    <result column="detail_address" jdbcType="VARCHAR" property="detailAddress" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="createTime" jdbcType="TIMESTAMP" property="createtime" />
@@ -74,8 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, code, name, province_id, city_id, county_id, status, remark, createTime, updateTime, 
-    createUser, updateUser
+    id, code, name, province_id, city_id, county_id, detail_address, status, remark, 
+    createTime, updateTime, createUser, updateUser
   </sql>
   <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TCompanyExample" resultMap="BaseResultMap">
     select
@@ -110,16 +111,16 @@
   <insert id="insert" parameterType="com.gasq.bdp.logn.model.TCompany">
     insert into t_company (id, code, name, 
       province_id, city_id, county_id, 
-      status, remark, createTime, 
-      updateTime, createUser, updateUser
-      )
+      detail_address, status, remark, 
+      createTime, updateTime, createUser, 
+      updateUser)
     values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
       #{provinceId,jdbcType=INTEGER}, #{cityId,jdbcType=INTEGER}, #{countyId,jdbcType=INTEGER}, 
-      #{status,jdbcType=BIT}, #{remark,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
-      #{updatetime,jdbcType=TIMESTAMP}, #{createuser,jdbcType=VARCHAR}, #{updateuser,jdbcType=VARCHAR}
-      )
+      #{detailAddress,jdbcType=VARCHAR}, #{status,jdbcType=BIT}, #{remark,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}, #{createuser,jdbcType=VARCHAR}, 
+      #{updateuser,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TCompany">
+  <insert id="insertSelective" parameterType="com.gasq.bdp.logn.model.TCompany">
     insert into t_company
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -139,6 +140,9 @@
       </if>
       <if test="countyId != null">
         county_id,
+      </if>
+      <if test="detailAddress != null">
+        detail_address,
       </if>
       <if test="status != null">
         status,
@@ -177,6 +181,9 @@
       </if>
       <if test="countyId != null">
         #{countyId,jdbcType=INTEGER},
+      </if>
+      <if test="detailAddress != null">
+        #{detailAddress,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
         #{status,jdbcType=BIT},
@@ -225,6 +232,9 @@
       <if test="record.countyId != null">
         county_id = #{record.countyId,jdbcType=INTEGER},
       </if>
+      <if test="record.detailAddress != null">
+        detail_address = #{record.detailAddress,jdbcType=VARCHAR},
+      </if>
       <if test="record.status != null">
         status = #{record.status,jdbcType=BIT},
       </if>
@@ -256,6 +266,7 @@
       province_id = #{record.provinceId,jdbcType=INTEGER},
       city_id = #{record.cityId,jdbcType=INTEGER},
       county_id = #{record.countyId,jdbcType=INTEGER},
+      detail_address = #{record.detailAddress,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=BIT},
       remark = #{record.remark,jdbcType=VARCHAR},
       createTime = #{record.createtime,jdbcType=TIMESTAMP},
@@ -283,6 +294,9 @@
       </if>
       <if test="countyId != null">
         county_id = #{countyId,jdbcType=INTEGER},
+      </if>
+      <if test="detailAddress != null">
+        detail_address = #{detailAddress,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=BIT},
@@ -312,6 +326,7 @@
       province_id = #{provinceId,jdbcType=INTEGER},
       city_id = #{cityId,jdbcType=INTEGER},
       county_id = #{countyId,jdbcType=INTEGER},
+      detail_address = #{detailAddress,jdbcType=VARCHAR},
       status = #{status,jdbcType=BIT},
       remark = #{remark,jdbcType=VARCHAR},
       createTime = #{createtime,jdbcType=TIMESTAMP},
@@ -334,7 +349,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="queryMapBeanList" parameterType="java.util.HashMap" resultType="java.util.Map">
+   <select id="queryMapBeanList" parameterType="java.util.HashMap" resultType="java.util.Map">
        select r.id as companyid,r.name as companyName from t_company r where r.status = 1 order by r.id
    </select>
    <select id="queryRootIn" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.Map">
@@ -809,4 +824,46 @@
 		</if>
 	) temp
   </select>
+  
+  <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
+	SELECT
+		p.id,p.`code`,p.`name`,p.remark,p.`status`,p.province_id as provinceId,p.city_id as cityId,p.county_id as countyId,p.createTime,p.createUser,p.updateTime,p.updateUser,
+		CONCAT(tp.`name`,tc.`name`,tcy.`name`,ifnull(p.detail_address,'')) as address,p.detail_address as detailAddress
+	FROM
+		`t_company` p
+	LEFT JOIN t_province tp ON p.province_id = tp.id
+	LEFT JOIN t_city tc ON p.city_id = tc.id
+	LEFT JOIN t_county tcy ON p.county_id = tcy.id
+	where 1=1 
+	<if test="name !=null and name!=''">
+		and p.name like concat('%',#{name},'%')
+	</if>
+	<if test="status !=null">
+		and p.status=#{status}
+	</if>
+	order by p.updateTime desc 
+	<if test="index !=null and pageSize!=null">
+		limit #{index},#{pageSize}
+	</if>
+</select>
+<select id="countCompanyByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
+	select count(*) from(
+		SELECT
+			p.id,p.`code`,p.`name`,p.remark,p.`status`,p.province_id as provinceId,p.city_id as cityId,p.county_id as countyId,p.createTime,p.createUser,p.updateTime,p.updateUser,
+			CONCAT(tp.`name`,tc.`name`,tcy.`name`,ifnull(p.detail_address,'')) as address,p.detail_address as detailAddress
+		FROM
+			`t_company` p
+		LEFT JOIN t_province tp ON p.province_id = tp.id
+		LEFT JOIN t_city tc ON p.city_id = tc.id
+		LEFT JOIN t_county tcy ON p.county_id = tcy.id
+		where 1=1 
+		<if test="name !=null and name!=''">
+			and p.name like concat('%',#{name},'%')
+		</if>
+		<if test="status !=null">
+			and p.status=#{status}
+		</if>
+	) temp
+</select>
+
 </mapper>

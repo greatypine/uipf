@@ -15,19 +15,23 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.gasq.bdp.logn.component.ActiveManager;
+import com.gasq.bdp.logn.mapper.TCustomerCommentMapper;
+import com.gasq.bdp.logn.mapper.TCustomerSubscribeLogMapper;
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeMapper;
+import com.gasq.bdp.logn.mapper.TVipCustomerMapper;
 import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
+import com.gasq.bdp.logn.model.TCustomerComment;
+import com.gasq.bdp.logn.model.TCustomerCommentExample;
 import com.gasq.bdp.logn.model.TCustomerSubscribe;
 import com.gasq.bdp.logn.model.TCustomerSubscribeExample;
 import com.gasq.bdp.logn.model.TCustomerSubscribeExample.Criteria;
 import com.gasq.bdp.logn.model.TCustomerSubscribeLog;
 import com.gasq.bdp.logn.model.TSysUser;
+import com.gasq.bdp.logn.model.TVipCustomer;
+import com.gasq.bdp.logn.model.TVipCustomerExample;
 import com.gasq.bdp.logn.service.CustomerSubscribeService;
-import com.gasq.bdp.logn.service.SubscribeLogService;
-import com.gasq.bdp.logn.service.TCustomerCommentService;
-import com.gasq.bdp.logn.service.TVipCustomerService;
 import com.gasq.bdp.logn.utils.ActiveMQUtil;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
@@ -41,10 +45,10 @@ import com.gasq.bdp.logn.utils.WorkFlowUtil;
 @Service
 public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 	@Autowired TCustomerSubscribeMapper customerSubscribeMapper;
-	@Autowired SubscribeLogService subscribeLogService;
+	@Autowired TCustomerSubscribeLogMapper subscribeLogService;
 	@Autowired ActiveManager activeManager;
-	@Autowired TVipCustomerService vipCustomerSergice;
-	@Autowired TCustomerCommentService customerCommentService;
+	@Autowired TVipCustomerMapper vipCustomerSergice;
+	@Autowired TCustomerCommentMapper customerCommentService;
 
 	@Override
 	public long countByExample(TCustomerSubscribeExample example) {
@@ -76,7 +80,7 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 			TCustomerSubscribe subscribe = customerSubscribeMapper.selectByPrimaryKey(id);
 			subscribe.setStatus(99);
 			this.saveOrUpdate(subscribe);
-			subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(subscribe.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_CLOSE,SystemUserInfo.getSystemUser().getUser().getUsername()));
+			subscribeLogService.insertSelective(new TCustomerSubscribeLog(subscribe.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_CLOSE,SystemUserInfo.getSystemUser().getUser().getUsername()));
 			return true;
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -155,20 +159,69 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 				bean.setUpdateUser(user.getUsername());
 				customerSubscribeMapper.updateByPrimaryKeySelective(bean);
 				if(bean.getStatus()==1) {
-					subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_RECEPTION,user.getUsername()));
+					subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_RECEPTION,user.getUsername()));
 				}else if(bean.getStatus()==0) {
-					subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_EDIT,user.getUsername()));
+					subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_EDIT,user.getUsername()));
 				}else if(bean.getStatus()==99) {
-					subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_CLOSE,user.getUsername()));
+					subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_CLOSE,user.getUsername()));
 				}
 			}else {
 				bean.setCreateTime(DateUtil.getSysCurrentDate());
 				bean.setCreateUser(user.getUsername());
 				bean.setStatus(0);
 				customerSubscribeMapper.insertSelective(bean);
-				subscribeLogService.saveOrUpdate(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_ADD,user.getUsername()));
+				subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_ADD,user.getUsername()));
 				String mess = "后台用户："+SystemUserInfo.getSystemUser().getUser().getNickname()+",在"+DateUtil.getAllCurrentDate()+"成功预约了一个客户！";
 				activeManager.sendBack(ActiveMQUtil.getTopicDestination(bean.getCompanyId()+InitProperties.BACK_SUBSCRIBE_MSG),mess);
+			}
+			TVipCustomerExample vcexample = new TVipCustomerExample();
+			vcexample.createCriteria().andCustomerPhoneEqualTo(bean.getCustomerPhone());
+			List<TVipCustomer> list = vipCustomerSergice.selectByExample(vcexample);
+			if(list.size()>0) {
+				TVipCustomer customer = list.get(0);
+				if(StringUtils.isNotBlank(bean.getCustomerName()))customer.setCustomerName(bean.getCustomerName());
+				if(StringUtils.isNotBlank(bean.getCustomerPhone()))customer.setCustomerPhone(bean.getCustomerPhone());
+				if(StringUtils.isNotBlank(bean.getEmail()))customer.setEmail(bean.getEmail());
+				if(bean.getSex()!=null)customer.setSex(bean.getSex());
+				vipCustomerSergice.updateByPrimaryKeySelective(customer);
+				if(StringUtils.isNotBlank(bean.getRemark())) {
+					TCustomerCommentExample tccexample = new TCustomerCommentExample();
+					tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(bean.getId());
+					long l = customerCommentService.countByExample(tccexample);
+					if(l<=0) {
+						TCustomerComment cc = new TCustomerComment();
+						cc.setRemark(bean.getRemark());
+						cc.setVipId(customer.getId());
+						cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
+						cc.setCreateTime(DateUtil.getSysCurrentDate());
+						customerCommentService.insertSelective(cc);
+					}
+				}
+			}else {
+				if(StringUtils.isNotBlank(bean.getCustomerPhone())) {
+					TVipCustomer vip = new TVipCustomer();
+					vip.setCompanyId(bean.getCompanyId());
+					vip.setCustomerName(bean.getCustomerName());
+					vip.setCustomerPhone(bean.getCustomerPhone());
+					vip.setSex(bean.getSex());
+					vip.setStatus(1);
+					vip.setCreateTime(DateUtil.getSysCurrentDate());
+					vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
+					vipCustomerSergice.insertSelective(vip);
+					if(StringUtils.isNotBlank(bean.getRemark())) {
+						TCustomerCommentExample tccexample = new TCustomerCommentExample();
+						tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(bean.getId());
+						long l = customerCommentService.countByExample(tccexample);
+						if(l<=0) {
+							TCustomerComment cc = new TCustomerComment();
+							cc.setRemark(bean.getRemark());
+							cc.setVipId(vip.getId());
+							cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
+							cc.setCreateTime(DateUtil.getSysCurrentDate());
+							customerCommentService.insertSelective(cc);
+						}
+					}
+				}
 			}
 			return true;
 		}catch (Exception e) {

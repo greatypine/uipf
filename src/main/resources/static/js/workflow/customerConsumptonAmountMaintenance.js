@@ -293,13 +293,15 @@ function CustomerConsumptonAmount(){
 		        	}
 				},
 				onLoadSuccess:function(data){
-					ccac.calculateAmount(null);
+					cu.clearSelected("ccac_table");
+					var params = ccac.getRequestParams();
+					ccac.calculateAmount(params);
 				}
 			});
 	};
 	
 	this.sumPrice = function(data){
-		$('#ccac_table').datagrid("getPanel").panel("setTitle","<span style='margin-left:1%'></span>总消费金额：<b style='color: red;'>"+data.total_amount.toFixed(2)+"</b>元"); 
+		$('#ccac_table').datagrid("getPanel").panel("setTitle","<span style='margin-left:0.5%'></span>总消费金额：<b style='color: red;'>￥"+data.total_amount.toFixed(2)+"</b>元"); 
 	};
 	this.sumPriceC = function(data){
 		ccac_table.datagrid('updateRow',{
@@ -705,23 +707,20 @@ function CustomerConsumptonAmount(){
 			$.messager.alert('提示','请先选中要操作的数据！','error');
 		}
 	};
-	this.calculateAmount = function(id){
+	this.calculateAmount = function(params){
 		$.ajax({
 			type:"POST",
-			data :{id:id},
+			data :params,
 			url : content+"/ccac/queryAmountSum",
 			error : function(data) {
 				$.messager.alert('提示信息','服务器连接超时请重试!','error'); 
 				return false;
 			},
 			success : function(data) {
-				if(data){//成功
-					if(id==null){
-						ccac.sumPrice(data);
-					}else{
-						ccac.sumPrice(data);
-						ccac.sumPriceC(data);
-					}
+				if(data!=null || data !=""){//成功
+					ccac.sumPrice(data);
+//						ccac.sumPrice(data);
+//						ccac.sumPriceC(data);
 				}
 			}
 		});

@@ -36,4 +36,6 @@ public interface TEquipmentMapper {
 	List<Map<String, Object>> queryPagingList(Map<String, Object> params);
 
 	Integer countByBean(Map<String, Object> params);
+
+	Map<String, Object> queryAmountSum(Map<String, Object> params);
 }

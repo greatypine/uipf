@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ import com.gasq.bdp.logn.utils.WorkFlowUtil;
  */
 @Service
 public class TEquipmentServiceImpl implements TEquipmentService {
+	protected Logger logger = Logger.getLogger(this.getClass());
 	@Autowired TEquipmentMapper mapper;
 
 	@Override
@@ -98,5 +100,39 @@ public class TEquipmentServiceImpl implements TEquipmentService {
 			mapper.insertSelective(bean);
 		}
 		return true;
+	}
+
+	@Override
+	public Map<String, Object> queryAmountSum(TEquipment bean) {
+		Map<String, Object> params = new  HashMap<String, Object>();
+		try {
+			if(bean.getName()!=null) {
+				params.put("name", bean.getName());
+			}
+			if(bean.getStatus()!=null) {
+				params.put("status", bean.getStatus());
+			}
+			if(bean.getType()!=null) {
+				params.put("type", bean.getType());
+			}
+			if(bean.getCompanyId()!=null) {
+				params.put("companyid", bean.getCompanyId());
+			}else {
+				if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+					params.put("companyid", SystemUserInfo.getSystemUser().getCompany().getId());
+				}
+			}
+			params = mapper.queryAmountSum(params);
+			if(params==null) {
+				params = new  HashMap<String, Object>();
+				params.put("total_amount", 0);
+				params.put("actual_total_amount", 0);
+			}
+		} catch (Exception e) {
+			params.put("total_amount", 0);
+			params.put("actual_total_amount", 0);
+			logger.error("查询统计设备总价值出错！"+e.getMessage(), e);
+		}
+		return params;
 	}
 }

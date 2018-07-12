@@ -150,8 +150,9 @@ public class TSysMenuServiceImpl implements TSysMenuService{
 				}
 				menuMapper.updateByPrimaryKeySelective(bean);
 			}else {
-				Integer id = menuMapper.getMaxId();
-				bean.setId(id);
+				String code = menuMapper.getNextCode(bean.getCode(),SystemUserInfo.getSystemUser().getCompany().getId());
+				bean.setCode(code);
+				menuMapper.insertSelective(bean);
 				if(bean.getRoleids()!=null) {
 					String[] roleids = bean.getRoleids().split(",");
 					for (String rid : roleids) {
@@ -159,9 +160,6 @@ public class TSysMenuServiceImpl implements TSysMenuService{
 						roleMenuMapper.insert(record);
 					}
 				}
-				String code = menuMapper.getNextCode(bean.getCode());
-				bean.setCode(code);
-				menuMapper.insertSelective(bean);
 			}
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

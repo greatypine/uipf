@@ -96,6 +96,20 @@ public class VipCustomerController {
     	return null;
 	 }
     
+    @ApiOperation(value="查询列表会员用户配置信息列表", notes="查询列表会员用户配置信息列表")
+    @ApiImplicitParam(name = "bean", value = "会员用户实体对象TVipCustomer", required = false, dataType = "TMessage")
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+	@RequestMapping(value = "/sendMessage",method=RequestMethod.POST)
+	public Map<String, Object> sendMessage(TVipCustomer bean) {
+		try {
+			return vipCustomerService.sendMessage(bean);
+		}catch (Exception e) {
+			paramMap.put("status", false);
+			paramMap.put("mess", "消息发送失败！");
+			logger.info(e.getMessage(),e);
+		}
+    	return paramMap;
+	 }
 }
 
 	

@@ -433,7 +433,7 @@ public class IndexController {
 	}
 	
 	@RequestMapping("/goVipCustomer")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_RECEPTIONIST }, logical = Logical.OR)
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_RECEPTIONIST,RoleSign.H_ADMIN,RoleSign.H_OPTION  }, logical = Logical.OR)
 	public String goVipCustomer(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
 		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
 		mmap.addAttribute("content", request.getContextPath());
@@ -465,7 +465,7 @@ public class IndexController {
 	}
 	
 	@RequestMapping("/goEquipment")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR }, logical = Logical.OR)
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN, RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION, RoleSign.QUERY, RoleSign.Test,RoleSign.Q_RECEPTIONIST }, logical = Logical.OR)
 	public String goEquipment(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
 		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
 		mmap.addAttribute("content", request.getContextPath());
@@ -478,5 +478,13 @@ public class IndexController {
 		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
 		mmap.addAttribute("content", request.getContextPath());
 		return "company";
+	}
+	
+	@RequestMapping("/goMessage")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_ADMIN,RoleSign.H_OPTION }, logical = Logical.OR)
+	public String goMessage(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		return "message";
 	}
 }

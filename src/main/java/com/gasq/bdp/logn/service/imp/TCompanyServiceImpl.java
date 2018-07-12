@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.ibatis.session.RowBounds;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.gasq.bdp.logn.mapper.TCompanyMapper;
+import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TCompany;
 import com.gasq.bdp.logn.model.TCompanyExample;
-import com.gasq.bdp.logn.model.TCompanyExample.Criteria;
 import com.gasq.bdp.logn.service.TCompanyService;
 import com.gasq.bdp.logn.utils.DateUtil;
 
@@ -50,33 +51,23 @@ public class TCompanyServiceImpl implements TCompanyService {
 	@Override
 	public Map<String, Object> queryPagingList(TCompany bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		TCompanyExample example = new TCompanyExample();
-		Criteria c = example.createCriteria();
-		if(bean.getName()!=null && !"".equals(bean.getName())) {
-			c.andNameLike("%"+bean.getName()+"%");
-		}
-		if(bean.getStatus()!=null) {
-			c.andStatusEqualTo(bean.getStatus());
-		}
-		if(bean.getId()!=null) {
-			c.andIdEqualTo(bean.getId());
-		}
-		if(bean.getCreatetime()!=null) {
-			c.andCreatetimeGreaterThanOrEqualTo(bean.getCreatetime());
-		}
-		example.setOrderByClause(" createTime desc ");
-		int count = (int) mapper.countByExample(example);
-		List<TCompany> list = null;
+		List<Map<String, Object>> list = null;
 		int start = 0;
 		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
 		int number = (bean.getRows()==0) ? 10 : bean.getRows();
 		start = (intPage - 1) * number;
-		RowBounds rowBounds = new RowBounds(start, bean.getRows());
-		if(count>0) {
-			list = mapper.selectByExampleWithRowbounds(example, rowBounds);
-		}else {
-			list = new ArrayList<TCompany>(); 
+		Map<String, Object> params= new  HashMap<String, Object>();
+		params.put("index", start);
+		params.put("pageSize", number);
+		if(bean.getName()!=null) {
+			params.put("name", bean.getName());
 		}
+		if(bean.getStatus()!=null) {
+			params.put("status", bean.getStatus());
+		}
+		list = mapper.queryPagingList(params);
+		if(list==null) list = new ArrayList<Map<String,Object>>(); 
+		Integer count = mapper.countCompanyByBean(params);
 		result.put("rows",list);
 		result.put("total",count);
 		return result;
@@ -84,16 +75,16 @@ public class TCompanyServiceImpl implements TCompanyService {
 
 	@Override
 	public boolean saveOrUpdate(TCompany bean) {
+		bean.setUpdatetime(DateUtil.getSysCurrentDate());
 		if(bean.getId()!=null) {
-			bean.setUpdatetime(DateUtil.getSysCurrentDate());
+			bean.setUpdateuser(SystemUserInfo.getSystemUser().getUser().getNickname());
 			mapper.updateByPrimaryKeySelective(bean);
-			return true;
 		}else {
-			bean.setUpdatetime(DateUtil.getSysCurrentDate());
 			bean.setCreatetime(DateUtil.getSysCurrentDate());
+			bean.setCreateuser(SystemUserInfo.getSystemUser().getUser().getNickname());
 			mapper.insertSelective(bean);
-			return true;
 		}
+		return true;
 	}
 
 	@Override

@@ -10,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.TEquipment;
 import com.gasq.bdp.logn.service.TEquipmentService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +26,7 @@ public class EquipmentController {
     //错误信息
     Map<String,Object> paramMap = new HashMap<String,Object>();
     
-    @ApiOperation(value="查询列表设备配置信息列表", notes="查询列表设备配置信息列表（所以）")
+    @ApiOperation(value="查询列表设备配置信息列表", notes="查询列表设备配置信息列表")
     @ApiImplicitParam(name = "bean", value = "设备实体对象TEquipment", required = false, dataType = "TEquipment")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
@@ -42,7 +40,7 @@ public class EquipmentController {
 	 }
     
     @ApiOperation(value="添加或更新设备配置信息", notes="添加或更新设备配置信息（管理员、操作、测试）")
-    @ApiImplicitParam(name = "bean", value = "设备实体对象TEquipment", required = true, dataType = "TEquipment")
+    @ApiImplicitParam(name = "bean", value = "设备实体对象TEquipment", required = false, dataType = "TEquipment")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
 	public boolean saveOrUpdate(TEquipment bean) {
@@ -66,6 +64,19 @@ public class EquipmentController {
 		}
 		return false;
 	 }
+    @ApiOperation(value="查询列表设备配置信息列表", notes="查询列表设备配置信息列表")
+    @ApiImplicitParam(name = "bean", value = "设备实体对象TEquipment", required = false, dataType = "TEquipment")
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+	@RequestMapping(value = "/queryAmountSum",method=RequestMethod.POST)
+	public Map<String, Object> queryAmountSum(TEquipment bean) {
+		try {
+			return equipmentService.queryAmountSum(bean);
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    
 }
 
 	

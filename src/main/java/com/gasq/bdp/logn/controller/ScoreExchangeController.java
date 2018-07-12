@@ -41,7 +41,7 @@ public class ScoreExchangeController {
     //错误信息
     Map<String,Object> paramMap = new HashMap<String,Object>();
     
-    @ApiOperation(value="查询列表积分兑换配置信息列表", notes="查询列表积分兑换配置信息列表（所以）")
+    @ApiOperation(value="查询列表积分兑换配置信息列表", notes="查询列表积分兑换配置信息列表")
     @ApiImplicitParam(name = "bean", value = "积分兑换实体对象TScoreExchange", required = false, dataType = "TScoreExchange")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)

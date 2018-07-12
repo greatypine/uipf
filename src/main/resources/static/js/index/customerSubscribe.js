@@ -25,7 +25,7 @@ function initData(){
 		url:content+'/common/queryCounsoler?id='+user.user.companyid
 	});
 	if(cu.hasRoles("sadmin,generalManager,h_admin,h_option")){
-		$("#subscribeDate").datetimebox().datetimebox('calendar').calendar({
+		$("#subscribeDate").datebox().datebox('calendar').calendar({
 			validator: function(date){
 				var now = new Date();
 				now.setTime(now.getTime()-24*60*60*1000);

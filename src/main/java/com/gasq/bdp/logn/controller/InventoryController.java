@@ -27,7 +27,7 @@ public class InventoryController {
     //错误信息
     Map<String,Object> paramMap = new HashMap<String,Object>();
     
-    @ApiOperation(value="查询列表库存配置信息列表", notes="查询列表库存配置信息列表（所以）")
+    @ApiOperation(value="查询列表库存配置信息列表", notes="查询列表库存配置信息列表")
     @ApiImplicitParam(name = "bean", value = "库存实体对象TInventory", required = false, dataType = "TInventory")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)

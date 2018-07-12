@@ -58,6 +58,7 @@
 <!-- <table schema="" tableName="t_sys_user_ext"></table>  -->
 <!-- <table schema="" tableName="t_sys_user_role"></table> -->
 <!-- <table schema="" tableName="t_company"></table>  -->
+<!-- <table schema="" tableName="t_message"></table>  -->
 <!-- 		<table schema="" tableName="t_sys_timer_job_hive"> </table> -->
 <!-- 		<table schema="" tableName="t_ltn_customer"> </table> -->
 <!-- <table schema="" tableName="t_vip_customer"> </table> -->
@@ -71,7 +72,7 @@
 <!-- 				<table schema="" tableName="t_score_exchange"> </table> -->
 <!-- 				<table schema="" tableName="t_project"> </table> -->
 <!-- 				<table schema="" tableName="t_customer_porject"> </table> -->
-				<table schema="" tableName="t_equipment"> </table>
+<!-- 				<table schema="" tableName="t_equipment"> </table> -->
 <!-- 				<table schema="" tableName="t_customer_project_log"> </table> -->
 <!-- 				<table schema="" tableName="t_customer_comment"> </table> -->
 <!-- 		<table schema="" tableName="t_sys_role_menu"> </table> -->

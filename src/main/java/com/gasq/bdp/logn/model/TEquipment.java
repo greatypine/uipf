@@ -3,6 +3,8 @@ package com.gasq.bdp.logn.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class TEquipment extends ParamsObject{
     /**
 	 * 
@@ -17,6 +19,7 @@ public class TEquipment extends ParamsObject{
 
     private String factory;
 
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date buyDate;
 
     private String buyUser;

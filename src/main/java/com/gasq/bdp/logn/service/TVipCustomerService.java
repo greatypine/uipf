@@ -2,6 +2,7 @@ package com.gasq.bdp.logn.service;
 import java.util.List;
 import java.util.Map;
 
+import com.gasq.bdp.logn.iexception.WorkFlowJobException;
 import com.gasq.bdp.logn.model.TVipCustomer;
 import com.gasq.bdp.logn.model.TVipCustomerExample;
 
@@ -22,5 +23,7 @@ public interface TVipCustomerService {
 	Map<String, Object> queryMapGridList(TVipCustomer bean);
 
 	List<Map<String, Object>> queryMapGridChildren(TVipCustomer bean);
+
+	Map<String, Object> sendMessage(TVipCustomer bean) throws WorkFlowJobException;
 
 }

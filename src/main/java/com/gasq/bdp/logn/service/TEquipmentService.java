@@ -19,4 +19,6 @@ public interface TEquipmentService {
 
 	boolean delete(int id);
 
+	Map<String, Object> queryAmountSum(TEquipment bean);
+
 }

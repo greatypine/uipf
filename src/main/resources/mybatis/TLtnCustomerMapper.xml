@@ -557,13 +557,81 @@
  
   <select id="queryAmountSum" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
   	<if test="record.id==null">
-  		select sum(cc.total_amount) as total_amount from t_ltn_customer a left join t_ltn_customer_consumpton_amount cc on a.id = cc.customer_id
-		WHERE
-		a.status = 1 
-		<if test="record.companyId!=null">
-			and a.company_id = #{record.companyId}
-		</if>
-  	
+  		SELECT 
+			sum(
+				ifnull(
+					cc.total_amount,
+					0
+				)
+			) AS total_amount
+		 from (
+	  		SELECT
+				a.id
+			from t_ltn_customer a 
+			LEFT JOIN t_customer_subscribe tcs on a.subscribe_id=tcs.id
+			<if test="record.companyId !=null">
+			 and tcs.company_id=#{record.companyId}
+			</if>
+			LEFT JOIN t_sys_user u2 on tcs.create_user=u2.username
+			<if test="record.companyId !=null">
+			 and u2.companyid=#{record.companyId}
+			</if>
+			left join v_consume_type vct on a.type=vct.value
+			<if test="record.companyId !=null">
+			 and vct.companyid=#{record.companyId}
+			</if>
+			LEFT JOIN t_sys_user u on a.therapeutist = u.id
+			<if test="record.companyId !=null">
+			 and u.companyid=#{record.companyId}
+			</if>
+			LEFT JOIN t_sys_user u1 on a.counsoler = u1.id
+			<if test="record.companyId !=null">
+			 and u1.companyid=#{record.companyId}
+			</if>
+			left join t_company c on a.company_id = c.id
+			left join v_sex vs on a.sex=vs.value
+			<if test="record.companyId !=null">
+			 and vs.companyid=#{record.companyId}
+			</if>
+			LEFT JOIN v_customer_order_status vcos on a.`status`= vcos.`value`
+			where 1 = 1
+	 		<if test="record.companyId &gt; 0 and record.companyId!=null">
+				and a.company_id=#{record.companyId}
+	 		</if>
+	 		<if test="record.phonenumb !='' and record.phonenumb!=null">
+				and a.phonenumb like concat(#{record.phonenumb},'%')
+	 		</if>
+	 		<if test="record.customername !='' and record.customername!=null">
+				and a.customername like concat(#{record.customername},'%')
+	 		</if>
+	 		<if test="record.therapeutist !='' and record.therapeutist!=null">
+				and a.therapeutist = #{record.therapeutist}
+	 		</if>
+	 		<if test="record.chuFuZhen !='' and record.chuFuZhen!=null">
+				and a.chu_fu_zhen = #{record.chuFuZhen}
+	 		</if>
+	 		<if test="record.statuss!=null">
+				and a.status in
+				<foreach item="item" index="index" collection="record.statuss" 
+	                         open="(" separator="," close=")">
+	                        #{item}
+	            </foreach>
+	 		</if>
+	 		<if test="record.type!=null">
+				and a.type = #{record.type}
+	 		</if>
+	 		<if test="record.id!=null">
+				and a.id = #{record.id}
+	 		</if>
+	 		<if test="record.createtime!=null">
+				and a.createtime &gt;= #{record.createtime}
+	 		</if>
+	 		<if test="record.endtime!=null">
+				and a.createtime &lt;= #{record.endtime}
+	 		</if>
+	 		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text
+	 	) aa
+		LEFT JOIN (SELECT sum(cc.total_amount)total_amount,cc.customer_id  FROM t_ltn_customer_consumpton_amount cc GROUP BY cc.customer_id) cc on cc.customer_id=aa.id	
   	</if>
   	<if test="record.id!=null">
   		SELECT

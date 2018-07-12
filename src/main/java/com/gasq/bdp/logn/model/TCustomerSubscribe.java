@@ -4,8 +4,6 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.gasq.bdp.logn.utils.DateUtil;
-
 public class TCustomerSubscribe extends ParamsObject{
     /**
 	 * 
@@ -18,13 +16,15 @@ public class TCustomerSubscribe extends ParamsObject{
 
     private String customerPhone;
 
+    private String email;
+
     private Integer sex;
 
     private Integer rootIn;
 
     private String project;
 
-    @DateTimeFormat(pattern=DateUtil.TIME_DEFAULT_FORMAT)
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date subscribeDate;
 
     private Integer companyId;
@@ -33,12 +33,10 @@ public class TCustomerSubscribe extends ParamsObject{
 
     private String createUser;
 
-    @DateTimeFormat(pattern=DateUtil.TIME_DEFAULT_FORMAT)
     private Date createTime;
 
     private String updateUser;
 
-    @DateTimeFormat(pattern=DateUtil.TIME_DEFAULT_FORMAT)
     private Date updateTime;
 
     private String remark;
@@ -65,6 +63,14 @@ public class TCustomerSubscribe extends ParamsObject{
 
     public void setCustomerPhone(String customerPhone) {
         this.customerPhone = customerPhone == null ? null : customerPhone.trim();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
     }
 
     public Integer getSex() {

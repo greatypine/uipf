@@ -145,11 +145,15 @@ public class CustomerConsumptonAmountController {
 	@RequestMapping(value = "/queryAmountSum",method=RequestMethod.POST)
 	public Map<String, Object> queryAmountSum(TLtnCustomer bean) {
 		try {
-			return customerService.queryAmountSum(bean);
+			paramMap = customerService.queryAmountSum(bean);
+			if(paramMap==null) {
+				paramMap = new HashMap<String,Object>();
+				paramMap.put("total_amount", 0);
+			}
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
-    	return null;
+    	return paramMap;
 	 }
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Test},logical=Logical.OR)
 	@SuppressWarnings("unchecked")
