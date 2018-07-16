@@ -72,7 +72,7 @@ public class TCustomerCommentServiceImpl implements TCustomerCommentService{
 				customerCommentMapper.updateByPrimaryKeySelective(bean);
 			}else {
 				bean.setCreateTime(DateUtil.getSysCurrentDate());
-				bean.setCreateUser(user.getUsername());
+				bean.setCreateUser(user.getNickname());
 				customerCommentMapper.insertSelective(bean);
 			}
 		} catch (Exception e) {

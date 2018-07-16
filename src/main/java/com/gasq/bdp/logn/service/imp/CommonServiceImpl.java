@@ -186,6 +186,9 @@ public class CommonServiceImpl implements CommonService {
 		List<Integer> secuessOrder = new ArrayList<Integer>();
 		List<Integer> wastageOrder = new ArrayList<Integer>();
 		List<Integer> unfinishedOrder = new ArrayList<Integer>();
+		List<Integer> actual_subscribe_enable_arrive = new ArrayList<Integer>();
+		List<Integer> actual_jiezhen = new ArrayList<Integer>();
+		List<Integer> all_totalOrder = new ArrayList<Integer>();
 		map.put("starttime", starttime);
 		map.put("endtime", endtime);
 		map.put("datetype", datetype);
@@ -212,6 +215,9 @@ public class CommonServiceImpl implements CommonService {
 				secuessOrder.add(new BigDecimal(lm.get("secuessOrder").toString()).intValue());
 				wastageOrder.add(new BigDecimal(lm.get("wastageOrder").toString()).intValue());
 				unfinishedOrder.add(new BigDecimal(lm.get("unfinishedOrder").toString()).intValue());
+				actual_subscribe_enable_arrive.add(new BigDecimal(lm.get("actual_subscribe_enable_arrive").toString()).intValue());
+				actual_jiezhen.add(new BigDecimal(lm.get("actual_jiezhen").toString()).intValue());
+				all_totalOrder.add(new BigDecimal(lm.get("all_totalOrder").toString()).intValue());
 			}
 		}
 		double max = (totalOrder.size()<=0)?0.0:Integer.parseInt(CommonUtils.getArrayMax(totalOrder).toString())*1.25;
@@ -222,6 +228,9 @@ public class CommonServiceImpl implements CommonService {
 		map.put("secuessOrder", secuessOrder);
 		map.put("wastageOrder", wastageOrder);
 		map.put("unfinishedOrder", unfinishedOrder);
+		map.put("actual_subscribe_enable_arrive", actual_subscribe_enable_arrive);
+		map.put("actual_jiezhen", actual_jiezhen);
+		map.put("all_totalOrder", all_totalOrder);
 		map.put("max", Math.round(max));
 		map.put("interval", Math.round(max));
 		map.put("series_name", companyname+"员工预约统计");

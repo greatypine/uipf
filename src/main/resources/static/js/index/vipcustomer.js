@@ -291,7 +291,7 @@ function systemvipcustomer(){
 		if(row){
 			$("#customercommentdlg").dialog("open").dialog("center").dialog("setTitle","添加客户信息");
 			$("#customercommentdlg-fm").form("clear");
-			$("#vip_id").val(row.id);
+			$("#vipId").val(row.id);
 		}else{
 			$.messager.alert('提示','请先选中要操作的数据！','error');
 		}
@@ -475,6 +475,8 @@ function systemvipcustomer(){
 				if(data.status){
 					$.messager.alert('提示',data.mess);
 					$.messager.progress('close');
+					$('#smessagedlg-fm').form("clear");
+					$("#smessagedlg").dialog("close");
 				}else{
 					$.messager.alert('提示',data.mess,'warning');
 					$.messager.progress('close');

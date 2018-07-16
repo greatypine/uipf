@@ -478,8 +478,11 @@
 		tc.`name` as companyname,
 		count(tcs.id) totalOrder,
 		sum(if(tcs.`status`=1,1,0)) secuessOrder,
-		sum(if(tcs.`status`=99,1,0)) wastageOrder,
-		sum(if(tcs.`status`=0,1,0)) unfinishedOrder
+		sum(if(tcs.`status`=99 and tcs.subscribe_date&lt;=#{endtime} and tcs.subscribe_date&gt;=#{starttime},1,0)) wastageOrder,
+		sum(if(tcs.`status`=0,1,0)) unfinishedOrder,
+		sum(if(tcs.subscribe_date&lt;=#{endtime} and tcs.subscribe_date&gt;=#{starttime},1,0)) actual_subscribe_enable_arrive,
+		sum(if(tcs.subscribe_date&lt;=#{endtime} and tcs.subscribe_date&gt;=#{starttime} and tcs.`status`=1,1,0)) actual_jiezhen,
+		(SELECT count(tcs1.id) all_totalOrder from t_customer_subscribe tcs1 where DATE_FORMAT(tcs1.create_time, '%Y-%m-%d')&lt;=#{endtime} and DATE_FORMAT(tcs1.create_time, '%Y-%m-%d') &gt;=#{starttime}) all_totalOrder
 	FROM
 		t_customer_subscribe tcs
 	LEFT JOIN t_sys_user tsu ON tcs.create_user = tsu.username

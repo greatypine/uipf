@@ -76,11 +76,11 @@ function Myinventory(){
 	};
 	this.query = function(){
 		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager")?$("#querycompanyid").combobox("getValue"):null;
-		var name = $("#queryname").val();
+		var name = $("#queryname").textbox("getValue");
 		var status = ($("#querystatus").combobox("getValue")<0)?null:$("#querystatus").combobox("getValue");
 		var createTime = ($("#querycreateTime").datebox('getValue')=="")?null:$("#querycreateTime").datebox('getValue');
 		var params = {};
-		if(name!="") {params.inventoryName = name;}
+		if(name!="") {params.name = name;}
 		params.status = status;
 		if(createTime!="" && createTime!=null) {params.createtime = createTime;}
 		params.companyid = companyid;

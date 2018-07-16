@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -18,6 +19,7 @@ import com.gasq.bdp.logn.component.ActiveManager;
 import com.gasq.bdp.logn.mapper.TCustomerCommentMapper;
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeLogMapper;
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeMapper;
+import com.gasq.bdp.logn.mapper.TSysUserMapper;
 import com.gasq.bdp.logn.mapper.TVipCustomerMapper;
 import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.RoleSign;
@@ -32,6 +34,7 @@ import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TVipCustomer;
 import com.gasq.bdp.logn.model.TVipCustomerExample;
 import com.gasq.bdp.logn.service.CustomerSubscribeService;
+import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.utils.ActiveMQUtil;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
@@ -49,6 +52,11 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 	@Autowired ActiveManager activeManager;
 	@Autowired TVipCustomerMapper vipCustomerSergice;
 	@Autowired TCustomerCommentMapper customerCommentService;
+	@Autowired EmailManager emailService;
+	@Autowired TSysUserMapper userMapper;
+	
+	@Value("${spring.mail.username}")
+	private String sourceEmail;
 
 	@Override
 	public long countByExample(TCustomerSubscribeExample example) {
@@ -171,8 +179,14 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 				bean.setStatus(0);
 				customerSubscribeMapper.insertSelective(bean);
 				subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_ADD,user.getUsername()));
-				String mess = "后台用户："+SystemUserInfo.getSystemUser().getUser().getNickname()+",在"+DateUtil.getAllCurrentDate()+"成功预约了一个客户！";
+				String mess = "后台用户："+SystemUserInfo.getSystemUser().getUser().getNickname()+",在"+DateUtil.getAllCurrentDate()+"成功预约了一个客户！\n 客户姓名："+bean.getCustomerName()+"\n 联系方式："+bean.getCustomerPhone()+"\n预约到诊时间："+DateUtil.dateToString(bean.getSubscribeDate());
 				activeManager.sendBack(ActiveMQUtil.getTopicDestination(bean.getCompanyId()+InitProperties.BACK_SUBSCRIBE_MSG),mess);
+				Map<String,Object> map = new HashMap<>();
+				map.put("companyid", bean.getCompanyId());
+				map.put("roles", RoleSign.Q_ALL);
+				List<TSysUser> userlist = userMapper.queryQUserEmailAndPhone(map);
+				Object[] emails = userlist.stream().map(f->f.getEmail()).distinct().toArray();
+				emailService.sendSimpleEmail(sourceEmail, emails, "痘卫士-预约提醒",mess);
 			}
 			TVipCustomerExample vcexample = new TVipCustomerExample();
 			vcexample.createCriteria().andCustomerPhoneEqualTo(bean.getCustomerPhone());
@@ -186,7 +200,7 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 				vipCustomerSergice.updateByPrimaryKeySelective(customer);
 				if(StringUtils.isNotBlank(bean.getRemark())) {
 					TCustomerCommentExample tccexample = new TCustomerCommentExample();
-					tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(bean.getId());
+					tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(customer.getId());
 					long l = customerCommentService.countByExample(tccexample);
 					if(l<=0) {
 						TCustomerComment cc = new TCustomerComment();
@@ -210,7 +224,7 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 					vipCustomerSergice.insertSelective(vip);
 					if(StringUtils.isNotBlank(bean.getRemark())) {
 						TCustomerCommentExample tccexample = new TCustomerCommentExample();
-						tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(bean.getId());
+						tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(vip.getId());
 						long l = customerCommentService.countByExample(tccexample);
 						if(l<=0) {
 							TCustomerComment cc = new TCustomerComment();
@@ -226,6 +240,7 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 			return true;
 		}catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			e.printStackTrace();
 		}
 		return false;
 	}

@@ -103,6 +103,9 @@ function MycustomerSubscribe(){
 		if(name!="") {params.customerName = name;}
 		if(createTime!="" && createTime!=null) {params.createtime = createTime;}
 		params.companyId = companyid;
+		if(cu.hasRoles("q_area_shopManager,q_admin,q_receptionist,q_counselor")){
+			params.status=0;
+		}
 		customerSubscribe_table.datagrid("load",params);
 	};
 	this.getParams = function(){

@@ -57,16 +57,18 @@ function CountReport(){
 						    		var fc = "#fff";
 						    		if(value>=80 && value<100){
 						    			color="#339900";
+						    			fc = "#fff";
 						    		}else if(value<80 && value>60){
 						    			color = "#66CC00";
+						    			fc = "#fff";
 						    		}else if(value<60 && value>40){
 						    			color="#FF3300";
-						    			fc = "#000";
+						    			fc = "orange";
 						    		}else if(value<40){
 						    			color="#FF0000";
-						    			fc = "#000";
+						    			fc = "red";
 						    		}else{
-						    			fc = "#000";
+						    			fc = "red";
 						    		}
 						    		s = '<div style="width:100%;border:1px solid #ccc">' +
 						    		'<div style="width:' + value + '%;background:green;color:'+fc+'">' + value + '%' + '</div>'

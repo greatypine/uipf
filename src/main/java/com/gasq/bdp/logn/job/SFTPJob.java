@@ -1,8 +1,7 @@
 package com.gasq.bdp.logn.job;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 import com.gasq.bdp.logn.iexception.WorkFlowJobException;
 import com.gasq.bdp.logn.model.PagingBean;
 import com.gasq.bdp.logn.model.ParamsObject;

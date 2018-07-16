@@ -460,4 +460,25 @@
 		GROUP BY tsu.id,vus.text,vs.text
 	) temp 
 </select>
+<select id="queryQUserEmailAndPhone" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    select
+      distinct
+      u.*
+    from t_sys_user u
+    INNER JOIN t_sys_user_role ur ON u.id = ur.user_id
+	INNER JOIN t_sys_role r on ur.role_id = r.id
+	where 
+		u.`status`=0 and r.`status`=1
+		<if test="companyid!=null">
+			and u.companyid=#{companyid}
+		</if>
+		<if test="roles!=null">
+			and r.role_sign in
+			<foreach item="item" index="index" collection="roles" open="(" separator="," close=")">
+                        #{item}
+            </foreach>
+ 		</if>
+ 		and u.email is not null and u.email !=''
+ 		and u.phoneNum is not null and u.phoneNum !=''
+  </select>
 </mapper>

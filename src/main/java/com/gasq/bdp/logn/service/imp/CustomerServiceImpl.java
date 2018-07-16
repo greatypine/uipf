@@ -269,7 +269,7 @@ public class CustomerServiceImpl implements CustomerService {
 						}
 						if(StringUtils.isNotBlank(bean.getRemark())) {
 							TCustomerCommentExample tccexample = new TCustomerCommentExample();
-							tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(bean.getId());
+							tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(customer.getId());
 							long l = customerCommentService.countByExample(tccexample);
 							if(l<=0) {
 								TCustomerComment cc = new TCustomerComment();
@@ -293,7 +293,7 @@ public class CustomerServiceImpl implements CustomerService {
 						vipCustomerMapper.insertSelective(vip);
 						if(StringUtils.isNotBlank(bean.getRemark())) {
 							TCustomerCommentExample tccexample = new TCustomerCommentExample();
-							tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(bean.getId());
+							tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(vip.getId());
 							long l = customerCommentService.countByExample(tccexample);
 							if(l<=0) {
 								TCustomerComment cc = new TCustomerComment();

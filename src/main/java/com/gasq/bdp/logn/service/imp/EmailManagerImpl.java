@@ -10,6 +10,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.gasq.bdp.logn.service.EmailManager;
@@ -31,6 +32,7 @@ public class EmailManagerImpl implements EmailManager{
 	     * @param subject       邮件主题
 	     * @param content       邮件内容
 	     */
+	    @Async
 	    public void sendSimpleEmail(String fromEmailName,Object[] toEmailName,String subject,String content){
 	       SimpleMailMessage message = new SimpleMailMessage();
 	       if(toEmailName.length>0){
@@ -42,7 +44,6 @@ public class EmailManagerImpl implements EmailManager{
 	    	       mailSender.send(message);//发送邮件
 	    	   }
 	       }
-	       
 	    }
 	    /**
 	     * 发送附件邮件
@@ -53,6 +54,7 @@ public class EmailManagerImpl implements EmailManager{
 	     * @param content       邮件内容
 	     * @param files         附件
 	     */
+	    @Async
 	    public void sendAttachmentsEmail(String fromEmailName,String[] toEmailName,String subject,String content,File[] files) throws MessagingException{
 	       //这个是javax.mail.internet.MimeMessage下的，不要搞错了。
 	       MimeMessage mimeMessage =  mailSender.createMimeMessage();
@@ -88,6 +90,7 @@ public class EmailManagerImpl implements EmailManager{
 	     * @param htmlContent   邮件内容  eg:<body>这是图片：<img src='cid:图片名称' /></body>
 	     * @param files         附件
 	     */
+	    @Async
 	    public void sendInlineMail(String fromEmailName,String[] toEmailName,String subject,String htmlContent,File[] files) throws Exception {
 	        MimeMessage mimeMessage = mailSender.createMimeMessage();
 	        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);

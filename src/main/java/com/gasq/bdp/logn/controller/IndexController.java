@@ -41,6 +41,7 @@ import com.gasq.bdp.logn.utils.ActiveMQUtil;
 import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.UserthreadLocal;
+import com.gasq.bdp.logn.utils.WorkFlowUtil;
 
 @Controller
 public class IndexController {
@@ -158,7 +159,9 @@ public class IndexController {
 			SecurityUtils.getSubject().getSession().setAttribute("user", systemUser);
 			logger.info(mess);
 //			emailService.sendSimpleEmail(InitProperties.EMAIL_SENDER, InitProperties.EMAIL_TARGET, "痘卫士-登录信息",mess);
-			activeManager.sendBack(ActiveMQUtil.getTopicDestination(systemUser.getUser().getCompanyid()+InitProperties.Moniter_USER), mess);
+			if(WorkFlowUtil.hasNoAnyRoles(RoleSign.SADMIN)){
+				activeManager.sendBack(ActiveMQUtil.getTopicDestination(systemUser.getUser().getCompanyid()+InitProperties.Moniter_USER), mess);
+			}
 			return "redirect:/homepage";
 		} else {
 			token.clear();

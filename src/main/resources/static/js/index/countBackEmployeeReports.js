@@ -9,7 +9,6 @@ function initData(){
 	reports = new Reports();
 	countreports.initDatas();
 	countreports.initCompant();
-	countreports.initDataGridCompant(null);
 	$(".companylist").combobox({
 		url:content+'/company/queryMapBeanList'
 	});
@@ -22,7 +21,7 @@ function CountReport(){
 		        singleSelect:true,
 		        rownumbers:true,
 		        loadMsg:'正在加载，请稍后...',
-		        collapsible:false,
+		        collapsible:true,
 		        pageSize: 10,
 		        pageList: [10, 15, 20],
 		        queryParams:params,
@@ -33,12 +32,79 @@ function CountReport(){
 				        {field:'totalOrder',title:'预约总人数',width:"15%",align:'center'},
 				        {field:'secuessOrder',title:'成功接诊人数',width:"15%",align:'center'},
 				        {field:'unfinishedOrder',title:'未接诊人数',width:"15%",align:'center'},
-				        {field:'wastageOrder',title:'流失人数',width:"15%",align:'center'}
+				        {field:'actual_subscribe_enable_arrive',title:'周期能就诊人数',width:"15%",align:'center'},
+				        {field:'actual_jiezhen',title:'周期就诊人数',width:"15%",align:'center'},
+				        {field:'wastageOrder',title:'流失人数',width:"15%",align:'center'},
+				        {field:'all_totalOrder',title:'预约率',width:'16%',
+						    formatter:function(val,row){
+						    	var s = "";
+						    	var value = 0;
+						    	if (val==0){
+						    			value = 0;
+						    			s = '<div style="width:100%;border:1px solid #ccc;">' +
+						    			'<div style="width:' + value + '%;background:#FF0000;color:#FF0000"><p style="color:#FF0000;">' + value + '%' + '</p></div>'
+						    			'</div>';
+						    	} else {
+						    		value = Math.round((Number(row.totalOrder))/Number(val)*100);
+						    		var color = "#336600";
+						    		var fc = "#fff";
+						    		if(value>=80 && value<100){
+						    			color="#339900";
+						    			fc = "#fff";
+						    		}else if(value<80 && value>60){
+						    			color = "#66CC00";
+						    			fc = "#fff";
+						    		}else if(value<60 && value>40){
+						    			color="#FF3300";
+						    			fc = "orange";
+						    		}else if(value<40){
+						    			color="#FF0000";
+						    			fc = "red";
+						    		}else{
+						    			fc = "red";
+						    		}
+						    		s = '<div style="width:100%;border:1px solid #ccc">' +
+						    		'<div style="width:' + value + '%;background:green;color:'+fc+'">' + value + '%' + '</div>'
+						    		'</div>';
+						    	}
+						    	return s;
+					    	}
+						},
+						{field:'daozhenlv',title:'到诊率',width:'16%',
+						    formatter:function(val,row){
+						    	var s = "";
+						    	var value = 0;
+						    	if (row.actual_subscribe_enable_arrive==0 || row.actual_jiezhen==0){
+						    			s = '<div style="width:100%;border:1px solid #ccc;">' +
+						    			'<div style="width:' + value + '%;background:#FF0000;color:#FF0000"><p style="color:#FF0000;">' + value + '%' + '</p></div>'
+						    			'</div>';
+						    	} else {
+						    		value = Math.round(Number(row.actual_jiezhen)/(Number(row.actual_subscribe_enable_arrive))*100);
+						    		var color = "#336600";
+						    		var fc = "#fff";
+						    		if(value>=80 && value<100){
+						    			color="#339900";
+						    			fc = "#fff";
+						    		}else if(value<80 && value>60){
+						    			color = "#66CC00";
+						    			fc = "#fff";
+						    		}else if(value<60 && value>40){
+						    			color="#FF3300";
+						    			fc = "orange";
+						    		}else if(value<40){
+						    			color="#FF0000";
+						    			fc = "red";
+						    		}else{
+						    			fc = "red";
+						    		}
+						    		s = '<div style="width:100%;border:1px solid #ccc">' +
+						    		'<div style="width:' + value + '%;background:green;color:'+fc+'">' + value + '%' + '</div>'
+						    		'</div>';
+						    	}
+						    	return s;
+					    	}
+						}
 		        ]],
-				onDblClickRow:function(index,row){
-				},
-				onSelect:function(index,row){
-				},
 				onLoadSuccess:function(){
 				} 
 			});

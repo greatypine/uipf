@@ -76,7 +76,7 @@ function Mycompany(){
 			    	$("#company_table").datagrid("selectRow", index);
 			    },
 				onDblClickRow:function(index,row){
-					$("#companydlg").dialog("open").dialog("center").dialog("setTitle","更新产品");
+					$("#companydlg").dialog("open").dialog("center").dialog("setTitle","更新公司");
 					row.status = row.status==true?1:0;
 					$("#companydlg-fm").form("clear").form("load",row);
 				},
@@ -101,7 +101,7 @@ function Mycompany(){
 	this.add = function(){
 		$("#companydlg-fm").form("clear");
 		company.initClearCombobox("status");
-		$("#companydlg").dialog("open").dialog("center").dialog("setTitle","添加产品");
+		$("#companydlg").dialog("open").dialog("center").dialog("setTitle","添加公司");
 	};
 	this.initClearCombobox = function(id){
 		var data = $('#'+id).combobox('getData');
