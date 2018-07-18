@@ -26,16 +26,16 @@ function CountReport(){
 		        pageList: [10, 15, 20],
 		        queryParams:params,
 		        columns:[[
-				        {field:'datetime',title:'日期',width:"10%",align:'center'},
-				        {field:'nickname',title:'员工姓名',width:"15%",align:'center'},
-				        {field:'companyname',title:'预约门店',width:"15%",align:'center'},
-				        {field:'totalOrder',title:'预约总人数',width:"15%",align:'center'},
-				        {field:'secuessOrder',title:'成功接诊人数',width:"15%",align:'center'},
-				        {field:'unfinishedOrder',title:'未接诊人数',width:"15%",align:'center'},
-				        {field:'actual_subscribe_enable_arrive',title:'周期能就诊人数',width:"15%",align:'center'},
-				        {field:'actual_jiezhen',title:'周期就诊人数',width:"15%",align:'center'},
-				        {field:'wastageOrder',title:'流失人数',width:"15%",align:'center'},
-				        {field:'all_totalOrder',title:'预约率',width:'16%',
+				        {field:'datetime',title:'日期',width:"6%",align:'center'},
+				        {field:'nickname',title:'员工姓名',width:"6%",align:'center'},
+				        {field:'companyname',title:'预约门店',width:"10%",align:'center'},
+				        {field:'totalOrder',title:'预约总人数',width:"6%",align:'center'},
+				        {field:'secuessOrder',title:'成功接诊人数',width:"8%",align:'center'},
+				        {field:'unfinishedOrder',title:'未接诊人数',width:"6%",align:'center'},
+				        {field:'actual_subscribe_enable_arrive',title:'周期能就诊人数',width:"8%",align:'center'},
+				        {field:'actual_jiezhen',title:'周期就诊人数',width:"8%",align:'center'},
+				        {field:'wastageOrder',title:'流失人数',width:"6%",align:'center'},
+				        {field:'all_totalOrder',title:'预约率',width:'18%',
 						    formatter:function(val,row){
 						    	var s = "";
 						    	var value = 0;
@@ -70,7 +70,7 @@ function CountReport(){
 						    	return s;
 					    	}
 						},
-						{field:'daozhenlv',title:'到诊率',width:'16%',
+						{field:'daozhenlv',title:'到诊率',width:'18%',
 						    formatter:function(val,row){
 						    	var s = "";
 						    	var value = 0;

@@ -1,7 +1,6 @@
 package com.gasq.bdp.logn.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -69,31 +68,6 @@ public class VipCustomerController {
 			logger.info(e.getMessage(),e);
 		}
 		return false;
-	 }
-    
-    @ApiOperation(value="查询列表会员用户配置信息列表", notes="查询列表会员用户配置信息列表")
-    @ApiImplicitParam(name = "bean", value = "会员用户实体对象TVipCustomer", required = false, dataType = "TVipCustomer")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
-	@RequestMapping(value = "/queryMapGridList",method=RequestMethod.POST)
-	public Map<String, Object> queryMapGridList(TVipCustomer bean) {
-		try {
-			return vipCustomerService.queryMapGridList(bean);
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @ApiOperation(value="查询列表会员用户配置信息列表", notes="查询列表会员用户配置信息列表")
-    @ApiImplicitParam(name = "bean", value = "会员用户实体对象TVipCustomer", required = false, dataType = "TVipCustomer")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
-	@RequestMapping(value = "/queryMapGridChildren",method=RequestMethod.POST)
-	public List<Map<String, Object>> queryMapGridChildren(TVipCustomer bean) {
-		try {
-			return vipCustomerService.queryMapGridChildren(bean);
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
 	 }
     
     @ApiOperation(value="查询列表会员用户配置信息列表", notes="查询列表会员用户配置信息列表")

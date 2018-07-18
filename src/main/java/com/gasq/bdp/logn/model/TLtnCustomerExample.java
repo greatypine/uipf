@@ -882,6 +882,126 @@ public class TLtnCustomerExample {
             return (Criteria) this;
         }
 
+        public Criteria andRootInIsNull() {
+            addCriterion("root_in is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInIsNotNull() {
+            addCriterion("root_in is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInEqualTo(Integer value) {
+            addCriterion("root_in =", value, "rootIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInNotEqualTo(Integer value) {
+            addCriterion("root_in <>", value, "rootIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInGreaterThan(Integer value) {
+            addCriterion("root_in >", value, "rootIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInGreaterThanOrEqualTo(Integer value) {
+            addCriterion("root_in >=", value, "rootIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInLessThan(Integer value) {
+            addCriterion("root_in <", value, "rootIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInLessThanOrEqualTo(Integer value) {
+            addCriterion("root_in <=", value, "rootIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInIn(List<Integer> values) {
+            addCriterion("root_in in", values, "rootIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInNotIn(List<Integer> values) {
+            addCriterion("root_in not in", values, "rootIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInBetween(Integer value1, Integer value2) {
+            addCriterion("root_in between", value1, value2, "rootIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andRootInNotBetween(Integer value1, Integer value2) {
+            addCriterion("root_in not between", value1, value2, "rootIn");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionIsNull() {
+            addCriterion("profession is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionIsNotNull() {
+            addCriterion("profession is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionEqualTo(Integer value) {
+            addCriterion("profession =", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionNotEqualTo(Integer value) {
+            addCriterion("profession <>", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionGreaterThan(Integer value) {
+            addCriterion("profession >", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionGreaterThanOrEqualTo(Integer value) {
+            addCriterion("profession >=", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionLessThan(Integer value) {
+            addCriterion("profession <", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionLessThanOrEqualTo(Integer value) {
+            addCriterion("profession <=", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionIn(List<Integer> values) {
+            addCriterion("profession in", values, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionNotIn(List<Integer> values) {
+            addCriterion("profession not in", values, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionBetween(Integer value1, Integer value2) {
+            addCriterion("profession between", value1, value2, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionNotBetween(Integer value1, Integer value2) {
+            addCriterion("profession not between", value1, value2, "profession");
+            return (Criteria) this;
+        }
+
         public Criteria andSubscribeIdIsNull() {
             addCriterion("subscribe_id is null");
             return (Criteria) this;

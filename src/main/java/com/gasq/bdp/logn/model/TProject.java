@@ -19,6 +19,8 @@ public class TProject extends ParamsObject{
 
     private Double discount;
 
+    private Integer projectModel;
+
     private Integer projectType;
 
     private Integer projectNums;
@@ -77,6 +79,14 @@ public class TProject extends ParamsObject{
 
     public void setDiscount(Double discount) {
         this.discount = discount;
+    }
+
+    public Integer getProjectModel() {
+        return projectModel;
+    }
+
+    public void setProjectModel(Integer projectModel) {
+        this.projectModel = projectModel;
     }
 
     public Integer getProjectType() {

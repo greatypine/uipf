@@ -354,7 +354,7 @@
 		p.id,p.companyid,p.`code`,p.`name`,p.factory,p.inventory,p.price,p.`status`,p.units,p.createuser,p.createtime,tc.`name` as companyName,p.updatetime,p.updateuser
 	FROM
 		`t_inventory` p
-	LEFT JOIN t_company tc on p.companyid=tc.id
+	INNER JOIN t_company tc on p.companyid=tc.id and tc.`status`=1
 	where 1=1  
 	<if test="name !=null and name!=''">
 		and p.name like concat('%',#{name},'%')
@@ -376,10 +376,10 @@
  <select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
 	select count(*) from (
 		SELECT
-			p.id,p.companyid,p.`code`,p.`name`,p.factory,p.inventory,p.price,p.`status`,p.units,p.createuser,p.createtime,tc.`name` as companyName,p.updatetime,p.updateuser
+			p.id
 		FROM
 			`t_inventory` p
-		LEFT JOIN t_company tc on p.companyid=tc.id
+		INNER JOIN t_company tc on p.companyid=tc.id and tc.`status`=1
 		where 1=1  
 		<if test="name !=null and name!=''">
 			and p.name like concat('%',#{name},'%')

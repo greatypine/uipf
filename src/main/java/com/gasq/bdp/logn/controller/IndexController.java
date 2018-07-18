@@ -490,4 +490,12 @@ public class IndexController {
 		mmap.addAttribute("content", request.getContextPath());
 		return "message";
 	}
+	
+	@RequestMapping("/goRootInCount")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_ADMIN,RoleSign.H_OPTION }, logical = Logical.OR)
+	public String goRootInCount(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		return "countBusinessAnalysis";
+	}
 }

@@ -253,3 +253,11 @@
 .icon-message_option{
 	background:url('icons/message_option.png') no-repeat center center;
 }
+/* 渠道统计 */
+.icon-rootincount{
+	background:url('icons/rootincount.png') no-repeat center center;
+}
+/* 用户消息留言 */
+.icon-usermessage{
+	background:url('icons/usermessage.png') no-repeat center center;
+}

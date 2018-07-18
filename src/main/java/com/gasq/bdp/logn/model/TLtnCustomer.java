@@ -34,6 +34,10 @@ public class TLtnCustomer extends ParamsObject{
     private Integer status;
 
     private Integer type;
+    
+    private Integer rootIn;
+
+    private Integer profession;
 
     private Integer subscribeId;
 
@@ -233,6 +237,22 @@ public class TLtnCustomer extends ParamsObject{
 
 	public void setStatuss(String[] statuss) {
 		this.statuss = statuss;
+	}
+
+	public Integer getRootIn() {
+		return rootIn;
+	}
+
+	public void setRootIn(Integer rootIn) {
+		this.rootIn = rootIn;
+	}
+
+	public Integer getProfession() {
+		return profession;
+	}
+
+	public void setProfession(Integer profession) {
+		this.profession = profession;
 	}
     
 	

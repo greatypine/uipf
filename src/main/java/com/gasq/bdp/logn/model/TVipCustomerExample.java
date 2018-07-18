@@ -773,6 +773,66 @@ public class TVipCustomerExample {
             return (Criteria) this;
         }
 
+        public Criteria andProfessionIsNull() {
+            addCriterion("profession is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionIsNotNull() {
+            addCriterion("profession is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionEqualTo(Integer value) {
+            addCriterion("profession =", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionNotEqualTo(Integer value) {
+            addCriterion("profession <>", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionGreaterThan(Integer value) {
+            addCriterion("profession >", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionGreaterThanOrEqualTo(Integer value) {
+            addCriterion("profession >=", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionLessThan(Integer value) {
+            addCriterion("profession <", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionLessThanOrEqualTo(Integer value) {
+            addCriterion("profession <=", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionIn(List<Integer> values) {
+            addCriterion("profession in", values, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionNotIn(List<Integer> values) {
+            addCriterion("profession not in", values, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionBetween(Integer value1, Integer value2) {
+            addCriterion("profession between", value1, value2, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionNotBetween(Integer value1, Integer value2) {
+            addCriterion("profession not between", value1, value2, "profession");
+            return (Criteria) this;
+        }
+
         public Criteria andTypeIsNull() {
             addCriterion("type is null");
             return (Criteria) this;

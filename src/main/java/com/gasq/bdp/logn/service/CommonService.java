@@ -46,4 +46,7 @@ public interface CommonService {
 
 	Map<String, Object> queryCountInventoryPie(Integer companyid, String datetype, Integer year, Integer month);
 
+	Map<String, Object> queryCountBusinessAnalysisDataDetail(Integer type, Integer companyid, String datetype,
+			String starttime, String endtime, Integer page, Integer rows);
+
 }

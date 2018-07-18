@@ -196,6 +196,7 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 				if(StringUtils.isNotBlank(bean.getCustomerName()))customer.setCustomerName(bean.getCustomerName());
 				if(StringUtils.isNotBlank(bean.getCustomerPhone()))customer.setCustomerPhone(bean.getCustomerPhone());
 				if(StringUtils.isNotBlank(bean.getEmail()))customer.setEmail(bean.getEmail());
+				if(bean.getProfession()!=null)customer.setProfession(bean.getProfession());
 				if(bean.getSex()!=null)customer.setSex(bean.getSex());
 				vipCustomerSergice.updateByPrimaryKeySelective(customer);
 				if(StringUtils.isNotBlank(bean.getRemark())) {
@@ -219,6 +220,7 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 					vip.setCustomerPhone(bean.getCustomerPhone());
 					vip.setSex(bean.getSex());
 					vip.setStatus(1);
+					vip.setProfession(bean.getProfession());
 					vip.setCreateTime(DateUtil.getSysCurrentDate());
 					vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
 					vipCustomerSergice.insertSelective(vip);

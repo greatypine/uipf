@@ -65,14 +65,15 @@ function systemvipcustomer(){
 	        columns:[[
 //	        	{field:'ck',checkbox:true},
 	        	{field:'id',title:'编号',hidden:true},
-		        {field:'customerName',title:'用户名称',width:"7%",align:'center'},
-		        {field:'customerPhone',title:'电话号码',width:"7%",align:'center'},
+		        {field:'customerName',title:'用户名称',width:"6%",align:'center'},
+		        {field:'customerPhone',title:'电话号码',width:"6%",align:'center'},
 		        {field:'statusName',title:'状态',width:"5%",align:'center'},
 		        {field:'email',title:'邮件地址',width:"12%"},
 		        {field:'brithday',title:'生日',width:"8%",align:'center'},
 		        {field:'sexName',title:'性别',width:"4%",align:'center'},
-		        {field:'alladdress',title:'地址',width:"11%"},
-		        {field:'actualAmount',title:'实际金额',width:"6%",align:'center',formatter:function(val,row){
+		        {field:'alladdress',title:'地址',width:"14%"},
+		        {field:'professionName',title:'客户职业',width:"5%",align:'center'},
+		        {field:'actualAmount',title:'实际金额',width:"5%",align:'center',formatter:function(val,row){
 		        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 		        }},
 		        {field:'giveAmount',title:'赠送金额',width:"6%",align:'center',formatter:function(val,row){
@@ -82,9 +83,9 @@ function systemvipcustomer(){
 		        	formatter:function(value, row, index){
 	            	return '<a id="'+row.id+'" href="javascripte:void(0)" onClick="systemvipcustomer.queryComments(this.id)" class="productslinkbtn easyui-linkbutton" data-options="plain:true,iconCls:\'icon-more\'">留言</a>';
 	            }},
-		        {field:'createUser',title:'创建人',width:"6%",align:'center'},
-		        {field:'createTime',title:'创建时间',width:"10%",align:'center'},
-		        {field:'updateTime',title:'更新时间',width:"10%",align:'center'}
+		        {field:'createUser',title:'创建人',width:"5%",align:'center'},
+		        {field:'createTime',title:'创建时间',width:"8%",align:'center'},
+		        {field:'updateTime',title:'更新时间',width:"8%",align:'center'}
 	        ]],
 	        view: detailview,
 	        collapsible:false,

@@ -136,7 +136,7 @@ public class TProjectServiceImpl implements TSysProjectService {
 	@Override
 	public boolean saveOrUpdate(TProject bean) {
 		bean.setUpdatetime(DateUtil.getSysCurrentDate());
-		bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
+		if(bean.getCompanyId()==null) bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
 		if(bean.getId()!=null) {
 			bean.setUpdateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
 			projectMapper.updateByPrimaryKeySelective(bean);

@@ -391,7 +391,7 @@
 	FROM
 		`t_sys_user` tsu
 	LEFT JOIN t_sys_user_role tsur ON tsu.id = tsur.user_id
-	LEFT JOIN t_company tc ON tsu.companyid = tc.id
+	INNER JOIN t_company tc ON tsu.companyid = tc.id and tc.`status`=1
 	LEFT JOIN t_sys_user_ext tsue ON tsu.id = tsue.user_id
 	LEFT JOIN v_user_status vus ON tsu. STATUS = vus.VALUE and tsu.companyid=vus.companyid
 	LEFT JOIN v_sex vs ON tsu.sex = vs.VALUE  and tsu.companyid=vs.companyid
@@ -426,12 +426,11 @@
 <select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
 	select count(*) from(
 		SELECT
-			tsu.id,tsu.username,tsu.`password` as md5passowrd,tsu.nickname,tsu.companyid,tsu.age,tsu.email,tsu.phonenum,tsu.sex,tsu.`status`,tsu.create_time as createTime,tsu.update_time as updateTime,
-			tsu.address,GROUP_CONCAT(tsur.role_id) as roleids,tc.`name` as companyName,tsue.`password` as password,tsu.card_id as cardId,vus.`text` as statusName,vs.text sexName
+			tsu.id
 		FROM
 			`t_sys_user` tsu
 		LEFT JOIN t_sys_user_role tsur ON tsu.id = tsur.user_id
-		LEFT JOIN t_company tc ON tsu.companyid = tc.id
+		INNER JOIN t_company tc ON tsu.companyid = tc.id and tc.`status`=1
 		LEFT JOIN t_sys_user_ext tsue ON tsu.id = tsue.user_id
 		LEFT JOIN v_user_status vus ON tsu. STATUS = vus.VALUE and tsu.companyid=vus.companyid
 		LEFT JOIN v_sex vs ON tsu.sex = vs.VALUE  and tsu.companyid=vs.companyid

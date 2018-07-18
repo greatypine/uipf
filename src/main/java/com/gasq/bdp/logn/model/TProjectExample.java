@@ -416,6 +416,66 @@ public class TProjectExample {
             return (Criteria) this;
         }
 
+        public Criteria andProjectModelIsNull() {
+            addCriterion("project_model is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelIsNotNull() {
+            addCriterion("project_model is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelEqualTo(Integer value) {
+            addCriterion("project_model =", value, "projectModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelNotEqualTo(Integer value) {
+            addCriterion("project_model <>", value, "projectModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelGreaterThan(Integer value) {
+            addCriterion("project_model >", value, "projectModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelGreaterThanOrEqualTo(Integer value) {
+            addCriterion("project_model >=", value, "projectModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelLessThan(Integer value) {
+            addCriterion("project_model <", value, "projectModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelLessThanOrEqualTo(Integer value) {
+            addCriterion("project_model <=", value, "projectModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelIn(List<Integer> values) {
+            addCriterion("project_model in", values, "projectModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelNotIn(List<Integer> values) {
+            addCriterion("project_model not in", values, "projectModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelBetween(Integer value1, Integer value2) {
+            addCriterion("project_model between", value1, value2, "projectModel");
+            return (Criteria) this;
+        }
+
+        public Criteria andProjectModelNotBetween(Integer value1, Integer value2) {
+            addCriterion("project_model not between", value1, value2, "projectModel");
+            return (Criteria) this;
+        }
+
         public Criteria andProjectTypeIsNull() {
             addCriterion("project_type is null");
             return (Criteria) this;

@@ -280,60 +280,60 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.gasq.bdp.logn.model.TCompany">
     update t_company
     <set>
-      <if test="code != null">
-        code = #{code,jdbcType=VARCHAR},
+      <if test="record.code != null">
+        code = #{record.code,jdbcType=VARCHAR},
       </if>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
       </if>
-      <if test="provinceId != null">
-        province_id = #{provinceId,jdbcType=INTEGER},
+      <if test="record.provinceId != null">
+        province_id = #{record.provinceId,jdbcType=INTEGER},
       </if>
-      <if test="cityId != null">
-        city_id = #{cityId,jdbcType=INTEGER},
+      <if test="record.cityId != null">
+        city_id = #{record.cityId,jdbcType=INTEGER},
       </if>
-      <if test="countyId != null">
-        county_id = #{countyId,jdbcType=INTEGER},
+      <if test="record.countyId != null">
+        county_id = #{record.countyId,jdbcType=INTEGER},
       </if>
-      <if test="detailAddress != null">
-        detail_address = #{detailAddress,jdbcType=VARCHAR},
+      <if test="record.detailAddress != null">
+        detail_address = #{record.detailAddress,jdbcType=VARCHAR},
       </if>
-      <if test="status != null">
-        status = #{status,jdbcType=BIT},
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=BIT},
       </if>
-      <if test="remark != null">
-        remark = #{remark,jdbcType=VARCHAR},
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
       </if>
-      <if test="createtime != null">
-        createTime = #{createtime,jdbcType=TIMESTAMP},
+      <if test="record.createtime != null">
+        createTime = #{record.createtime,jdbcType=TIMESTAMP},
       </if>
-      <if test="updatetime != null">
-        updateTime = #{updatetime,jdbcType=TIMESTAMP},
+      <if test="record.updatetime != null">
+        updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
       </if>
-      <if test="createuser != null">
-        createUser = #{createuser,jdbcType=VARCHAR},
+      <if test="record.createuser != null">
+        createUser = #{record.createuser,jdbcType=VARCHAR},
       </if>
-      <if test="updateuser != null">
-        updateUser = #{updateuser,jdbcType=VARCHAR},
+      <if test="record.updateuser != null">
+        updateUser = #{record.updateuser,jdbcType=VARCHAR},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{record.id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.gasq.bdp.logn.model.TCompany">
     update t_company
-    set code = #{code,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
-      province_id = #{provinceId,jdbcType=INTEGER},
-      city_id = #{cityId,jdbcType=INTEGER},
-      county_id = #{countyId,jdbcType=INTEGER},
-      detail_address = #{detailAddress,jdbcType=VARCHAR},
-      status = #{status,jdbcType=BIT},
-      remark = #{remark,jdbcType=VARCHAR},
-      createTime = #{createtime,jdbcType=TIMESTAMP},
-      updateTime = #{updatetime,jdbcType=TIMESTAMP},
-      createUser = #{createuser,jdbcType=VARCHAR},
-      updateUser = #{updateuser,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=INTEGER}
+    set code = #{record.code,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      province_id = #{record.provinceId,jdbcType=INTEGER},
+      city_id = #{record.cityId,jdbcType=INTEGER},
+      county_id = #{record.countyId,jdbcType=INTEGER},
+      detail_address = #{record.detailAddress,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=BIT},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      createTime = #{record.createtime,jdbcType=TIMESTAMP},
+      updateTime = #{record.updatetime,jdbcType=TIMESTAMP},
+      createUser = #{record.createuser,jdbcType=VARCHAR},
+      updateUser = #{record.updateuser,jdbcType=VARCHAR}
+    where id = #{record.id,jdbcType=INTEGER}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.gasq.bdp.logn.model.TCompanyExample" resultMap="BaseResultMap">
     select
@@ -486,7 +486,7 @@
 	FROM
 		t_customer_subscribe tcs
 	LEFT JOIN t_sys_user tsu ON tcs.create_user = tsu.username
-	LEFT JOIN t_company tc ON tcs.company_id = tc.id
+	INNER JOIN t_company tc ON tcs.company_id = tc.id
 	LEFT JOIN v_root_in vri on tcs.root_in = vri.`value` and vri.companyid = tcs.company_id
 	LEFT JOIN v_sex vs on tcs.sex=vs.`value`  and vs.companyid = tcs.company_id
 	LEFT JOIN v_subscribe vss on tcs.`status` = vss.`value` and vss.companyid= tcs.company_id
@@ -546,7 +546,7 @@
 	FROM
 		t_inventory ti
 	LEFT JOIN t_inventory_log til ON ti.id = til.product_id
-	LEFT JOIN t_company tc on ti.companyid=tc.id
+	INNER JOIN t_company tc on ti.companyid=tc.id
 	where 1 = 1 and til.product_id is not null
 	<if test="year!=null and month!=null">
 		and DATE_FORMAT(til.create_time, '%Y%m') = concat(#{year},#{month})
@@ -604,7 +604,7 @@
 				FROM
 					t_inventory ti
 				LEFT JOIN t_inventory_log til ON ti.id = til.product_id
-				LEFT JOIN t_company tc on ti.companyid=tc.id
+				INNER JOIN t_company tc on ti.companyid=tc.id
 				where 1 = 1 and til.product_id is not null
 				<if test="year!=null and month!=null">
 					and DATE_FORMAT(til.create_time, '%Y%m') = concat(#{year},#{month})
@@ -646,7 +646,7 @@
 				sum(if(til.option_type=6 or til.option_type=5 ,ifnull(til.numbs,0),0))* ti.price value
 			 from t_inventory ti
 			LEFT JOIN t_inventory_log til ON ti.id = til.product_id
-			LEFT JOIN t_company tc on ti.companyid=tc.id
+			INNER JOIN t_company tc on ti.companyid=tc.id
 			where 1=1 
 				<if test="year!=null and month!=null">
 					and DATE_FORMAT(til.create_time, '%Y%m') = concat(#{year},#{month,jdbcType=VARCHAR})
@@ -687,7 +687,7 @@
 					sum(if(til.option_type=6 or til.option_type=5 ,ifnull(til.numbs,0),0))* ti.price value
 				 from t_inventory ti
 				LEFT JOIN t_inventory_log til ON ti.id = til.product_id
-				LEFT JOIN t_company tc on ti.companyid=tc.id
+				INNER JOIN t_company tc on ti.companyid=tc.id
 				where 1=1 
 				<if test="year!=null and month!=null">
 					and DATE_FORMAT(til.create_time, '%Y%m') = concat(#{year},#{month,jdbcType=VARCHAR})
@@ -797,7 +797,7 @@
 		FROM
 			t_customer_subscribe tcs
 		LEFT JOIN t_sys_user tsu ON tcs.create_user = tsu.username
-		LEFT JOIN t_company tc ON tcs.company_id = tc.id
+		INNER JOIN t_company tc ON tcs.company_id = tc.id
 		LEFT JOIN v_root_in vri on tcs.root_in = vri.`value` and vri.companyid = tcs.company_id
 		LEFT JOIN v_sex vs on tcs.sex=vs.`value`  and vs.companyid = tcs.company_id
 		LEFT JOIN v_subscribe vss on tcs.`status` = vss.`value` and vss.companyid= tcs.company_id
@@ -865,6 +865,97 @@
 		</if>
 		<if test="status !=null">
 			and p.status=#{status}
+		</if>
+	) temp
+</select>
+
+
+<select id="queryCountBusinessAnalysisDataDetail" parameterType="java.util.HashMap" resultType="java.util.Map">
+	SELECT
+	  	<if test="datetype!=null and datetype!=''">
+			<if test="datetype==1">
+				DATE_FORMAT(b.createTime, '%Y') datetime,
+			</if>
+			<if test="datetype==2">
+				DATE_FORMAT(b.createTime, '%Y%m') datetime,
+			</if>
+			<if test="datetype==3">
+				DATE_FORMAT(b.createTime, '%Y%m%d') datetime,
+			</if>
+		</if>
+		<if test="datetype==null or datetype==''">
+			DATE_FORMAT(b.createTime, '%Y%m%d') datetime,
+		</if>
+		a.`name`,
+		count(DISTINCT b.phonenumb) numbs,
+		sum(ifnull(c.total_amount,0)) total_amount,
+		sum(ifnull(c.total_amount,0))/count(DISTINCT b.phonenumb) total_amount_avg,
+		vcp.text,
+		tc.name as companyName
+	FROM
+		v_root_in a
+	LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in AND a.companyid = b.company_id
+	LEFT JOIN t_ltn_customer_consumpton_amount c on b.id=c.customer_id
+	LEFT JOIN v_customer_profession vcp on b.profession = vcp.`value`
+	INNER JOIN t_company tc ON a.companyid = tc.id
+	where 1=1 
+	<if test="starttime!=null and starttime!=''">
+		and DATE_FORMAT(b.createTime, '%Y-%m-%d') &gt;= #{starttime}
+	</if>
+	<if test="endtime!=null and endtime!=''">
+		and DATE_FORMAT(b.createTime, '%Y-%m-%d') &lt;= #{endtime}
+	</if>
+	<if test="companyid!=null">
+		and a.companyid = #{companyid}
+	</if>
+	<if test="datetype!=null and datetype!=''">
+		<if test="datetype==1">
+			GROUP BY DATE_FORMAT(b.createTime, '%Y'),a.name,vcp.text,a.companyid
+		</if>
+		<if test="datetype==2">
+			GROUP BY DATE_FORMAT(b.createTime, '%Y%m'),a.name,vcp.text,a.companyid
+		</if>
+		<if test="datetype==3">
+			GROUP BY DATE_FORMAT(b.createTime, '%Y%m%d'),a.name,vcp.text,a.companyid
+		</if>
+	</if>
+	<if test="datetype==null or datetype==''">
+		GROUP BY DATE_FORMAT(b.createTime, '%Y%m%d'),a.name,vcp.text,a.companyid
+	</if>
+	ORDER BY a.companyid,datetime,a.`name`,vcp.text
+</select>
+<select id="countBusinessAnalysisDataDetailByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
+	select count(*) from(
+		SELECT
+			a.`name`
+		FROM
+			v_root_in a
+		LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in AND a.companyid = b.company_id
+		LEFT JOIN t_ltn_customer_consumpton_amount c on b.id=c.customer_id
+		LEFT JOIN v_customer_profession vcp on b.profession = vcp.`value`
+		where 1=1 
+		<if test="starttime!=null and starttime!=''">
+			and DATE_FORMAT(b.createTime, '%Y-%m-%d') &gt;= #{starttime}
+		</if>
+		<if test="endtime!=null and endtime!=''">
+			and DATE_FORMAT(b.createTime, '%Y-%m-%d') &lt;= #{endtime}
+		</if>
+		<if test="companyid!=null">
+			and a.companyid = #{companyid}
+		</if>
+		<if test="datetype!=null and datetype!=''">
+			<if test="datetype==1">
+				GROUP BY DATE_FORMAT(b.createTime, '%Y'),a.name,vcp.text,a.companyid
+			</if>
+			<if test="datetype==2">
+				GROUP BY DATE_FORMAT(b.createTime, '%Y%m'),a.name,vcp.text,a.companyid
+			</if>
+			<if test="datetype==3">
+				GROUP BY DATE_FORMAT(b.createTime, '%Y%m%d'),a.name,vcp.text,a.companyid
+			</if>
+		</if>
+		<if test="datetype==null or datetype==''">
+			GROUP BY DATE_FORMAT(b.createTime, '%Y%m%d'),a.name,vcp.text,a.companyid
 		</if>
 	) temp
 </select>

@@ -14,6 +14,9 @@ function initData(){
 	$(".projectType").combobox({
 		url:content+'/common/getView?viewname=v_project_type&id='+user.user.companyid
 	});
+	$(".projectModel").combobox({
+		url:content+'/common/getView?viewname=v_project_model&id='+user.user.companyid
+	});
 }
 function MyProject(){
 	this.initCompant = function(){
@@ -28,7 +31,7 @@ function MyProject(){
 				},
 		        columns:[[
 		        	 	{field:'id',title:'编号',hidden:true},
-				        {field:'projectName',title:'名称',width:"18%"},
+				        {field:'projectName',title:'名称',width:"15%"},
 				        {field:'status',title:'状态',width:"5%",align:'center',formatter:function(val,row){
 				        	if(val==0){
 					        	return '<font color="FF0033">关闭</font>'
@@ -36,17 +39,17 @@ function MyProject(){
 					        	return '<font color="33CC33">开启</font>'
 					        }
 				        }},
-				        {field:'imageUrl',title:'商品地址',width:"14%",align:'left',hidden:true},
 				        {field:'companyName',title:'所属公司',width:"10%",align:'center'},
-				        {field:'money',title:'金额',width:"8%",align:'center'},
+				        {field:'money',title:'金额',width:"6%",align:'center'},
 				        {field:'discount',title:'折扣',width:"5%",align:'center',formatter:function(val,row){
 				        	if(val=="" || val==null || val=="null") val = 0;
 				        	if(Number(val)==1) return "没折扣";
 				        	return Number(val)*100+"折"
 				        }},
-				        {field:'projectTypeName',title:'消费类型',width:"10%",align:'center'},
-				        {field:'projectNums',title:'次数',width:"10%",align:'center'},
-				        {field:'deadline',title:'期限（月）',width:"10%",align:'center'},
+				        {field:'projectModelName',title:'项目分类',width:"8%",align:'center'},
+				        {field:'projectTypeName',title:'消费类型',width:"8%",align:'center'},
+				        {field:'projectNums',title:'次数',width:"8%",align:'center'},
+				        {field:'deadline',title:'期限（月）',width:"8%",align:'center'},
 				        {field:'companyId',title:'数据库',width:"5%",align:'center',hidden:true},
 				        {field:'createuser',title:'创建人',width:"8%",align:'center'},
 				        {field:'createtime',title:'创建时间',width:"13%",align:'center',formatter:function(val,row){
@@ -66,6 +69,11 @@ function MyProject(){
 				onDblClickRow:function(index,row){
 					$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","更新产品");
 					row.status = row.status==true?1:0;
+					if(cu.hasRoles("sadmin,generalManager,q_area_shopManager")){
+						project.initClearCombobox("companyId");
+					}
+					project.initClearCombobox("projectModel");
+					project.initClearCombobox("projectType");
 					$("#projectdlg-fm").form("clear").form("load",row);
 				},
 				onSelect:function(index,row){
@@ -96,7 +104,11 @@ function MyProject(){
 	this.add = function(){
 		$("#projectdlg-fm").form("clear");
 		project.initClearCombobox("status");
-		project.initClearCombobox("companyId");
+		if(cu.hasRoles("sadmin,generalManager,q_area_shopManager")){
+			project.initClearCombobox("companyId");
+		}
+		project.initClearCombobox("projectModel");
+		project.initClearCombobox("projectType");
 		$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","添加产品");
 	};
 	this.initClearCombobox = function(id){

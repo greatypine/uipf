@@ -301,4 +301,48 @@ public class CommonServiceImpl implements CommonService {
 		map.put("series_name", companyname+"消费金额占比");
 		return map;
 	}
+
+	@Override
+	public Map<String, Object> queryCountBusinessAnalysisDataDetail(Integer type, Integer companyid, String datetype,
+			String starttime, String endtime,Integer page,Integer rows) {
+		Map<String, Object> map = new  HashMap<String, Object>();
+		map.put("starttime", starttime);
+		map.put("endtime", endtime);
+		map.put("datetype", datetype);
+		map.put("type", type);
+		int start = 0;
+		int intPage = (page==0) ? 1 : page;
+		int number = (rows==0) ? 10 : rows;
+		start = (intPage - 1) * number;
+		map.put("index", start);
+		map.put("pageSize", number);
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+			}
+		}
+		int total_nums = 0;
+		double total_amount_all = 0.0;
+		double total_amount_avg_all = 0.0;
+		List<Map<String, Object>> listmaps = companyMapper.queryCountBusinessAnalysisDataDetail(map);
+		if(listmaps==null || listmaps.size()<=0)listmaps = new ArrayList<Map<String,Object>>();
+		total_nums = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("numbs").toString())).sum();
+		total_amount_all = listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("total_amount").toString())).sum();
+		total_amount_avg_all = listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("total_amount_avg").toString())).sum();
+		Integer count = companyMapper.countBusinessAnalysisDataDetailByBean(map);
+		List<Map<String,Object>> footer =  new ArrayList<>();
+		Map<String,Object> footerp = new HashMap<>();
+		footerp.put("datetime", "合计：");
+		footerp.put("numbs", total_nums);
+		footerp.put("total_amount", total_amount_all);
+		footerp.put("total_amount_avg", total_amount_avg_all);
+		footer.add(footerp);
+		map.clear();
+		map.put("rows",listmaps);
+		map.put("total",count);
+		map.put("footer",footer);
+		return map;
+	}
 }

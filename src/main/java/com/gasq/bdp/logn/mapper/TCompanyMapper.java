@@ -66,4 +66,8 @@ public interface TCompanyMapper {
 	Integer countCompanyByBean(Map<String, Object> params);
 
 	List<Map<String, Object>> queryMapBeanList(@Param("record") TCompany bean);
+
+	List<Map<String, Object>> queryCountBusinessAnalysisDataDetail(Map<String, Object> map);
+
+	Integer countBusinessAnalysisDataDetailByBean(Map<String, Object> map);
 }

@@ -253,6 +253,7 @@ public class CustomerServiceImpl implements CustomerService {
 						if(StringUtils.isNotBlank(bean.getCustomername()))customer.setCustomerName(bean.getCustomername());
 						if(StringUtils.isNotBlank(bean.getPhonenumb()))customer.setCustomerPhone(bean.getPhonenumb());
 						if(StringUtils.isNotBlank(bean.getCardId()))customer.setEmail(bean.getCardId());
+						if(bean.getProfession()!=null)customer.setProfession(bean.getProfession());
 						if(bean.getSex()!=null)customer.setSex(bean.getSex());
 						vipCustomerMapper.updateByPrimaryKeySelective(customer);
 						TLtnCustomerConsumptonAmountExample tccaexample = new TLtnCustomerConsumptonAmountExample();
@@ -287,6 +288,7 @@ public class CustomerServiceImpl implements CustomerService {
 						vip.setCustomerPhone(bean.getPhonenumb());
 						vip.setSex(bean.getSex());
 						vip.setStatus(1);
+						vip.setProfession(bean.getProfession());
 						vip.setEmail(bean.getCardId());
 						vip.setCreateTime(DateUtil.getSysCurrentDate());
 						vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
@@ -413,41 +415,15 @@ public class CustomerServiceImpl implements CustomerService {
 			TCustomerSubscribe record = new TCustomerSubscribe();
 			record.setId(bean.getId());
 			record.setStatus(1);
+			record.setUpdateTime(DateUtil.getSysCurrentDate());
+			record.setUpdateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
 			customerSubscribeMapper.updateByPrimaryKeySelective(record);
-			TVipCustomer vip = new TVipCustomer();
-			vip.setCompanyId(bean.getCompanyId());
-			vip.setCustomerName(bean.getCustomername());
-			vip.setCustomerPhone(bean.getPhonenumb());
-			vip.setSex(bean.getSex());
-			vip.setStatus(1);
-			vip.setCreateTime(DateUtil.getSysCurrentDate());
-			vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
-			vipCustomerMapper.insertSelective(vip);
-			if(StringUtils.isNotBlank(bean.getRemark())) {
-				TCustomerCommentExample tccexample = new TCustomerCommentExample();
-				tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(bean.getId());
-				long l = customerCommentService.countByExample(tccexample);
-				if(l<=0) {
-					TCustomerComment cc = new TCustomerComment();
-					cc.setRemark(bean.getRemark());
-					cc.setVipId(vip.getId());
-					cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
-					cc.setCreateTime(DateUtil.getSysCurrentDate());
-					customerCommentService.insertSelective(cc);
-				}
-			}
 			bean.setId(null);
 			bean.setUpdatetime(DateUtil.getSysCurrentDate());
 			bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
-			if(bean.getId()!=null) {
-				bean.setUpdateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
-				customerMapper.updateByPrimaryKeySelective(bean);
-				bean = customerMapper.selectByPrimaryKey(bean.getId());
-			}else {
-				bean.setCreateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
-				bean.setCreatetime(DateUtil.getSysCurrentDate());
-				customerMapper.insertSelective(bean);
-			}
+			bean.setCreateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
+			bean.setCreatetime(DateUtil.getSysCurrentDate());
+			customerMapper.insertSelective(bean);
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}

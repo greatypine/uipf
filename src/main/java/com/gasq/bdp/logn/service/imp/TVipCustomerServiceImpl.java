@@ -24,7 +24,6 @@ import com.gasq.bdp.logn.mapper.TVipCustomerMapper;
 import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
-import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmount;
 import com.gasq.bdp.logn.model.TMessage;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TVipCustomer;
@@ -146,53 +145,6 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return false;
-	}
-
-	@Override
-	public Map<String, Object> queryMapGridList(TVipCustomer bean) {
-		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String,Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
-		bean.setPage(start);
-		bean.setRows(number);
-		if(bean.getCompanyId()!=null) {
-			bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
-		}else {
-			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
-				bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
-			}
-		}
-		if(bean.getStatus()==null) {
-			if(WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.Q_ADMIN)) {
-				String statuss = String.join(",","1","99");
-				bean.setStatuss(statuss.split(","));
-			}else {
-				String statuss = String.join(",","1");
-				bean.setStatuss(statuss.split(","));
-			}
-		}else {
-			String statuss = String.join(",",bean.getStatus().toString());
-			bean.setStatuss(statuss.split(","));
-		}
-		list = mapper.queryMapGridList(bean);
-		if(list==null || list.size()<=0)list = new ArrayList<Map<String,Object>>(); 
-		result.put("rows",list);
-		result.put("total",list.size());
-		return result;
-	}
-
-	@Override
-	public List<Map<String, Object>> queryMapGridChildren(TVipCustomer bean) {
-		TLtnCustomerConsumptonAmount tca = new TLtnCustomerConsumptonAmount();
-		if(bean.getId()!=null) {
-			tca.setCustomerId(bean.getId());
-		}
-//		tca.setCompanyid(SystemUserInfo.getSystemUser().getUser().getCompanyid());
-		List<Map<String, Object>> children = mapper.queryMapGridChildren(tca);
-		return children;
 	}
 
 	@Override

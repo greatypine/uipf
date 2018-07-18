@@ -32,6 +32,8 @@ public class TVipCustomer extends ParamsObject{
 
     private String address;
 
+	private Integer profession;
+
     private Integer type;
 
     private Integer status;
@@ -254,6 +256,14 @@ public class TVipCustomer extends ParamsObject{
 
 	public void setEndtime(Date endtime) {
 		this.endtime = endtime;
+	}
+
+	public Integer getProfession() {
+		return profession;
+	}
+
+	public void setProfession(Integer profession) {
+		this.profession = profession;
 	}
     
 }

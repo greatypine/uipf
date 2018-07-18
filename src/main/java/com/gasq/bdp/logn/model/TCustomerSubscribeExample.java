@@ -2,6 +2,7 @@ package com.gasq.bdp.logn.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class TCustomerSubscribeExample {
@@ -103,6 +104,32 @@ public class TCustomerSubscribeExample {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value1, value2));
+        }
+
+        protected void addCriterionForJDBCDate(String condition, Date value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            addCriterion(condition, new java.sql.Date(value.getTime()), property);
+        }
+
+        protected void addCriterionForJDBCDate(String condition, List<Date> values, String property) {
+            if (values == null || values.size() == 0) {
+                throw new RuntimeException("Value list for " + property + " cannot be null or empty");
+            }
+            List<java.sql.Date> dateList = new ArrayList<java.sql.Date>();
+            Iterator<Date> iter = values.iterator();
+            while (iter.hasNext()) {
+                dateList.add(new java.sql.Date(iter.next().getTime()));
+            }
+            addCriterion(condition, dateList, property);
+        }
+
+        protected void addCriterionForJDBCDate(String condition, Date value1, Date value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            addCriterion(condition, new java.sql.Date(value1.getTime()), new java.sql.Date(value2.getTime()), property);
         }
 
         public Criteria andIdIsNull() {
@@ -495,6 +522,66 @@ public class TCustomerSubscribeExample {
             return (Criteria) this;
         }
 
+        public Criteria andProfessionIsNull() {
+            addCriterion("profession is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionIsNotNull() {
+            addCriterion("profession is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionEqualTo(Integer value) {
+            addCriterion("profession =", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionNotEqualTo(Integer value) {
+            addCriterion("profession <>", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionGreaterThan(Integer value) {
+            addCriterion("profession >", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionGreaterThanOrEqualTo(Integer value) {
+            addCriterion("profession >=", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionLessThan(Integer value) {
+            addCriterion("profession <", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionLessThanOrEqualTo(Integer value) {
+            addCriterion("profession <=", value, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionIn(List<Integer> values) {
+            addCriterion("profession in", values, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionNotIn(List<Integer> values) {
+            addCriterion("profession not in", values, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionBetween(Integer value1, Integer value2) {
+            addCriterion("profession between", value1, value2, "profession");
+            return (Criteria) this;
+        }
+
+        public Criteria andProfessionNotBetween(Integer value1, Integer value2) {
+            addCriterion("profession not between", value1, value2, "profession");
+            return (Criteria) this;
+        }
+
         public Criteria andProjectIsNull() {
             addCriterion("project is null");
             return (Criteria) this;
@@ -576,52 +663,52 @@ public class TCustomerSubscribeExample {
         }
 
         public Criteria andSubscribeDateEqualTo(Date value) {
-            addCriterion("subscribe_date =", value, "subscribeDate");
+            addCriterionForJDBCDate("subscribe_date =", value, "subscribeDate");
             return (Criteria) this;
         }
 
         public Criteria andSubscribeDateNotEqualTo(Date value) {
-            addCriterion("subscribe_date <>", value, "subscribeDate");
+            addCriterionForJDBCDate("subscribe_date <>", value, "subscribeDate");
             return (Criteria) this;
         }
 
         public Criteria andSubscribeDateGreaterThan(Date value) {
-            addCriterion("subscribe_date >", value, "subscribeDate");
+            addCriterionForJDBCDate("subscribe_date >", value, "subscribeDate");
             return (Criteria) this;
         }
 
         public Criteria andSubscribeDateGreaterThanOrEqualTo(Date value) {
-            addCriterion("subscribe_date >=", value, "subscribeDate");
+            addCriterionForJDBCDate("subscribe_date >=", value, "subscribeDate");
             return (Criteria) this;
         }
 
         public Criteria andSubscribeDateLessThan(Date value) {
-            addCriterion("subscribe_date <", value, "subscribeDate");
+            addCriterionForJDBCDate("subscribe_date <", value, "subscribeDate");
             return (Criteria) this;
         }
 
         public Criteria andSubscribeDateLessThanOrEqualTo(Date value) {
-            addCriterion("subscribe_date <=", value, "subscribeDate");
+            addCriterionForJDBCDate("subscribe_date <=", value, "subscribeDate");
             return (Criteria) this;
         }
 
         public Criteria andSubscribeDateIn(List<Date> values) {
-            addCriterion("subscribe_date in", values, "subscribeDate");
+            addCriterionForJDBCDate("subscribe_date in", values, "subscribeDate");
             return (Criteria) this;
         }
 
         public Criteria andSubscribeDateNotIn(List<Date> values) {
-            addCriterion("subscribe_date not in", values, "subscribeDate");
+            addCriterionForJDBCDate("subscribe_date not in", values, "subscribeDate");
             return (Criteria) this;
         }
 
         public Criteria andSubscribeDateBetween(Date value1, Date value2) {
-            addCriterion("subscribe_date between", value1, value2, "subscribeDate");
+            addCriterionForJDBCDate("subscribe_date between", value1, value2, "subscribeDate");
             return (Criteria) this;
         }
 
         public Criteria andSubscribeDateNotBetween(Date value1, Date value2) {
-            addCriterion("subscribe_date not between", value1, value2, "subscribeDate");
+            addCriterionForJDBCDate("subscribe_date not between", value1, value2, "subscribeDate");
             return (Criteria) this;
         }
 

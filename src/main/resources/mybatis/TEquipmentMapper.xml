@@ -404,7 +404,7 @@
 		,ves.text as statusName,vet.text as typeName
 	FROM
 		`t_equipment` p
-	LEFT JOIN t_company tc on p.company_id=tc.id
+	INNER JOIN t_company tc on p.company_id=tc.id and tc.`status`=1
 	LEFT JOIN t_sys_user u1 on p.buy_user =u1.id and u1.companyid=p.company_id
 	LEFT JOIN t_sys_user u2 on p.manager =u2.id and u2.companyid=p.company_id
 	LEFT JOIN t_sys_user u3 on p.create_user =u3.username and u3.companyid=p.company_id
@@ -432,12 +432,10 @@
 <select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
 	select count(*) from(
 		SELECT
-			p.id,p.company_id as companyId,p.name,p.code,p.buy_date as buyDate,p.buy_user as buyUser,p.buy_price as buyPrice,p.depreciation_life as depreciationLife
-			,p.factory,p.manager,p.`status`,p.type,p.create_time,p.update_time,tc.`name` as companyName,u1.nickname as buyUserName,u2.nickname as managerName,u3.nickname as createUser,u4.nickname as updateUser
-			,ves.text as statusName,vet.text as typeName
+			p.id
 		FROM
 			`t_equipment` p
-		LEFT JOIN t_company tc on p.company_id=tc.id
+		INNER JOIN t_company tc on p.company_id=tc.id and tc.`status`=1
 		LEFT JOIN t_sys_user u1 on p.buy_user =u1.username and u1.companyid=p.company_id
 		LEFT JOIN t_sys_user u2 on p.manager =u2.username and u2.companyid=p.company_id
 		LEFT JOIN t_sys_user u3 on p.create_user =u3.username and u3.companyid=p.company_id

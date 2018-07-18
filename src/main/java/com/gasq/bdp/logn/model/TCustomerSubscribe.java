@@ -22,6 +22,8 @@ public class TCustomerSubscribe extends ParamsObject{
 
     private Integer rootIn;
 
+    private Integer profession;
+
     private String project;
 
     @DateTimeFormat(pattern="yyyy-MM-dd")
@@ -87,6 +89,14 @@ public class TCustomerSubscribe extends ParamsObject{
 
     public void setRootIn(Integer rootIn) {
         this.rootIn = rootIn;
+    }
+
+    public Integer getProfession() {
+        return profession;
+    }
+
+    public void setProfession(Integer profession) {
+        this.profession = profession;
     }
 
     public String getProject() {

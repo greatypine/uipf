@@ -174,6 +174,17 @@ public class CommonController {
     	return null;
 	 }
     
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.QUERY },logical=Logical.OR)
+    @RequestMapping(value = "/queryCountBusinessAnalysisDataDetail",method=RequestMethod.POST)
+	public Map<String, Object> queryCountBusinessAnalysisDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
+		try {
+			return commonService.queryCountBusinessAnalysisDataDetail(type, companyid, datetype, starttime, endtime, page, rows);
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    
 }
 
 	

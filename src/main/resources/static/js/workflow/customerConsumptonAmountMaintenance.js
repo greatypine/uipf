@@ -46,6 +46,12 @@ function initData(){
 	$("#inventoryId").combobox({
 		url:content+'/common/queryProjectInventory?id='+user.user.companyid
 	});
+	$("#rootIn").combobox({
+		url:content+'/common/queryRootIn?id='+user.user.companyid
+	});
+	$("#profession").combobox({
+		url:content+'/common/getView?viewname=v_customer_profession'
+	});
 	
 	ccac = new CustomerConsumptonAmount();
 	ccac.initCompant();
@@ -85,8 +91,11 @@ function CustomerConsumptonAmount(){
 		        	 	{field:'id',title:'编号',hidden:true},
 //				        {field:'companyName',title:'公司名称',width:"7%"},
 		        	 	{field:'customername',title:'客户名称',width:"5%",align:'center'},
-		        	 	{field:'phonenumb',title:'电话号码',width:"7%",align:'center'},
-		        	 	{field:'sexName',title:'性别',width:"4%",align:'center'},
+		        	 	{field:'phonenumb',title:'电话号码',width:"5%",align:'center'},
+		        	 	{field:'sexName',title:'性别',width:"3%",align:'center'},
+		        	 	{field:'rootInName',title:'客户来源',width:"5%",align:'center'},
+		        	 	{field:'professionName',title:'客户职业',width:"4%",align:'center'},
+		        	 	{field:'createUser',title:'创建人',width:"5%",align:'center'},
 				        {field:'statusName',title:'结算状态',width:"5%",align:'center'},
 				        {field:'counsolerName',title:'咨询师',width:"5%",align:'center'},
 				        {field:'therapeutistName',title:'治疗师',width:"5%",align:'center'},
@@ -97,21 +106,21 @@ function CustomerConsumptonAmount(){
 					        	return '<font color="33CC33">复诊</font>'
 					        }
 				        }},
-				        {field:'typeName',title:'结算类型',width:"6%",align:'center'},
+				        {field:'typeName',title:'结算类型',width:"5%",align:'center'},
 				        {field:'totalConsumptonAmount',title:'总消费金额',width:"7%",align:'center',formatter:function(val,row){
 				        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 				        }},
-				        {field:'remindtime',title:'回访时间',width:"6%",align:'center'},
+				        {field:'remindtime',title:'回访时间',width:"5%",align:'center'},
 				        {field:'subscribeName',title:'预约人',width:"4%",align:'center'},
 //				        {field:'createUser',title:'创建人',width:"6%",align:'center'},
-				        {field:'createTime',title:'接诊时间',width:"12%",align:'center',formatter:function(val,row){
+				        {field:'createTime',title:'接诊时间',width:"10%",align:'center',formatter:function(val,row){
 				        	return CU.DateTimeFormatter(val,1);
 				        }},
 //				        {field:'updateUser',title:'更新人',width:"4%",align:'center'},
-				        {field:'updateTime',title:'完成时间',width:"12%",align:'center',formatter:function(val,row){
+				        {field:'updateTime',title:'完成时间',width:"10%",align:'center',formatter:function(val,row){
 				        	return CU.DateTimeFormatter(val,1);
 				        }},
-				        {field:'remark',title:'描述',width:"17%",align:'left'}
+				        {field:'remark',title:'描述',width:"12%",align:'left'}
 		        ]],
 		        view: detailview,
 		        collapsible:false,
@@ -262,6 +271,11 @@ function CustomerConsumptonAmount(){
 			    },
 				onDblClickRow:function(index,row){
 					$("#ccacdlg").dialog("open").dialog("center").dialog("setTitle","更新用户信息");
+					cu.initClearCombobox("sex");
+					cu.initClearCombobox("chuFuZhen");
+					cu.initClearCombobox("therapeutist");
+					cu.initClearCombobox("rootIn");
+					cu.initClearCombobox("profession");
 					$("#ccacdlg-fm").form("clear").form("load",row);
 					var st = row.status;
 					if(st==1){
@@ -320,12 +334,14 @@ function CustomerConsumptonAmount(){
 		var params = {};
 		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager,h_option")?$("#querycompanyid").combobox("getValue"):null;
 		var customername = $("#queryname").textbox("getValue");
+		var customerphone = $("#queryphone").textbox("getValue");
 		var therapeutist = ($("#userid").combobox("getValue")<=0)?null:$("#userid").combobox("getValue")==""?null:$("#userid").combobox("getValue");
 		var chuFuZhen = ($("#queryChuFuZhen").combobox('getValue')<=0)?null:$("#queryChuFuZhen").combobox("getValue")==""?null:$("#queryChuFuZhen").combobox("getValue");
 		var status = $("#querystatus").combobox('getValue');
 		var createTime = ($("#querycreateTime").datebox('getValue')=="" || $("#querycreateTime").datebox('getValue')=="undefined")?null:$("#querycreateTime").datebox('getValue');
 		var endTime = ($("#queryendTime").datebox('getValue')=="")?null:$("#queryendTime").datebox('getValue');
 		params.customername = customername;
+		params.phonenumb = customerphone;
 		params.therapeutist = therapeutist;
 		params.chuFuZhen = chuFuZhen;
 		params.createtime = createTime;
@@ -347,6 +363,8 @@ function CustomerConsumptonAmount(){
 		cu.initClearCombobox("sex");
 		cu.initClearCombobox("chuFuZhen");
 		cu.initClearCombobox("therapeutist");
+		cu.initClearCombobox("rootIn");
+		cu.initClearCombobox("profession");
 	};
 	this.clear = function(){
 		$("#ccacform").form("clear");

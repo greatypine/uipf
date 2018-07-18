@@ -20,10 +20,6 @@ public interface TVipCustomerService {
 
 	boolean delete(int id);
 
-	Map<String, Object> queryMapGridList(TVipCustomer bean);
-
-	List<Map<String, Object>> queryMapGridChildren(TVipCustomer bean);
-
 	Map<String, Object> sendMessage(TVipCustomer bean) throws WorkFlowJobException;
 
 }

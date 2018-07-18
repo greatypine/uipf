@@ -18,6 +18,9 @@ function initData(){
 	$("#rootIn").combobox({
 		url:content+'/common/queryRootIn?id='+user.user.companyid
 	});
+	$(".profession").combobox({
+		url:content+'/common/getView?viewname=v_customer_profession'
+	});
 	$(".sex").combobox({
 		url:content+'/common/querySex?id='+user.user.companyid
 	});
@@ -59,6 +62,7 @@ function MycustomerSubscribe(){
 					        	return '<font color="00CC33">未知</font>';
 					        }
 				        }},
+				        {field:'professionName',title:'客户职业',width:"8%",align:'center'},
 				        {field:'rootInName',title:'来源',width:"8%",align:'center'},
 				        {field:'companyName',title:'所属公司',width:"10%",align:'center'},
 				        {field:'project',title:'预约项目',width:"12%",align:'center'},
@@ -83,6 +87,13 @@ function MycustomerSubscribe(){
 					if(row.sex==0)row.sexName="女";
 					else if(row.sex==1)row.sexName="男";
 					else row.sexName="未知";
+					if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("rootIn");
+					cu.initClearCombobox("sex");
+					if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("companyId");
+					if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("profession");
+					else{
+						cu.initClearCombobox("profession1");
+					}
 					$("#customerSubscribedlg-fm").form("clear").form("load",row);
 					if(row.status==1){
 						$("#basecomplate").hide();
@@ -98,9 +109,11 @@ function MycustomerSubscribe(){
 	this.query = function(){
 		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager")?$("#querycompanyid").combobox("getValue"):null;
 		var name = $("#queryname").textbox("getValue");
+		var phone = $("#queryphone").textbox("getValue");
 		var createTime = ($("#querycreateTime").datebox('getValue')=="")?null:$("#querycreateTime").datebox('getValue');
 		var params = {};
 		if(name!="") {params.customerName = name;}
+		if(phone!="") {params.customerPhone = phone;}
 		if(createTime!="" && createTime!=null) {params.createtime = createTime;}
 		params.companyId = companyid;
 		if(cu.hasRoles("q_area_shopManager,q_admin,q_receptionist,q_counselor")){
@@ -119,7 +132,8 @@ function MycustomerSubscribe(){
 		$("#customerSubscribedlg-fm").form("clear");
 		cu.initClearCombobox("rootIn");
 		cu.initClearCombobox("sex");
-		cu.initClearCombobox("companyId");
+		if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("companyId");
+		cu.initClearCombobox("profession");
 		$("#customerSubscribedlg").dialog("open").dialog("center").dialog("setTitle","添加预约客户信息");
 	};
 	this.reception = function(){
@@ -127,6 +141,10 @@ function MycustomerSubscribe(){
 		if(row){
 			row.customername = row.customerName;
 			row.phonenumb = row.customerPhone;
+			if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("rootIn");
+			cu.initClearCombobox("sex");
+			if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("companyId");
+			cu.initClearCombobox("profession1");
 			$("#ccacdlg-fm").form("clear").form("load",row);
 			$("#ccacdlg").dialog("open").dialog("center").dialog("setTitle","接诊客户");
 		}else{
@@ -144,7 +162,7 @@ function MycustomerSubscribe(){
 					var counsoler = $("#counsoler").combobox("getValue");
 					var customerName = $("#customername").textbox("getValue");
 					var text = $("#counsoler").combobox("getText");
-					$.messager.alert('提示','操作成功!请美容师'+text+'在《客户消费维护》页面操作!');
+					$.messager.alert('提示','操作成功!请美容师'+text+'在《客户消费维护》页面刷新后继续操作!');
 					$.messager.progress('close');
 					$('#ccacdlg').dialog('close');
 					cu.clearSelected("customerSubscribe_table");
