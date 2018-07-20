@@ -94,9 +94,11 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 			subscribe.setStatus(99);
 			this.saveOrUpdate(subscribe);
 			subscribeLogService.insertSelective(new TCustomerSubscribeLog(subscribe.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_CLOSE,SystemUserInfo.getSystemUser().getUser().getUsername()));
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】成功关闭客户预约信息并添加预约关闭日志！");
 			return true;
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】关闭客户预约信息失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return false;
 	}
@@ -175,13 +177,13 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新预约信息成功！");
 				if(bean.getStatus()==1) {
 					subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_RECEPTION,user.getUsername()));
-					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加预约日志信息成功！前台接诊成功");
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加前台接诊预约日志信息成功！");
 				}else if(bean.getStatus()==0) {
 					subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_EDIT,user.getUsername()));
-					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加预约日志信息成功！修改接诊信息成功");
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加修改预约日志信息成功！");
 				}else if(bean.getStatus()==99) {
 					subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_CLOSE,user.getUsername()));
-					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加预约日志信息成功！关闭接诊信息成功");
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加关闭预约日志信息成功！");
 				}
 			}else {
 				bean.setCreateUser(user.getUsername());

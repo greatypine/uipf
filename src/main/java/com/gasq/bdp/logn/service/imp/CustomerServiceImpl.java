@@ -29,6 +29,7 @@ import com.gasq.bdp.logn.mapper.TCustomerPorjectMapper;
 import com.gasq.bdp.logn.mapper.TCustomerProjectLogMapper;
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeMapper;
 import com.gasq.bdp.logn.mapper.TInventoryMapper;
+import com.gasq.bdp.logn.mapper.TLtnCustomerConsumptonAmountMapper;
 import com.gasq.bdp.logn.mapper.TLtnCustomerMapper;
 import com.gasq.bdp.logn.mapper.TSysTimerScheduleconfigMapper;
 import com.gasq.bdp.logn.mapper.TVipCustomerMapper;
@@ -52,7 +53,6 @@ import com.gasq.bdp.logn.model.TProject;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TVipCustomer;
 import com.gasq.bdp.logn.model.TVipCustomerExample;
-import com.gasq.bdp.logn.service.CustomerConsumptonAmountService;
 import com.gasq.bdp.logn.service.CustomerService;
 import com.gasq.bdp.logn.service.TSysProjectService;
 import com.gasq.bdp.logn.utils.CommonUtils;
@@ -69,7 +69,7 @@ import com.gasq.bdp.logn.utils.WorkFlowUtil;
 public class CustomerServiceImpl implements CustomerService {
 	protected Logger logger = Logger.getLogger(this.getClass());
 	@Autowired TLtnCustomerMapper customerMapper;
-	@Autowired CustomerConsumptonAmountService consumptonAmountService;
+	@Autowired TLtnCustomerConsumptonAmountMapper consumptonAmountService;
 	@Autowired MyScheduler scheduler;
 	@Autowired TSysTimerScheduleconfigMapper scheduleconfigMapper;
 	@Autowired TCustomerSubscribeMapper customerSubscribeMapper;
@@ -187,6 +187,7 @@ public class CustomerServiceImpl implements CustomerService {
 		Integer count = customerMapper.countByBean(bean);
 		result.put("rows",list);
 		result.put("total",count);
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询消费订单信息列表完成！查询条数："+count+",查询参数："+CommonUtils.bean2Json(bean));
 		return result;
 	}
 

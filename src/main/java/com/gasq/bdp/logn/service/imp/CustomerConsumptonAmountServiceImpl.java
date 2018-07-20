@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmountExample;
 import com.gasq.bdp.logn.service.CustomerConsumptonAmountService;
 import com.gasq.bdp.logn.service.TConsumptonProjectService;
 import com.gasq.bdp.logn.service.TInventoryLogService;
+import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 
 /**
@@ -33,6 +35,7 @@ import com.gasq.bdp.logn.utils.DateUtil;
  */
 @Service
 public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAmountService {
+	protected Logger logger = Logger.getLogger(this.getClass());
 	@Autowired TLtnCustomerConsumptonAmountMapper customerConsumptonAmountMapper;
 	@Autowired TLtnCustomerMapper customerMapper;
 	@Autowired TConsumptonProjectService consumptonProjectService;
@@ -64,9 +67,12 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 			TConsumptonProjectExample cpe = new TConsumptonProjectExample();
 			cpe.createCriteria().andConsumptonAmountIdEqualTo(id);
 			consumptonProjectService.deleteByExample(cpe);
-			return customerConsumptonAmountMapper.deleteByPrimaryKey(id)>0?true:false;
+			Boolean b = customerConsumptonAmountMapper.deleteByPrimaryKey(id)>0?true:false;
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】成功删除客户预约信息并添加预约关闭日志！");
+			return b ;
 		}catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除订单消费金额操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return false;
 	}
@@ -102,6 +108,7 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 		Integer count = customerConsumptonAmountMapper.countByBean(bean);
 		result.put("rows",list);
 		result.put("total",count);
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询消费订单金额信息列表完成！查询条数："+count+",查询参数："+CommonUtils.bean2Json(bean));
 		return result;
 	}
 
@@ -109,7 +116,6 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 	@Transactional(rollbackFor=Exception.class)
 	public TLtnCustomerConsumptonAmount saveOrUpdate(TLtnCustomerConsumptonAmount bean) {
 		try {
-			
 			bean.setUpdatetime(DateUtil.getSysCurrentDate());
 			BigDecimal arrears = bean.getArrears();//欠款
 			BigDecimal repayment = bean.getRepayment();//还款金额
@@ -130,14 +136,17 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 			if(bean.getId()!=null) {
 				bean.setUpdateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
 				customerConsumptonAmountMapper.updateByPrimaryKeySelective(bean);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新订单消费金额操作成功！更新信息为："+CommonUtils.bean2Json(bean));
 			}else {
 				bean.setCreateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
 				bean.setCreatetime(DateUtil.getSysCurrentDate());
 				customerConsumptonAmountMapper.insertSelective(bean);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加订单消费金额操作成功！更新信息为："+CommonUtils.bean2Json(bean));
 			}
 			return bean;
 		}catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】插入或更新订单消费金额操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return null;
 	}

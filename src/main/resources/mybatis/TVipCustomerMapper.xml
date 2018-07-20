@@ -558,7 +558,7 @@
 			and a.create_time &lt;= #{record.createTime}
  		</if>
  		GROUP BY a.id,a.`status`,u.nickname,vs.text,vvcs.`name`,vvct.name,vcp.`text`
-		order by a.update_time desc 
+		order by a.create_time desc 
 		<if test="record.rows !=null and record.page!=null">
 			limit #{record.page},#{record.rows}
 		</if>

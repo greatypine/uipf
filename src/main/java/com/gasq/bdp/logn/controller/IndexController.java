@@ -200,10 +200,10 @@ public class IndexController {
 	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN, RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION, RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
 	public String logout(RedirectAttributes redirectAttributes) {
 		// 使用权限管理工具进行用户的退出，跳出登录，给出提示信息
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】已安全退出！");
+		redirectAttributes.addFlashAttribute("message", "您已安全退出");
 		SecurityUtils.getSubject().logout();
 		UserthreadLocal.remove();
-		redirectAttributes.addFlashAttribute("message", "您已安全退出");
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】已安全退出！");
 		return "redirect:/index";
 	}
 
