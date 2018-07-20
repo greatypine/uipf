@@ -45,7 +45,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
@@ -99,7 +98,7 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>druid</artifactId>
-			<version>1.0.5</version>
+			<version>1.1.5</version>
 		</dependency>
 		<!-- ehcache缓存 -->
 		<dependency>
@@ -159,11 +158,11 @@
 
 		<dependency>  
 		    <groupId>ch.qos.logback</groupId>  
-		    <artifactId>logback-classic</artifactId>  
+		    <artifactId>logback-classic</artifactId>
 		</dependency>
 		<dependency>
 		    <groupId>ch.qos.logback</groupId>  
-		    <artifactId>logback-core</artifactId>  
+		    <artifactId>logback-core</artifactId>
 		</dependency> 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
@@ -262,11 +261,32 @@
         <dependency>
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-activemq</artifactId>
+	        <exclusions>
+		    	<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+		    </exclusions>
 	    </dependency>
 	    <dependency>
 	        <groupId>org.apache.activemq</groupId>
 	        <artifactId>activemq-web</artifactId>
+	        <exclusions>
+		    	<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+		    </exclusions>
 	    </dependency>
+	    
 	</dependencies>
 	<build>
 		<finalName>dws</finalName>
