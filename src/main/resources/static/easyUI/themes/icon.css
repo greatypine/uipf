@@ -261,3 +261,7 @@
 .icon-usermessage{
 	background:url('icons/usermessage.png') no-repeat center center;
 }
+/* 订单回退 */
+.icon-return{
+	background:url('icons/return.png') no-repeat center center;
+}

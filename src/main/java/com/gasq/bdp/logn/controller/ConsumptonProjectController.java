@@ -1,5 +1,7 @@
 package com.gasq.bdp.logn.controller;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gasq.bdp.logn.model.RoleSign;
+import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TConsumptonProject;
 import com.gasq.bdp.logn.service.TConsumptonProjectService;
 
@@ -30,11 +33,15 @@ public class ConsumptonProjectController {
 	 
  	@ApiOperation(value="查询列表消费产品配置信息列表", notes="查询列表消费产品配置信息列表")
     @ApiImplicitParam(name = "bean", value = "消费产品实体对象TConsumptonProject", required = false, dataType = "TConsumptonProject")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
 	public Map<String, Object> queryMapLists(@Valid TConsumptonProject bean) {
+ 		Instant start = Instant.now();
+ 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询列表消费产品配置信息列表！");
 		try {
-			return consumptonProjectService.queryPagingList(bean);
+			Map<String, Object> map = consumptonProjectService.queryPagingList(bean);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -43,9 +50,10 @@ public class ConsumptonProjectController {
     
     @ApiOperation(value="查询消费产品对象列表", notes="查询消费产品对象列表")
     @ApiImplicitParam(name = "bean", value = "消费产品实体对象TConsumptonProject", required = false, dataType = "TConsumptonProject")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryBeanList",method=RequestMethod.POST)
 	public List<TConsumptonProject> queryBeanList(TConsumptonProject bean) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询消费产品对象列表！");
 		try {
 			return consumptonProjectService.selectByExample(bean);
 		}catch (Exception e) {
@@ -59,6 +67,7 @@ public class ConsumptonProjectController {
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
 	public Map<String, Object> saveOrUpdate(TConsumptonProject bean) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加或更新消费产品配置信息！");
 		try {
 			return consumptonProjectService.saveOrUpdate(bean);
 		} catch (Exception e) {
@@ -72,6 +81,7 @@ public class ConsumptonProjectController {
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/delete",method=RequestMethod.POST)
 	public boolean delete(int id) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除消费产品配置信息！");
 		try {
 			return consumptonProjectService.delete(id);
 		} catch (Exception e) {

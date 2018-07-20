@@ -399,7 +399,7 @@
   <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 	SELECT
 		p.id,p.company_id as companyId,p.create_time as createTime,p.create_user as createUser,p.customer_name customerName,p.customer_phone as customerPhone,p.project,p.remark,p.root_in as rootIn,
-		p.sex as sex,DATE_FORMAT(p.subscribe_date,'%Y-%m-%d %H:%i:%S') as subscribeDate,p.update_time as updateTime,p.update_user as updateUser,p.status,vsb.text statusName,
+		p.sex as sex,DATE_FORMAT(p.subscribe_date,'%Y-%m-%d') as subscribeDate,p.update_time as updateTime,p.update_user as updateUser,p.status,vsb.text statusName,
 		tc.`name` as companyName,vri.`name` as rootInName,p.email,p.profession,vcp.text as professionName
 	FROM
 		t_customer_subscribe p

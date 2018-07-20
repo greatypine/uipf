@@ -28,7 +28,7 @@ public class SubscribeLogController {
     
     @ApiOperation(value="查询列表预约日志配置信息列表", notes="查询列表预约日志配置信息列表")
     @ApiImplicitParam(name = "bean", value = "预约日志实体对象TCustomerSubscribeLog", required = false, dataType = "TCustomerSubscribeLog")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
 	public Map<String, Object> queryMapLists(TCustomerSubscribeLog bean) {
 		try {
@@ -41,7 +41,7 @@ public class SubscribeLogController {
     
     @ApiOperation(value="查询预约日志对象列表", notes="查询预约日志对象列表")
     @ApiImplicitParam(name = "bean", value = "预约日志实体对象TCustomerSubscribeLog", required = false, dataType = "TCustomerSubscribeLog")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryBeanList",method=RequestMethod.POST)
 	public List<TCustomerSubscribeLog> queryBeanList(TCustomerSubscribeLog bean) {
 		try {

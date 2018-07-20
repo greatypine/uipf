@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ import com.gasq.bdp.logn.utils.WorkFlowUtil;
  */
 @Service
 public class TProjectServiceImpl implements TSysProjectService {
+	protected Logger logger = Logger.getLogger(this.getClass());
 	@Autowired TProjectMapper projectMapper;
 
 	@Override
@@ -145,6 +147,7 @@ public class TProjectServiceImpl implements TSysProjectService {
 			bean.setCreateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
 			projectMapper.insertSelective(bean);
 		}
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】项目插入或更新完成！");
 		return true;
 	}
 

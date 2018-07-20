@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gasq.bdp.logn.model.RoleSign;
+import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TSysRole;
 import com.gasq.bdp.logn.service.TSysRoleService;
 
@@ -24,9 +25,10 @@ public class RoleController {
     //错误信息
     Map<String,Object> paramMap = new HashMap<String,Object>();
     
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
 	public Map<String, Object> queryMapLists(TSysRole bean) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询角色列表！");
 		try {
 			return roleService.queryPagingList(bean);
 		}catch (Exception e) {
@@ -35,9 +37,10 @@ public class RoleController {
     	return null;
 	 }
     
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryBeanList",method=RequestMethod.POST)
 	public List<TSysRole> queryBeanList(TSysRole bean) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询角色列表！");
 		try {
 			return roleService.selectByExample(bean);
 		}catch (Exception e) {
@@ -46,9 +49,10 @@ public class RoleController {
     	return null;
 	 }
     
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryMapBeanList",method=RequestMethod.POST)
 	public List<Map<String,Object>> queryMapBeanList(TSysRole bean) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询角色列表！");
 		try {
 			return roleService.queryMapBeanList(bean);
 		}catch (Exception e) {
@@ -60,6 +64,7 @@ public class RoleController {
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
 	public boolean saveOrUpdate(TSysRole bean) {
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求新增或更新角色信息！");
 		try {
 			return roleService.saveOrUpdate(bean);
 		} catch (Exception e) {
@@ -71,6 +76,7 @@ public class RoleController {
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/delete",method=RequestMethod.POST)
 	public boolean delete(Integer id) {
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除角色信息！");
 		try {
 			return roleService.delete(id);
 		} catch (Exception e) {

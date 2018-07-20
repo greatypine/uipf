@@ -41,6 +41,7 @@
 <!-- 		<table schema="" tableName="t_sys_timer_job_mongo_query"> </table> -->
 <!-- <table schema="" tableName="t_sys_mongo_query_keys"> </table> -->
 <!-- <table schema="" tableName="t_customer_subscribe"> </table> -->
+<table schema="" tableName="t_customer_images"> </table>
 		
 <!-- 		<table schema="" tableName="t_sys_timer_job_sql_insert_update"> </table> -->
 <!-- 		<table schema="" tableName="t_sys_sql_update_keys"> </table> -->

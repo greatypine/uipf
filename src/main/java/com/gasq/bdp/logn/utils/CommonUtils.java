@@ -1,5 +1,9 @@
 package com.gasq.bdp.logn.utils;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -24,6 +28,8 @@ import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -515,6 +521,30 @@ public class CommonUtils {
             joiner.add(cs);
         }
         return joiner.toString();
+    }
+	/**
+     * 保存文件，直接以multipartFile形式
+     * @param multipartFile
+     * @param path 文件保存绝对路径
+     * @return 返回文件名
+     * @throws IOException
+     */
+    public static String saveImg(MultipartFile multipartFile,String path) throws IOException {
+        File file = new File(path);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        FileInputStream fileInputStream = (FileInputStream) multipartFile.getInputStream();
+        String fileName = UUID.randomUUID().toString() + ".png";
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(path + File.separator + fileName));
+        byte[] bs = new byte[1024];
+        int len;
+        while ((len = fileInputStream.read(bs)) != -1) {
+            bos.write(bs, 0, len);
+        }
+        bos.flush();
+        bos.close();
+        return fileName;
     }
     /**
      * 使用示例

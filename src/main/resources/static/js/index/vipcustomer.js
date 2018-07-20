@@ -81,7 +81,7 @@ function systemvipcustomer(){
 		        }},
 		        {field:'comments',title:'留言',width:"5%",align:'center',
 		        	formatter:function(value, row, index){
-	            	return '<a id="'+row.id+'" href="javascripte:void(0)" onClick="systemvipcustomer.queryComments(this.id)" class="productslinkbtn easyui-linkbutton" data-options="plain:true,iconCls:\'icon-more\'">留言</a>';
+	            	return '<a id="'+row.id+'" href="javascripte:void(0)" onClick="systemvipcustomer.queryComments(this.id)" class="productslinkbtn">留言</a>';
 	            }},
 		        {field:'createUser',title:'创建人',width:"5%",align:'center'},
 		        {field:'createTime',title:'创建时间',width:"8%",align:'center'},
@@ -139,14 +139,14 @@ function systemvipcustomer(){
 					        }},
 					        {field:'products',title:'产品',align:'center',width:"8%",
 					        	formatter:function(value, row, index){
-				            	return '<a id="'+row.id+'" href="javascripte:void(0)" onClick="systemvipcustomer.queryProducts(this.id)" class="productslinkbtn easyui-linkbutton" data-options="plain:true,iconCls:\'icon-more\'">产品列表</a>';
+				            	return '<a id="'+row.id+'" href="javascripte:void(0)" onClick="systemvipcustomer.queryProducts(this.id)" class="productslinkbtn">产品列表</a>';
 				            }},
 					        {field:'remark',title:'描述',width:"19%",align:'center'}
 			        ]],
 					onSelect:function(index,row){
 					},
 					onLoadSuccess:function(data){
-						$(".productslinkbtn").linkbutton();
+//						$(".productslinkbtn").linkbutton();
 						setTimeout(function(){
 			                $('#systemvipcustomer_table').datagrid('fixDetailRowHeight',index); 
 			            },0);
@@ -165,7 +165,7 @@ function systemvipcustomer(){
 			onSelect:function(index,row){
 			},
 			onLoadSuccess:function(data){
-				$(".productslinkbtn").linkbutton();
+//				$(".productslinkbtn").linkbutton();
 			}
 		});
 	};

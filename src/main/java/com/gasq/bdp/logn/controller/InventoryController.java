@@ -1,5 +1,7 @@
 package com.gasq.bdp.logn.controller;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.gasq.bdp.logn.model.RoleSign;
+import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TInventory;
 import com.gasq.bdp.logn.service.TInventoryService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -25,15 +30,19 @@ public class InventoryController {
 	protected Logger logger = Logger.getLogger(this.getClass());
     @Autowired TInventoryService inventoryService;
     //错误信息
-    Map<String,Object> paramMap = new HashMap<String,Object>();
+    Map<String,Object> map = new HashMap<String,Object>();
     
     @ApiOperation(value="查询列表库存配置信息列表", notes="查询列表库存配置信息列表")
     @ApiImplicitParam(name = "bean", value = "库存实体对象TInventory", required = false, dataType = "TInventory")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
 	public Map<String, Object> queryMapLists(TInventory bean) {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表库存配置信息列表！");
 		try {
-			return inventoryService.queryPagingList(bean);
+			map = inventoryService.queryPagingList(bean);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表库存配置信息列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -42,11 +51,15 @@ public class InventoryController {
     
     @ApiOperation(value="查询库存对象列表", notes="查询库存对象列表")
     @ApiImplicitParam(name = "bean", value = "库存实体对象TInventory", required = false, dataType = "TInventory")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryBeanList",method=RequestMethod.POST)
 	public List<TInventory> queryBeanList(TInventory bean) {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询库存对象列表！");
 		try {
-			return inventoryService.selectByExample(bean);
+			List<TInventory> list = inventoryService.selectByExample(bean);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询库存对象列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			return list;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -58,8 +71,12 @@ public class InventoryController {
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
 	public boolean saveOrUpdate(TInventory bean) {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求添加或更新库存配置信息！");
 		try {
-			return inventoryService.saveOrUpdate(bean);
+			Boolean f = inventoryService.saveOrUpdate(bean);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求添加或更新库存配置信息结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			return f;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -71,8 +88,12 @@ public class InventoryController {
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/delete",method=RequestMethod.POST)
 	public boolean delete(int id) {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除库存配置信息！");
 		try {
-			return inventoryService.delete(id);
+			Boolean f = inventoryService.delete(id);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除库存配置信息结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			return f;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -82,11 +103,15 @@ public class InventoryController {
     
     @ApiOperation(value="查询当前库存", notes="查询当前库存")
     @ApiImplicitParam(name = "bean", value = "库存实体对象TInventory", required = false, dataType = "TInventory")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/syncInventory",method=RequestMethod.POST)
 	public Double syncInventory(Integer id) {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询当前库存！");
 		try {
-			return inventoryService.getInventoryNumbs(id);
+			Double d =inventoryService.getInventoryNumbs(id);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询当前库存结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			return d;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -98,8 +123,12 @@ public class InventoryController {
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
     @RequestMapping(value = "/checkInventoryEnable",method=RequestMethod.POST)
 	public Boolean checkInventoryEnable(Integer id,Double numbs) {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询当前商品是否有库存！");
 		try {
-			return inventoryService.checkInventoryEnable(id,numbs);
+			Boolean f = inventoryService.checkInventoryEnable(id,numbs);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询当前商品是否有库存结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			return f;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -111,8 +140,12 @@ public class InventoryController {
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/appendInventory",method=RequestMethod.POST)
 	public Map<String, Object> appendInventory(TInventory bean) {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求产品入库！");
 		try {
-			return inventoryService.appendInventory(bean);
+			map = inventoryService.appendInventory(bean);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求产品入库结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			return map;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
@@ -123,8 +156,12 @@ public class InventoryController {
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/deliveryInventory",method=RequestMethod.POST)
 	public Map<String, Object> deliveryInventory(TInventory bean) {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求产品出库！");
 		try {
-			return inventoryService.deliveryInventory(bean);
+			map = inventoryService.deliveryInventory(bean);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求产品出库结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			return map;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}

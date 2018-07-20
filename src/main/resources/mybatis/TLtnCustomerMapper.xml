@@ -569,7 +569,7 @@
 			and a.createtime &lt;= #{record.endtime}
  		</if>
  		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text,vcp.text,vri.name
-		order by a.updateTime desc 
+		order by a.createtime desc 
 		<if test="record.rows !=null and record.page!=null">
 			limit #{record.page},#{record.rows}
 		</if>
@@ -661,7 +661,7 @@
   		 SELECT
 			lc.customername as '客户姓名',
 			lc.phonenumb '客户电话',
-			ifnull(vri.text,'') '客户来源',
+			ifnull(vri.`name`,'') '客户来源',
 			ifnull(vcp.text,'') '客户职业',
 			ifnull(vcos.text,'') as '结算状态',
 			ifnull(vct.text,'') as '结算类型',
@@ -675,14 +675,14 @@
 			DATE_FORMAT(lc.createTime,'%Y-%m-%d %H:%i:%S') as '创建时间',
 			ifnull(lc.remark,'') as '说明'
 		from t_ltn_customer lc 
-		LEFT JOIN v_root_in vri on a.root_in = vri.value and vri.companyid=a.company_id
-		LEFT JOIN v_customer_profession vcp on a.profession=vcp.value
-		LEFT JOIN t_customer_subscribe tcs on lc.subscribe_id=tcs.id and tcs.company_id=a.company_id
-		LEFT JOIN t_sys_user u3 on lc.createUser=u3.username and u3.companyid=a.company_id
-		LEFT JOIN t_sys_user u2 on tcs.create_user=u2.username and u2.companyid=a.company_id
-		LEFT JOIN t_sys_user u on lc.therapeutist = u.id and u.companyid=a.company_id
-		left join v_consume_type vct on lc.type=vct.value and vct.companyid=a.company_id
-		LEFT JOIN t_sys_user u1 on lc.counsoler = u1.id and u1.companyid=a.company_id
+		LEFT JOIN v_root_in vri on lc.root_in = vri.value and vri.companyid=lc.company_id
+		LEFT JOIN v_customer_profession vcp on lc.profession=vcp.value
+		LEFT JOIN t_customer_subscribe tcs on lc.subscribe_id=tcs.id and tcs.company_id=lc.company_id
+		LEFT JOIN t_sys_user u3 on lc.createUser=u3.username and u3.companyid=lc.company_id
+		LEFT JOIN t_sys_user u2 on tcs.create_user=u2.username and u2.companyid=lc.company_id
+		LEFT JOIN t_sys_user u on lc.therapeutist = u.id and u.companyid=lc.company_id
+		left join v_consume_type vct on lc.type=vct.value and vct.companyid=lc.company_id
+		LEFT JOIN t_sys_user u1 on lc.counsoler = u1.id and u1.companyid=lc.company_id
 		LEFT JOIN v_customer_order_status vcos on lc.`status`= vcos.`value`
 		LEFT JOIN (select GROUP_CONCAT(tp.project_name order by tca.createTime SEPARATOR '/') as projectnames,tca.customer_id from t_ltn_customer_consumpton_amount tca LEFT JOIN t_project tp on tca.project_id=tp.id GROUP BY tca.customer_id) tcdt on tcdt.customer_id=lc.id
 		where 1=1
@@ -714,7 +714,7 @@
 			and lc.createtime &lt;= #{record.endtime}
  		</if>
  		GROUP BY lc.id,lc.company_id,vct.text,u2.nickname,tcdt.projectnames,u3.nickname,vcos.text,vcp.text,vri.name
-		order by lc.updateTime desc
+		order by lc.createtime desc
   </select>
   <select id="getConsumptionProjects" parameterType="java.lang.Integer" resultType="java.util.Map">
   		select GROUP_CONCAT(p.project_name)project_name,sum(a.total_amount)total_amount from t_ltn_customer_consumpton_amount a LEFT JOIN t_project p on a.project_id=p.id 

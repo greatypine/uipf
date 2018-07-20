@@ -75,12 +75,20 @@ public class TInventoryServiceImpl implements TInventoryService {
 	@Override
 	@Transactional
 	public boolean delete(int id) {
-		TSysUser user = SystemUserInfo.getSystemUser().getUser();
-		TInventory bean = inventoryMapper.selectByPrimaryKey(id);
-		TInventoryLog ilog = new TInventoryLog(bean.getId(),InitProperties.INVENTORY_OPTION_DELETE,null,null,null,user.getCompanyid(),bean.getInventory(),user.getUsername());
-		inventoryLogService.saveOrUpdate(ilog);
-		boolean g = inventoryMapper.deleteByPrimaryKey(id)>0?true:false;
-		return g;
+		try {
+			TSysUser user = SystemUserInfo.getSystemUser().getUser();
+			TInventory bean = inventoryMapper.selectByPrimaryKey(id);
+			TInventoryLog ilog = new TInventoryLog(bean.getId(),InitProperties.INVENTORY_OPTION_DELETE,null,null,null,user.getCompanyid(),bean.getInventory(),user.getUsername());
+			inventoryLogService.saveOrUpdate(ilog);
+			bean.setStatus(99);
+			inventoryMapper.updateByPrimaryKeySelective(bean);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除商品完成！");
+			return true;
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除库存信息操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
+		}
+		return false;
 	}
 
 	@Override
@@ -139,6 +147,7 @@ public class TInventoryServiceImpl implements TInventoryService {
 		Integer count = inventoryMapper.countByBean(params);
 		result.put("rows",list);
 		result.put("total",count);
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询库存操作完成！总查询【"+count+"】条!");
 		return result;
 	}
 
@@ -152,17 +161,22 @@ public class TInventoryServiceImpl implements TInventoryService {
 			if(bean.getId()!=null) {
 				bean.setUpdateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
 				inventoryMapper.updateByPrimaryKeySelective(bean);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新库存操作完成！");
 				TInventoryLog ilog = new TInventoryLog(bean.getId(),InitProperties.INVENTORY_OPTION_UPDATE,null,null,null,user.getCompanyid(),bean.getInventory(),user.getUsername());
 				inventoryLogService.saveOrUpdate(ilog);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加库存操作日志信息完成！");
 			}else {
 				bean.setCreatetime(DateUtil.getSysCurrentDate());
 				bean.setCreateuser(user.getUsername());
 				inventoryMapper.insertSelective(bean);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加库存操作完成！");
 				TInventoryLog ilog = new TInventoryLog(bean.getId(),InitProperties.INVENTORY_OPTION_ADD,null,null,null,user.getCompanyid(),bean.getInventory(),user.getUsername());
 				inventoryLogService.saveOrUpdate(ilog);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加库存操作日志信息完成！");
 			}
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】新增或更新库存信息操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return true;
 	}
@@ -186,6 +200,7 @@ public class TInventoryServiceImpl implements TInventoryService {
 			}
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】检查库存是否可用操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return false;
 	}
@@ -203,11 +218,12 @@ public class TInventoryServiceImpl implements TInventoryService {
 				result.put("status", true);
 				TInventoryLog ilog = new TInventoryLog(bean.getId(),InitProperties.INVENTORY_OPTION_APPEND,null,null,null,user.getCompanyid(),bean.getInventory(),user.getUsername());
 				inventoryLogService.saveOrUpdate(ilog);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】商品入库完成！");
 				return result;
 			}
 		}catch (Exception e) {
 			mess = "入库操作失败！"+e.getMessage();
-			logger.info(mess,e);
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】商品入库操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		result.put("status", false);
@@ -241,7 +257,7 @@ public class TInventoryServiceImpl implements TInventoryService {
 			}
 		}catch (Exception e) {
 			mess = "出库操作失败！"+e.getMessage();
-			logger.info(mess,e);
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】出库操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		result.put("status", false);

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gasq.bdp.logn.model.RoleSign;
+import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.service.TSysRoleMenuService;
 import com.gasq.bdp.logn.utils.CommonUtils;
 
@@ -27,9 +28,10 @@ public class RoleMenuController {
 	 * @return
 	 */
     @SuppressWarnings("rawtypes")
-	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN},logical=Logical.OR)
+    @RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN, RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION, RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
 	public Boolean saveOrUpdate(String menuss,Integer roleid) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求添加菜单信息！");
 		if(roleid == null) return false;
 		List<Map> menus = CommonUtils.json2List(menuss, Map.class);
 		return roleMenuService.saveOrUpdate(roleid,menus);

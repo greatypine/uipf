@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.gasq.bdp.logn.model.RoleSign;
+import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TInventoryLog;
 import com.gasq.bdp.logn.service.TInventoryLogService;
 import io.swagger.annotations.Api;
@@ -29,9 +30,10 @@ public class InventoryLogController {
     
     @ApiOperation(value="查询列表库存日志配置信息列表", notes="查询列表库存日志配置信息列表")
     @ApiImplicitParam(name = "bean", value = "库存日志实体对象TInventoryLog", required = false, dataType = "TInventoryLog")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
 	public Map<String, Object> queryMapLists(TInventoryLog bean) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表库存日志配置信息列表！");
 		try {
 			return inventoryLogService.queryPagingList(bean);
 		}catch (Exception e) {
@@ -42,9 +44,10 @@ public class InventoryLogController {
     
     @ApiOperation(value="查询库存日志对象列表", notes="查询库存日志对象列表")
     @ApiImplicitParam(name = "bean", value = "库存日志实体对象TInventoryLog", required = false, dataType = "TInventoryLog")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryBeanList",method=RequestMethod.POST)
 	public List<TInventoryLog> queryBeanList(TInventoryLog bean) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询库存日志对象列表！");
 		try {
 			return inventoryLogService.selectByExample(bean);
 		}catch (Exception e) {
@@ -58,6 +61,7 @@ public class InventoryLogController {
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
 	public boolean saveOrUpdate(TInventoryLog bean) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求添加或更新库存日志配置信息！");
 		try {
 			return inventoryLogService.saveOrUpdate(bean);
 		} catch (Exception e) {
@@ -71,6 +75,7 @@ public class InventoryLogController {
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/delete",method=RequestMethod.POST)
 	public boolean delete(int id) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除库存日志配置信息！");
 		try {
 			return inventoryLogService.delete(id);
 		} catch (Exception e) {

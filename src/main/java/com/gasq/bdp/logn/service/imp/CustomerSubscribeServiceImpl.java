@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ import com.gasq.bdp.logn.model.TVipCustomerExample;
 import com.gasq.bdp.logn.service.CustomerSubscribeService;
 import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.utils.ActiveMQUtil;
+import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
 
@@ -47,6 +49,9 @@ import com.gasq.bdp.logn.utils.WorkFlowUtil;
  */
 @Service
 public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
+	
+	protected Logger logger = Logger.getLogger(this.getClass());
+	
 	@Autowired TCustomerSubscribeMapper customerSubscribeMapper;
 	@Autowired TCustomerSubscribeLogMapper subscribeLogService;
 	@Autowired ActiveManager activeManager;
@@ -154,6 +159,7 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 		Integer count = customerSubscribeMapper.countByBean(params);
 		result.put("rows",list);
 		result.put("total",count);
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询预约信息列表完成！查询条数："+count+",查询参数："+CommonUtils.bean2Json(params));
 		return result;
 	}
 
@@ -166,27 +172,35 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 			if(bean.getId()!=null) {
 				bean.setUpdateUser(user.getUsername());
 				customerSubscribeMapper.updateByPrimaryKeySelective(bean);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新预约信息成功！");
 				if(bean.getStatus()==1) {
 					subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_RECEPTION,user.getUsername()));
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加预约日志信息成功！前台接诊成功");
 				}else if(bean.getStatus()==0) {
 					subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_EDIT,user.getUsername()));
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加预约日志信息成功！修改接诊信息成功");
 				}else if(bean.getStatus()==99) {
 					subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_CLOSE,user.getUsername()));
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加预约日志信息成功！关闭接诊信息成功");
 				}
 			}else {
-				bean.setCreateTime(DateUtil.getSysCurrentDate());
 				bean.setCreateUser(user.getUsername());
 				bean.setStatus(0);
 				customerSubscribeMapper.insertSelective(bean);
 				subscribeLogService.insertSelective(new TCustomerSubscribeLog(bean.getId(),InitProperties.SUBSCRIBE_OPTION_TYPE_ADD,user.getUsername()));
-				String mess = "后台用户："+SystemUserInfo.getSystemUser().getUser().getNickname()+",在"+DateUtil.getAllCurrentDate()+"成功预约了一个客户！\n 客户姓名："+bean.getCustomerName()+"\n 联系方式："+bean.getCustomerPhone()+"\n预约到诊时间："+DateUtil.dateToString(bean.getSubscribeDate());
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加预约日志成功！");
+				String mess = "◆后台用户："+SystemUserInfo.getSystemUser().getUser().getNickname()+",在"+DateUtil.getAllCurrentDate()+"成功预约了一个客户！\n◆客户姓名："+bean.getCustomerName()+"\n◆联系方式："+bean.getCustomerPhone()+"\n◆预约到诊时间："+DateUtil.dateToString(bean.getSubscribeDate());
 				activeManager.sendBack(ActiveMQUtil.getTopicDestination(bean.getCompanyId()+InitProperties.BACK_SUBSCRIBE_MSG),mess);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】系统通知发送成功！发送内容为："+mess);
 				Map<String,Object> map = new HashMap<>();
 				map.put("companyid", bean.getCompanyId());
+//				List<String> sList = new ArrayList<String>();
+//				sList.add(RoleSign.SADMIN);
 				map.put("roles", RoleSign.Q_ALL);
 				List<TSysUser> userlist = userMapper.queryQUserEmailAndPhone(map);
 				Object[] emails = userlist.stream().map(f->f.getEmail()).distinct().toArray();
 				emailService.sendSimpleEmail(sourceEmail, emails, "痘卫士-预约提醒",mess);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】邮件通知发送成功！发送内容为："+mess);
 			}
 			TVipCustomerExample vcexample = new TVipCustomerExample();
 			vcexample.createCriteria().andCustomerPhoneEqualTo(bean.getCustomerPhone());
@@ -199,6 +213,7 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 				if(bean.getProfession()!=null)customer.setProfession(bean.getProfession());
 				if(bean.getSex()!=null)customer.setSex(bean.getSex());
 				vipCustomerSergice.updateByPrimaryKeySelective(customer);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新会员用户信息成功！");
 				if(StringUtils.isNotBlank(bean.getRemark())) {
 					TCustomerCommentExample tccexample = new TCustomerCommentExample();
 					tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(customer.getId());
@@ -210,6 +225,7 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 						cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
 						cc.setCreateTime(DateUtil.getSysCurrentDate());
 						customerCommentService.insertSelective(cc);
+						logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加顾客留言信息成功！");
 					}
 				}
 			}else {
@@ -224,6 +240,7 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 					vip.setCreateTime(DateUtil.getSysCurrentDate());
 					vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
 					vipCustomerSergice.insertSelective(vip);
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】新增顾客信息成功！");
 					if(StringUtils.isNotBlank(bean.getRemark())) {
 						TCustomerCommentExample tccexample = new TCustomerCommentExample();
 						tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(vip.getId());
@@ -235,14 +252,16 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 							cc.setCreateUser(SystemUserInfo.getSystemUser().getUser().getNickname());
 							cc.setCreateTime(DateUtil.getSysCurrentDate());
 							customerCommentService.insertSelective(cc);
+							logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加顾客留言信息成功！");
 						}
 					}
 				}
 			}
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】新增或更新客户预约操作完成！");
 			return true;
 		}catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			e.printStackTrace();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】新增或更新客户预约操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return false;
 	}

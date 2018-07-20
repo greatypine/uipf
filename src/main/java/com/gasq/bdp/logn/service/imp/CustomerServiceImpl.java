@@ -26,6 +26,7 @@ import com.gasq.bdp.logn.mapper.TConsumptonProjectMapper;
 import com.gasq.bdp.logn.mapper.TCustomerCommentMapper;
 import com.gasq.bdp.logn.mapper.TCustomerConsumptonLogMapper;
 import com.gasq.bdp.logn.mapper.TCustomerPorjectMapper;
+import com.gasq.bdp.logn.mapper.TCustomerProjectLogMapper;
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeMapper;
 import com.gasq.bdp.logn.mapper.TInventoryMapper;
 import com.gasq.bdp.logn.mapper.TLtnCustomerMapper;
@@ -40,6 +41,7 @@ import com.gasq.bdp.logn.model.TCustomerCommentExample;
 import com.gasq.bdp.logn.model.TCustomerConsumptonLog;
 import com.gasq.bdp.logn.model.TCustomerPorject;
 import com.gasq.bdp.logn.model.TCustomerPorjectExample;
+import com.gasq.bdp.logn.model.TCustomerProjectLogExample;
 import com.gasq.bdp.logn.model.TCustomerSubscribe;
 import com.gasq.bdp.logn.model.TInventory;
 import com.gasq.bdp.logn.model.TLtnCustomer;
@@ -77,6 +79,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired TInventoryMapper inventoryMapper;
 	@Autowired TConsumptonProjectMapper consumptonProjectMapper;
 	@Autowired TCustomerPorjectMapper customerProjectService;
+	@Autowired TCustomerProjectLogMapper customerProjectLogService;
 	@Autowired TCustomerCommentMapper customerCommentService;
 	@Autowired TSysProjectService projectService;
 //	@Autowired ActiveManager activeManager;
@@ -100,6 +103,7 @@ public class CustomerServiceImpl implements CustomerService {
 			TLtnCustomer customer = customerMapper.selectByPrimaryKey(id);
 			customer.setStatus(99);
 			customerMapper.updateByPrimaryKeySelective(customer);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新订单信息成功！更新状态为【关闭】");
 			TLtnCustomerConsumptonAmountExample example = new TLtnCustomerConsumptonAmountExample();
 			example.createCriteria().andCustomerIdEqualTo(id);
 			List<TLtnCustomerConsumptonAmount> ccalists = consumptonAmountService.selectByExample(example);
@@ -112,14 +116,26 @@ public class CustomerServiceImpl implements CustomerService {
 					TInventory inventory = inventoryMapper.selectByPrimaryKey(projectId);
 					inventory.setInventory(inventory.getInventory().add(cp.getNumbs()));
 					inventoryMapper.updateByPrimaryKeySelective(inventory);
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新库存信息成功！已将删除的商品【"+inventory.getName()+"】数量【"+cp.getNumbs()+"】返回到库存中去！");
 					TCustomerPorjectExample cpexample = new TCustomerPorjectExample();
 					cpexample.createCriteria().andOrderIdEqualTo(id).andProjectIdEqualTo(projectId);
+					List<TCustomerPorject> list = customerProjectService.selectByExample(cpexample);
+					if(list.size()>0) {
+						for (TCustomerPorject tCustomerPorject : list) {
+							TCustomerProjectLogExample cpl = new TCustomerProjectLogExample();
+							cpl.createCriteria().andCpIdEqualTo(tCustomerPorject.getId());
+							customerProjectLogService.deleteByExample(cpl);
+						}
+						logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除客户项目消费日志信息成功！");
+					}
 					customerProjectService.deleteByExample(cpexample);
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除客户项目信息成功！");
 				}
 			}
 			return true;
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除消费订单操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return false;
 	}
@@ -256,6 +272,7 @@ public class CustomerServiceImpl implements CustomerService {
 						if(bean.getProfession()!=null)customer.setProfession(bean.getProfession());
 						if(bean.getSex()!=null)customer.setSex(bean.getSex());
 						vipCustomerMapper.updateByPrimaryKeySelective(customer);
+						logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新客户信息成功！");
 						TLtnCustomerConsumptonAmountExample tccaexample = new TLtnCustomerConsumptonAmountExample();
 						tccaexample.createCriteria().andCustomerIdEqualTo(bean.getId());
 						List<TLtnCustomerConsumptonAmount> listssa = consumptonAmountService.selectByExample(tccaexample);
@@ -267,6 +284,7 @@ public class CustomerServiceImpl implements CustomerService {
 								if(deadline!=null)dl = DateUtil.getDiyDateMonth(DateUtil.getSysCurrentDate(), deadline);
 								customerProjectService.insertSelective(new TCustomerPorject(customer.getId(),bean.getId(),cca.getProjectId(),tProject.getProjectType(),tProject.getProjectNums(),tProject.getProjectNums(),dl,user.getUsername(),DateUtil.getSysCurrentDate()));
 							}
+							logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加客户项目信息成功！添加条数【"+listssa.size()+"】");
 						}
 						if(StringUtils.isNotBlank(bean.getRemark())) {
 							TCustomerCommentExample tccexample = new TCustomerCommentExample();
@@ -280,6 +298,7 @@ public class CustomerServiceImpl implements CustomerService {
 								cc.setCreateTime(DateUtil.getSysCurrentDate());
 								customerCommentService.insertSelective(cc);
 							}
+							logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加客户留言信息成功！添加条数【"+l+"】");
 						}
 					}else {
 						TVipCustomer vip = new TVipCustomer();
@@ -293,6 +312,7 @@ public class CustomerServiceImpl implements CustomerService {
 						vip.setCreateTime(DateUtil.getSysCurrentDate());
 						vip.setCreateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
 						vipCustomerMapper.insertSelective(vip);
+						logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加客户信息成功！");
 						if(StringUtils.isNotBlank(bean.getRemark())) {
 							TCustomerCommentExample tccexample = new TCustomerCommentExample();
 							tccexample.createCriteria().andRemarkEqualTo(bean.getRemark()).andVipIdEqualTo(vip.getId());
@@ -305,6 +325,7 @@ public class CustomerServiceImpl implements CustomerService {
 								cc.setCreateTime(DateUtil.getSysCurrentDate());
 								customerCommentService.insertSelective(cc);
 							}
+							logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加客户留言信息成功！添加条数【"+l+"】");
 						}
 						TLtnCustomerConsumptonAmountExample tccaexample = new TLtnCustomerConsumptonAmountExample();
 						tccaexample.createCriteria().andCustomerIdEqualTo(bean.getId());
@@ -317,6 +338,7 @@ public class CustomerServiceImpl implements CustomerService {
 								if(deadline!=null)dl = DateUtil.getDiyDateMonth(DateUtil.getSysCurrentDate(), deadline);
 								customerProjectService.insertSelective(new TCustomerPorject(vip.getId(),bean.getId(),cca.getProjectId(),tProject.getProjectType(),tProject.getProjectNums(),tProject.getProjectNums(),dl,user.getUsername(),DateUtil.getSysCurrentDate()));
 							}
+							logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加客户项目信息成功！添加条数【"+listssa.size()+"】");
 						}
 					}
 				}
@@ -325,7 +347,7 @@ public class CustomerServiceImpl implements CustomerService {
 		} catch (Exception e) {
 			result.put("status", false);
 			result.put("mess", "用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"，操作失败！请稍后再进行尝试！");
-			logger.info("用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"，操作失败！请稍后再进行尝试！"+e.getMessage(),e);
+			logger.error("用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"，操作失败！请稍后再进行尝试！"+e.getMessage(),e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 //		activeManager.sendBack(ActiveMQUtil.getTopicDestination(bean.getCompanyId()+InitProperties.BEFORE_SUBSCRIBE_MSG),"");
@@ -418,14 +440,17 @@ public class CustomerServiceImpl implements CustomerService {
 			record.setUpdateTime(DateUtil.getSysCurrentDate());
 			record.setUpdateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
 			customerSubscribeMapper.updateByPrimaryKeySelective(record);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新预约信息为【已接诊】状态！");
 			bean.setId(null);
 			bean.setUpdatetime(DateUtil.getSysCurrentDate());
 			bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
 			bean.setCreateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
 			bean.setCreatetime(DateUtil.getSysCurrentDate());
 			customerMapper.insertSelective(bean);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加客户消费订单信息成功！");
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】前台接诊操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return true;
 	}
@@ -453,16 +478,61 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	@Transactional(rollbackFor=Exception.class)
-	public boolean refundCust(int id)throws WorkFlowStateException {
+	public boolean refundCust(int id) throws WorkFlowStateException {
 		try {
 			TLtnCustomer customer = customerMapper.selectByPrimaryKey(id);
 			customer.setStatus(98);
 			customerMapper.updateByPrimaryKeySelective(customer);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】客户消费信息退款成功！");
 			return true;
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】消费订单退款操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return false;
+	}
+
+	@Override
+	@Transactional(rollbackFor=Exception.class)
+	public Map<String, Object> orderBack(TLtnCustomer bean) throws WorkFlowStateException {
+		Map<String, Object> result= new  HashMap<String, Object>();
+		result.put("status", false);
+		try {
+			TLtnCustomer customer = customerMapper.selectByPrimaryKey(bean.getId());
+			customer.setStatus(0);
+   			customer.setType(0);
+   			TLtnCustomerConsumptonAmountExample example = new TLtnCustomerConsumptonAmountExample();
+			example.createCriteria().andCustomerIdEqualTo(bean.getId());
+			List<TLtnCustomerConsumptonAmount> ccalists = consumptonAmountService.selectByExample(example);
+			for(TLtnCustomerConsumptonAmount cca : ccalists) {
+				//删除订单消费库存日志信息
+				TConsumptonProjectExample example1 = new TConsumptonProjectExample();
+				example1.createCriteria().andConsumptonAmountIdEqualTo(cca.getId());
+				consumptonProjectMapper.deleteByExample(example1);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除订单消费库存日志信息成功！");
+				//删除用户套餐信息
+				TCustomerPorjectExample cpexample = new TCustomerPorjectExample();
+				cpexample.createCriteria().andOrderIdEqualTo(bean.getId()).andProjectIdEqualTo(cca.getProjectId());
+				List<TCustomerPorject> list = customerProjectService.selectByExample(cpexample);
+				if(list.size()>0) {
+					for (TCustomerPorject tCustomerPorject : list) {
+						TCustomerProjectLogExample cple = new TCustomerProjectLogExample();
+						cple.createCriteria().andCpIdEqualTo(tCustomerPorject.getId());
+						customerProjectLogService.deleteByExample(cple);
+					}
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除客户项目信息成功！");
+				}
+				customerProjectService.deleteByExample(cpexample);
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除客户项目信息成功！");
+			}
+			customerMapper.updateByPrimaryKeySelective(customer);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】客户消费信息回退成功！");
+			result.put("status", true);
+		}catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】消费订单回退操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
+		}
+		return result;
 	}
 
 }

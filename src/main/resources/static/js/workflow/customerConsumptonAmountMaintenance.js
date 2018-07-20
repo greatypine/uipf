@@ -13,6 +13,7 @@ function initData(){
 		$("#jiesuanpt").hide();
 		$("#export").hide();
 		$("#jiesuanhy").hide();
+		$("#orderback").linkbutton('disable');
 		$("#consumpton_project_list").hide();
 		$("#ccacdetaildlg").css("height","45%");
 	}
@@ -52,7 +53,6 @@ function initData(){
 	$("#profession").combobox({
 		url:content+'/common/getView?viewname=v_customer_profession'
 	});
-	
 	ccac = new CustomerConsumptonAmount();
 	ccac.initCompant();
 	ccac.initProjectDg({"consumptonAmountId":-1});
@@ -91,7 +91,7 @@ function CustomerConsumptonAmount(){
 		        	 	{field:'id',title:'编号',hidden:true},
 //				        {field:'companyName',title:'公司名称',width:"7%"},
 		        	 	{field:'customername',title:'客户名称',width:"5%",align:'center'},
-		        	 	{field:'phonenumb',title:'电话号码',width:"5%",align:'center'},
+		        	 	{field:'phonenumb',title:'电话号码',width:"6%",align:'center'},
 		        	 	{field:'sexName',title:'性别',width:"3%",align:'center'},
 		        	 	{field:'rootInName',title:'客户来源',width:"5%",align:'center'},
 		        	 	{field:'professionName',title:'客户职业',width:"4%",align:'center'},
@@ -112,15 +112,19 @@ function CustomerConsumptonAmount(){
 				        }},
 				        {field:'remindtime',title:'回访时间',width:"5%",align:'center'},
 				        {field:'subscribeName',title:'预约人',width:"4%",align:'center'},
+				        {field:'comments',title:'就诊照片',width:"6%",align:'center',
+				        	formatter:function(value, row, index){
+			            	return '<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option" href="javascripte:void(0)" onClick="ccac.uploadImg('+index+')" class="imageslinkbtn" data-options="plain:true">上传</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="javascripte:void(0)" onClick="ccac.viewImages('+index+')" class="imageslinkbtn" data-options="plain:true">预览</a>';
+			            }},
 //				        {field:'createUser',title:'创建人',width:"6%",align:'center'},
 				        {field:'createTime',title:'接诊时间',width:"10%",align:'center',formatter:function(val,row){
 				        	return CU.DateTimeFormatter(val,1);
 				        }},
 //				        {field:'updateUser',title:'更新人',width:"4%",align:'center'},
-				        {field:'updateTime',title:'完成时间',width:"10%",align:'center',formatter:function(val,row){
-				        	return CU.DateTimeFormatter(val,1);
-				        }},
-				        {field:'remark',title:'描述',width:"12%",align:'left'}
+//				        {field:'updateTime',title:'完成时间',width:"10%",align:'center',formatter:function(val,row){
+//				        	return CU.DateTimeFormatter(val,1);
+//				        }},
+				        {field:'remark',title:'描述',width:"14%",align:'left'}
 		        ]],
 		        view: detailview,
 		        collapsible:false,
@@ -262,7 +266,7 @@ function CustomerConsumptonAmount(){
 			        onSelect:function(index,row){
 			        	ccac.customerId = row.customerId;
 			        },
-			        onLoadSuccess:function(){
+			        onLoadSuccess:function(data){
 			        	setTimeout(function(){
 			                $('#ccac_table').datagrid('fixDetailRowHeight',index); 
 			            },0); 
@@ -289,24 +293,28 @@ function CustomerConsumptonAmount(){
 				onSelect:function(index,row){
 					ccac.index = index;
 //					$('#ccac_table').datagrid("clearSelections");
-					if(row.status==1 || (row.status!=1 && row.totalConsumptonAmount<=0)){
+					if(row.status==1){
 		        		$("#jiesuanfx").linkbutton('disable');
 		        		$("#jiesuanpt").linkbutton('disable');
 		        		$("#jiesuanhy").linkbutton('disable');
 		        		$("#jiesuansk").linkbutton('enable');
+		        		$("#orderback").linkbutton('enable');
 		        	}else if(row.status==0){
 		        		$("#jiesuanfx").linkbutton('enable');
 		        		$("#jiesuanpt").linkbutton('enable');
 		        		$("#jiesuanhy").linkbutton('enable');
 		        		$("#jiesuansk").linkbutton('disable');
+		        		$("#orderback").linkbutton('disable');
 		        	}else{
 		        		$("#jiesuanfx").linkbutton('disable');
 		        		$("#jiesuanpt").linkbutton('disable');
 		        		$("#jiesuanhy").linkbutton('disable');
 		        		$("#jiesuansk").linkbutton('disable');
+		        		$("#orderback").linkbutton('disable');
 		        	}
 				},
 				onLoadSuccess:function(data){
+//					$(".imageslinkbtn").linkbutton();
 					cu.clearSelected("ccac_table");
 					var params = ccac.getRequestParams();
 					ccac.calculateAmount(params);
@@ -816,6 +824,100 @@ function CustomerConsumptonAmount(){
             operaSupport: false,
             printTime : 6000
 		});
+	};
+	
+	this.uploadImg = function(index){
+		$('#ccac_table').datagrid("selectRow", index);
+		$("#uploaddlg").dialog("open").dialog("center").dialog("setTitle","添加图片");
+	};
+	this.uploadPic = function(){
+ 		if($("#file").val()==""){
+ 			$.messager.alert("提示","请选择文件夹");
+ 			return false;
+ 		}
+	}
+	this.doupload =function(){
+		var row=$('#ccac_table').datagrid('getSelected');
+		if(row){
+			$("#img_orderId").val(row.id);
+			$("#img_customerPhone").val(row.phonenumb);
+			$('#uploadform').form('submit',{
+				url:content+"/common/img/upload",
+				onSubmit:function(){
+					return $(this).form('enableValidation').form('validate');
+				},
+				success: function(result){
+					var data = eval('(' + result + ')');
+					if(data.status || data.status=='true'){
+						$('#uploadform').form('clear');
+						$.messager.progress('close');
+						$('#uploaddlg').dialog('close');
+					}else{
+						$.messager.alert('提示',data.mess,'warning');
+						$.messager.progress('close');
+					}
+				}
+			});
+		}else{
+			$.messager.alert('提示','请先选中要操作的数据！','error');
+		}
+	};
+	this.viewImages = function(index){
+		$('#ccac_table').datagrid("selectRow", index);
+		var row=$('#ccac_table').datagrid('getSelected');
+		if(row){
+			$.ajax({
+				type:"POST",
+				datatype:"json",
+				data :{"orderId":row.id,"customerPhone":row.phonenumb},
+				url : content+"/customerImages/getCount",
+				error : function(data) {
+					$.messager.alert('提示信息','服务器连接超时请重试!','error'); 
+					return false;
+				},
+				success : function(count) {
+					if(count>0){//成功
+						$("#viewimages").attr("src",content+"/goViewImages?orderId="+row.id+"&customerPhone="+row.phonenumb);
+						$("#viewimagesdlg").dialog("open").dialog("center").dialog("setTitle","就诊图片预览");
+					}else{
+						$.messager.alert('提示信息','没有要查看的照片!','warning');
+					}
+				}
+			});
+		}else{
+			$.messager.alert('提示','请先选中要操作的数据！','error');
+		}
+	};
+	
+	this.orderBack = function(){
+		var row=$('#ccac_table').datagrid('getSelected');
+		if(row){
+			$.messager.confirm('提示信息', '你确认要回退用户：“'+row.customername+'”的订单吗?', function(r){
+				if (r){
+					$.ajax({
+						type:"POST",
+						datatype:"json",
+						data :{id:row.id},
+						url : content+"/ccac/orderBack",
+						error : function(data) {
+							$.messager.alert('提示信息','服务器连接超时请重试!','error'); 
+							return false;
+						},
+						success : function(data) {
+							if(data.status){//成功
+								$.messager.alert('提示信息','订单回退成功!');
+								$('#ccac_table').datagrid('reload');
+							}else{
+								$.messager.alert('提示信息','删除失败!','warning');
+							}
+						}
+					});
+				}
+			});
+		}else{
+			$.messager.alert('提示','请先选中要操作的数据！','error');
+		}
+		
 	};
 }
 

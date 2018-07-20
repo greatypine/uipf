@@ -87,8 +87,10 @@ function MycustomerSubscribe(){
 					if(row.sex==0)row.sexName="女";
 					else if(row.sex==1)row.sexName="男";
 					else row.sexName="未知";
-					if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("rootIn");
-					cu.initClearCombobox("sex");
+					if(cu.hasRoles("h_admin,h_option")){
+						cu.initClearCombobox("rootIn");
+						cu.initClearCombobox("sex");
+					}
 					if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("companyId");
 					if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("profession");
 					else{
@@ -130,9 +132,11 @@ function MycustomerSubscribe(){
 	this.add = function(){
 		$("#basecomplate").show();
 		$("#customerSubscribedlg-fm").form("clear");
-		cu.initClearCombobox("rootIn");
-		cu.initClearCombobox("sex");
-		if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("companyId");
+		if(cu.hasRoles("h_admin,h_option")){
+			cu.initClearCombobox("rootIn");
+			cu.initClearCombobox("sex");
+			cu.initClearCombobox("companyId");
+		}
 		cu.initClearCombobox("profession");
 		$("#customerSubscribedlg").dialog("open").dialog("center").dialog("setTitle","添加预约客户信息");
 	};
@@ -141,8 +145,10 @@ function MycustomerSubscribe(){
 		if(row){
 			row.customername = row.customerName;
 			row.phonenumb = row.customerPhone;
-			if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("rootIn");
-			cu.initClearCombobox("sex");
+			if(cu.hasRoles("h_admin,h_option")){
+				cu.initClearCombobox("rootIn");
+				cu.initClearCombobox("sex");
+			}
 			if(cu.hasRoles("h_admin,h_option"))cu.initClearCombobox("companyId");
 			cu.initClearCombobox("profession1");
 			$("#ccacdlg-fm").form("clear").form("load",row);

@@ -12,7 +12,7 @@
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="customerSubscribe.query()">查询</a> 
 			<a shiro:hasAnyRoles="sadmin,h_option,h_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="customerSubscribe.add()">添加</a>
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="customerSubscribe.reception()">接诊</a>  
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin,q_area_shopManager,q_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="customerSubscribe.reception()">接诊</a>  
 			<a shiro:hasAnyRoles="sadmin,h_admin,h_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="customerSubscribe.remove()">关闭</a>
 		</div>
 		<div id="cron_bar">
@@ -51,7 +51,7 @@
 	    		<tr shiro:hasAnyRoles="q_admin,q_option">
 	    			<td class="tdname">性别：</td>
 	    			<td class="tdnamebox">
-	    				<input id="sex" name="sex"  hidden="true"/>
+	    				<input id="sex" name="sex" hidden="true"/>
 	    				<input id="sexName" name="sexName" class="easyui-textbox" style="width: 100%;"/>
 	    			</td>
 	    			<td class="tdname">来源：</td>
@@ -70,7 +70,7 @@
 	    				<input id="subscribeDate" name="subscribeDate" class="easyui-datebox" style="width: 100%;" data-options="required:false"/>
 	    			</td>
 	    		</tr>
-	    		<tr shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin,q_area_shopManager">
+	    		<tr shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin,q_area_shopManager,q_option">
 	    			<td class="tdname">预约项目：</td>
 	    			<td class="tdnamebox">
 	    				<input id="project" name="project" class="easyui-textbox" style="width: 100%;" data-options=""/>
@@ -92,7 +92,7 @@
 <!-- 	    				<input id="status" name="statusName" class="easyui-textbox" style="width: 100%;" data-options="editable:false"/> -->
 <!-- 	    			</td> -->
 	    		</tr>
-	    		<tr shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin,q_area_shopManager">
+	    		<tr shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin,q_area_shopManager,q_option">
 	    			<td class="tdname" colspan="1">公司：</td>
 	    			<td class="tdnamebox" colspan="3">
 	    				<input id="companyId" name="companyId" style="width: 100%;" hidden="true"/>

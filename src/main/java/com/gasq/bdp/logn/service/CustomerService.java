@@ -47,4 +47,6 @@ public interface CustomerService {
 		Map<String, Object> queryCountConsumptionReportList(Integer companyid, String datetype, String starttime, String endtime);
 
 		boolean refundCust(int id) throws WorkFlowStateException;
+
+		Map<String, Object> orderBack(TLtnCustomer customer) throws WorkFlowStateException;
 }

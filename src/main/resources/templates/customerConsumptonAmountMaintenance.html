@@ -17,6 +17,7 @@
 			<a id="jiesuanhy" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-vip" plain="true" onclick="ccac.hycommit()">会员结算</a>
 			<a id="jiesuanfx" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-fenxiao" plain="true" onclick="ccac.fxcommit()">分销结算</a>
 <!-- 			<a id="print" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-print" plain="true" onclick="ccac.printData()">打印</a> -->
+			<a id="orderback" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-return" data-options="disabled:true" plain="true" onclick="ccac.orderBack()">订单回退</a>
 			<a id="export" shiro:hasPermission="user:execute" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-large-smartart" plain="true" onclick="ccac.exportData()">导出</a>
 			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="ccac.remove()">关闭</a>
 			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="ccac.refund()">退款</a>
@@ -201,7 +202,32 @@
 			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#querycphone').textbox('setValue','');$('#projectsdlg').dialog('close')" style="width: 90px">关闭</a>
 		</div>
 	</div>
-	
+	<div id="uploaddlg" class="easyui-dialog"  data-options="modal:true" style="width: 55%; overflow: hidden;" closed="true" buttons="#uploaddlg-buttons">
+		<form id="uploadform" method="POST" enctype="multipart/form-data"  style="margin: 0; padding: 1%;margin-top: 2%;"> 
+	        <table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname" style="width: 8%;">名称：</td>
+	    			<td class="tdnamebox">
+	    				<input id="img_title" name="title" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
+	    			</td>
+	    			<td class="tdname"  style="width: 10%;">选择图片：</td>
+	    			<td class="tdnamebox"><input name="editormd-image-file" id="img_file" class="easyui-filebox" style="width: 100%" data-options="buttonText:'选择',required:true,prompt:'选择上传图片...'"/></td>
+	    		</tr>
+	    	</table>
+	    	<input id="img_orderId" type="hidden" name="orderId" /><br/>
+	    	<input id="img_customerPhone" type="hidden" name="customerPhone" /><br/>
+	    </form>
+    </div>
+    <div id="uploaddlg-buttons">
+    	<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_counselor" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.doupload()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#uploadform').form('clear');$('#uploaddlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="viewimagesdlg" class="easyui-dialog"  data-options="modal:true" style="width: 55%; overflow: hidden;height: 70%;" closed="true" buttons="#viewimagesdlg-buttons">
+		<iframe id="viewimages" frameborder="0" scrolling="no" width="100%" height="100%"></iframe>
+    </div>
+    <div id="viewimagesdlg-buttons">
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#viewimagesdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
 <div id="test" style="display: none;">
       <table style="width: 241mm;height: 93mm;margin: auto;border: 1px solid #000;">
           <tr>

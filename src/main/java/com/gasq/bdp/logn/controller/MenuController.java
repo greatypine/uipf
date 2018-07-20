@@ -33,7 +33,7 @@ public class MenuController {
 	 */
     @ApiOperation(value="查询菜单列表", notes="查询菜单列表（所有用户）")
     @ApiImplicitParam(name = "pid", value = "菜单对象<TSysMenu>实体id", required = true, dataType = "Integer", paramType="query")
-	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryMenus",method=RequestMethod.POST)
 	public List<TSysMenu> queryMenus(Integer pid) {
 		if(CommonUtils.isEmpty(pid)) return null;
@@ -57,7 +57,7 @@ public class MenuController {
    	 */
     @ApiOperation(value="查询菜单列表", notes="查询菜单列表（所有用户）")
     @ApiImplicitParam(name = "pid", value = "菜单对象<TSysMenu>实体pid", required = true, dataType = "Integer", paramType="query")
-   	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+   	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
    	@RequestMapping(value = "/queryAllMenus",method=RequestMethod.POST)
    	public List<Map<String, Object>> queryAllMenus(Integer pid,Integer roleid) {
    		if(pid==null) return null;
@@ -67,7 +67,7 @@ public class MenuController {
     
     @ApiOperation(value="查询列表菜单配置信息列表", notes="查询列表菜单配置信息列表（所有）")
     @ApiImplicitParam(name = "bean", value = "菜单实体对象TSysMenu", required = false, dataType = "TSysMenu")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
 	public Map<String, Object> queryMapLists(TSysMenu bean) {
 		try {
@@ -79,7 +79,7 @@ public class MenuController {
 	 }
     @ApiOperation(value="添加或更新菜单配置信息", notes="添加或更新菜单配置信息（管理员、操作、测试）")
     @ApiImplicitParam(name = "bean", value = "菜单实体对象TSysMenu", required = true, dataType = "TSysMenu")
-	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test,RoleSign.Q_RECEPTIONIST },logical=Logical.OR)
+	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
 	public boolean saveOrUpdate(TSysMenu bean) {
 		try {
