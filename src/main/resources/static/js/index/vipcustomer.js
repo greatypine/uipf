@@ -485,4 +485,34 @@ function systemvipcustomer(){
 			}
 		});
 	};
+	
+	this.createConsumptonOrder = function(){
+		var row=$('#systemvipcustomer_table').datagrid('getSelected');
+		if(row){
+			$.messager.confirm('提示信息', '你确要对客户【'+row.customerName+'】生成消费记录吗?', function(r){
+				if (r){
+					$.ajax({
+						type:"POST",
+						data :row,
+						datatype:"json",
+						url : content+"/vipcustomer/createConsumptonOrder",
+						error : function(data) {
+							$.messager.alert('提示信息','服务器连接超时请重试!','error'); 
+							return false;
+						},
+						success : function(data) {
+							if(data){//成功
+								$.messager.alert('提示信息','操作成功!');
+								$('#systemvipcustomer_table').datagrid('reload');
+							}else{
+								$.messager.alert('提示信息','删除失败!','warning');
+							}
+						}
+					});
+				}
+			});
+		}else{
+			$.messager.alert('提示','请先选中要操作的数据！','error');
+		}
+	};
 }

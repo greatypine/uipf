@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import com.gasq.bdp.logn.component.ActiveManager;
 import com.gasq.bdp.logn.component.MyScheduler;
 import com.gasq.bdp.logn.iexception.WorkFlowStateException;
 import com.gasq.bdp.logn.mapper.TCompanyMapper;
@@ -29,10 +30,12 @@ import com.gasq.bdp.logn.mapper.TCustomerPorjectMapper;
 import com.gasq.bdp.logn.mapper.TCustomerProjectLogMapper;
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeMapper;
 import com.gasq.bdp.logn.mapper.TInventoryMapper;
-import com.gasq.bdp.logn.mapper.TLtnCustomerConsumptonAmountMapper;
+import com.gasq.bdp.logn.mapper.TCustomerConsumptonAmountMapper;
 import com.gasq.bdp.logn.mapper.TLtnCustomerMapper;
 import com.gasq.bdp.logn.mapper.TSysTimerScheduleconfigMapper;
+import com.gasq.bdp.logn.mapper.TSysUserMapper;
 import com.gasq.bdp.logn.mapper.TVipCustomerMapper;
+import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TConsumptonProject;
@@ -46,15 +49,17 @@ import com.gasq.bdp.logn.model.TCustomerProjectLogExample;
 import com.gasq.bdp.logn.model.TCustomerSubscribe;
 import com.gasq.bdp.logn.model.TInventory;
 import com.gasq.bdp.logn.model.TLtnCustomer;
-import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmount;
-import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmountExample;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmount;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmountExample;
 import com.gasq.bdp.logn.model.TLtnCustomerExample;
 import com.gasq.bdp.logn.model.TProject;
 import com.gasq.bdp.logn.model.TSysUser;
+import com.gasq.bdp.logn.model.TSysUserExample;
 import com.gasq.bdp.logn.model.TVipCustomer;
 import com.gasq.bdp.logn.model.TVipCustomerExample;
 import com.gasq.bdp.logn.service.CustomerService;
 import com.gasq.bdp.logn.service.TSysProjectService;
+import com.gasq.bdp.logn.utils.ActiveMQUtil;
 import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
@@ -69,7 +74,7 @@ import com.gasq.bdp.logn.utils.WorkFlowUtil;
 public class CustomerServiceImpl implements CustomerService {
 	protected Logger logger = Logger.getLogger(this.getClass());
 	@Autowired TLtnCustomerMapper customerMapper;
-	@Autowired TLtnCustomerConsumptonAmountMapper consumptonAmountService;
+	@Autowired TCustomerConsumptonAmountMapper consumptonAmountService;
 	@Autowired MyScheduler scheduler;
 	@Autowired TSysTimerScheduleconfigMapper scheduleconfigMapper;
 	@Autowired TCustomerSubscribeMapper customerSubscribeMapper;
@@ -82,7 +87,8 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired TCustomerProjectLogMapper customerProjectLogService;
 	@Autowired TCustomerCommentMapper customerCommentService;
 	@Autowired TSysProjectService projectService;
-//	@Autowired ActiveManager activeManager;
+	@Autowired TSysUserMapper userMapper;
+	@Autowired ActiveManager activeManager;
 	
 	@Value("${wf.serverUrlPrefix}")
 	private String wfServerUrlPrefix;
@@ -104,10 +110,10 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.setStatus(99);
 			customerMapper.updateByPrimaryKeySelective(customer);
 			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新订单信息成功！更新状态为【关闭】");
-			TLtnCustomerConsumptonAmountExample example = new TLtnCustomerConsumptonAmountExample();
+			TCustomerConsumptonAmountExample example = new TCustomerConsumptonAmountExample();
 			example.createCriteria().andCustomerIdEqualTo(id);
-			List<TLtnCustomerConsumptonAmount> ccalists = consumptonAmountService.selectByExample(example);
-			for(TLtnCustomerConsumptonAmount cca : ccalists) {
+			List<TCustomerConsumptonAmount> ccalists = consumptonAmountService.selectByExample(example);
+			for(TCustomerConsumptonAmount cca : ccalists) {
 				TConsumptonProjectExample example1 = new TConsumptonProjectExample();
 				example1.createCriteria().andConsumptonAmountIdEqualTo(cca.getId());
 				List<TConsumptonProject> cplist = consumptonProjectMapper.selectByExample(example1);
@@ -203,9 +209,9 @@ public class CustomerServiceImpl implements CustomerService {
 			double totalAmount = 0;
 			if(type!=null) {
 				if(bean.getStatus()==1) {
-					TLtnCustomerConsumptonAmountExample example = new TLtnCustomerConsumptonAmountExample();
+					TCustomerConsumptonAmountExample example = new TCustomerConsumptonAmountExample();
 					example.createCriteria().andCustomerIdEqualTo(bean.getId());
-					List<TLtnCustomerConsumptonAmount> list = consumptonAmountService.selectByExample(example);
+					List<TCustomerConsumptonAmount> list = consumptonAmountService.selectByExample(example);
 					if(list!=null && list.size()>0) {
 						totalAmount = list.stream().mapToDouble(b -> b.getTotalAmount().doubleValue()).sum();
 						logger.info("用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+",消费总金额为："+totalAmount);
@@ -274,16 +280,16 @@ public class CustomerServiceImpl implements CustomerService {
 						if(bean.getSex()!=null)customer.setSex(bean.getSex());
 						vipCustomerMapper.updateByPrimaryKeySelective(customer);
 						logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新客户信息成功！");
-						TLtnCustomerConsumptonAmountExample tccaexample = new TLtnCustomerConsumptonAmountExample();
+						TCustomerConsumptonAmountExample tccaexample = new TCustomerConsumptonAmountExample();
 						tccaexample.createCriteria().andCustomerIdEqualTo(bean.getId());
-						List<TLtnCustomerConsumptonAmount> listssa = consumptonAmountService.selectByExample(tccaexample);
+						List<TCustomerConsumptonAmount> listssa = consumptonAmountService.selectByExample(tccaexample);
 						if(listssa.size()>0) {
-							for(TLtnCustomerConsumptonAmount cca : listssa) {
+							for(TCustomerConsumptonAmount cca : listssa) {
 								TProject tProject = projectService.selectByPrimaryKey((long)cca.getProjectId());
-								Integer deadline = tProject.getDeadline();
+								Integer deadline = cca.getDeadline();
 								Date dl = null;
 								if(deadline!=null)dl = DateUtil.getDiyDateMonth(DateUtil.getSysCurrentDate(), deadline);
-								customerProjectService.insertSelective(new TCustomerPorject(customer.getId(),bean.getId(),cca.getProjectId(),tProject.getProjectType(),tProject.getProjectNums(),tProject.getProjectNums(),dl,user.getUsername(),DateUtil.getSysCurrentDate()));
+								customerProjectService.insertSelective(new TCustomerPorject(customer.getId(),bean.getId(),cca.getProjectId(),tProject.getProjectType(),cca.getProjectNums(),cca.getProjectNums(),dl,user.getUsername(),DateUtil.getSysCurrentDate()));
 							}
 							logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加客户项目信息成功！添加条数【"+listssa.size()+"】");
 						}
@@ -328,11 +334,11 @@ public class CustomerServiceImpl implements CustomerService {
 							}
 							logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加客户留言信息成功！添加条数【"+l+"】");
 						}
-						TLtnCustomerConsumptonAmountExample tccaexample = new TLtnCustomerConsumptonAmountExample();
+						TCustomerConsumptonAmountExample tccaexample = new TCustomerConsumptonAmountExample();
 						tccaexample.createCriteria().andCustomerIdEqualTo(bean.getId());
-						List<TLtnCustomerConsumptonAmount> listssa = consumptonAmountService.selectByExample(tccaexample);
+						List<TCustomerConsumptonAmount> listssa = consumptonAmountService.selectByExample(tccaexample);
 						if(listssa.size()>0) {
-							for(TLtnCustomerConsumptonAmount cca : listssa) {
+							for(TCustomerConsumptonAmount cca : listssa) {
 								TProject tProject = projectService.selectByPrimaryKey((long)cca.getProjectId());
 								Integer deadline = tProject.getDeadline();
 								Date dl = null;
@@ -435,8 +441,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Transactional(rollbackFor=Exception.class)
 	public boolean saveOrUpdateTFMCust(TLtnCustomer bean) throws SchedulerException {
 		try {
-			TCustomerSubscribe record = new TCustomerSubscribe();
-			record.setId(bean.getId());
+			TCustomerSubscribe record = customerSubscribeMapper.selectByPrimaryKey(bean.getId());
 			record.setStatus(1);
 			record.setUpdateTime(DateUtil.getSysCurrentDate());
 			record.setUpdateUser(SystemUserInfo.getSystemUser().getUser().getUsername());
@@ -447,8 +452,15 @@ public class CustomerServiceImpl implements CustomerService {
 			bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
 			bean.setCreateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
 			bean.setCreatetime(DateUtil.getSysCurrentDate());
+			TSysUserExample usere = new TSysUserExample();
+			usere.createCriteria().andUsernameEqualTo(record.getCreateUser()).andStatusEqualTo(0);
+			List<TSysUser> userlist = userMapper.selectByExample(usere);
+			bean.setSubscribeId(userlist.get(0).getId().intValue());
 			customerMapper.insertSelective(bean);
 			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加客户消费订单信息成功！");
+			String mess = "★顾客："+bean.getCustomername()+"\n★手机："+bean.getPhonenumb()+"。\n在"+DateUtil.getAllCurrentDate()+"已到店接诊！";
+			activeManager.sendBack(ActiveMQUtil.getTopicDestination(InitProperties.SUBSCRIBE_RECEPTION_MSG),mess);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】预约接诊情况系统通知发送成功！\n发送内容为："+mess);
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】前台接诊操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
@@ -502,10 +514,10 @@ public class CustomerServiceImpl implements CustomerService {
 			TLtnCustomer customer = customerMapper.selectByPrimaryKey(bean.getId());
 			customer.setStatus(0);
    			customer.setType(0);
-   			TLtnCustomerConsumptonAmountExample example = new TLtnCustomerConsumptonAmountExample();
+   			TCustomerConsumptonAmountExample example = new TCustomerConsumptonAmountExample();
 			example.createCriteria().andCustomerIdEqualTo(bean.getId());
-			List<TLtnCustomerConsumptonAmount> ccalists = consumptonAmountService.selectByExample(example);
-			for(TLtnCustomerConsumptonAmount cca : ccalists) {
+			List<TCustomerConsumptonAmount> ccalists = consumptonAmountService.selectByExample(example);
+			for(TCustomerConsumptonAmount cca : ccalists) {
 				//删除订单消费库存日志信息
 				TConsumptonProjectExample example1 = new TConsumptonProjectExample();
 				example1.createCriteria().andConsumptonAmountIdEqualTo(cca.getId());
@@ -521,7 +533,7 @@ public class CustomerServiceImpl implements CustomerService {
 						cple.createCriteria().andCpIdEqualTo(tCustomerPorject.getId());
 						customerProjectLogService.deleteByExample(cple);
 					}
-					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除客户项目信息成功！");
+					logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除客户项目日志信息成功！");
 				}
 				customerProjectService.deleteByExample(cpexample);
 				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除客户项目信息成功！");

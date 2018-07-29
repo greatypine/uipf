@@ -21,4 +21,6 @@ public interface TSysUserService {
 
 	SystemUser queryFullUser(TSysUser user);
 
+	boolean unlockSubmit(TSysUser bean);
+
 }

@@ -41,7 +41,7 @@
 <!-- 		<table schema="" tableName="t_sys_timer_job_mongo_query"> </table> -->
 <!-- <table schema="" tableName="t_sys_mongo_query_keys"> </table> -->
 <!-- <table schema="" tableName="t_customer_subscribe"> </table> -->
-<table schema="" tableName="t_customer_images"> </table>
+<!-- <table schema="" tableName="t_customer_images"> </table> -->
 		
 <!-- 		<table schema="" tableName="t_sys_timer_job_sql_insert_update"> </table> -->
 <!-- 		<table schema="" tableName="t_sys_sql_update_keys"> </table> -->
@@ -55,7 +55,7 @@
 <!-- <table schema="" tableName="t_sys_role"></table>  -->
 <!-- <table schema="" tableName="t_sys_role_permission"></table>  -->
 <!-- <table schema="" tableName="t_sys_permission"></table>  -->
-<!-- <table schema="" tableName="t_sys_user"></table>  -->
+<table schema="" tableName="t_sys_user"></table> 
 <!-- <table schema="" tableName="t_sys_user_ext"></table>  -->
 <!-- <table schema="" tableName="t_sys_user_role"></table> -->
 <!-- <table schema="" tableName="t_company"></table>  -->
@@ -69,7 +69,9 @@
 <!-- <table schema="" tableName="t_inventory_log"> </table> -->
 <!-- <table schema="" tableName="t_customer_subscribe_log"> </table> -->
 <!-- 		<table schema="" tableName="t_inventory"> </table> -->
-<!-- 		<table schema="" tableName="t_ltn_customer_consumpton_amount"> </table> -->
+<!-- 		<table schema="" tableName="t_customer_consumpton_amount"> </table> -->
+<!-- <table schema="" tableName="t_sys_timer_switch"> </table> -->
+		
 <!-- 				<table schema="" tableName="t_score_exchange"> </table> -->
 <!-- 				<table schema="" tableName="t_project"> </table> -->
 <!-- 				<table schema="" tableName="t_customer_porject"> </table> -->

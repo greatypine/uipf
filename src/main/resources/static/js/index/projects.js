@@ -117,6 +117,7 @@ function MyProject(){
 		$('#'+id).combobox('loadData',data);
 	};
 	this.complate = function(){
+		$('#basecomplate').linkbutton('disable');
 		$('#projectdlg-fm').form('submit',{
 			url:content+"/project/saveOrUpdate",
 			onSubmit:function(){
@@ -133,7 +134,11 @@ function MyProject(){
 					$.messager.alert('提示','操作失败','warning');
 					$.messager.progress('close');
 				}
-			}
+				$('#basecomplate').linkbutton('enable');
+			},error:function(XMLHttpRequest,textStatus,errorThrown){
+                $.messager.alert('提示',"操作失败！","error");
+                $('#basecomplate').linkbutton('enable');
+            }
 		});
 	};
 	this.onDateDiffSelect = function(date){
@@ -146,6 +151,7 @@ function MyProject(){
 			$.messager.confirm('提示信息', '你确认要删除此项配置吗?', function(r){
 				if (r){
 					$.ajax({
+						async: false,
 						data :{id:row.id},
 						url : content+"/project/delete",
 						error : function(data) {

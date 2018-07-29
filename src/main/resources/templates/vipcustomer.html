@@ -12,7 +12,8 @@
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="systemvipcustomer.query()">查询</a> 
 			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,q_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemvipcustomer.add()">添加</a>
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,h_admin,h_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemvipcustomer.sendMessByEmail()">消息推送</a>
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,h_admin,h_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-message" plain="true" onclick="systemvipcustomer.sendMessByEmail()">消息推送</a>
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,q_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-xiaofei" plain="true" onclick="systemvipcustomer.createConsumptonOrder()">生成就诊订单</a>
 			<a shiro:hasAnyRoles="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="systemvipcustomer.remove()">删除</a>
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="systemvipcustomer.clear()">清空</a>
 		</div>

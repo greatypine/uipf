@@ -13,14 +13,23 @@ import javax.mail.MessagingException;
  */
 public interface EmailManager {
 	/**
-     * 发送普通邮件
+     * 发送多人普通邮件
      * 修改application.properties的用户，才能发送。
      * @param fromEmailName 发件邮箱
      * @param emails   接受邮箱
      * @param subject       邮件主题
      * @param content       邮件内容
      */
-	public void sendSimpleEmail(String fromEmailName,Object[] emails,String subject,String content);
+	public void sendSimpleEmail(Object[] emails,String subject,String content);
+	/**
+     * 发送单人普通邮件
+     * 修改application.properties的用户，才能发送。
+     * @param fromEmailName 发件邮箱
+     * @param emails   接受邮箱
+     * @param subject       邮件主题
+     * @param content       邮件内容
+     */
+	public void sendSimpleEmail(String email, String subject, String mess);
 	 /**
      * 发送附件邮件
      * @throws MessagingException
@@ -30,7 +39,7 @@ public interface EmailManager {
      * @param content       邮件内容
      * @param files         附件
      */
-	public void sendAttachmentsEmail(String fromEmailName,String[] toEmailName,String subject,String content,File[] files) throws MessagingException;
+	public void sendAttachmentsEmail(String[] toEmailName,String subject,String content,File[] files) throws MessagingException;
 	/**
      * 邮件中使用静态资源
      * @throws MessagingException
@@ -40,7 +49,7 @@ public interface EmailManager {
      * @param htmlContent   邮件内容  eg:<body>这是图片：<img src='cid:图片名称' /></body>
      * @param files         附件
      */
-	public void sendInlineMail(String fromEmailName,String[] toEmailName,String subject,String htmlContent,File[] files) throws Exception;
+	public void sendInlineMail(String[] toEmailName,String subject,String htmlContent,File[] files) throws Exception;
 	/**
      * 发送模板邮件
      * @param fromEmailName  发件人
@@ -49,5 +58,7 @@ public interface EmailManager {
      * @param dataModel      数据
      * @throws Exception
      */
-//	public void sendTemplateMail(String fromEmailName,String toEmailName,String subject,Map<String, Object> dataModel) throws Exception;
+//	public void sendTemplateMail(String toEmailName,String subject,Map<String, Object> dataModel) throws Exception;
+	void sendHtmlMail(String to, String subject, String content);
+	void sendHtmlMails(Object[] to, String subject, String content);
 }

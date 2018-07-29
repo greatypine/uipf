@@ -184,7 +184,7 @@ public class CommonController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊报表数据！");
 		try {
 			Map<String, Object> map = commonService.queryEmployeeTreatOrderReport(type,companyid,datetype,starttime,endtime);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊报表数据结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊报表数据结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -199,7 +199,7 @@ public class CommonController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表！");
     	try {
 			Map<String, Object> map = commonService.queryEmployeeTreatOrderDataDetail(type,companyid,datetype,starttime,endtime,page,rows);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
     	}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -214,7 +214,7 @@ public class CommonController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单报表数据！");
     	try {
 			Map<String, Object> map = commonService.queryBackEmployeeOrderReport(type,companyid,datetype,starttime,endtime);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -228,7 +228,7 @@ public class CommonController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单数据列表！");
     	try {
 			Map<String, Object> map = commonService.queryBackEmployeeOrderDataDetail(type,companyid,datetype,starttime,endtime,page,rows);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单数据列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单数据列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -242,7 +242,7 @@ public class CommonController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计库存数据！");
 		try {
 			Map<String, Object> map = commonService.queryCountInventory(companyid,datetype,year,month,page,rows);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计库存数据结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计库存数据结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -257,7 +257,7 @@ public class CommonController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计库存饼图！");
 		try {
 			Map<String, Object> map = commonService.queryCountInventoryPie(companyid,datetype,year,month);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计库存饼图结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计库存饼图结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -272,7 +272,7 @@ public class CommonController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计商业报表列表！");
     	try {
 			Map<String, Object> map = commonService.queryCountBusinessAnalysisDataDetail(type, companyid, datetype, starttime, endtime, page, rows);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计商业报表列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计商业报表列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);

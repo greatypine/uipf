@@ -40,7 +40,7 @@ public class EquipmentController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表设备配置信息列表！");
 		try {
 			map = equipmentService.queryPagingList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表设备配置信息列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表设备配置信息列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);

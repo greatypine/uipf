@@ -458,10 +458,12 @@ public class WorkFlowUtil {
 					if(email==null || email=="") continue;
 					String[] toEmailNames = {email};
 					Map<String, Object> queryAmountSum = SpringApplicationUtils.getBean(TLtnCustomerMapper.class).getConsumptionProjects(customer.getId());
-					BigDecimal bd = new BigDecimal(queryAmountSum.get("total_amount").toString());
-					String projects = queryAmountSum.get("project_name").toString();
-					context.append("你好,").append(sysUser.getNickname()).append("医师").append(": \n\n").append("  ●明天有您的回访客户:\n    ◎客户姓名：").append(customer.getCustomername()).append("\n    ◎联系方式：").append(customer.getPhonenumb()).append("\n    ◎消费项目：").append(projects).append("\n    ◎消费总金额：").append(bd.doubleValue()).append("\n    ◎上次治疗时间：").append(DateUtil.getDateStr(customer.getCreatetime(),DateUtil.TIME_DEFAULT_FORMAT)).append("\n\n  请您及时处理，如有问题请联系《客户消费信息平台》管理人员。\n\n").append("发送者：客户消费信息平台").toString();
-					SpringApplicationUtils.getBean(EmailManager.class).sendSimpleEmail(InitProperties.EMAIL_SENDER, toEmailNames, title, context.toString());
+					if(queryAmountSum!=null && !queryAmountSum.isEmpty()) {
+						BigDecimal bd = new BigDecimal(queryAmountSum.get("total_amount").toString());
+						String projects = queryAmountSum.get("project_name").toString();
+						context.append("你好,").append(sysUser.getNickname()).append("医师").append(": \n\n").append("  ●明天有您的回访客户:\n    ◎客户姓名：").append(customer.getCustomername()).append("\n    ◎联系方式：").append(customer.getPhonenumb()).append("\n    ◎消费项目：").append(projects).append("\n    ◎消费总金额：").append(bd.doubleValue()).append("\n    ◎上次治疗时间：").append(DateUtil.getDateStr(customer.getCreatetime(),DateUtil.TIME_DEFAULT_FORMAT)).append("\n\n  请您及时处理，如有问题请联系《客户消费信息平台》管理人员。\n\n").append("发送者：客户消费信息平台").toString();
+						SpringApplicationUtils.getBean(EmailManager.class).sendHtmlMails(toEmailNames, title, context.toString());
+					}
 				}
 				context = null;
 				ltnCustomers = null;
@@ -498,10 +500,12 @@ public class WorkFlowUtil {
 						if(email==null || email=="") continue;
 						String[] toEmailNames = {email};
 						Map<String, Object> queryAmountSum = SpringApplicationUtils.getBean(TLtnCustomerMapper.class).getConsumptionProjects(customer.getId());
-						BigDecimal bd = new BigDecimal(queryAmountSum.get("total_amount").toString());
-						String projects = queryAmountSum.get("project_name").toString();
-						context.append("你好,").append(sysUser.getNickname()).append(": \n\n").append("  ●您有未到店就诊的预约客户:\n    ◎客户姓名：").append(customer.getCustomerName()).append("\n    ◎联系方式：").append(customer.getCustomerName()).append("\n    ◎消费项目：").append(projects).append("\n    ◎消费总金额：").append(bd.doubleValue()).append("\n    ◎门诊时间：").append(DateUtil.getDateStr(customer.getSubscribeDate(),DateUtil.TIME_DEFAULT_FORMAT)).append("\n\n  请您及时处理，如有问题请联系《客户消费信息平台》管理人员。\n\n").append("发送者：客户消费信息平台").toString();
-						SpringApplicationUtils.getBean(EmailManager.class).sendSimpleEmail(InitProperties.EMAIL_SENDER, toEmailNames, title, context.toString());
+						if(queryAmountSum!=null && !queryAmountSum.isEmpty()) {
+							BigDecimal bd = new BigDecimal(queryAmountSum.get("total_amount").toString());
+							String projects = queryAmountSum.get("project_name").toString();
+							context.append("你好,").append(sysUser.getNickname()).append(": \n\n").append("  ●您有未到店就诊的预约客户:\n    ◎客户姓名：").append(customer.getCustomerName()).append("\n    ◎联系方式：").append(customer.getCustomerName()).append("\n    ◎消费项目：").append(projects).append("\n    ◎消费总金额：").append(bd.doubleValue()).append("\n    ◎门诊时间：").append(DateUtil.getDateStr(customer.getSubscribeDate(),DateUtil.TIME_DEFAULT_FORMAT)).append("\n\n  请您及时处理，如有问题请联系《客户消费信息平台》管理人员。\n\n").append("发送者：客户消费信息平台").toString();
+							SpringApplicationUtils.getBean(EmailManager.class).sendHtmlMails(toEmailNames, title, context.toString());
+						}
 					}
 				}
 				context = null;

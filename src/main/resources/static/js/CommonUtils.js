@@ -2,7 +2,6 @@ function CommonUtils(){
 	this.DATE_FULL_FORMAT = "yyyy-MM-dd hh:mm:ss";
 	this.DATE_DAY_FORMAT = "yyyy-MM-dd";
 	this.DATE_MONTH_FORMAT = "yyyy-MM";
-	
 	/**
 	 * 计算两个时间之间的天数 ：取正整
 	 */
@@ -213,9 +212,9 @@ function CommonUtils(){
 		$.messager.show({
 			title:'信息提示！',
 			msg:mess,
-			width:350,
-			height:100,
-			timeout:10000,
+			width:400,
+			height:150,
+			timeout:20000,
 			showType:'show'
 		});
 		cu.warnVoice();
@@ -225,6 +224,35 @@ function CommonUtils(){
 	};
 	this.warnVoice = function(){
 		$('#newMessageDIV').html('<audio autoplay="autoplay"><source src="'+content+'/static/voice/warn.wav" type="audio/wav"/><source src="'+content+'/static/voice/warn.wav" type="audio/mpeg"/></audio>');
+	};
+	
+	this.replaceAll = function(s,s1,s2){
+		var ns = s.replace(new RegExp(s1,"gm"),s2);
+		return ns;
+	};
+	this.unlockSubmit = function (){
+	    var passwd = $("#unlock_passwd").textbox("getValue");
+	    if(passwd=="" ||passwd==null){return ;}
+	    $.ajax({
+	        url: content + '/systemuser/unlockSubmit',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: {
+	            'password': passwd,
+	            'username':user.user.username
+	        },
+	        success: function(data){
+	            if(data || data =='true'){
+	                $('#dlg-lock').dialog('close');
+	                $.cookie('lock_flag', false);
+	            }else{
+	            	$.messager.alert('提示','解锁出错！',"error");
+	            }
+	        },
+	        error: function(){
+	            $.messager.alert('提示','解锁出错！',"error");
+	        }
+	    });
 	};
 }
 $.fn.serializeJson=function(){

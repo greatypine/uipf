@@ -7,11 +7,15 @@ $(function(){
 function init(){
 	initdata();
 	if(cu.hasRoles("sadmin,q_area_shopManager,generalManager,q_admin,h_admin")){//管理员
-		indexOption.initUserSubscribeListener();//监听预约
+		indexOption.initUserSubscribeListener();//监听后台预约信息
 		indexOption.initUserLoginInfoListener();//监听用户登录信息
+		indexOption.getBackSubscribeDayAllInfo();//查询登录时监听当天预约信息
 	}
-	if(cu.hasRoles("q_receptionist")) {//前台
-		indexOption.initUserSubscribeListener();//监听用户登录信息
+	if(cu.hasRoles("q_receptionist,q_option")) {//前台
+		indexOption.initUserSubscribeListener();//监听后台预约信息
+	}
+	if(cu.hasRoles("h_option")) {//预约人员
+		indexOption.getSubscribeReceptionInfo();//查询监听预约接诊情况
 	}
 //	if(cu.hasRoles("q_area_shopManager,q_admin,q_receptionist")) {//前台
 //		indexOption.initCounsolerSubscribeListener();//监听用户登录信息
@@ -19,7 +23,6 @@ function init(){
 }
 
 function initdata(){
-	amq.init({ uri: content+'/amq', logging: true, timeout: 45, clientId:(new Date()).getTime().toString() });
 	indexOption = new IndexOption();
 	indexOption.queryMenus({"pid":0});
 	$(".loginOut").bind("click",function(){
@@ -120,6 +123,37 @@ function IndexOption(){
 	        }
 	    };
 	    amq.addListener(user.user.companyid+'back_subscribe_msg','topic://'+user.user.companyid+'back_subscribe_msg',myUserHandler.rcvMessage);
+	};
+	this.getSubscribeReceptionInfo = function(){
+		$.ajax({
+			type:"POST",
+			dataType:"json",
+			url : content+"/customerSubscribe/querySubscribeReceptionInfo",
+			error : function(data) {
+				return false;
+			},
+			success : function(data) {
+				if(data!=null){
+					cu.bottomRight(cu.replaceAll(data.mess,":","<br>"));
+				}
+			}
+		});
+	};
+	
+	this.getBackSubscribeDayAllInfo = function(){
+		$.ajax({
+			type:"POST",
+			dataType:"json",
+			url : content+"/customerSubscribe/querySubscribeInfo",
+			error : function(data) {
+				return false;
+			},
+			success : function(data) {
+				if(data!=null){
+					cu.bottomRight(cu.replaceAll(data.mess,":","<br>"));
+				}
+			}
+		});
 	};
 //	this.initCounsolerSubscribeListener = function(){
 //		 var myUserHandler ={

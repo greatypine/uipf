@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -34,7 +35,7 @@ public class CustomerSubscribe {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求预约列表！");
 		try {
 			map = customerSubscribeService.queryPagingList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求预约列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求预约列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -67,7 +68,7 @@ public class CustomerSubscribe {
 	 }
     
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION},logical=Logical.OR)
-	@RequestMapping(value = "/delete",method=RequestMethod.POST)
+	@RequestMapping(value = "/delete",method=RequestMethod.GET)
 	public boolean delete(int id) {
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除预约信息！");
 		try {
@@ -76,6 +77,39 @@ public class CustomerSubscribe {
 			logger.info(e.getMessage(),e);
 		}
 		return false;
+	 }
+	
+	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION,RoleSign.Q_COUNELOR },logical=Logical.OR)
+	@RequestMapping(value = "/querySubscribeReceptionInfo",method=RequestMethod.POST)
+	public Map<String, Object> querySubscribeReceptionInfo() {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】开始【请求预约接诊信息】！");
+		try {
+			String info = customerSubscribeService.querySubscribeReceptionInfo();
+			if(StringUtils.isBlank(info)) return null;
+			map.put("mess", info);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】结束【请求预约接诊信息】！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
+			return map;
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+		return null;
+	 }
+	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION,RoleSign.Q_COUNELOR },logical=Logical.OR)
+	@RequestMapping(value = "/querySubscribeInfo",method=RequestMethod.POST)
+	public Map<String, Object> queryReceptionInfo() {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】开始【请求预约信息】！");
+		try {
+			String info = customerSubscribeService.querySubscribeInfo();
+			if(StringUtils.isBlank(info)) return null;
+			map.put("mess", info);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】结束【请求预约信息】！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
+			return map;
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+		return null;
 	 }
 }
 

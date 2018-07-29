@@ -41,7 +41,7 @@ public class CustomerCommentController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询列表用户留言信息列表！");
 		try {
 			Map<String, Object> map = customerCommentService.queryPagingList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);

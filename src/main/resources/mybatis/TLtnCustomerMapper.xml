@@ -508,7 +508,7 @@
 			a.createTime,
 			a.updateTime,
 			a.remark,
-			ifnull((select sum(ifnull(cc.total_amount,0)) from t_ltn_customer_consumpton_amount cc where cc.customer_id= a.id),0) as totalConsumptonAmount,
+			ifnull((select sum(ifnull(cc.total_amount,0)) from t_customer_consumpton_amount cc where cc.customer_id= a.id),0) as totalConsumptonAmount,
 			u.nickname as therapeutistName,
 			vct.text as typeName,
 			a.sex,
@@ -633,7 +633,7 @@
 	 		</if>
 	 		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text
 	 	) aa
-		LEFT JOIN (SELECT sum(cc.total_amount)total_amount,cc.customer_id  FROM t_ltn_customer_consumpton_amount cc GROUP BY cc.customer_id) cc on cc.customer_id=aa.id	
+		LEFT JOIN (SELECT sum(cc.total_amount)total_amount,cc.customer_id  FROM t_customer_consumpton_amount cc GROUP BY cc.customer_id) cc on cc.customer_id=aa.id	
   	</if>
   	<if test="record.id!=null">
   		SELECT
@@ -642,7 +642,7 @@
 			SELECT
 				sum(b.total_amount) total_amount
 			FROM
-				t_ltn_customer_consumpton_amount b
+				t_customer_consumpton_amount b
 			INNER JOIN t_ltn_customer b1 ON b.customer_id = b1.id
 			WHERE b.customer_id=#{record.id} 
 			AND b1.company_id = #{record.companyId} 
@@ -650,7 +650,7 @@
 		) AS one_total_amount
 	FROM
 		t_ltn_customer a
-		left join t_ltn_customer_consumpton_amount cc on a.id = cc.customer_id
+		left join t_customer_consumpton_amount cc on a.id = cc.customer_id
 	WHERE
 		a.status = 1 
 		and a.company_id = #{record.companyId}
@@ -669,7 +669,7 @@
 			ifnull(u1.nickname,'') '咨询师',
 			ifnull(u.nickname,'') '治疗师',
 			ifnull(tcdt.projectnames,'') '就诊项目',
-			ifnull((select sum(ifnull(cc.total_amount,0)) from t_ltn_customer_consumpton_amount cc where cc.customer_id= lc.id),0) '消费总金额',
+			ifnull((select sum(ifnull(cc.total_amount,0)) from t_customer_consumpton_amount cc where cc.customer_id= lc.id),0) '消费总金额',
 			ifnull(lc.remindtime,'') '回访时间',
 			ifnull(u3.nickname,'') '创建人',
 			DATE_FORMAT(lc.createTime,'%Y-%m-%d %H:%i:%S') as '创建时间',
@@ -684,7 +684,7 @@
 		left join v_consume_type vct on lc.type=vct.value and vct.companyid=lc.company_id
 		LEFT JOIN t_sys_user u1 on lc.counsoler = u1.id and u1.companyid=lc.company_id
 		LEFT JOIN v_customer_order_status vcos on lc.`status`= vcos.`value`
-		LEFT JOIN (select GROUP_CONCAT(tp.project_name order by tca.createTime SEPARATOR '/') as projectnames,tca.customer_id from t_ltn_customer_consumpton_amount tca LEFT JOIN t_project tp on tca.project_id=tp.id GROUP BY tca.customer_id) tcdt on tcdt.customer_id=lc.id
+		LEFT JOIN (select GROUP_CONCAT(tp.project_name order by tca.createTime SEPARATOR '/') as projectnames,tca.customer_id from t_customer_consumpton_amount tca LEFT JOIN t_project tp on tca.project_id=tp.id GROUP BY tca.customer_id) tcdt on tcdt.customer_id=lc.id
 		where 1=1
 		<if test="record.companyId &gt; 0 and record.companyId!=null">
 			and lc.company_id=#{record.companyId}
@@ -717,7 +717,7 @@
 		order by lc.createtime desc
   </select>
   <select id="getConsumptionProjects" parameterType="java.lang.Integer" resultType="java.util.Map">
-  		select GROUP_CONCAT(p.project_name)project_name,sum(a.total_amount)total_amount from t_ltn_customer_consumpton_amount a LEFT JOIN t_project p on a.project_id=p.id 
+  		select GROUP_CONCAT(p.project_name)project_name,sum(a.total_amount)total_amount from t_customer_consumpton_amount a LEFT JOIN t_project p on a.project_id=p.id 
   		where a.customer_id=#{id}
   </select>
   <select id="countConsumptionReport" parameterType="java.util.Map" resultType="java.util.Map">
@@ -746,7 +746,7 @@
 		sum(IF(a.chu_fu_zhen=1,1,0)) FUZHEN
 	FROM
 		t_ltn_customer a
-	LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_ltn_customer_consumpton_amount b GROUP BY b.customer_id) b on a.id = b.id
+	LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_customer_consumpton_amount b GROUP BY b.customer_id) b on a.id = b.id
 	where a.status=1
 	<if test="starttime!=null and starttime!=''">
 		and DATE_FORMAT(a.createTime, '%Y-%m-%d') &gt;= #{starttime}

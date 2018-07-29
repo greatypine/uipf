@@ -89,6 +89,20 @@ public class VipCustomerController {
 		}
     	return paramMap;
 	 }
+    @ApiOperation(value="根据会员信息快速生成消费订单信息", notes="根据会员信息快速生成消费订单信息")
+    @ApiImplicitParam(name = "bean", value = "会员用户实体对象TVipCustomer", required = true, dataType = "TVipCustomer")
+	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
+	@RequestMapping(value = "/createConsumptonOrder",method=RequestMethod.POST)
+	public boolean createConsumptonOrder(TVipCustomer bean) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】开始请求根据会员信息快速生成消费订单信息！");
+		try {
+			return vipCustomerService.createConsumptonOrder(bean);
+		} catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+		return false;
+	 }
+    
 }
 
 	

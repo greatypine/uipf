@@ -4,6 +4,7 @@
 	<title>客户消费信息平台</title>
 	<link rel="shortcut icon" th:href="@{/static/easyUI/themes/icons/Flower.ico}"/>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=0.5,maximum-scale=2.0"/>
 	<link rel="stylesheet" type="text/css" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
 	<link rel="stylesheet" type="text/css" th:href="@{/static/css/font-awesome-4.6.3/css/font-awesome.min.css}"/>
 	<link id="easyuiTheme" rel="stylesheet" type="text/css" th:href="@{/static/easyUI/themes/metro-red/easyui.css}"/>
@@ -22,14 +23,35 @@
 	<script type="text/javascript" th:src="@{/static/activeMQ/amq_jquery_adapter.js}"></script>
 	<script type="text/javascript" th:src="@{/static/activeMQ/amq.js}"></script>
 	<script type="text/javascript" th:src="@{/static/js/CommonUtils.js}"></script>
+	<script type="text/javascript" th:src="@{/static/jquery-cookie/jquery.cookie.js}"></script>
 	<script th:inline="javascript">
+	$(document).keyup(function(event){
+	    switch(event.keyCode){
+	        case 27:
+	            {
+	                //检测按键：ESC,锁住网页
+	                $.cookie('lock_flag', true);
+	                $('#dlg-lock').dialog('open').dialog('center');
+	                $('#lock_form').form('clear');                
+	            }
+	            break;  
+	    }
+	});
+	var lock_flag = $.cookie('lock_flag');
+	if(lock_flag){
+		$('#dlg-lock').dialog('open').dialog('center');
+        $('#lock_form').form('clear');
+	}else{
+		$('#dlg-lock').dialog('close');
+	}
 		var path=[[${path}]];
 		var content=[[${content}]];
 		var user = [[${session.user}]];
 		var CU = new CommonUtils();
 		var cu = CU;
 		var amq = org.activemq.Amq;
-// 		console.log(user);
+		amq.init({ uri: content+'/amq', logging: false, timeout: 45, clientId:(new Date()).getTime().toString() });
+		// 		console.log(user);
 	</script>
 </head>
 </html>

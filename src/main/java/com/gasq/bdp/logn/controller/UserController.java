@@ -91,6 +91,18 @@ public class UserController {
 		}
 		return false;
 	 }
+    @ApiOperation(value="锁屏解锁", notes="锁屏解锁")
+    @ApiImplicitParam(name = "id", value = "用户实体id", required = true, dataType = "Integer", paramType="query")
+	@RequestMapping(value = "/unlockSubmit",method=RequestMethod.POST)
+	public boolean unlockSubmit(TSysUser bean) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求锁屏解锁！");
+		try {
+			return sysUserService.unlockSubmit(bean);
+		} catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+		return false;
+	 }
     
 }
 

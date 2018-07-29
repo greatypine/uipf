@@ -161,6 +161,7 @@ public class TSysUserServiceImpl implements TSysUserService {
 			TSysUserExample userexample = new TSysUserExample();
 			userexample.createCriteria().andUsernameEqualTo(bean.getUsername());
 			long countuser = mapper.countByExample(userexample);
+			if(bean.getStatus()==99) bean.setIsvalid(false);
 			if(bean.getId()!=null) {
 				TSysUserRoleExample urx = new TSysUserRoleExample();
 				urx.createCriteria().andUserIdEqualTo(bean.getId());
@@ -227,6 +228,7 @@ public class TSysUserServiceImpl implements TSysUserService {
 		if(systemUser.getCompany()!=null) {
 			c.andCompanyidEqualTo(systemUser.getCompany().getId());
 		}
+		c.andIsvalidEqualTo(true);
 		List<TSysUser> users = mapper.selectByExample(userexample);
 		if(users.size()>0) {
 			TSysUser tSysUser = users.get(0);
@@ -248,6 +250,17 @@ public class TSysUserServiceImpl implements TSysUserService {
 		}
 		SystemUserInfo.setSystemUser(systemUser);
 		return systemUser;
+	}
+
+	@Override
+	public boolean unlockSubmit(TSysUser bean) {
+		if(StringUtils.isBlank(bean.getUsername()) || StringUtils.isBlank(bean.getPassword())) return false;
+		TSysUserExample userexample = new TSysUserExample();
+		Criteria c = userexample.createCriteria();
+			c.andUsernameEqualTo(bean.getUsername());
+			c.andPasswordEqualTo(CommonUtils.change2MD5(bean.getPassword()));
+		long ct = mapper.countByExample(userexample);
+		return ct>0?true:false;
 	}
 
 }

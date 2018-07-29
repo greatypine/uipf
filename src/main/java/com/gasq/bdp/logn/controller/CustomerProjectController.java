@@ -49,7 +49,7 @@ public class CustomerProjectController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户项目信息列表！");
 		try {
 			Map<String, Object> list = customerProjectService.queryPagingList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户项目信息列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户项目信息列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return list;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -86,7 +86,7 @@ public class CustomerProjectController {
 	 }
     
     @ApiOperation(value="查询列表用户消费套餐信息列表", notes="查询列表用户消费套餐信息列表")
-    @ApiImplicitParam(name = "bean", value = "实体对象TLtnCustomerConsumptonAmount", required = false, dataType = "TLtnCustomerConsumptonAmount")
+    @ApiImplicitParam(name = "bean", value = "实体对象TCustomerConsumptonAmount", required = false, dataType = "TCustomerConsumptonAmount")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryCustomerAmountListByCustomerPhone",method=RequestMethod.POST)
 	public Map<String, Object> queryCustomerAmountListByCustomerPhone(TLtnCustomer bean) {

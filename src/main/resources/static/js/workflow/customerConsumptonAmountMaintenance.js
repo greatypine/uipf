@@ -25,6 +25,17 @@ function initData(){
 		onSelect:function(record){
 			$("#projectAmount").numberbox("setValue",record.money);
 			$("#discount").numberbox("setValue",Number(record.discount)*100);
+			if(record.projectType==1){
+				$("#projectNums").numberbox("setValue",record.projectNums);
+				$("#projectNums").textbox('textbox').attr('readonly',false);
+				$("#deadline").numberbox("setValue",0);
+				$("#deadline").textbox('textbox').attr('readonly',true);
+			}else if(record.projectType==2){
+				$("#projectNums").numberbox("setValue",0);
+				$("#projectNums").textbox('textbox').attr('readonly',true);
+				$("#deadline").numberbox("setValue",record.deadline);
+				$("#deadline").textbox('textbox').attr('readonly',false);
+			}
 		}
 	});
 	if(cu.hasRoles("sadmin,q_area_shopManager,generalManager,q_admin")){
@@ -53,6 +64,14 @@ function initData(){
 	$("#profession").combobox({
 		url:content+'/common/getView?viewname=v_customer_profession'
 	});
+	var h = $(document).height();
+	if(h>800){
+		$("#consumpton_project_list").css("height",'56%');
+	}else if(h<800 && h>650){
+		$("#consumpton_project_list").css("height",'47%');
+	}else if(h<650){
+		$("#consumpton_project_list").css("height",'32%');
+	}
 	ccac = new CustomerConsumptonAmount();
 	ccac.initCompant();
 	ccac.initProjectDg({"consumptonAmountId":-1});
@@ -149,32 +168,34 @@ function CustomerConsumptonAmount(){
 		                loadMsg:'正在加载，请稍后...',
 		                height:'auto',
 		                columns:[[
-		                	 	{field:'projectName',title:'套餐名称',width:"12%",align:'center'},
-		                	 	{field:'projectAmount',title:'套餐金额',width:"8%",align:'center',formatter:function(val,row){
+		                	 	{field:'projectName',title:'套餐名称',width:"12%",align:'left'},
+		                	 	{field:'projectAmount',title:'套餐金额',width:"6%",align:'center',formatter:function(val,row){
 						        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 						        }},
-						        {field:'discount',title:'折扣',width:"8%",align:'center',formatter:function(val,row){
+						        {field:'discount',title:'折扣',width:"6%",align:'center',formatter:function(val,row){
 						        	return val*100+"%";
 						        }},
-		                	 	{field:'arrears',title:'欠款金额',width:"8%",align:'center',formatter:function(val,row){
+						        {field:'projectNums',title:'套餐次数',width:"6%",align:'center'},
+						        {field:'deadline',title:'套餐时长(月)',width:"7%",align:'center'},
+		                	 	{field:'arrears',title:'欠款金额',width:"6%",align:'center',formatter:function(val,row){
 						        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 						        }},
-		                	 	{field:'repayment',title:'还款金额',width:"8%",align:'center',formatter:function(val,row){
+		                	 	{field:'repayment',title:'还款金额',width:"6%",align:'center',formatter:function(val,row){
 						        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 						        }},
-						        {field:'movePayment',title:'移动支付',width:"8%",align:'center',formatter:function(val,row){
+						        {field:'movePayment',title:'移动支付',width:"6%",align:'center',formatter:function(val,row){
 						        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 						        }},
-						        {field:'cashIncome',title:'现金收入',width:"8%",align:'center',formatter:function(val,row){
+						        {field:'cashIncome',title:'现金收入',width:"6%",align:'center',formatter:function(val,row){
 						        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 						        }},
-						        {field:'creditCashIncome',title:'刷卡收入',width:"8%",align:'center',formatter:function(val,row){
+						        {field:'creditCashIncome',title:'刷卡收入',width:"6%",align:'center',formatter:function(val,row){
 						        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 						        }},
 						        {field:'totalAmount',title:'总金额',width:"10%",align:'center',formatter:function(val,row){
 						        	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
 						        }},
-						        {field:'remark',title:'说明',width:"18%",align:'center'}
+						        {field:'remark',title:'说明',width:"23%",align:'left'}
 		                ]],
 		                toolbar: [{
 		                    text:'添加消费记录',
@@ -186,11 +207,12 @@ function CustomerConsumptonAmount(){
 		                	}
 		                	$('#ddv-'+ccac.index).datagrid("unselectAll");
 		            		$('#ddv-'+ccac.index).datagrid("uncheckAll");
-		            		$('#ddv-'+ccac._index).datagrid("unselectAll");
-		            		$('#ddv-'+ccac._index).datagrid("uncheckAll");
 	                		var row = $("#ccac_table").datagrid("getSelected");
 		                	if(row.status==1){
 		                		$.messager.alert('提示','消费订单已完成！不可再次操作！','warning');
+		                		return ;
+		                	}else if(row.status==99){
+		                		$.messager.alert('提示','消费订单已关闭！不可再次操作！','warning');
 		                		return ;
 		                	}else{
 		                		$("#baseproductcomplate").show();
@@ -216,7 +238,7 @@ function CustomerConsumptonAmount(){
 					    	$("#consumptonAmountId").val($("#ccacdid").val());
 					    	$("#baseproductcomplate").hide();
 					    	ccac.customerAmountEdit(crow);
-		                	if(row.status==1 || cu.hasRoles("h_option")){
+		                	if(row.status==1 || row.status==99 || cu.hasRoles("h_option")){
 		                		$("#baseproductcomplate").hide();
 		                		cu.disableForm("ccacdetaildlg-fm",true);
 		                		$("#project_tb .easyui-linkbutton").linkbutton('disable');
@@ -242,6 +264,10 @@ function CustomerConsumptonAmount(){
 		                		$.messager.alert('提示','消费订单已完成！不可再次操作！','warning');
 		                		return ;
 		                	}
+		                	if(row.status==99){
+		                		$.messager.alert('提示','消费订单已关闭！不可再次操作！','warning');
+		                		return ;
+		                	}
 		                	if(CU.hasPermission("delete")) ccac.customerAmountRemove(index);
 		                	else $.messager.alert('提示','没有操作权限！','warning');
 		                }
@@ -252,7 +278,7 @@ function CustomerConsumptonAmount(){
 				    	$("#baseproductcomplate").hide();
 				    	ccac.customerAmountEdit(row);
 				    	var row1 = $("#ccac_table").datagrid("getSelected");
-	                	if(row1.status==1 || cu.hasRoles("h_option")){
+	                	if(row1.status==1 || row1.status==99 || cu.hasRoles("h_option")){
 	                		$("#baseproductcomplate").hide();
 	                		cu.disableForm("ccacdetaildlg-fm",true);
 	                		$("#project_tb .easyui-linkbutton").linkbutton('disable');
@@ -283,6 +309,9 @@ function CustomerConsumptonAmount(){
 					$("#ccacdlg-fm").form("clear").form("load",row);
 					var st = row.status;
 					if(st==1){
+						cu.disableForm("ccacdlg-fm",true);
+						$("#basecomplate").hide();
+					}else if(st==99){
 						cu.disableForm("ccacdlg-fm",true);
 						$("#basecomplate").hide();
 					}else{
@@ -366,8 +395,10 @@ function CustomerConsumptonAmount(){
 		$('#ccacform').form('clear');
 	};
 	this.add = function(){
+		$('#ccac_table').datagrid("unselectAll");
 		$("#ccacdlg").dialog("open").dialog("center").dialog("setTitle","添加客户消费记录");
 		$("#ccacdlg-fm").form("clear");
+		cu.disableForm("ccacdlg-fm",false);
 		cu.initClearCombobox("sex");
 		cu.initClearCombobox("chuFuZhen");
 		cu.initClearCombobox("therapeutist");
@@ -406,7 +437,10 @@ function CustomerConsumptonAmount(){
 					$.messager.progress('close');
 				}
 				$('#basecomplate').linkbutton('enable');
-			}
+			},error:function(XMLHttpRequest,textStatus,errorThrown){
+                $.messager.alert('提示',"操作失败！","error");
+                $('#basecomplate').linkbutton('enable');
+            }
 		});
 	};
 	this.amountcomplate = function(){
@@ -436,7 +470,10 @@ function CustomerConsumptonAmount(){
 					$.messager.progress('close');
 				}
 				$('#baseproductcomplate').linkbutton('enable');
-			}
+			},error:function(XMLHttpRequest,textStatus,errorThrown){
+                $.messager.alert('提示',"操作失败！","error");
+                $('#baseproductcomplate').linkbutton('enable');
+            }
 		});
 	};
 	this.fxcommit = function(){
@@ -445,6 +482,7 @@ function CustomerConsumptonAmount(){
 			$.messager.confirm('提示信息', '你确认要以《分销结算》此用户信息吗?', function(r){
 				if (r){
 					$.ajax({
+						async: false,
 						type:"POST",
 						data :row,
 						url : content+"/ccac/commit",
@@ -474,6 +512,7 @@ function CustomerConsumptonAmount(){
 			$.messager.confirm('提示信息', '你确认要以《会员结算》此用户信息吗?', function(r){
 				if (r){
 					$.ajax({
+						async: false,
 						type:"POST",
 						data :row,
 						url : content+"/ccac/hycommit",
@@ -578,6 +617,7 @@ function CustomerConsumptonAmount(){
 			if (r){
 				$("#"+id).linkbutton("disable");
 				$.ajax({
+					async: false,
 					type:"POST",
 					datType: "JSON",
 					data :{"id":id},
@@ -607,6 +647,7 @@ function CustomerConsumptonAmount(){
 			$.messager.confirm('提示信息', '你确认要以《普通结算》此用户信息吗?', function(r){
 				if (r){
 					$.ajax({
+						async: false,
 						type:"POST",
 						data :row,
 						url : content+"/ccac/ptcommit",
@@ -636,6 +677,7 @@ function CustomerConsumptonAmount(){
 			$.messager.confirm('提示信息', '你确认要删除此条消费记录吗?', function(r){
 				if (r){
 					$.ajax({
+						async: false,
 						type:"POST",
 						data :{id:row.id},
 						url : content+"/ccac/deleteCust",
@@ -665,6 +707,7 @@ function CustomerConsumptonAmount(){
 			$.messager.confirm('提示信息', '你确认要退款此条消费记录吗?', function(r){
 				if (r){
 					$.ajax({
+						async: false,
 						type:"POST",
 						data :{id:row.id},
 						url : content+"/ccac/refundCust",
@@ -701,8 +744,9 @@ function CustomerConsumptonAmount(){
 	};
 	this.customerAmountEdit = function(row){
 		cu.initClearCombobox("projectId");
-		$("#ccacdetaildlg-fm").form("clear").form("load",row);
 		$("#ccacdetaildlg").dialog("open").dialog("center").dialog("setTitle","修改消费记录");
+		$("#ccacdetaildlg-fm").form("clear").form("load",row);
+		$("#deadline").numberbox("setValue",row.deadline);
 	};
 	this.customerAmountRemove = function(index){
 		var row=$('#ddv-'+index).datagrid('getSelected');
@@ -710,6 +754,7 @@ function CustomerConsumptonAmount(){
 			$.messager.confirm('提示信息', '你确认要删除此项配置吗?', function(r){
 				if (r){
 					$.ajax({
+						async: false,
 						type:"POST",
 						data :{id:row.id},
 						url : content+"/ccac/deleteCustAmount",
@@ -735,6 +780,7 @@ function CustomerConsumptonAmount(){
 	};
 	this.calculateAmount = function(params){
 		$.ajax({
+			async: false,
 			type:"POST",
 			data :params,
 			url : content+"/ccac/queryAmountSum",
@@ -782,7 +828,10 @@ function CustomerConsumptonAmount(){
 					$.messager.progress('close');
 				}
 				$('#projectListcomplate').linkbutton('enable');
-			}
+			},error:function(XMLHttpRequest,textStatus,errorThrown){
+                $.messager.alert('提示',"操作失败！","error");
+                $('#projectListcomplate').linkbutton('enable');
+            }
 		});
 	};
 	this.removeaProjectList = function(){
@@ -791,6 +840,7 @@ function CustomerConsumptonAmount(){
 			$.messager.confirm('提示信息', '你确认要删除此项配置吗?', function(r){
 				if (r){
 					$.ajax({
+						async: false,
 						type:"POST",
 						data :{id:row.id},
 						url : content+"/consumptonProject/delete",
@@ -867,6 +917,7 @@ function CustomerConsumptonAmount(){
 		var row=$('#ccac_table').datagrid('getSelected');
 		if(row){
 			$.ajax({
+				async: false,
 				type:"POST",
 				datatype:"json",
 				data :{"orderId":row.id,"customerPhone":row.phonenumb},
@@ -892,9 +943,14 @@ function CustomerConsumptonAmount(){
 	this.orderBack = function(){
 		var row=$('#ccac_table').datagrid('getSelected');
 		if(row){
+			if(row.status==99){
+				$.messager.alert('提示','订单已关闭不可操作！','error');
+				return ;
+			}
 			$.messager.confirm('提示信息', '你确认要回退用户：“'+row.customername+'”的订单吗?', function(r){
 				if (r){
 					$.ajax({
+						async: false,
 						type:"POST",
 						datatype:"json",
 						data :{id:row.id},

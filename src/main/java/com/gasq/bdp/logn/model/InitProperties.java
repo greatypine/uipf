@@ -12,10 +12,7 @@ public class InitProperties{
      * value属性表示使用哪个缓存策略，缓存策略在ehcache.xml
     */
 	public static final String CACHE_NAME = "myCache";
-	public static final String EMAIL_SENDER = "princejwg.happy@163.com";
-	public static final String EMAIL_TARGET[] = {"328335115@qq.com"};
-	public static final String EMAIL_HADOOPWORKFLOW_TARGET[] = {"328335115@qq.com","1062567218@qq.com"};
-	public static final String EMAIL_GABDPTIMMER_TARGET[] = {"renmian@gakj.citic.com","645575930@qq.com","517098158@qq.com"};
+	public static final String EMAIL_SENDER = "juwg@gacs.citic";
 	public static final String DEFAULT_USERNAME="后台系统";
 	/**
 	 * 默认数据库
@@ -84,6 +81,14 @@ public class InitProperties{
 	 * 监听后台预约
 	 */
 	public static final String BACK_SUBSCRIBE_MSG = "back_subscribe_msg";
+	/**
+	 * 后台预约急诊信息
+	 */
+	public static final String SUBSCRIBE_RECEPTION_MSG = "subscribe_reception_msg";
+	/**
+	 * 当天后台预约信息
+	 */
+	public static final String BACK_SUBSCRIBE_DAY_ALL_MSG = "back_subscribe_day_all_msg";
 	/**
 	 * 监听前台接诊
 	 */

@@ -41,7 +41,7 @@ public class InventoryController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表库存配置信息列表！");
 		try {
 			map = inventoryService.queryPagingList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表库存配置信息列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表库存配置信息列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -58,7 +58,7 @@ public class InventoryController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询库存对象列表！");
 		try {
 			List<TInventory> list = inventoryService.selectByExample(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询库存对象列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询库存对象列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return list;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -75,7 +75,7 @@ public class InventoryController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求添加或更新库存配置信息！");
 		try {
 			Boolean f = inventoryService.saveOrUpdate(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求添加或更新库存配置信息结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求添加或更新库存配置信息结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return f;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -92,7 +92,7 @@ public class InventoryController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除库存配置信息！");
 		try {
 			Boolean f = inventoryService.delete(id);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除库存配置信息结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除库存配置信息结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return f;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -110,7 +110,7 @@ public class InventoryController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询当前库存！");
 		try {
 			Double d =inventoryService.getInventoryNumbs(id);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询当前库存结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询当前库存结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return d;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -127,7 +127,7 @@ public class InventoryController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询当前商品是否有库存！");
 		try {
 			Boolean f = inventoryService.checkInventoryEnable(id,numbs);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询当前商品是否有库存结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询当前商品是否有库存结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return f;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -144,7 +144,7 @@ public class InventoryController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求产品入库！");
 		try {
 			map = inventoryService.appendInventory(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求产品入库结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求产品入库结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -160,7 +160,7 @@ public class InventoryController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求产品出库！");
 		try {
 			map = inventoryService.deliveryInventory(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求产品出库结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求产品出库结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);

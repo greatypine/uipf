@@ -17,4 +17,9 @@ public interface CustomerSubscribeService {
 	boolean delete(int id);
 
 	TCustomerSubscribe selectByPrimaryKey(Integer id);
+
+	String querySubscribeReceptionInfo();
+
+	String querySubscribeInfo();
+
 }

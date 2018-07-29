@@ -49,4 +49,7 @@ public interface CommonService {
 	Map<String, Object> queryCountBusinessAnalysisDataDetail(Integer type, Integer companyid, String datetype,
 			String starttime, String endtime, Integer page, Integer rows);
 
+	List<Map<String, Object>> queryCountProjectsOrderCost(Integer companyid, String datatype, String diyStrDateTime,
+			String diyStrDateTime2);
+
 }

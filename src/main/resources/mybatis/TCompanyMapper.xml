@@ -426,7 +426,7 @@
 		tsu.nickname
 	FROM
 		t_ltn_customer a
-	LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_ltn_customer_consumpton_amount b LEFT JOIN t_ltn_customer b1 ON b.customer_id = b1.id WHERE b1.`status` = 1 GROUP BY b.customer_id) b on a.id = b.id
+	LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_customer_consumpton_amount b LEFT JOIN t_ltn_customer b1 ON b.customer_id = b1.id WHERE b1.`status` = 1 GROUP BY b.customer_id) b on a.id = b.id
 	LEFT JOIN t_sys_user tsu on a.counsoler = tsu.id
 	where 1 = 1
 	<if test="starttime!=null and starttime!=''">
@@ -478,10 +478,10 @@
 		tc.`name` as companyname,
 		count(tcs.id) totalOrder,
 		sum(if(tcs.`status`=1,1,0)) secuessOrder,
-		sum(if(tcs.`status`=99 and tcs.subscribe_date&lt;=#{endtime} and tcs.subscribe_date&gt;=#{starttime},1,0)) wastageOrder,
+		sum(if(tcs.`status`=99 and DATE_FORMAT(tcs.subscribe_date, '%Y-%m-%d') &lt;=#{endtime} and DATE_FORMAT(tcs.subscribe_date, '%Y-%m-%d') &gt;=#{starttime},1,0)) wastageOrder,
 		sum(if(tcs.`status`=0,1,0)) unfinishedOrder,
-		sum(if(tcs.subscribe_date&lt;=#{endtime} and tcs.subscribe_date&gt;=#{starttime},1,0)) actual_subscribe_enable_arrive,
-		sum(if(tcs.subscribe_date&lt;=#{endtime} and tcs.subscribe_date&gt;=#{starttime} and tcs.`status`=1,1,0)) actual_jiezhen,
+		sum(if(tcs.subscribe_date &lt;=#{endtime} and tcs.subscribe_date &gt;=#{starttime},1,0)) actual_subscribe_enable_arrive,
+		sum(if(tcs.subscribe_date &lt;=#{endtime} and tcs.subscribe_date &gt;=#{starttime} and tcs.`status`=1,1,0)) actual_jiezhen,
 		(SELECT count(tcs1.id) all_totalOrder from t_customer_subscribe tcs1 where DATE_FORMAT(tcs1.create_time, '%Y-%m-%d')&lt;=#{endtime} and DATE_FORMAT(tcs1.create_time, '%Y-%m-%d') &gt;=#{starttime}) all_totalOrder
 	FROM
 		t_customer_subscribe tcs
@@ -741,7 +741,7 @@
 			tsu.nickname
 		FROM
 			t_ltn_customer a
-		LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_ltn_customer_consumpton_amount b LEFT JOIN t_ltn_customer b1 ON b.customer_id = b1.id WHERE b1.`status` = 1 GROUP BY b.customer_id) b on a.id = b.id
+		LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_customer_consumpton_amount b LEFT JOIN t_ltn_customer b1 ON b.customer_id = b1.id WHERE b1.`status` = 1 GROUP BY b.customer_id) b on a.id = b.id
 		LEFT JOIN t_sys_user tsu on a.counsoler = tsu.id
 		where 1 = 1
 		<if test="starttime!=null and starttime!=''">
@@ -869,7 +869,6 @@
 	) temp
 </select>
 
-
 <select id="queryCountBusinessAnalysisDataDetail" parameterType="java.util.HashMap" resultType="java.util.Map">
 	SELECT
 	  	<if test="datetype!=null and datetype!=''">
@@ -889,13 +888,13 @@
 		a.`name`,
 		count(DISTINCT b.phonenumb) numbs,
 		sum(ifnull(c.total_amount,0)) total_amount,
-		sum(ifnull(c.total_amount,0))/count(DISTINCT b.phonenumb) total_amount_avg,
+		avg(ifnull(c.total_amount,0)) total_amount_avg,
 		vcp.text,
 		tc.name as companyName
 	FROM
 		v_root_in a
 	LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in AND a.companyid = b.company_id
-	LEFT JOIN t_ltn_customer_consumpton_amount c on b.id=c.customer_id
+	LEFT JOIN t_customer_consumpton_amount c on b.id=c.customer_id
 	LEFT JOIN v_customer_profession vcp on b.profession = vcp.`value`
 	INNER JOIN t_company tc ON a.companyid = tc.id
 	where 1=1 
@@ -931,7 +930,7 @@
 		FROM
 			v_root_in a
 		LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in AND a.companyid = b.company_id
-		LEFT JOIN t_ltn_customer_consumpton_amount c on b.id=c.customer_id
+		LEFT JOIN t_customer_consumpton_amount c on b.id=c.customer_id
 		LEFT JOIN v_customer_profession vcp on b.profession = vcp.`value`
 		where 1=1 
 		<if test="starttime!=null and starttime!=''">
@@ -960,4 +959,66 @@
 	) temp
 </select>
 
+
+<select id="queryCountProjectsOrderCost" parameterType="java.util.HashMap" resultType="java.util.Map">
+	SELECT 
+		temp1.datetime,
+		tc.name as companyname,
+		MAX(CASE vpm.value WHEN 1 THEN temp1.pronumbs ELSE 0 END ) pn1,
+		MAX(CASE vpm.value WHEN 2 THEN temp1.pronumbs ELSE 0 END ) pn2,
+		MAX(CASE vpm.value WHEN 3 THEN temp1.pronumbs ELSE 0 END ) pn3,
+		MAX(CASE vpm.value WHEN 4 THEN temp1.pronumbs ELSE 0 END ) pn4,
+		MAX(CASE vpm.value WHEN 5 THEN temp1.pronumbs ELSE 0 END ) pn5,
+		MAX(CASE vpm.value WHEN 6 THEN temp1.pronumbs ELSE 0 END ) pn6,
+		MAX(CASE vpm.value WHEN 7 THEN temp1.pronumbs ELSE 0 END ) pn7,
+		MAX(CASE vpm.value WHEN 8 THEN temp1.pronumbs ELSE 0 END ) pn8
+		from v_project_model vpm LEFT JOIN (
+			SELECT
+				<if test="datetype==1">
+					DATE_FORMAT(c.createTime, '%Y') datetime,
+				</if>
+				<if test="datetype==2">
+					DATE_FORMAT(c.createTime, '%Y%m') datetime,
+				</if>
+				<if test="datetype==3">
+					DATE_FORMAT(c.createTime, '%Y%m%d') datetime,
+				</if>
+				a.project_model,
+				count(b.id) pronumbs,
+				c.company_id
+			FROM
+				t_project a
+			LEFT JOIN v_project_model pm on a.project_model=pm.`value` and a.company_id=pm.companyid
+			INNER JOIN t_customer_consumpton_amount b ON a.id = b.project_id
+			INNER JOIN t_ltn_customer c on b.customer_id=c.id and a.company_id= c.company_id
+			where 1=1 
+			<if test="companyid!=null">
+				and c.company_id=#{companyid} 
+			</if>
+				and c.`status`=1 
+			<if test="starttime!=null and starttime!=''">
+				and DATE_FORMAT(c.createTime, '%Y-%m-%d') &gt;= #{starttime}
+			</if>
+			<if test="endtime!=null and endtime!=''">
+				and DATE_FORMAT(c.createTime, '%Y-%m-%d') &lt;= #{endtime}
+			</if>
+			<if test="datetype==1">
+				GROUP BY DATE_FORMAT(c.createTime, '%Y'),b.project_id,c.company_id,a.project_model
+			</if>
+			<if test="datetype==2">
+				GROUP BY DATE_FORMAT(c.createTime, '%Y%m'),b.project_id,c.company_id,a.project_model
+			</if>
+			<if test="datetype==3">
+				GROUP BY DATE_FORMAT(c.createTime, '%Y%m%d'),b.project_id,c.company_id,a.project_model
+			</if>
+			
+		) temp1 on vpm.companyid = temp1.company_id and vpm.`value`=temp1.project_model
+		INNER JOIN t_company tc on vpm.companyid=tc.id and temp1.company_id= tc.id and tc.`status`=1
+		where 1=1 
+		<if test="companyid!=null">
+			and vpm.companyid=#{companyid}
+		</if>
+	GROUP BY tc.name,temp1.datetime
+	ORDER BY tc.id
+</select>
 </mapper>

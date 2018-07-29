@@ -25,7 +25,7 @@ import com.gasq.bdp.logn.model.TConsumptonProjectExample.Criteria;
 import com.gasq.bdp.logn.model.TInventory;
 import com.gasq.bdp.logn.model.TInventoryLog;
 import com.gasq.bdp.logn.model.TLtnCustomer;
-import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmount;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmount;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.service.CustomerConsumptonAmountService;
 import com.gasq.bdp.logn.service.CustomerService;
@@ -76,7 +76,7 @@ public class TConsumptonProjectServiceImpl implements TConsumptonProjectService 
 			TSysUser user = SystemUserInfo.getSystemUser().getUser();
 			TConsumptonProject project = consumptonProjectMapper.selectByPrimaryKey(id);
 			TInventory bean = inventoryService.selectByPrimaryKey(project.getProjectId());
-			TLtnCustomerConsumptonAmount consumptonAmount = consumptonAmountService.selectByPrimaryKey(project.getConsumptonAmountId());
+			TCustomerConsumptonAmount consumptonAmount = consumptonAmountService.selectByPrimaryKey(project.getConsumptonAmountId());
 			TLtnCustomer customer = customerService.selectByPrimaryKey(consumptonAmount.getCustomerId());
 			BigDecimal dnumbs = project.getNumbs();
 			bean.setInventory(bean.getInventory().add(dnumbs));
@@ -154,7 +154,7 @@ public class TConsumptonProjectServiceImpl implements TConsumptonProjectService 
 			if(enable) {
 				bean.setUpdatetime(DateUtil.getSysCurrentDate());
 				TInventory inventory = inventoryService.selectByPrimaryKey(bean.getProjectId());
-				TLtnCustomerConsumptonAmount consumptonAmount = consumptonAmountService.selectByPrimaryKey(bean.getConsumptonAmountId());
+				TCustomerConsumptonAmount consumptonAmount = consumptonAmountService.selectByPrimaryKey(bean.getConsumptonAmountId());
 				TLtnCustomer customer = customerService.selectByPrimaryKey(consumptonAmount.getCustomerId());
 				if(bean.getId()!=null) {
 					TConsumptonProject cproject = consumptonProjectMapper.selectByPrimaryKey(bean.getId());

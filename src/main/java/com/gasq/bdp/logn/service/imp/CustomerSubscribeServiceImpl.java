@@ -169,10 +169,12 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 	@Transactional(rollbackFor=Exception.class)
 	public boolean saveOrUpdate(TCustomerSubscribe bean) {
 		try {
-			bean.setUpdateTime(DateUtil.getSysCurrentDate());
 			TSysUser user = SystemUserInfo.getSystemUser().getUser();
 			if(bean.getId()!=null) {
-				bean.setUpdateUser(user.getUsername());
+				if(WorkFlowUtil.hasAnyRoles(RoleSign.Q_ADMIN,RoleSign.Q_OPTION,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.Q_COUNELOR,RoleSign.Q_RECEPTIONIST)){
+					bean.setUpdateTime(DateUtil.getSysCurrentDate());
+					bean.setUpdateUser(user.getNickname());
+				}
 				customerSubscribeMapper.updateByPrimaryKeySelective(bean);
 				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新预约信息成功！");
 				if(bean.getStatus()==1) {
@@ -194,15 +196,17 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 				String mess = "◆后台用户："+SystemUserInfo.getSystemUser().getUser().getNickname()+",在"+DateUtil.getAllCurrentDate()+"成功预约了一个客户！\n◆客户姓名："+bean.getCustomerName()+"\n◆联系方式："+bean.getCustomerPhone()+"\n◆预约到诊时间："+DateUtil.dateToString(bean.getSubscribeDate());
 				activeManager.sendBack(ActiveMQUtil.getTopicDestination(bean.getCompanyId()+InitProperties.BACK_SUBSCRIBE_MSG),mess);
 				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】系统通知发送成功！发送内容为："+mess);
-				Map<String,Object> map = new HashMap<>();
-				map.put("companyid", bean.getCompanyId());
+//				Map<String,Object> map = new HashMap<>();
+//				map.put("companyid", bean.getCompanyId());
 //				List<String> sList = new ArrayList<String>();
 //				sList.add(RoleSign.SADMIN);
-				map.put("roles", RoleSign.Q_ALL);
-				List<TSysUser> userlist = userMapper.queryQUserEmailAndPhone(map);
-				Object[] emails = userlist.stream().map(f->f.getEmail()).distinct().toArray();
-				emailService.sendSimpleEmail(sourceEmail, emails, "痘卫士-预约提醒",mess);
-				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】邮件通知发送成功！发送内容为："+mess);
+//				map.put("roles", RoleSign.Q_ALL);
+//				List<TSysUser> userlist = userMapper.queryQUserEmailAndPhone(map);
+//				Object[] emails = userlist.stream().map(f->f.getEmail()).distinct().toArray();
+//				emailService.sendHtmlMails(emails, "痘卫士-客户预约提醒",mess);
+//				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】邮件通知发送成功！发送内容为："+mess);
+//				SyncAction sa = new SyncAction(emailService,userMapper,bean.getCompanyId());
+//				SyncAction.getExec().submit(sa);
 			}
 			TVipCustomerExample vcexample = new TVipCustomerExample();
 			vcexample.createCriteria().andCustomerPhoneEqualTo(bean.getCustomerPhone());
@@ -266,6 +270,55 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】新增或更新客户预约操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return false;
+	}
+
+	@Override
+	public String querySubscribeReceptionInfo() {
+		String mess = "";
+		List<Map<String, Object>> maps = customerSubscribeMapper.querySubscribeReceptionInfo(SystemUserInfo.getSystemUser().getUser().getUsername());
+		if(maps!=null) {
+			if(maps.size()>0) {
+				String nickname = maps.get(0).get("nickname").toString();
+				mess+="★用户【"+nickname+"】";
+				for (Map<String, Object> map : maps) {
+					String customer_name = map.get("customer_name").toString();
+					String datetime = map.get("datetime").toString();
+					if(StringUtils.isNotBlank(customer_name)) {
+						mess += ":在"+datetime+"有未到诊顾客【"+customer_name+"】，共计"+customer_name.split(",").length+"人！:";
+					}
+				}
+				if(mess.length()>0) {
+					String jiezhennumbs = maps.get(0).get("jiezhennumbs").toString();
+					mess +="★昨日到店接诊："+jiezhennumbs+"人";
+				}
+			}
+//			activeManager.sendBack(ActiveMQUtil.getTopicDestination(SystemUserInfo.getSystemUser().getUser().getCompanyid()+InitProperties.BACK_SUBSCRIBE_DAY_ALL_MSG),mess);
+//			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】预约未到诊情况系统通知发送成功！\n发送内容为："+mess);
+		}
+		return mess;
+	}
+
+	@Override
+	public String querySubscribeInfo() {
+		String mess = "";
+		List<Map<String, Object>> maps = customerSubscribeMapper.querySubscribeInfo(SystemUserInfo.getSystemUser().getUser().getCompanyid());
+		if(maps!=null) {
+			for (Map<String, Object> map : maps) {
+				String customer_name = map.get("customer_name").toString();
+				String datetime = map.get("datetime").toString();
+				String nickname = map.get("nickname").toString();
+				if(StringUtils.isNotBlank(customer_name)) {
+					mess += "★用户【"+nickname+"】在"+datetime+"成功预约了新客户【"+customer_name+"】，共预约"+customer_name.split(",").length+"人！:";
+				}
+			}
+			if(mess.length()>0)	{
+				String daozhennumbs = maps.get(0).get("daozhennumbs").toString();
+				mess +="★今天可到店接诊人数："+daozhennumbs+"人";
+			}
+//			activeManager.sendBack(ActiveMQUtil.getTopicDestination(SystemUserInfo.getSystemUser().getUser().getCompanyid()+InitProperties.BACK_SUBSCRIBE_DAY_ALL_MSG),mess);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】前台预约接诊情况系统通知发送成功！\n发送内容为："+mess);
+		}
+		return mess;
 	}
 
 }

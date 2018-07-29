@@ -61,7 +61,7 @@ public class RoleSign {
 	/**
 	 * 前台所有人员权限
 	 */
-	public static final String[] Q_ALL = String.join(",", SADMIN,Q_AREA_SHOPMANAGER,Q_COUNELOR,Q_RECEPTIONIST,Test,Q_OPTION,QUERY,Q_ADMIN).split(",");;
+	public static final String[] Q_ALL = String.join(",", SADMIN,Q_AREA_SHOPMANAGER,Q_COUNELOR,Q_RECEPTIONIST,Q_OPTION,Q_ADMIN).split(",");;
 	
 	/**
 	 * 后台所有人员权限
@@ -72,6 +72,12 @@ public class RoleSign {
 	 * 店长以上权限人员
 	 */
 	public static String[] M_ALL() {
-		return String.join(",", SADMIN,Q_AREA_SHOPMANAGER,GENERALMANAGER,Test).split(",");
+		return String.join(",", SADMIN,Q_AREA_SHOPMANAGER,GENERALMANAGER).split(",");
+	}
+	/**
+	 * 店长及店长以上权限人员
+	 */
+	public static String[] M_USER() {
+		return String.join(",", SADMIN,Q_AREA_SHOPMANAGER,GENERALMANAGER,Q_ADMIN).split(",");
 	}
 }

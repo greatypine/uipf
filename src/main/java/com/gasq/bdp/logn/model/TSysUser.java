@@ -34,6 +34,8 @@ public class TSysUser extends ParamsObject{
 
     private Integer status;
 
+    private Boolean isvalid;
+
     private String groupName;
 
     @DateTimeFormat(pattern="yyyy-MM-dd")
@@ -46,8 +48,24 @@ public class TSysUser extends ParamsObject{
     private Date endTime;
     
     private String roleids;
+    
+    public Date getEndTime() {
+		return endTime;
+	}
 
-    public Long getId() {
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	public String getRoleids() {
+		return roleids;
+	}
+
+	public void setRoleids(String roleids) {
+		this.roleids = roleids;
+	}
+
+	public Long getId() {
         return id;
     }
 
@@ -143,6 +161,14 @@ public class TSysUser extends ParamsObject{
         this.status = status;
     }
 
+    public Boolean getIsvalid() {
+        return isvalid;
+    }
+
+    public void setIsvalid(Boolean isvalid) {
+        this.isvalid = isvalid;
+    }
+
     public String getGroupName() {
         return groupName;
     }
@@ -166,21 +192,4 @@ public class TSysUser extends ParamsObject{
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
-
-	public String getRoleids() {
-		return roleids;
-	}
-
-	public void setRoleids(String roleids) {
-		this.roleids = roleids;
-	}
-
-	public Date getEndTime() {
-		return endTime;
-	}
-
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
-    
 }

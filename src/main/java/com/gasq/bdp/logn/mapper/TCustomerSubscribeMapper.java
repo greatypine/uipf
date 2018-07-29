@@ -36,4 +36,10 @@ public interface TCustomerSubscribeMapper {
 	List<Map<String, Object>> queryPagingList(Map<String, Object> params);
 
 	Integer countByBean(Map<String, Object> params);
+
+	List<Map<String, Object>> querySubscribeReceptionInfo(String username);
+
+	List<Map<String, Object>> querySubscribeInfo();
+
+	List<Map<String, Object>> querySubscribeInfo(Integer companyid);
 }

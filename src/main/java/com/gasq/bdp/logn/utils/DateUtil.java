@@ -3,6 +3,8 @@ package com.gasq.bdp.logn.utils;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -339,6 +341,20 @@ public class DateUtil {
 		calendar.setTime(date);
 		return calendar;
 
+	}
+	
+	/**
+	 * 
+	 * 方法描述:获得当前月
+	 * 
+	 * @return String 上个月月字符串 1-9的范围内增加了0前缀
+	 */
+	public static String getOtherMonth(int d,String format) {
+		LocalDate now = LocalDate.now();
+		LocalDate date = now.plusMonths(d);
+		DateTimeFormatter df = DateTimeFormatter.ofPattern(format);
+		String dateString = date.format(df);
+		return dateString;
 	}
 
 	/**

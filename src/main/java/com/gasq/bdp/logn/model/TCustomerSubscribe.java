@@ -26,7 +26,7 @@ public class TCustomerSubscribe extends ParamsObject{
 
     private String project;
 
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date subscribeDate;
 
     private Integer companyId;

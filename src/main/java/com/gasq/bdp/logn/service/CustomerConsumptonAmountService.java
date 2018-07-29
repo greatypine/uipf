@@ -6,8 +6,8 @@ package com.gasq.bdp.logn.service;
 import java.util.List;
 import java.util.Map;
 
-import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmount;
-import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmountExample;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmount;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmountExample;
 
 /**
  * @author Ju_weigang
@@ -17,19 +17,19 @@ import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmountExample;
  */
 public interface CustomerConsumptonAmountService {
 	
-	 	long countByExample(TLtnCustomerConsumptonAmountExample example);
+	 	long countByExample(TCustomerConsumptonAmountExample example);
 
-	    int deleteByExample(TLtnCustomerConsumptonAmountExample example);
+	    int deleteByExample(TCustomerConsumptonAmountExample example);
 
-	    int insertSelective(TLtnCustomerConsumptonAmount record);
+	    int insertSelective(TCustomerConsumptonAmount record);
 
-	    List<TLtnCustomerConsumptonAmount> selectByExample(TLtnCustomerConsumptonAmountExample example);
+	    List<TCustomerConsumptonAmount> selectByExample(TCustomerConsumptonAmountExample example);
 
-	    TLtnCustomerConsumptonAmount selectByPrimaryKey(Integer id);
+	    TCustomerConsumptonAmount selectByPrimaryKey(Integer id);
 
-		Map<String, Object> queryPagingList(TLtnCustomerConsumptonAmount bean);
+		Map<String, Object> queryPagingList(TCustomerConsumptonAmount bean);
 
 		boolean delete(int id);
 
-		TLtnCustomerConsumptonAmount saveOrUpdate(TLtnCustomerConsumptonAmount bean);
+		TCustomerConsumptonAmount saveOrUpdate(TCustomerConsumptonAmount bean);
 }

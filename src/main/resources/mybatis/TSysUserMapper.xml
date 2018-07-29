@@ -14,6 +14,7 @@
     <result column="sex" jdbcType="INTEGER" property="sex" />
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="isvalid" jdbcType="BIT" property="isvalid" />
     <result column="group_name" jdbcType="VARCHAR" property="groupName" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -78,7 +79,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, username, nickname, password, companyid, card_id, email, phoneNum, age, sex, 
-    address, status, group_name, create_time, update_time
+    address, status, isvalid, group_name, create_time, update_time
   </sql>
   <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TSysUserExample" resultMap="BaseResultMap">
     select
@@ -115,14 +116,14 @@
       password, companyid, card_id, 
       email, phoneNum, age, 
       sex, address, status, 
-      group_name, create_time, update_time
-      )
+      isvalid, group_name, create_time, 
+      update_time)
     values (#{id,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, 
       #{password,jdbcType=VARCHAR}, #{companyid,jdbcType=INTEGER}, #{cardId,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{phonenum,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, 
       #{sex,jdbcType=INTEGER}, #{address,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
-      #{groupName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+      #{isvalid,jdbcType=BIT}, #{groupName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TSysUser">
     insert into t_sys_user
@@ -162,6 +163,9 @@
       </if>
       <if test="status != null">
         status,
+      </if>
+      <if test="isvalid != null">
+        isvalid,
       </if>
       <if test="groupName != null">
         group_name,
@@ -209,6 +213,9 @@
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isvalid != null">
+        #{isvalid,jdbcType=BIT},
       </if>
       <if test="groupName != null">
         #{groupName,jdbcType=VARCHAR},
@@ -266,6 +273,9 @@
       <if test="record.status != null">
         status = #{record.status,jdbcType=INTEGER},
       </if>
+      <if test="record.isvalid != null">
+        isvalid = #{record.isvalid,jdbcType=BIT},
+      </if>
       <if test="record.groupName != null">
         group_name = #{record.groupName,jdbcType=VARCHAR},
       </if>
@@ -294,6 +304,7 @@
       sex = #{record.sex,jdbcType=INTEGER},
       address = #{record.address,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
+      isvalid = #{record.isvalid,jdbcType=BIT},
       group_name = #{record.groupName,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP}
@@ -301,7 +312,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.gasq.bdp.logn.model.TSysUser">
+  <update id="updateByPrimaryKeySelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TSysUser">
     update t_sys_user
     <set>
       <if test="username != null">
@@ -337,6 +348,9 @@
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
+      <if test="isvalid != null">
+        isvalid = #{isvalid,jdbcType=BIT},
+      </if>
       <if test="groupName != null">
         group_name = #{groupName,jdbcType=VARCHAR},
       </if>
@@ -362,6 +376,7 @@
       sex = #{sex,jdbcType=INTEGER},
       address = #{address,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
+      isvalid = #{isvalid,jdbcType=BIT},
       group_name = #{groupName,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
@@ -381,7 +396,7 @@
       order by ${orderByClause}
     </if>
   </select>
-<select id="selectUserType" resultType="java.util.Map">
+  <select id="selectUserType" resultType="java.util.Map">
   	select * from v_usertype
 </select>
 <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
@@ -395,7 +410,7 @@
 	LEFT JOIN t_sys_user_ext tsue ON tsu.id = tsue.user_id
 	LEFT JOIN v_user_status vus ON tsu. STATUS = vus.VALUE and tsu.companyid=vus.companyid
 	LEFT JOIN v_sex vs ON tsu.sex = vs.VALUE  and tsu.companyid=vs.companyid
-	where 1=1 
+	where tsu.isvalid=1 
 	<if test="username !=null and username!=''">
 		and tsu.username=#{username}
 	</if>
@@ -434,7 +449,7 @@
 		LEFT JOIN t_sys_user_ext tsue ON tsu.id = tsue.user_id
 		LEFT JOIN v_user_status vus ON tsu. STATUS = vus.VALUE and tsu.companyid=vus.companyid
 		LEFT JOIN v_sex vs ON tsu.sex = vs.VALUE  and tsu.companyid=vs.companyid
-		where 1=1 
+		where tsu.isvalid=1 
 		<if test="username !=null and username!=''">
 			and tsu.username=#{username}
 		</if>
@@ -466,8 +481,9 @@
     from t_sys_user u
     INNER JOIN t_sys_user_role ur ON u.id = ur.user_id
 	INNER JOIN t_sys_role r on ur.role_id = r.id
+	INNER JOIN t_company tc on u.companyid = tc.id
 	where 
-		u.`status`=0 and r.`status`=1
+		u.isvalid=1 and r.`status`=1 and tc.status=1
 		<if test="companyid!=null">
 			and u.companyid=#{companyid}
 		</if>

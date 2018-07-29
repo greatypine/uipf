@@ -895,6 +895,66 @@ public class TSysUserExample {
             return (Criteria) this;
         }
 
+        public Criteria andIsvalidIsNull() {
+            addCriterion("isvalid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidIsNotNull() {
+            addCriterion("isvalid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidEqualTo(Boolean value) {
+            addCriterion("isvalid =", value, "isvalid");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidNotEqualTo(Boolean value) {
+            addCriterion("isvalid <>", value, "isvalid");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidGreaterThan(Boolean value) {
+            addCriterion("isvalid >", value, "isvalid");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidGreaterThanOrEqualTo(Boolean value) {
+            addCriterion("isvalid >=", value, "isvalid");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidLessThan(Boolean value) {
+            addCriterion("isvalid <", value, "isvalid");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidLessThanOrEqualTo(Boolean value) {
+            addCriterion("isvalid <=", value, "isvalid");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidIn(List<Boolean> values) {
+            addCriterion("isvalid in", values, "isvalid");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidNotIn(List<Boolean> values) {
+            addCriterion("isvalid not in", values, "isvalid");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidBetween(Boolean value1, Boolean value2) {
+            addCriterion("isvalid between", value1, value2, "isvalid");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsvalidNotBetween(Boolean value1, Boolean value2) {
+            addCriterion("isvalid not between", value1, value2, "isvalid");
+            return (Criteria) this;
+        }
+
         public Criteria andGroupNameIsNull() {
             addCriterion("group_name is null");
             return (Criteria) this;

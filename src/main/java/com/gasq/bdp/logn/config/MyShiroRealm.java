@@ -64,6 +64,7 @@ public class MyShiroRealm extends AuthorizingRealm{
         //到数据库查是否有此对象
         TSysUser tu = new TSysUser();
         tu.setUsername(loginName);
+        tu.setIsvalid(true);
         List<TSysUser> users =userService.selectByExample(tu);// 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
         SystemUser su = SystemUserInfo.getSystemUser();
         if(su==null) su = SystemUserInfo.getInstance();

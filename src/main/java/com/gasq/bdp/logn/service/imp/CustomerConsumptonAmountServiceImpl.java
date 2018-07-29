@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import com.gasq.bdp.logn.mapper.TLtnCustomerConsumptonAmountMapper;
+import com.gasq.bdp.logn.mapper.TCustomerConsumptonAmountMapper;
 import com.gasq.bdp.logn.mapper.TLtnCustomerMapper;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TConsumptonProjectExample;
-import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmount;
-import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmountExample;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmount;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmountExample;
 import com.gasq.bdp.logn.service.CustomerConsumptonAmountService;
 import com.gasq.bdp.logn.service.TConsumptonProjectService;
 import com.gasq.bdp.logn.service.TInventoryLogService;
@@ -36,23 +36,23 @@ import com.gasq.bdp.logn.utils.DateUtil;
 @Service
 public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAmountService {
 	protected Logger logger = Logger.getLogger(this.getClass());
-	@Autowired TLtnCustomerConsumptonAmountMapper customerConsumptonAmountMapper;
+	@Autowired TCustomerConsumptonAmountMapper customerConsumptonAmountMapper;
 	@Autowired TLtnCustomerMapper customerMapper;
 	@Autowired TConsumptonProjectService consumptonProjectService;
 	@Autowired TInventoryLogService inventoryLogService;
 
 	@Override
-	public long countByExample(TLtnCustomerConsumptonAmountExample example) {
+	public long countByExample(TCustomerConsumptonAmountExample example) {
 		return customerConsumptonAmountMapper.countByExample(example);
 	}
 
 	@Override
 	@Transactional(rollbackFor=Exception.class)
-	public int deleteByExample(TLtnCustomerConsumptonAmountExample example) {
+	public int deleteByExample(TCustomerConsumptonAmountExample example) {
 		try {
-			List<TLtnCustomerConsumptonAmount> list = customerConsumptonAmountMapper.selectByExample(example);
-			for (TLtnCustomerConsumptonAmount tLtnCustomerConsumptonAmount : list) {
-				this.delete(tLtnCustomerConsumptonAmount.getId());
+			List<TCustomerConsumptonAmount> list = customerConsumptonAmountMapper.selectByExample(example);
+			for (TCustomerConsumptonAmount TCustomerConsumptonAmount : list) {
+				this.delete(TCustomerConsumptonAmount.getId());
 			}
 		}catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -78,22 +78,22 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 	}
 	
 	@Override
-	public int insertSelective(TLtnCustomerConsumptonAmount record) {
+	public int insertSelective(TCustomerConsumptonAmount record) {
 		return customerConsumptonAmountMapper.insertSelective(record);
 	}
 
 	@Override
-	public List<TLtnCustomerConsumptonAmount> selectByExample(TLtnCustomerConsumptonAmountExample example) {
+	public List<TCustomerConsumptonAmount> selectByExample(TCustomerConsumptonAmountExample example) {
 		return customerConsumptonAmountMapper.selectByExample(example);
 	}
 
 	@Override
-	public TLtnCustomerConsumptonAmount selectByPrimaryKey(Integer id) {
+	public TCustomerConsumptonAmount selectByPrimaryKey(Integer id) {
 		return customerConsumptonAmountMapper.selectByPrimaryKey(id);
 	}
 
 	@Override
-	public Map<String, Object> queryPagingList(TLtnCustomerConsumptonAmount bean) {
+	public Map<String, Object> queryPagingList(TCustomerConsumptonAmount bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
 		List<Map<String,Object>> list = null;
 		int start = 0;
@@ -114,7 +114,7 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 
 	@Override
 	@Transactional(rollbackFor=Exception.class)
-	public TLtnCustomerConsumptonAmount saveOrUpdate(TLtnCustomerConsumptonAmount bean) {
+	public TCustomerConsumptonAmount saveOrUpdate(TCustomerConsumptonAmount bean) {
 		try {
 			bean.setUpdatetime(DateUtil.getSysCurrentDate());
 			BigDecimal arrears = bean.getArrears();//欠款

@@ -10,7 +10,7 @@
     <result column="root_in" jdbcType="INTEGER" property="rootIn" />
     <result column="profession" jdbcType="INTEGER" property="profession" />
     <result column="project" jdbcType="VARCHAR" property="project" />
-    <result column="subscribe_date" jdbcType="DATE" property="subscribeDate" />
+    <result column="subscribe_date" jdbcType="TIMESTAMP" property="subscribeDate" />
     <result column="company_id" jdbcType="INTEGER" property="companyId" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="create_user" jdbcType="VARCHAR" property="createUser" />
@@ -120,7 +120,7 @@
       remark)
     values (#{id,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, #{customerPhone,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{rootIn,jdbcType=INTEGER}, 
-      #{profession,jdbcType=INTEGER}, #{project,jdbcType=VARCHAR}, #{subscribeDate,jdbcType=DATE}, 
+      #{profession,jdbcType=INTEGER}, #{project,jdbcType=VARCHAR}, #{subscribeDate,jdbcType=TIMESTAMP}, 
       #{companyId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{remark,jdbcType=VARCHAR})
@@ -203,7 +203,7 @@
         #{project,jdbcType=VARCHAR},
       </if>
       <if test="subscribeDate != null">
-        #{subscribeDate,jdbcType=DATE},
+        #{subscribeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="companyId != null">
         #{companyId,jdbcType=INTEGER},
@@ -262,7 +262,7 @@
         project = #{record.project,jdbcType=VARCHAR},
       </if>
       <if test="record.subscribeDate != null">
-        subscribe_date = #{record.subscribeDate,jdbcType=DATE},
+        subscribe_date = #{record.subscribeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="record.companyId != null">
         company_id = #{record.companyId,jdbcType=INTEGER},
@@ -300,7 +300,7 @@
       root_in = #{record.rootIn,jdbcType=INTEGER},
       profession = #{record.profession,jdbcType=INTEGER},
       project = #{record.project,jdbcType=VARCHAR},
-      subscribe_date = #{record.subscribeDate,jdbcType=DATE},
+      subscribe_date = #{record.subscribeDate,jdbcType=TIMESTAMP},
       company_id = #{record.companyId,jdbcType=INTEGER},
       status = #{record.status,jdbcType=INTEGER},
       create_user = #{record.createUser,jdbcType=VARCHAR},
@@ -337,7 +337,7 @@
         project = #{project,jdbcType=VARCHAR},
       </if>
       <if test="subscribeDate != null">
-        subscribe_date = #{subscribeDate,jdbcType=DATE},
+        subscribe_date = #{subscribeDate,jdbcType=TIMESTAMP},
       </if>
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=INTEGER},
@@ -372,7 +372,7 @@
       root_in = #{rootIn,jdbcType=INTEGER},
       profession = #{profession,jdbcType=INTEGER},
       project = #{project,jdbcType=VARCHAR},
-      subscribe_date = #{subscribeDate,jdbcType=DATE},
+      subscribe_date = #{subscribeDate,jdbcType=TIMESTAMP},
       company_id = #{companyId,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
       create_user = #{createUser,jdbcType=VARCHAR},
@@ -399,7 +399,7 @@
   <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 	SELECT
 		p.id,p.company_id as companyId,p.create_time as createTime,p.create_user as createUser,p.customer_name customerName,p.customer_phone as customerPhone,p.project,p.remark,p.root_in as rootIn,
-		p.sex as sex,DATE_FORMAT(p.subscribe_date,'%Y-%m-%d') as subscribeDate,p.update_time as updateTime,p.update_user as updateUser,p.status,vsb.text statusName,
+		p.sex as sex,DATE_FORMAT(p.subscribe_date,'%Y-%m-%d %H:%i:%s') as subscribeDate,p.update_time as updateTime,p.update_user as updateUser,p.status,vsb.text statusName,
 		tc.`name` as companyName,vri.`name` as rootInName,p.email,p.profession,vcp.text as professionName
 	FROM
 		t_customer_subscribe p
@@ -432,7 +432,7 @@
 	<if test="status !=null">
 		and p.status=#{status}
 	</if>
-	order by p.update_time desc 
+	order by p.create_time desc 
 	<if test="index !=null and pageSize!=null">
 		limit #{index},#{pageSize}
 	</if>
@@ -472,5 +472,47 @@
 			and p.status=#{status}
 		</if>
 	) temp
+</select>
+<!-- <select id="querySubscribeReceptionInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap"> -->
+<!-- 	SELECT -->
+<!-- 		GROUP_CONCAT(a.customer_name) customer_name -->
+<!-- 		, DATE_FORMAT(a.update_time, '%Y-%m-%d') datetime -->
+<!-- 	FROM -->
+<!-- 		t_customer_subscribe a -->
+<!-- 	WHERE -->
+<!-- 		a.`status` = 1 -->
+<!-- 	AND (a.subscribe_date &lt;= now() or a.subscribe_date is null) -->
+<!-- 	AND DATE_FORMAT(a.update_time, '%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d') -->
+<!-- 	GROUP BY DATE_FORMAT(a.update_time, '%Y-%m-%d') -->
+<!-- </select> -->
+<select id="querySubscribeReceptionInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	SELECT
+		GROUP_CONCAT(a.customer_name ORDER BY a.create_time) customer_name
+		, DATE_FORMAT(a.create_time, '%Y-%m-%d') datetime
+		,tsu.nickname,
+		(select count(*) from t_customer_subscribe b where b.`status` = 1 and b.subscribe_date= DATE_FORMAT(DATE_SUB(curdate(),INTERVAL 1 DAY),'%Y-%m-%d')) jiezhennumbs
+	FROM
+		t_customer_subscribe a
+	LEFT JOIN t_sys_user tsu  on a.create_user = tsu.username
+	WHERE
+		a.`status` = 0 and a.create_user = 'yuj'
+	AND (a.subscribe_date &lt;= DATE_FORMAT(DATE_SUB(curdate(),INTERVAL 1 DAY),'%Y-%m-%d') or a.subscribe_date is null)
+	 AND DATE_FORMAT(a.create_time, '%Y-%m-%d') &lt;= DATE_FORMAT(DATE_SUB(curdate(),INTERVAL 1 DAY),'%Y-%m-%d')
+	GROUP BY DATE_FORMAT(a.create_time, '%Y-%m-%d'),tsu.nickname;
+</select>
+
+<select id="querySubscribeInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+	SELECT
+		GROUP_CONCAT(a.customer_name ORDER BY a.create_time) customer_name
+		, DATE_FORMAT(a.create_time, '%Y-%m-%d') datetime,
+		(select count(*) from t_customer_subscribe b where b.`status` = 0 and b.company_id=#{companyid} and b.subscribe_date= DATE_FORMAT(now(),'%Y-%m-%d')) daozhennumbs,
+		tsu.nickname
+	FROM
+		t_customer_subscribe a
+		LEFT JOIN t_sys_user tsu on a.create_user = tsu.username
+	WHERE
+		a.`status` = 0 and a.company_id=#{companyid}
+	AND DATE_FORMAT(a.create_time, '%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
+	GROUP BY DATE_FORMAT(a.create_time, '%Y-%m-%d'),tsu.nickname
 </select>
 </mapper>

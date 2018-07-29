@@ -10,20 +10,22 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.gasq.bdp.logn.iexception.WorkFlowJobException;
-import com.gasq.bdp.logn.mapper.TLtnCustomerConsumptonAmountMapper;
+import com.gasq.bdp.logn.mapper.TCustomerConsumptonAmountMapper;
+import com.gasq.bdp.logn.mapper.TLtnCustomerMapper;
 import com.gasq.bdp.logn.mapper.TMessageMapper;
 import com.gasq.bdp.logn.mapper.TVipCustomerLogMapper;
 import com.gasq.bdp.logn.mapper.TVipCustomerMapper;
 import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
+import com.gasq.bdp.logn.model.TLtnCustomer;
 import com.gasq.bdp.logn.model.TMessage;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TVipCustomer;
@@ -32,6 +34,7 @@ import com.gasq.bdp.logn.model.TVipCustomerExample.Criteria;
 import com.gasq.bdp.logn.model.TVipCustomerLog;
 import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.service.TVipCustomerService;
+import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
 
@@ -43,14 +46,13 @@ import com.gasq.bdp.logn.utils.WorkFlowUtil;
  */
 @Service
 public class TVipCustomerServiceImpl implements TVipCustomerService {
+	protected Logger logger = Logger.getLogger(this.getClass());
 	@Autowired TVipCustomerMapper mapper;
 	@Autowired TVipCustomerLogMapper customerLogMapper;
-	@Autowired TLtnCustomerConsumptonAmountMapper consumptonAmountMapper;
+	@Autowired TLtnCustomerMapper customerMapper;
+	@Autowired TCustomerConsumptonAmountMapper consumptonAmountMapper;
 	@Autowired TMessageMapper messagemapper;
 	@Autowired EmailManager emailManager;
-	
-	@Value("${spring.mail.username}")
-	private String sourceEmail;
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
@@ -117,6 +119,7 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 		Integer count = mapper.countByBean(bean);
 		result.put("rows",list);
 		result.put("total",count);
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询会员用户信息列表完成！查询条数："+count+",查询参数："+CommonUtils.bean2Json(bean));
 		return result;
 	}
 
@@ -140,9 +143,11 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 				mapper.insertSelective(bean);
 				customerLogMapper.insertSelective(new TVipCustomerLog(bean.getId(),InitProperties.CUSTOMER_CONSUMPTON_OPTION_ADD,bean.getActualAmount().add(bean.getGiveAmount()),user.getCompanyid(),user.getUsername()));
 			}
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新或插入会员用户信息成功！");
 			return true;
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】插入退操或会员用户失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 		}
 		return false;
 	}
@@ -192,16 +197,36 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 				emails = list.stream().map(f->f.getEmail()).distinct().toArray();
 				TMessage message = messagemapper.selectByPrimaryKey(bean.getMessid());
 				if(bean.getMesstype()==1) {//邮件
-					emailManager.sendSimpleEmail(sourceEmail, emails, message.getTitle(), message.getMessage());
+					emailManager.sendSimpleEmail(emails, message.getTitle(), message.getMessage());
 				}else if(bean.getType()==2) {//短信
 					
 				}
 			}
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】发送消息成功！共发送消息【"+emails.length+"】条！");
 			result.put("status", true);
 			result.put("mess", "发送消息成功！共发送消息【"+emails.length+"】条！");
 		} catch (Exception e) {
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】发送消息操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
 			throw new WorkFlowJobException("发送消息失败！"+e.getMessage(),e);
 		}
 		return result;
+	}
+
+	@Override
+	public boolean createConsumptonOrder(TVipCustomer bean) {
+		TSysUser user = SystemUserInfo.getSystemUser().getUser();
+		TLtnCustomer customer = new TLtnCustomer();
+		customer.setCustomername(bean.getCustomerName());
+		customer.setPhonenumb(bean.getCustomerPhone());
+		customer.setCardId(bean.getEmail());
+		customer.setChuFuZhen(1);
+		customer.setStatus(0);
+		customer.setCompanyId(user.getCompanyid());
+		customer.setCreateuser(user.getUsername());
+		customer.setProfession(bean.getProfession());
+		customer.setSex(bean.getSex());
+		customerMapper.insertSelective(customer);
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】从会员信息快速生成客户消费订单信息成功！生成内容："+CommonUtils.bean2Json(customer));
+		return true;
 	}
 }

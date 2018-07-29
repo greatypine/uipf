@@ -3,14 +3,25 @@
 <head th:include="include :: linkresource('首页')">
 </head>
 <body>
-<div id="newMessageDIV" style="display:none"></div> 
+<div id="newMessageDIV" style="display:none"></div>
+<!-- 一键锁定屏幕解锁对话框 模态对话框 -->
+<div id="dlg-lock" class="easyui-dialog" style="width:340px;height:120px;" data-options="closed: true,modal:true,title:''">
+    <form id="lock_form">
+        <div style="float:left;margin-top:20px">
+            <label style="margin-right:5px;height:30px;font-size:12px;">解锁密码:</label>
+            <input class="easyui-textbox" style="float:left;width:250px;height:30px;" type="password" id="unlock_passwd" data-options="required:true,prompt:'请输入解锁密码!'"/>
+        </div>
+        <div style="float:left;margin-left:115px;margin-top:5px;">
+            <a href="javascript:void(0)" class="easyui-linkbutton c3" style="float:left;width:80px;height:26px;" onclick="cu.unlockSubmit();">提交</a>
+        </div>
+    </form>
+</div>
+
 	<div class="easyui-layout" data-options="fit:true" style="width:100%;height: 100%;" border="false">
 		<div data-options="region:'north',split:false" id="north" style="background: #f6c1bc;overflow: hidden;">
 	        <div class="head head-right" style="float: right;padding-top: 8px;padding-right: 10px;">
                 <a href="javascript:void(0)" class="easyui-menubutton" data-options="menu:'#mm_user'"><span class="glyphicon glyphicon-user"></span><label th:text="${session.user.role[0].roleName}"></label>&nbsp;&nbsp;★&nbsp;&nbsp;<label th:text="${session.user.user.nickname}"></label></a>
-                <div id="mm_user" style="width:150px;">
-                    <div  shiro:hasPermission="user:create" data-options="iconCls:'icon-edit'" class="changepwd">修改信息</div>
-                    <div class="menu-sep"></div>
+                <div id="mm_user" style="width: 200px;">
                     <div data-options="iconCls:'icon-undo'" class="loginOut">安全退出</div>
                 </div>
 	        </div>
@@ -30,80 +41,6 @@
 				</div>
 			</div>
 		</div>
-	</div>
-	
-	<div id="systemuserdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#systemuser_dlg-buttons">
-		<form id="systemuserdlg-fm" th:method="post" style="margin: 0; padding: 1%">
-			<table cellpadding="5" style="width: 100%">
-	    		<tr>
-	    			<td class="tdname">角色名称：</td>
-	    			<td class="tdnamebox">
-	    				<input id="username" name="username" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
-	    			</td>
-	    			<td class="tdname">密码：</td>
-	    			<td class="tdnamebox">
-	    				<input id="password" name="password" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			<td class="tdname">角色：</td>
-	    			<td class="tdnamebox">
-	    				<input id="roleid" name="roleid" class="easyui-combobox roleid" style="width: 100%;" data-options="required:true,editable:false,valueField:'roleid',textField:'roleName'"/>
-	    			</td>
-	    			<td class="tdname">状态：</td>
-	    			<td class="tdnamebox">
-	    				<input name="status" id="status" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:1,text:'开启'},{value:0,text:'关闭'}]"/>
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			<td class="tdname">公司：</td>
-	    			<td class="tdnamebox">
-	    				<input id="companyid" name="companyid" class="easyui-combobox companylist" style="width: 100%;" data-options="required:true,editable:false,valueField:'companyid',textField:'companyName'"/>
-	    			</td>
-	    			<td class="tdname">类型：</td>
-	    			<td class="tdnamebox">
-	    				<input id="type" name="type" class="easyui-combobox usertype" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'name'"/>
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			
-	    			<td class="tdname">电话：</td>
-	    			<td class="tdnamebox">
-	    				<input id="phonenum" name="phonenum" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
-	    			</td>
-	    			<td class="tdname">邮箱：</td>
-	    			<td class="tdnamebox">
-	    				<input id="email" name="email" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			<td class="tdname">昵称：</td>
-	    			<td class="tdnamebox">
-	    				<input id="nickname" name="nickname" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
-	    			</td>
-	    			<td class="tdname">地址：</td>
-	    			<td class="tdnamebox">
-	    				<input id="address" name="address" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			<td class="tdname">年龄：</td>
-	    			<td class="tdnamebox">
-	    				<input id="age" name="age" class="easyui-numberbox" style="width: 100%;" data-options="required:false"/>
-	    			</td>
-	    			<td class="tdname">性别：</td>
-	    			<td class="tdnamebox">
-	    				<input name="sex" id="sex" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:1,text:'男'},{value:0,text:'女'}]"/>
-<!-- 	    				<input id="sex" name="sex" class="easyui-textbox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:1,text:'男'},{value:0,text:'女'}]"/> -->
-	    			</td>
-	    		</tr>
-	    	</table>
-			<input id="id" name="id" value="" type="hidden" />
-		</form>
-	</div>
-	<div id="systemuser_dlg-buttons">
-		<a shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemuser.complate()" style="width: 90px">确认</a> 
-		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#systemuserdlg-fm').form('clear');$('#systemuserdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 </body>
 <script type="text/javascript" th:src="@{/static/js/index/index.js}"></script>

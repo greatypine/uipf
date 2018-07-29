@@ -7,7 +7,7 @@ $(function(){
 function initData(){
 	customerSubscribe = new MycustomerSubscribe();
 	var st = null;
-	if(cu.hasRoles("q_area_shopManager,q_admin,q_receptionist,q_counselor")){
+	if(cu.hasRoles("q_area_shopManager,q_admin,q_receptionist,q_counselor,q_option")){
 		st = 0;
 	}
 	var initQueryParams={status:st};
@@ -27,8 +27,8 @@ function initData(){
 	$(".counsoler").combobox({
 		url:content+'/common/queryCounsoler?id='+user.user.companyid
 	});
-	if(cu.hasRoles("sadmin,generalManager,h_admin,h_option")){
-		$("#subscribeDate").datebox().datebox('calendar').calendar({
+	if(cu.hasRoles("h_admin,h_option")){
+		$("#subscribeDate").datetimebox().datetimebox('calendar').calendar({
 			validator: function(date){
 				var now = new Date();
 				now.setTime(now.getTime()-24*60*60*1000);
@@ -50,10 +50,16 @@ function MycustomerSubscribe(){
 		        queryParams:params,
 		        columns:[[
 		        	 	{field:'id',title:'编号',hidden:true},
-				        {field:'customerName',title:'客户姓名',width:"10%",align:'center'},
-				        {field:'statusName',title:'订单状态',width:"10%",align:'center'},
-				        {field:'customerPhone',title:'客户手机',width:"8%",align:'center'},
-				        {field:'sex',title:'性别',width:"5%",align:'center',formatter:function(val,row){
+				        {field:'customerName',title:'客户姓名',width:"8%",align:'center'},
+				        {field:'statusName',title:'订单状态',width:"6%",align:'center',formatter:function(val,row){
+				        	if(row.status==1){
+				        		return '<font color="FF0033">'+val+'</font>';
+				        	}else{
+				        		return '<font color="33CC33">'+val+'</font>';
+				        	}
+				        }},
+				        {field:'customerPhone',title:'客户手机',width:"6%",align:'center'},
+				        {field:'sex',title:'性别',width:"4%",align:'center',formatter:function(val,row){
 				        	if(val==0){
 					        	return '<font color="FF0033">女</font>';
 					        }else if(val==1){
@@ -62,13 +68,17 @@ function MycustomerSubscribe(){
 					        	return '<font color="00CC33">未知</font>';
 					        }
 				        }},
-				        {field:'professionName',title:'客户职业',width:"8%",align:'center'},
-				        {field:'rootInName',title:'来源',width:"8%",align:'center'},
+				        {field:'professionName',title:'客户职业',width:"6%",align:'center'},
+				        {field:'rootInName',title:'来源',width:"7%",align:'center'},
 				        {field:'companyName',title:'所属公司',width:"10%",align:'center'},
-				        {field:'project',title:'预约项目',width:"12%",align:'center'},
+				        {field:'project',title:'预约项目',width:"10%",align:'center'},
 				        {field:'subscribeDate',title:'约诊时间',width:"8%",align:'center'},
 				        {field:'createUser',title:'创建人',width:"6%",align:'center'},
 				        {field:'createTime',title:'预约时间',width:"10%",align:'center',formatter:function(val,row){
+				        	return CU.DateTimeFormatter(val,1);
+				        }},
+				        {field:'updateUser',title:'接诊人',width:"6%",align:'center'},
+				        {field:'updateTime',title:'接诊时间',width:"10%",align:'center',formatter:function(val,row){
 				        	return CU.DateTimeFormatter(val,1);
 				        }}
 		        ]],
@@ -97,12 +107,23 @@ function MycustomerSubscribe(){
 						cu.initClearCombobox("profession1");
 					}
 					$("#customerSubscribedlg-fm").form("clear").form("load",row);
-					if(row.status==1){
-						$("#basecomplate").hide();
+					if(row.status==1 || row.status==99){
+						cu.disableForm("customerSubscribedlg-fm",true);
+//						$("#basecomplate").hide();
+						$("#complatebtn").hide();
+					}else if(row.status==0){
+						cu.disableForm("customerSubscribedlg-fm",false);
+						$("#complatebtn").show();
 					}
 				},
 				onSelect:function(index,row){
-				
+					if(row.status==1){
+		        		$("#reception").linkbutton('disable');
+		        	}else if(row.status==0){
+		        		$("#reception").linkbutton('enable');
+		        	}else{
+		        		$("#jiesuanfx").linkbutton('disable');
+		        	}
 				},
 				onLoadSuccess:function(){
 				} 
@@ -136,8 +157,10 @@ function MycustomerSubscribe(){
 			cu.initClearCombobox("rootIn");
 			cu.initClearCombobox("sex");
 			cu.initClearCombobox("companyId");
+			cu.initClearCombobox("profession");
 		}
-		cu.initClearCombobox("profession");
+		cu.disableForm("ccustomerSubscribedlg-fm",false);
+		$("#complatebtn").show();
 		$("#customerSubscribedlg").dialog("open").dialog("center").dialog("setTitle","添加预约客户信息");
 	};
 	this.reception = function(){
@@ -158,6 +181,7 @@ function MycustomerSubscribe(){
 		}
 	};
 	this.doReception = function(){
+		$("#basecomplate").linkbutton("disable");
 		$('#ccacdlg-fm').form('submit',{
 			url:content+"/ccac/saveOrUpdateTFMCust",
 			onSubmit:function(){
@@ -179,8 +203,11 @@ function MycustomerSubscribe(){
 					$.messager.alert('提示','操作失败','warning');
 					$.messager.progress('close');
 				}
-//				$('#basecomplate').linkbutton('enable');
-			}
+				$('#basecomplate').linkbutton('enable');
+			},error:function(XMLHttpRequest,textStatus,errorThrown){
+                $.messager.alert('提示',"操作失败！","error");
+                $('#basecomplate').linkbutton('enable');
+            }
 		});
 	};
 	this.initClearCombobox = function(id){
@@ -189,6 +216,7 @@ function MycustomerSubscribe(){
 		$('#'+id).combobox('loadData',data);
 	};
 	this.complate = function(){
+		$("#complatebtn").linkbutton("disable");
 		$('#customerSubscribedlg-fm').form('submit',{
 			url:content+"/customerSubscribe/saveOrUpdate",
 			onSubmit:function(){
@@ -204,15 +232,19 @@ function MycustomerSubscribe(){
 					$.messager.progress('close');
 					$('#customerSubscribedlg').dialog('close');
 					$('#customerSubscribe_table').datagrid('reload');
-					if(id=="" || id==null){
-						cu.sendMessage(amq,"topic://back_subscribe_msg","后台用户："+user.user.nickname+"，在"+cu.getCurrentDateTime()+"成功预约了新顾客->姓名："+customerName+"，手机号："+customerPhone+",预约到店时间："+subscribeDate+"。");
-					}
+//					if(id=="" || id==null){
+//						cu.sendMessage(amq,"topic://back_subscribe_msg","后台用户："+user.user.nickname+"，在"+cu.getCurrentDateTime()+"成功预约了新顾客->姓名："+customerName+"，手机号："+customerPhone+",预约到店时间："+subscribeDate+"。");
+//					}
 					$('#customerSubscribedlg-fm').form('clear');
 				}else{
 					$.messager.alert('提示','操作失败','warning');
 					$.messager.progress('close');
 				}
-			}
+				$('#complatebtn').linkbutton('enable');
+			},error:function(XMLHttpRequest,textStatus,errorThrown){
+                $.messager.alert('提示',"操作失败！","error");
+                $('#complatebtn').linkbutton('enable');
+            }
 		});
 	};
 	this.onDateDiffSelect = function(date){
@@ -222,7 +254,7 @@ function MycustomerSubscribe(){
 	this.remove = function(){
 		var row=$('#customerSubscribe_table').datagrid('getSelected');
 		if(row){
-			$.messager.confirm('提示信息', '你确认要删除此项配置吗?', function(r){
+			$.messager.confirm('提示信息', '你确认要关闭此项配置吗?', function(r){
 				if (r){
 					$.ajax({
 						data :{id:row.id},

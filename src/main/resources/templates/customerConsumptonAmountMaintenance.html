@@ -11,11 +11,11 @@
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="ccac.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="ccac.add()">添加</a> 
-			<a id="jiesuanpt" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-pay" plain="true" onclick="ccac.ptcommit()">普通结算</a>
-			<a id="jiesuansk" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:false" iconCls="icon-card" plain="true" onclick="ccac.querySwipingCardCommit()">刷卡结算</a>
-			<a id="jiesuanhy" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-vip" plain="true" onclick="ccac.hycommit()">会员结算</a>
-			<a id="jiesuanfx" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-fenxiao" plain="true" onclick="ccac.fxcommit()">分销结算</a>
+			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist,q_counselor" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="ccac.add()">添加</a> 
+			<a id="jiesuanpt" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist,q_counselor" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-pay" plain="true" onclick="ccac.ptcommit()">普通结算</a>
+			<a id="jiesuansk" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist,q_counselor" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:false" iconCls="icon-card" plain="true" onclick="ccac.querySwipingCardCommit()">刷卡结算</a>
+			<a id="jiesuanhy" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist,q_counselor" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-vip" plain="true" onclick="ccac.hycommit()">会员结算</a>
+			<a id="jiesuanfx" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist,q_counselor" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-fenxiao" plain="true" onclick="ccac.fxcommit()">分销结算</a>
 <!-- 			<a id="print" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-print" plain="true" onclick="ccac.printData()">打印</a> -->
 			<a id="orderback" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-return" data-options="disabled:true" plain="true" onclick="ccac.orderBack()">订单回退</a>
 			<a id="export" shiro:hasPermission="user:execute" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-large-smartart" plain="true" onclick="ccac.exportData()">导出</a>
@@ -100,12 +100,12 @@
 		</form>
 	</div>
 	<div id="ccac_dlg-buttons">
-		<a id="basecomplate" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_counselor" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.complate()" style="width: 90px">确认</a> 
+		<a id="basecomplate" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_counselor,q_option,q_receptionist" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.complate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#ccacdlg-fm').form('clear');$('#ccacdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 	
-	<div id="ccacdetaildlg" class="easyui-dialog"  data-options="modal:true" style="width: 55%; height:65%;overflow: hidden;" closed="true" buttons="#ccacdetail_dlg-buttons">
-		<div data-options="region:'north'" style="height: 55%">
+	<div id="ccacdetaildlg" class="easyui-dialog"  data-options="modal:true" style="width: 55%; height:80%;overflow: hidden;" closed="true" buttons="#ccacdetail_dlg-buttons">
+		<div data-options="region:'north'" style="height: auto;">
 			<form id="ccacdetaildlg-fm" th:method="post" style="margin: 0; padding: 1%;">
 				<table cellpadding="5" style="width: 100%">
 		    		<tr>
@@ -123,9 +123,15 @@
 		    			<td class="tdnamebox"><input name="arrears" id="arrears" class="easyui-numberbox" style="width: 100%;" data-options="min:0,precision:2"/></td>
 		    		</tr>
 		    		<tr>
+		    			<td class="tdname">套餐次数：</td>
+		    			<td class="tdnamebox"><input name="projectNums" id="projectNums" class="easyui-numberbox" style="width: 100%;" data-options="min:0"/></td>
+		    			<td class="tdname">套餐时长(月)：</td>
+		    			<td class="tdnamebox"><input name="deadline" id="deadline" class="easyui-numberbox" style="width: 100%;" data-options="min:0"/></td>
+		    		</tr>
+		    		<tr>
 		    			<td class="tdname">还款金额：</td>
 		    			<td class="tdnamebox"><input name="repayment" id="repayment" class="easyui-numberbox" style="width: 100%;" data-options="min:0,precision:2"/></td>
-		    			<td class="tdname">移动支付：</td>
+		    			<td class="tdname">网络/移动支付：</td>
 		    			<td class="tdnamebox"><input name="movePayment" id="movePayment" class="easyui-numberbox" style="width: 100%;" data-options="min:0,precision:2"/></td>
 		    		</tr>
 		    		<tr>
@@ -145,7 +151,7 @@
 				<input id="customerId" name="customerId" value="" type="hidden" />
 			</form>
 		</div>
-		<div id="consumpton_project_list" data-options="region:'south'" style="height: 45%">
+		<div id="consumpton_project_list" data-options="region:'south'" style="">
 	    	<table id="project_dg" class="easyui-datagrid" style="width: 100%;padding: 1%;"
 				data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:5,toolbar:'#project_tb'" pagination="true">
 			</table>

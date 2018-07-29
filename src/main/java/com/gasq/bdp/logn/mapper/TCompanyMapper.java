@@ -70,4 +70,6 @@ public interface TCompanyMapper {
 	List<Map<String, Object>> queryCountBusinessAnalysisDataDetail(Map<String, Object> map);
 
 	Integer countBusinessAnalysisDataDetailByBean(Map<String, Object> map);
+
+	List<Map<String, Object>> queryCountProjectsOrderCost(Map<String, Object> map);
 }

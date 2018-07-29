@@ -94,6 +94,8 @@ public class CommonServiceImpl implements CommonService {
 		List<Map<String, Object>> listmaps = companyMapper.countConsumptionReport(map);
 		if(listmaps!=null && listmaps.size()>0) {
 			for (Map<String, Object> lm : listmaps) {
+				Object nn = lm.get("nickname");
+				if(nn==null) continue;
 				years.add(lm.get("datetime").toString());
 				nickname.add(lm.get("nickname").toString());
 				camount.add(new BigDecimal(lm.get("c_total_amount").toString()).doubleValue());
@@ -310,17 +312,21 @@ public class CommonServiceImpl implements CommonService {
 		map.put("endtime", endtime);
 		map.put("datetype", datetype);
 		map.put("type", type);
-		int start = 0;
-		int intPage = (page==0) ? 1 : page;
-		int number = (rows==0) ? 10 : rows;
-		start = (intPage - 1) * number;
-		map.put("index", start);
-		map.put("pageSize", number);
+		if(rows<=0) {
+			int start = 0;
+			int intPage = (page==0) ? 1 : page;
+			int number = (rows==0) ? 10 : rows;
+			start = (intPage - 1) * number;
+			map.put("index", start);
+			map.put("pageSize", number);
+		}
 		if(companyid!=null) {
 			map.put("companyid", companyid);
 		}else {
 			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
 				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+			}else {
+				map.put("companyid", null);
 			}
 		}
 		int total_nums = 0;
@@ -330,7 +336,7 @@ public class CommonServiceImpl implements CommonService {
 		if(listmaps==null || listmaps.size()<=0)listmaps = new ArrayList<Map<String,Object>>();
 		total_nums = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("numbs").toString())).sum();
 		total_amount_all = listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("total_amount").toString())).sum();
-		total_amount_avg_all = listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("total_amount_avg").toString())).sum();
+		total_amount_avg_all = listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("total_amount_avg").toString())).average().getAsDouble();
 		Integer count = companyMapper.countBusinessAnalysisDataDetailByBean(map);
 		List<Map<String,Object>> footer =  new ArrayList<>();
 		Map<String,Object> footerp = new HashMap<>();
@@ -344,5 +350,24 @@ public class CommonServiceImpl implements CommonService {
 		map.put("total",count);
 		map.put("footer",footer);
 		return map;
+	}
+
+	@Override
+	public List<Map<String, Object>> queryCountProjectsOrderCost(Integer companyid, String datatype, String starttime,String endtime) {
+		Map<String, Object> map = new  HashMap<String, Object>();
+		map.put("starttime", starttime);
+		map.put("endtime", endtime);
+		map.put("datetype", datatype);
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+			}else {
+				map.put("companyid", null);
+			}
+		}
+		List<Map<String, Object>> listmaps = companyMapper.queryCountProjectsOrderCost(map);
+		return listmaps;
 	}
 }

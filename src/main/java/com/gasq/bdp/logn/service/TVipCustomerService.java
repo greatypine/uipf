@@ -22,4 +22,6 @@ public interface TVipCustomerService {
 
 	Map<String, Object> sendMessage(TVipCustomer bean) throws WorkFlowJobException;
 
+	boolean createConsumptonOrder(TVipCustomer bean);
+
 }

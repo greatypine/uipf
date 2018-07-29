@@ -37,6 +37,7 @@ import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TCustomerImages;
 import com.gasq.bdp.logn.model.TSysUser;
+import com.gasq.bdp.logn.service.CustomerSubscribeService;
 import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.service.TCustomerImagesService;
 import com.gasq.bdp.logn.service.TSysMenuService;
@@ -57,6 +58,7 @@ public class IndexController {
 	@Autowired ActiveManager activeManager;
 	@Autowired EmailManager emailService;
 	@Autowired TCustomerImagesService customerImagesService;
+	@Autowired CustomerSubscribeService customerSubscribeService;
 	// 错误信息
 	Map<String, Object> paramMap = new HashMap<String, Object>();
 
@@ -128,6 +130,12 @@ public class IndexController {
 			return "login";
 		}
 		String username = user.getUsername();
+		SystemUser systemUser = userService.queryFullUser(user);
+		if(systemUser.getUser()==null) {
+			logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已不可用");
+			redirectAttributes.addFlashAttribute("message", "账户已不可用");
+			return "redirect:/index";
+		}
 		boolean rememberMe = ServletRequestUtils.getBooleanParameter(request, "rememberMe", false);
 		UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(),CommonUtils.change2MD5(user.getPassword()),rememberMe);
 		// 获取当前的Subject
@@ -158,13 +166,11 @@ public class IndexController {
 		}
 		// 验证是否登录成功
 		if (currentUser.isAuthenticated()) {
-			SystemUser systemUser = userService.queryFullUser(user);
 			request.getSession().setAttribute("user", systemUser);
 			mmap.addAttribute("user", systemUser);
 			String mess = "用户："+systemUser.getUser().getNickname()+" 在"+DateUtil.getAllCurrentDate()+"登录成功!";
 			SecurityUtils.getSubject().getSession().setAttribute("user", systemUser);
 			logger.info(mess);
-//			emailService.sendSimpleEmail(InitProperties.EMAIL_SENDER, InitProperties.EMAIL_TARGET, "痘卫士-登录信息",mess);
 			if(WorkFlowUtil.hasNoAnyRoles(RoleSign.SADMIN)){
 				activeManager.sendBack(ActiveMQUtil.getTopicDestination(systemUser.getUser().getCompanyid()+InitProperties.Moniter_USER), mess);
 			}

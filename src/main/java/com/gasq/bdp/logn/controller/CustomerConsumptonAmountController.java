@@ -25,7 +25,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TLtnCustomer;
-import com.gasq.bdp.logn.model.TLtnCustomerConsumptonAmount;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmount;
 import com.gasq.bdp.logn.service.CustomerConsumptonAmountService;
 import com.gasq.bdp.logn.service.CustomerService;
 
@@ -56,7 +56,7 @@ public class CustomerConsumptonAmountController {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费订单信息列表！");
 		try {
 			map = customerService.queryPagingList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费订单信息列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费订单信息列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -65,15 +65,15 @@ public class CustomerConsumptonAmountController {
 	 }
     
     @ApiOperation(value="查询列表用户消费金额信息列表", notes="查询列表用户消费金额信息列表")
-    @ApiImplicitParam(name = "bean", value = "sql实体对象TLtnCustomerConsumptonAmount", required = false, dataType = "TLtnCustomerConsumptonAmount")
+    @ApiImplicitParam(name = "bean", value = "sql实体对象TCustomerConsumptonAmount", required = false, dataType = "TCustomerConsumptonAmount")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryCustomerAmountList",method=RequestMethod.POST)
-	public Map<String, Object> queryCustomerAmountList(TLtnCustomerConsumptonAmount bean) {
+	public Map<String, Object> queryCustomerAmountList(TCustomerConsumptonAmount bean) {
     	Instant start = Instant.now();
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费金额信息列表！");
 		try {
 			map = customerConsumptonAmountService.queryPagingList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费金额信息列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费金额信息列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -88,7 +88,7 @@ public class CustomerConsumptonAmountController {
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求新增或修改用户消费金额信息列表！");
 		try {
 			map = customerService.saveOrUpdate(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求新增或修改用户消费金额信息列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求新增或修改用户消费金额信息列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -105,7 +105,7 @@ public class CustomerConsumptonAmountController {
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求开始执行接诊！");
 		try {
 			Boolean b = customerService.saveOrUpdateTFMCust(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求开始执行接诊结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求开始执行接诊结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return b;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -115,12 +115,12 @@ public class CustomerConsumptonAmountController {
     
 //	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdateCustAmount",method=RequestMethod.POST)
-	public Integer saveOrUpdateCustAmount(TLtnCustomerConsumptonAmount bean) {
+	public Integer saveOrUpdateCustAmount(TCustomerConsumptonAmount bean) {
 		Instant start = Instant.now();
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求保存或修改客户消费金额！");
 		try {
 			Integer i = customerConsumptonAmountService.saveOrUpdate(bean).getId();
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求保存或修改客户消费金额结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求保存或修改客户消费金额结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return i;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -135,7 +135,7 @@ public class CustomerConsumptonAmountController {
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除改客户消费金额！");
 		try {
 			Boolean f = customerService.delete(id);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除改客户消费金额结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除改客户消费金额结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return f;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -149,7 +149,7 @@ public class CustomerConsumptonAmountController {
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求退款客户消费订单！");
 		try {
 			Boolean f = customerService.refundCust(id);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求退款客户消费订单结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求退款客户消费订单结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return f;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -164,7 +164,7 @@ public class CustomerConsumptonAmountController {
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除客户消费订单！");
 		try {
 			Boolean f =  customerConsumptonAmountService.delete(id);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除客户消费订单结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除客户消费订单结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return f;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -187,7 +187,7 @@ public class CustomerConsumptonAmountController {
 				map = new HashMap<String,Object>();
 				map.put("total_amount", 0);
 			}
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求统计用户消费金额结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求统计用户消费金额结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -227,7 +227,7 @@ public class CustomerConsumptonAmountController {
 					throw new Exception(response.get("mess").toString());
 				}
 			}
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求提交用户消费订单结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求提交用户消费订单结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			map.put("status", false);
@@ -246,7 +246,7 @@ public class CustomerConsumptonAmountController {
    			customer.setStatus(1);
    			customer.setType(1);
    			map = customerService.saveOrUpdate(customer);
-   			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求普通结算用户消费订单结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+   			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求普通结算用户消费订单结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
    		}catch (Exception e) {
    			map.put("status", false);
@@ -262,7 +262,7 @@ public class CustomerConsumptonAmountController {
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计就诊报表！");
 		try {
 			map = customerService.countConsumptionReport(companyid,datetype,starttime,endtime);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计就诊报表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计就诊报表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -275,7 +275,7 @@ public class CustomerConsumptonAmountController {
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计就诊报表列表！");
 		try {
 			map = customerService.queryCountConsumptionReportList(companyid,datetype,starttime,endtime);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计就诊报表列表结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计就诊报表列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -294,7 +294,7 @@ public class CustomerConsumptonAmountController {
    			customer.setStatus(1);
    			customer.setType(3);
    			map = customerService.saveOrUpdate(customer);
-   			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求提交客户消费订单结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+   			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求提交客户消费订单结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
    		}catch (Exception e) {
    			map.put("status", false);
@@ -311,7 +311,7 @@ public class CustomerConsumptonAmountController {
    		try {
    			logger.info("开始进行订单回退操作...");
    			map = customerService.orderBack(customer);
-   			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求订单回退结束！总用时："+Duration.between(start, Instant.now()).toMinutes()+"分钟！");
+   			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求订单回退结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
    		}catch (Exception e) {
    			map.put("status", false);
