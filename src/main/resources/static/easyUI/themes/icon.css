@@ -265,3 +265,11 @@
 .icon-return{
 	background:url('icons/return.png') no-repeat center center;
 }
+/* 排班管理 */
+.icon-workforce{
+	background:url('icons/workforce.png') no-repeat center center;
+}
+/* 排班查询 */
+.icon-iquery{
+	background:url('icons/iquery.png') no-repeat center center;
+}

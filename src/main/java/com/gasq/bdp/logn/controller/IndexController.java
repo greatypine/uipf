@@ -543,4 +543,31 @@ public class IndexController {
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】进入就诊图片预览界面！");
 		return "viewimages";
 	}
+	
+	@RequestMapping("/goWrokforceManagement")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER}, logical = Logical.OR)
+	public String goWorkforceManagement(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】进入【排班管理】界面！");
+		return "workforceManagement";
+	}
+	
+	@RequestMapping("/goWrokforceManagementQuery")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION}, logical = Logical.OR)
+	public String goWrokforceManagementQuery(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】进入【排班查询】界面！");
+		return "workforceManagementQuery";
+	}
+	
+	@RequestMapping("/goViewManager")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION,RoleSign.H_ADMIN,RoleSign.H_OPTION}, logical = Logical.OR)
+	public String goViewManager(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】进入【视图管理】界面！");
+		return "viewManager";
+	}
 }

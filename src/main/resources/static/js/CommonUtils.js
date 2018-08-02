@@ -128,6 +128,22 @@ function CommonUtils(){
         	return y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d);
         }
 	}
+	/**
+	 * 获取某月的最后一天
+	 */
+	this.getLastMonthDay = function(year,month){
+		var date = null;
+		var day;
+		if(year!="" && month!=""){
+			if(month<10)month="0"+month
+			date = new Date(year,month,0);
+			day = date.getDate();
+		}else{
+			date = new Date();
+			day = new Date(date.getFullYear(), date.getMonth()-1, 0).getDate();
+		}
+		return day;
+	}
 	
 	/**
 	 *根据用户角色标记判断用户是否有角色
@@ -254,6 +270,11 @@ function CommonUtils(){
 	        }
 	    });
 	};
+	
+	this.showtime = function(id){
+		$("#"+id).html(new Date().toLocaleString());
+		setTimeout("cu.showtime('currenttime')",1000);
+	}
 }
 $.fn.serializeJson=function(){
     var serializeObj={};

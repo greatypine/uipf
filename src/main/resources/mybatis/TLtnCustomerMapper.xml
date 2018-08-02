@@ -568,6 +568,9 @@
  		<if test="record.endtime!=null">
 			and a.createtime &lt;= #{record.endtime}
  		</if>
+ 		<if test="record.rootIn!=null">
+ 			and a.root_in = #{record.rootIn}
+ 		</if>
  		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text,vcp.text,vri.name
 		order by a.createtime desc 
 		<if test="record.rows !=null and record.page!=null">
@@ -630,6 +633,9 @@
 	 		</if>
 	 		<if test="record.endtime!=null">
 				and a.createtime &lt;= #{record.endtime}
+	 		</if>
+	 		<if test="record.rootIn!=null">
+	 			and a.root_in = #{record.rootIn}
 	 		</if>
 	 		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text
 	 	) aa
@@ -771,7 +777,7 @@
 	<if test="datetype==null or datetype==''">
 		GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d')
 	</if>
-	order by datetime asc
+	order by datetime desc
   </select>
   
   <select id="countByBean" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.lang.Integer">
@@ -823,6 +829,9 @@
  		</if>
  		<if test="record.endtime!=null">
 			and a.createtime &lt;= #{record.endtime}
+ 		</if>
+ 		<if test="record.rootIn!=null">
+ 			and a.root_in = #{record.rootIn}
  		</if>
  		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text,vcp.text,vri.name
 	) temp

@@ -52,4 +52,7 @@ public interface CommonService {
 	List<Map<String, Object>> queryCountProjectsOrderCost(Integer companyid, String datatype, String diyStrDateTime,
 			String diyStrDateTime2);
 
+	List<Map<String, Object>> queryCountProjectsOrderAmountCost(Integer companyid, String datatype, String otherMonth,
+			String diyStrDateTime);
+
 }

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+	<link type="text/css" th:href="@{/static/css/workflow/shell.css}" rel="stylesheet" media="screen"/>
+<body>
+<div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
+	<table id="workforceManagementQuery_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
+		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:30,toolbar:'#tb_cron_option'" pagination="true">
+	</table>
+	<div id="tb_cron_option" style="padding: 5px; height: auto">
+		<div id="cron_bar">
+			<form id="workforceManagementQueryform">
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager,q_admin">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+				年： <input id="queryyear" name="year" class="easyui-combobox year" data-options="editable:false,valueField:'value',textField:'text',panelHeight:'auto'" style="width: 120px; height: 22px;"/>
+				月： <input id="querymonth" name="month" class="easyui-combobox month" data-options="editable:false,valueField:'value',textField:'text',panelHeight:'auto'" style="width: 120px; height: 22px;"/> 
+<!-- 				人员：<input name="username" id="queryusercbx" class="easyui-combobox usercbx" style="width: 200px; height: 22px;" data-options="editable:false,multiple:true,editable:true,valueField:'id',textField:'nickname'"/> -->
+				<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="workforceManagementQuery.query()">查询</a> 
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/static/js/index/workforceManagementQuery.js}"></script>
+</html>

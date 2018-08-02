@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+	<link type="text/css" th:href="@{/static/css/workflow/shell.css}" rel="stylesheet" media="screen"/>
+<body>
+<div id="reprotContent" class="easyui-layout" style="width: 100%;height: 100%;" data-options="fit:true">
+	<div data-options="region:'north'" style="height:50%;">
+		<table id="views-datagrid" class="easyui-datagrid" style="width: 100%; height: 100%;"
+			data-options="singleSelect: true,rownumbers:true,fit:true,iconCls:'icon-list',toolbar:'#view_bar'" pagination="true">
+		</table>
+		<div id="view_bar"  style="padding: 5px; height: auto">
+			<div style="margin-bottom: 5px">
+				<a shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager,q_admin,h_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="viewmanager.vpadd()">添加</a>
+				<a shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="viewmanager.vpremove()">删除</a>
+			</div>
+			<div>
+				统计条件：&nbsp;&nbsp;
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager,q_admin">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+				名称： <input id="queryname" class="easyui-textbox" style="width: 120px; height: 22px;"/>
+				<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="viewmanager.query()">查询</a> 
+			</div>
+		</div>
+	</div>
+	
+	<div data-options="region:'south'" style="height:50%">
+		<table id="views-datagrid-child" class="easyui-datagrid" style="width: 100%; height: 100%;"
+			data-options="singleSelect: true,rownumbers:true,fit:true,iconCls:'icon-list',toolbar:'#view_cbar'" pagination="true">
+		</table>
+		<div id="view_cbar" style="padding: 5px; height: auto">
+			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager,q_admin,h_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="viewmanager.vcadd()">添加</a>
+			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="viewmanager.vcremove()">删除</a>
+		</div>
+	</div>
+	
+	<div id="viewmanagerdlg" class="easyui-dialog" style="width: 400px; overflow: hidden; display: none;" closed="true" buttons="#pvdlg-buttons">
+		<form id="viewmanagerdlg-fm" method="post" novalidate style="margin: 0; padding: 20px 50px">
+			<div style="margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #ccc">视图信息</div>
+			<div style="margin-bottom: 10px;" shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager,q_admin">
+				<input id="companyid" name="companyid" class="easyui-combobox companylist" label="门店名称:" style="width: 100%;" data-options="required:true,editable:false,valueField:'companyid',textField:'companyName'"/>
+			</div>
+			<div style="margin-bottom: 10px; display: none;">
+				<input name="id" class="easyui-textbox" label="id:" style="width: 100%"/>
+			</div>
+			<div style="margin-bottom: 10px; display: none;">
+				<input name="type" class="easyui-textbox" label="type：" style="width: 100%"/>
+			</div>
+			<div style="margin-bottom: 10px">
+				<input name="name" class="easyui-textbox" required="true" label="视图名称:" style="width: 100%"/>
+			</div>
+			<div style="margin-bottom: 10px">
+				<input name="code" class="easyui-textbox" required="true" label="视图编码:" style="width: 100%"/>
+			</div>
+			<div style="margin-bottom: 10px">
+				<label style="padding-right: 25px;">是否显示:</label> 
+				<select class="easyui-combobox" panelHeight="auto" name="status" required="true" style="width: 100px;">
+					<option value="1">开启</option>
+					<option value="99">关闭</option>
+				</select>
+			</div>
+			<div style="margin-bottom: 10px">
+				<input name="remark" class="easyui-textbox" multiline="true" label="描述:" style="width: 100%; height: 80px"/>
+			</div>
+		</form>
+	</div>
+	<div id="cvdlg" class="easyui-dialog"
+		style="width: 400px; overflow: hidden; display: none;" closed="true"
+		buttons="#cvdlg-buttons">
+		<form id="cview-fm" method="post" novalidate style="margin: 0; padding: 20px 50px">
+			<div style="margin-bottom: 20px; font-size: 14px; border-bottom: 1px solid #ccc">视图信息</div>
+			<div style="margin-bottom: 10px; display: none;">
+				<input name="id" class="easyui-textbox" label="id:" style="width: 100%"/>
+			</div>
+			<div style="margin-bottom: 10px;display: none;">
+				<input id="ccompanyId" name="companyId" class="easyui-textbox" readonly="true" required="true" style="width: 100%"/>
+			</div>
+			<div style="margin-bottom: 10px;display: none;">
+				<input id="ctype" name="type" class="easyui-textbox" readonly="true" required="true" style="width: 100%"/>
+			</div>
+			<div style="margin-bottom: 10px;display: none;">
+				<input id="cname" name="viewName" class="easyui-textbox" readonly="true" required="true" label="所属视图:" style="width: 100%"/>
+			</div>
+			<div style="margin-bottom: 10px">
+				<input name="name" class="easyui-textbox" required="true" label="视图名称:" style="width: 100%"/>
+			</div>
+			<div style="margin-bottom: 10px">
+				<input name="code" class="easyui-textbox" required="true" label="视图编码:" style="width: 100%"/>
+			</div>
+			<div style="margin-bottom: 10px">
+				<select class="easyui-combobox" panelHeight="auto" label="视图状态:"  name="status" required="true" style="width: 100%;">
+					<option value="1">开启</option>
+					<option value="99">关闭</option>
+				</select>
+			</div>
+		</form>
+	</div>
+	
+	<div id="pvdlg-buttons">
+		<a shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager,q_admin,h_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="viewmanager.saveView()" style="width: 90px">保存</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#viewmanagerdlg-fm').form('clear');$('#viewmanagerdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="cvdlg-buttons">
+		<a shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager,q_admin,h_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="viewmanager.savecView()" style="width: 90px">保存</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#cview-fm').form('clear');$('#cvdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/static/js/index/viewmanager.js}"></script>
+</html>

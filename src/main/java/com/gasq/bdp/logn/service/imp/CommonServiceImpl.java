@@ -337,6 +337,8 @@ public class CommonServiceImpl implements CommonService {
 		total_nums = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("numbs").toString())).sum();
 		total_amount_all = listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("total_amount").toString())).sum();
 		total_amount_avg_all = listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("total_amount_avg").toString())).average().getAsDouble();
+		total_amount_all = (double)Math.round(total_amount_all*100)/100;
+    	total_amount_avg_all = (double)Math.round(total_amount_avg_all*100)/100;
 		Integer count = companyMapper.countBusinessAnalysisDataDetailByBean(map);
 		List<Map<String,Object>> footer =  new ArrayList<>();
 		Map<String,Object> footerp = new HashMap<>();
@@ -368,6 +370,26 @@ public class CommonServiceImpl implements CommonService {
 			}
 		}
 		List<Map<String, Object>> listmaps = companyMapper.queryCountProjectsOrderCost(map);
+		return listmaps;
+	}
+
+	@Override
+	public List<Map<String, Object>> queryCountProjectsOrderAmountCost(Integer companyid, String datatype,
+			String starttime, String endtime) {
+		Map<String, Object> map = new  HashMap<String, Object>();
+		map.put("starttime", starttime);
+		map.put("endtime", endtime);
+		map.put("datetype", datatype);
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+			}else {
+				map.put("companyid", null);
+			}
+		}
+		List<Map<String, Object>> listmaps = companyMapper.queryCountProjectsOrderAmountCost(map);
 		return listmaps;
 	}
 }

@@ -388,7 +388,7 @@
          and a.companyid=#{record.id}
        </if>
    </select>
-    <select id="getView" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.Map"  statementType="STATEMENT">
+    <select id="getView" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.LinkedHashMap"  statementType="STATEMENT">
        <![CDATA[
        select * from ${record.viewname} a where 1=1
        ]]>
@@ -452,7 +452,7 @@
 	<if test="datetype==null or datetype==''">
 		GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d'),a.counsoler,tsu.nickname
 	</if>
-	order by datetime asc,total_amont desc
+	order by datetime desc,total_amont desc
 	<if test="index !=null and pageSize!=null">
 		limit #{index},#{pageSize}
 	</if>
@@ -514,7 +514,7 @@
 	<if test="datetype==null or datetype==''">
 		GROUP BY DATE_FORMAT(tcs.create_time, '%Y%m%d'),tsu.nickname,tcs.company_id
 	</if>
-	ORDER BY datetime asc,totalOrder desc
+	ORDER BY datetime desc,totalOrder desc
   </select>
   
   <select id="queryCountInventory" parameterType="java.util.Map" resultType="java.util.Map">
@@ -568,7 +568,7 @@
 	<if test="datetype==null or datetype==''">
 		GROUP BY DATE_FORMAT(til.create_time, '%Y%m'),ti.id,ti.companyid
 	</if>
-	ORDER BY datetime asc,currentInventoryNumbs desc,companyName
+	ORDER BY datetime desc,currentInventoryNumbs desc,companyName
 	<if test="index !=null and pageSize!=null">
 		limit #{index},#{pageSize}
 	</if>
@@ -709,7 +709,7 @@
 				ORDER BY value desc
 			) temp,(select @rownum1:=0) t 
 		) temp1 where temp1.rownum1>10
-	GROUP BY temp1.datetime,temp1.companyName
+	GROUP BY temp1.datetime desc,temp1.companyName
 	ORDER BY rownum
   </select>
   
@@ -767,7 +767,7 @@
 		<if test="datetype==null or datetype==''">
 			GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d'),a.counsoler,tsu.nickname
 		</if>
-		order by datetime asc,total_amont desc
+		order by datetime desc,total_amont desc
 	) temp 
   </select>
   
@@ -893,7 +893,7 @@
 		tc.name as companyName
 	FROM
 		v_root_in a
-	LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in AND a.companyid = b.company_id
+	LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in AND a.companyid = b.company_id and b.status=1
 	LEFT JOIN t_customer_consumpton_amount c on b.id=c.customer_id
 	LEFT JOIN v_customer_profession vcp on b.profession = vcp.`value`
 	INNER JOIN t_company tc ON a.companyid = tc.id
@@ -921,7 +921,7 @@
 	<if test="datetype==null or datetype==''">
 		GROUP BY DATE_FORMAT(b.createTime, '%Y%m%d'),a.name,vcp.text,a.companyid
 	</if>
-	ORDER BY a.companyid,datetime,a.`name`,vcp.text
+	ORDER BY a.companyid,datetime desc,a.`name`,vcp.text
 </select>
 <select id="countBusinessAnalysisDataDetailByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
 	select count(*) from(
@@ -929,7 +929,7 @@
 			a.`name`
 		FROM
 			v_root_in a
-		LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in AND a.companyid = b.company_id
+		LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in AND a.companyid = b.company_id and b.status=1
 		LEFT JOIN t_customer_consumpton_amount c on b.id=c.customer_id
 		LEFT JOIN v_customer_profession vcp on b.profession = vcp.`value`
 		where 1=1 
@@ -1018,7 +1018,69 @@
 		<if test="companyid!=null">
 			and vpm.companyid=#{companyid}
 		</if>
-	GROUP BY tc.name,temp1.datetime
+	GROUP BY tc.name,temp1.datetime desc
+	ORDER BY tc.id
+</select>
+
+<select id="queryCountProjectsOrderAmountCost" parameterType="java.util.HashMap" resultType="java.util.Map">
+	SELECT 
+		temp1.datetime,
+		tc.name as companyname,
+		MAX(CASE vpm.value WHEN 1 THEN temp1.proamount ELSE 0 END ) pn1,
+		MAX(CASE vpm.value WHEN 2 THEN temp1.proamount ELSE 0 END ) pn2,
+		MAX(CASE vpm.value WHEN 3 THEN temp1.proamount ELSE 0 END ) pn3,
+		MAX(CASE vpm.value WHEN 4 THEN temp1.proamount ELSE 0 END ) pn4,
+		MAX(CASE vpm.value WHEN 5 THEN temp1.proamount ELSE 0 END ) pn5,
+		MAX(CASE vpm.value WHEN 6 THEN temp1.proamount ELSE 0 END ) pn6,
+		MAX(CASE vpm.value WHEN 7 THEN temp1.proamount ELSE 0 END ) pn7,
+		MAX(CASE vpm.value WHEN 8 THEN temp1.proamount ELSE 0 END ) pn8
+		from v_project_model vpm LEFT JOIN (
+			SELECT
+				<if test="datetype==1">
+					DATE_FORMAT(c.createTime, '%Y') datetime,
+				</if>
+				<if test="datetype==2">
+					DATE_FORMAT(c.createTime, '%Y%m') datetime,
+				</if>
+				<if test="datetype==3">
+					DATE_FORMAT(c.createTime, '%Y%m%d') datetime,
+				</if>
+				a.project_model,
+				sum(b.total_amount) proamount,
+				c.company_id
+			FROM
+				t_project a
+			LEFT JOIN v_project_model pm on a.project_model=pm.`value` and a.company_id=pm.companyid
+			INNER JOIN t_customer_consumpton_amount b ON a.id = b.project_id
+			INNER JOIN t_ltn_customer c on b.customer_id=c.id and a.company_id= c.company_id
+			where 1=1 
+			<if test="companyid!=null">
+				and c.company_id=#{companyid} 
+			</if>
+				and c.`status`=1 
+			<if test="starttime!=null and starttime!=''">
+				and DATE_FORMAT(c.createTime, '%Y-%m-%d') &gt;= #{starttime}
+			</if>
+			<if test="endtime!=null and endtime!=''">
+				and DATE_FORMAT(c.createTime, '%Y-%m-%d') &lt;= #{endtime}
+			</if>
+			<if test="datetype==1">
+				GROUP BY DATE_FORMAT(c.createTime, '%Y'),b.project_id,c.company_id,a.project_model
+			</if>
+			<if test="datetype==2">
+				GROUP BY DATE_FORMAT(c.createTime, '%Y%m'),b.project_id,c.company_id,a.project_model
+			</if>
+			<if test="datetype==3">
+				GROUP BY DATE_FORMAT(c.createTime, '%Y%m%d'),b.project_id,c.company_id,a.project_model
+			</if>
+			
+		) temp1 on vpm.companyid = temp1.company_id and vpm.`value`=temp1.project_model
+		INNER JOIN t_company tc on vpm.companyid=tc.id and temp1.company_id= tc.id and tc.`status`=1
+		where 1=1 
+		<if test="companyid!=null">
+			and vpm.companyid=#{companyid}
+		</if>
+	GROUP BY tc.name,temp1.datetime desc
 	ORDER BY tc.id
 </select>
 </mapper>

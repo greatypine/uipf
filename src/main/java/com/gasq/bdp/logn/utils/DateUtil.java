@@ -3,8 +3,15 @@ package com.gasq.bdp.logn.utils;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -694,6 +701,91 @@ public class DateUtil {
     	double between=(date2.getTime()-date1.getTime())/1000;//除以1000是为了转换成秒
     	double min=between/60;
     	return min;
+    }
+    /**
+     * localDate转Date
+     */
+    public static Date localDate2Date(LocalDate localDate){
+        ZonedDateTime zonedDateTime = localDate.atStartOfDay(ZoneId.systemDefault());
+        Instant instant1 = zonedDateTime.toInstant();
+        Date from = Date.from(instant1);
+        return  from;
+    }
+
+    /**
+     * Date 转 localDate
+     */
+   public static LocalDate date2LocalDate(Date date){
+       Instant instant = date.toInstant();
+       ZonedDateTime zdt = instant.atZone(ZoneId.systemDefault());
+       LocalDate localDate = zdt.toLocalDate();
+       return localDate;
+   }
+
+    //获取月第一天
+    public static Date getStartDayOfMonth(String date) {
+        LocalDate now = LocalDate.parse(date);
+        return DateUtil.getStartDayOfMonth(now);
+    }
+
+    public static Date getStartDayOfMonth(LocalDate date) {
+        LocalDate now = date.with(TemporalAdjusters.firstDayOfMonth());
+        return DateUtil.localDate2Date(now);
+    }
+    //获取月最后一天
+    public static Date getEndDayOfMonth(String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        return DateUtil.getEndDayOfMonth(localDate);
+    }
+
+    public static Date getEndDayOfMonth(LocalDate date) {
+        LocalDate now = date.with(TemporalAdjusters.lastDayOfMonth());
+        Date.from(now.atStartOfDay(ZoneId.systemDefault()).plusDays(1L).minusNanos(1L).toInstant());
+        return DateUtil.localDate2Date(now);
+    }
+
+    //获取周第一天
+    public static Date getStartDayOfWeek(String date) {
+        LocalDate now = LocalDate.parse(date);
+        return DateUtil.getStartDayOfWeek(now);
+    }
+
+    public static Date getStartDayOfWeek(TemporalAccessor date) {
+        TemporalField fieldISO = WeekFields.of(Locale.CHINA).dayOfWeek();
+        LocalDate localDate = LocalDate.from(date);
+        localDate=localDate.with(fieldISO, 1);
+        return DateUtil.localDate2Date(localDate);
+    }
+    //获取周最后一天
+    public static Date getEndDayOfWeek(String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        return DateUtil.getEndDayOfWeek(localDate);
+    }
+
+    public static Date getEndDayOfWeek(TemporalAccessor date) {
+        TemporalField fieldISO = WeekFields.of(Locale.CHINA).dayOfWeek();
+        LocalDate localDate = LocalDate.from(date);
+        localDate=localDate.with(fieldISO, 7);
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).plusDays(1L).minusNanos(1L).toInstant());
+    }
+    //一天的开始
+    public static Date getStartOfDay(String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        return DateUtil.getStartOfDay(localDate);
+    }
+
+    public static Date getStartOfDay(TemporalAccessor date) {
+        LocalDate localDate = LocalDate.from(date);
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+    //一天的结束
+    public static Date getEndOfDay(String date){
+        LocalDate localDate = LocalDate.parse(date);
+        return DateUtil.getEndOfDay(localDate);
+    }
+    public static Date getEndOfDay(TemporalAccessor date) {
+        LocalDate localDate = LocalDate.from(date);
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).plusDays(1L).minusNanos(1L).toInstant());
     }
 //    public static void main(String[] args) {
 //    	Date s = parseStr("2017-12-05 13:37:20",DateUtil.TIME_DEFAULT_FORMAT);

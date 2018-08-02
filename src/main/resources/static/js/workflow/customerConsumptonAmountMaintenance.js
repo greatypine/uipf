@@ -58,7 +58,7 @@ function initData(){
 	$("#inventoryId").combobox({
 		url:content+'/common/queryProjectInventory?id='+user.user.companyid
 	});
-	$("#rootIn").combobox({
+	$(".rootIn").combobox({
 		url:content+'/common/queryRootIn?id='+user.user.companyid
 	});
 	$("#profession").combobox({
@@ -377,6 +377,7 @@ function CustomerConsumptonAmount(){
 		var status = $("#querystatus").combobox('getValue');
 		var createTime = ($("#querycreateTime").datebox('getValue')=="" || $("#querycreateTime").datebox('getValue')=="undefined")?null:$("#querycreateTime").datebox('getValue');
 		var endTime = ($("#queryendTime").datebox('getValue')=="")?null:$("#queryendTime").datebox('getValue');
+		var rootIn = ($("#queryrootIn").combobox("getValue")<=0)?null:$("#queryrootIn").combobox("getValue")==""?null:$("#queryrootIn").combobox("getValue");
 		params.customername = customername;
 		params.phonenumb = customerphone;
 		params.therapeutist = therapeutist;
@@ -385,6 +386,7 @@ function CustomerConsumptonAmount(){
 		params.endTime = endTime;
 		params.companyId = companyid;
 		params.status = status;
+		params.rootIn = rootIn;
 		if(status==-1) params.status=null;
 		return params;
 	}
@@ -409,7 +411,7 @@ function CustomerConsumptonAmount(){
 		$("#ccacform").form("clear");
 	};
 	this.exportData = function(){
-		$.messager.confirm('提示信息', '你确认要到处客户信息吗?', function(r){
+		$.messager.confirm('提示信息', '你确认要导出客户信息吗?', function(r){
 			if (r){
 				var params = ccac.getRequestParams();
 				window.location.href = content+"/exportExcel/exportDataList?customername="+params.customername+"&therapeutist="+params.therapeutist+"&status="+params.status+"&chuFuZhen="+params.chuFuZhen+"&createtime="+params.createtime+"&endtime"+params.endTime;

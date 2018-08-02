@@ -7,25 +7,25 @@
 <!-- 一键锁定屏幕解锁对话框 模态对话框 -->
 <div id="dlg-lock" class="easyui-dialog" style="width:340px;height:120px;" data-options="closed: true,modal:true,title:''">
     <form id="lock_form">
-        <div style="float:left;margin-top:20px">
-            <label style="margin-right:5px;height:30px;font-size:12px;">解锁密码:</label>
-            <input class="easyui-textbox" style="float:left;width:250px;height:30px;" type="password" id="unlock_passwd" data-options="required:true,prompt:'请输入解锁密码!'"/>
+        <div style="width: 80%;margin: auto;margin-top:20px;font-size: 14px;">
+            <span class="glyphicon glyphicon-lock" style="top: 3px;"></span><input class="easyui-textbox" style="width:240px;height:30px;" label="解锁密码:" type="password" id="unlock_passwd" data-options="required:true,prompt:'请输入解锁密码!'"/>
         </div>
-        <div style="float:left;margin-left:115px;margin-top:5px;">
-            <a href="javascript:void(0)" class="easyui-linkbutton c3" style="float:left;width:80px;height:26px;" onclick="cu.unlockSubmit();">提交</a>
+        <div style="width:80px;margin:auto;margin-top:10px;">
+            <a href="javascript:void(0)" class="easyui-linkbutton c3" style="float:left;width:80px;" onclick="cu.unlockSubmit();">提交</a>
         </div>
     </form>
 </div>
 
 	<div class="easyui-layout" data-options="fit:true" style="width:100%;height: 100%;" border="false">
 		<div data-options="region:'north',split:false" id="north" style="background: #f6c1bc;overflow: hidden;">
-	        <div class="head head-right" style="float: right;padding-top: 8px;padding-right: 10px;">
-                <a href="javascript:void(0)" class="easyui-menubutton" data-options="menu:'#mm_user'"><span class="glyphicon glyphicon-user"></span><label th:text="${session.user.role[0].roleName}"></label>&nbsp;&nbsp;★&nbsp;&nbsp;<label th:text="${session.user.user.nickname}"></label></a>
+	        <div class="head head-right" style="float: right;padding-top: 8px;padding-right: 10px;font-size: 16px;color:#404040;padding: 5px;">
+	        	<span class="glyphicon glyphicon-time" style="top: 3px;"></span><label id="currenttime" style="padding-left: 5px;position: relative;top: 1px;"></label>
+                <a href="javascript:void(0)" class="easyui-menubutton" data-options="menu:'#mm_user'"><span class="glyphicon glyphicon-user"></span><label style="padding-left: 5px;" th:text="${session.user.role[0].roleName}"></label>&nbsp;&nbsp;★&nbsp;&nbsp;<label th:text="${session.user.user.nickname}"></label></a>
                 <div id="mm_user" style="width: 200px;">
                     <div data-options="iconCls:'icon-undo'" class="loginOut">安全退出</div>
                 </div>
 	        </div>
-	        <span id="companyandtime" class="head-left" style="float: left;color: white;font-size: 24px;padding: 5px;">
+	        <span id="companyandtime" class="head-left" style="float: left;color:#404040;font-size: 24px;padding: 5px;">
 	        	<label th:text="${session.user.company.name}"></label>-客户消费信息平台
 	        </span>
 		</div>
@@ -37,6 +37,9 @@
 				<div title="主页" data-options="closable:false" style="width:100%;height: 100%;padding:10px">
 					<div style="width: 27%;margin: auto;">
 						<h2><b>客户消费信息平台</b></h2>
+					</div>
+					<div style="width: 50%;margin: auto;margin-top: 100px;">
+						<iframe width="650" height="220" frameborder="no" scrolling="no" border="0" marginwidth="0" marginheight="0" src="http://i.tianqi.com/index.php?c=code&id=13"></iframe>
 					</div>
 				</div>
 			</div>
