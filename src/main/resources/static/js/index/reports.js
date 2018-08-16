@@ -89,7 +89,7 @@ function Reports(){
 	            }
 	        } ],
 			series : [ {
-				name:"出诊消费总金额",
+				name:"初诊消费总金额",
 				type : "bar",
 				data : data.camount,
 				itemStyle : {
@@ -517,6 +517,130 @@ function Reports(){
 				backgroundColor : "#ECF1F4"
 			};
 		charts.setOption(option);
+	};
+	
+	this.initQReport = function(data){
+		var employeeTreatOrder = echarts.init(document.getElementById("indexreport"),theme);
+		var option = {	
+			tooltip : {
+				trigger : "axis",
+				show : true,
+				formatter: function(a,b,c){
+				    var title = "";
+				    var val = "";
+				    if(a.length>1){
+				    	title = a[0].name;
+				    	if(title.length>6) val = title.substring(0,4)+"年"+title.substring(4,6)+"月"+title.substring(6,title.length)+"日";
+				    	else if(title.length>4 && title.length<=6) val = title.substring(0,4)+"年"+title.substring(4,6)+"月";
+				    	else if(title.length<=4) val = title+"年"
+				    	var sbane = "";
+				    		sbane += a[1].seriesName+"："+(a[1].value)+"人</br>";
+				    		sbane += a[0].seriesName+"："+(a[0].value*10000).toFixed(2)+"元</br>";
+				    	val += "</br>"+sbane
+				    }
+				    return val; 
+		        }
+		    },
+			toolbox: {
+		        show: true,
+		        orient: 'vertical',
+		        left: 'right',
+		        top: 'center'
+		    },
+			grid : {
+				x : 70,
+				y : 70,
+				x2 : 90,
+				y2 : 30,
+			},
+			xAxis : [ {
+				type : "category",
+				data : data.datetime,
+				axisLabel : {
+					textStyle : {
+						fontSize : 12,
+					},
+					interval : 0
+				},
+				axisPointer: {
+	                type: 'shadow'
+	            }
+			} ],
+			yAxis : [
+				{
+				type : "value",
+//				show : false,
+				name: '治疗总金额',
+				min:0,
+				max:data.maxtotal_amonts,
+				axisLabel : {
+					// rotate:45, //刻度旋转45度角
+					textStyle : {
+						fontSize : 12,
+					},
+					interval : 0,
+					formatter: function(val){
+						return '￥'+Number(val)*10000;
+					}
+				}
+			},
+	        {
+	            type: 'value',
+	            name: '新顾客',
+	            min: 0,
+	            max: data.maxnewnumb,
+	            axisLabel: {
+	                formatter: '{value} 人'
+	            }
+	        } ],
+			series : [{
+				name:"治疗总金额",
+				type : "bar",
+				data : data.total_amounts,
+				itemStyle : {
+					normal : {
+						label : {
+							show : true,
+							position : 'top',
+							formatter : function(val){
+								return '￥'+(Number(val.value)*10000).toFixed(2);
+							}
+						},
+						labelLine : {
+							show : true,
+						},
+						areaStyle : {
+							type : "default"
+						}
+					}
+				}
+			},
+			{
+				name:"新顾客",
+				type : "line",
+				data : data.newnumbs,
+				itemStyle : {
+					normal : {
+						label : {
+							show : true,
+							position : 'top',
+							formatter : '{c}'
+						}
+					}
+				}
+			}
+			],
+			title : {
+				text :data.title,
+				x:'center',
+				textStyle : {
+					fontFamily : '"微软雅黑",Verdana,Arial,Helvetica,sans-serif',
+					fontWeight : 'normal',
+				}
+			},
+			backgroundColor : "#fafafa"
+		}
+		employeeTreatOrder.setOption(option);
 	};
 	
 	this.initDataTable = function(params){

@@ -119,7 +119,7 @@ public class WorkforceManagementServiceImpl implements WorkforceManagementServic
 		Integer companyid = bean.getCompanyid();
 		if(companyid==null) companyid = user.getCompanyid();
 		String month = bean.getMonth();
-		month = (Integer.parseInt(month)<10)?"0"+month:month;
+		month = (Integer.parseInt(month)<10)?"0"+Integer.parseInt(month):month;
 		String cycle = bean.getYear()+month;
 		TWorkforcemanagementExample example = new TWorkforcemanagementExample();
 		example.createCriteria().andCycleEqualTo(cycle).andCompanyidEqualTo(bean.getCompanyid());

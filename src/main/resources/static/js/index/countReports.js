@@ -28,13 +28,13 @@ function CountReport(){
 		        queryParams:params,
 		        columns:[[
 				        {field:'datetime',title:'日期',width:"20%",align:'center'},
-				        {field:'c_total_amount',title:'出诊金额',width:"20%",align:'center',formatter:function(val,row){
+				        {field:'c_total_amount',title:'初诊金额',width:"20%",align:'center',formatter:function(val,row){
 				        	return (val!=0)?"￥"+(Number(val)*10000).toFixed(2):"￥"+0.00;
 				        }},
 				        {field:'f_total_amount',title:'复诊金额',width:"20%",align:'center',formatter:function(val,row){
 				        	return (val!=0)?"￥"+(Number(val)*10000).toFixed(2):"￥"+0.00;
 				        }},
-				        {field:'CHUZHEN',title:'出诊人数',width:"20%",align:'center'},
+				        {field:'CHUZHEN',title:'初诊人数',width:"20%",align:'center'},
 				        {field:'FUZHEN',title:'复诊人数',width:"20%",align:'center'}
 		        ]],
 				onDblClickRow:function(index,row){
@@ -47,7 +47,7 @@ function CountReport(){
 	};
 	this.initDatas = function(){
 		$("#datetype").combobox('select', '3');
-		$('#starttime').datebox('setValue', cu.date_add(new Date(),-31));
+		$('#starttime').datebox('setValue', cu.date_add(new Date(),-8));
 		$('#endtime').datebox('setValue', cu.date_add(new Date(),-1));
 	};
 	this.initCompant = function(){

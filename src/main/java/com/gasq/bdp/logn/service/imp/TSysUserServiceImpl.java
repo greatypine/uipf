@@ -232,6 +232,8 @@ public class TSysUserServiceImpl implements TSysUserService {
 		List<TSysUser> users = mapper.selectByExample(userexample);
 		if(users.size()>0) {
 			TSysUser tSysUser = users.get(0);
+			TSysUserExt userExt = uxmapper.selectByPrimaryKey(tSysUser.getId());
+			systemUser.setUserext(userExt);
 			systemUser.setUser(tSysUser);
 			systemUser.setCompany(companymapper.selectByPrimaryKey(tSysUser.getCompanyid()));
 			List<TSysRole> roles = rolemapper.selectRolesByUserId(tSysUser.getId());
@@ -262,5 +264,49 @@ public class TSysUserServiceImpl implements TSysUserService {
 		long ct = mapper.countByExample(userexample);
 		return ct>0?true:false;
 	}
+	@Override
+	public boolean checkUserNameEable(String username) {
+		if(StringUtils.isBlank(username) ) return false;
+		TSysUserExample userexample = new TSysUserExample();
+		Criteria c = userexample.createCriteria();
+			c.andUsernameEqualTo(username);
+		long ct = mapper.countByExample(userexample);
+		return ct<=0?true:false;
+	}
 
+	@Override
+	public TSysUser getSysUserInfo(Long id) {
+		return mapper.selectByPrimaryKey(id);
+	}
+	@Override
+	public TSysUserExt getSysUserExtInfo(Long id) {
+		return uxmapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	@Transactional
+	public Map<String, Object> changePassword(String oldpwd, String newpwd) {
+		Map<String, Object> result= new  HashMap<String, Object>();
+		try {
+			SystemUser systemUser = SystemUserInfo.getSystemUser();
+			TSysUserExt userext = systemUser.getUserext();
+			if(!userext.getPassword().equals(oldpwd)) {
+				result.put("status", false);
+				result.put("mess", "旧密码不正确！请查证后再次尝试。");
+				return result;
+			}
+			TSysUser user = systemUser.getUser();
+			user.setPassword(CommonUtils.change2MD5(newpwd));
+			userext.setPassword(newpwd);
+			uxmapper.updateByPrimaryKeySelective(userext);
+			mapper.updateByPrimaryKeySelective(user);
+			result.put("status", true);
+			return result;
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+		}
+		result.put("status", false);
+		result.put("mess", "操作失败，请联系系统管理员！");
+		return result;
+	}
 }

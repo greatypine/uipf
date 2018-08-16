@@ -15,7 +15,7 @@ function Myviewmanager(){
 	 * 视图
 	 */
 	this.initCompant = function(params){
-		$('#views-datagrid').datagrid({
+		viewmanager_table = $('#views-datagrid').datagrid({
 			fitColumns:false,
 	        singleSelect:true,
 	        rownumbers:true,

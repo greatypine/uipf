@@ -20,10 +20,12 @@
 
 	<properties>
 		<start-class>com.gasq.bdp.logn.Application</start-class>
+	    <java.version>1.8</java.version>
+	    <maven.compiler.source>1.8</maven.compiler.source>
+	    <maven.compiler.target>1.8</maven.compiler.target>
 		<it.skip>false</it.skip>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
 		<mysql.connector.version>5.1.30</mysql.connector.version>
 		<springfox.version>2.7.0</springfox.version>
 		<log4j.version>2.8.2</log4j.version>
@@ -64,7 +66,17 @@
 		<dependency>
 			<groupId>com.github.pagehelper</groupId>
 			<artifactId>pagehelper</artifactId>
-			<version>3.2.3</version>
+			<version>5.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper-spring-boot-autoconfigure</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper-spring-boot-starter</artifactId>
+			<version>1.2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -299,6 +311,8 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+	          		<source>1.8</source>
+	          		<target>1.8</target>
 					<jvmArguments>-Dfile.encoding=UTF-8</jvmArguments>
 					<executable>true</executable>
 				</configuration>

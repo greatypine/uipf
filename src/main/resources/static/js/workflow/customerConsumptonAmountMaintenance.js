@@ -73,7 +73,12 @@ function initData(){
 		$("#consumpton_project_list").css("height",'32%');
 	}
 	ccac = new CustomerConsumptonAmount();
-	ccac.initCompant();
+	var starttime = cu.date_add(new Date(),-1);
+	$("#querycreateTime").datebox('setValue',starttime);
+//	$("#userid").combobox("setValue",user.user.id);
+//	$("#userid").combobox("select",user.user.id);
+	var params = ccac.getRequestParams();
+	ccac.initCompant(params);;
 	ccac.initProjectDg({"consumptonAmountId":-1});
 	ccac.initProjectsDg({"phonenumb":-1});
 	ccac.initProjectLogsDg({"cpId":-1});
@@ -97,15 +102,14 @@ function CustomerConsumptonAmount(){
         	]]
 		});
 	};
-	this.initCompant = function(){
+	this.initCompant = function(params){
 		ccac.index = null;
 		ccac_table = $('#ccac_table').datagrid({
 		        url: content+"/ccac/queryCustomerList",
 		        fitColumns: true, 
 		        pageList: [30, 40, 50],
 		        loadMsg:'正在加载，请稍后...',
-		        queryParams:{
-				},
+		        queryParams:params,
 		        columns:[[
 		        	 	{field:'id',title:'编号',hidden:true},
 //				        {field:'companyName',title:'公司名称',width:"7%"},
@@ -419,6 +423,7 @@ function CustomerConsumptonAmount(){
 		});
 	};
 	this.complate = function(){
+		$.messager.progress();
 		$('#basecomplate').linkbutton('disable');
 		$('#ccacdlg-fm').form('submit',{
 			url:content+"/ccac/saveOrUpdateCust",
@@ -426,26 +431,27 @@ function CustomerConsumptonAmount(){
 				return $(this).form('enableValidation').form('validate');
 			},
 			success: function(result){
+				$.messager.progress('close');
 				var data = eval('(' + result + ')');
 				if(data!=null && (data.status || data.status=='true')){
 					$('#ccacdlg-fm').form('clear');
 					$.messager.alert('提示','操作成功');
-					$.messager.progress('close');
 					$('#ccacdlg').dialog('close');
 					cu.clearSelected("ccac_table");
 					$('#ccac_table').datagrid('reload');
 				}else{
 					$.messager.alert('提示',result.mess,'warning');
-					$.messager.progress('close');
 				}
 				$('#basecomplate').linkbutton('enable');
 			},error:function(XMLHttpRequest,textStatus,errorThrown){
+				$.messager.progress('close');
                 $.messager.alert('提示',"操作失败！","error");
                 $('#basecomplate').linkbutton('enable');
             }
 		});
 	};
 	this.amountcomplate = function(){
+		$.messager.progress();
 		$('#baseproductcomplate').linkbutton('disable');
 		$('#ccacdetaildlg-fm').form('submit',{
 			url:content+"/ccac/saveOrUpdateCustAmount",
@@ -453,6 +459,7 @@ function CustomerConsumptonAmount(){
 				return $(this).form('enableValidation').form('validate');
 			},
 			success: function(result){
+				$.messager.progress('close');
 				if(result!=null && result!=""){
 //					$('#ccacdetaildlg-fm').form('clear');
 					cu.disableForm("ccacdetaildlg-fm",false);
@@ -463,16 +470,15 @@ function CustomerConsumptonAmount(){
 					$.messager.alert('提示','操作成功');
 					$('#ccac_table').datagrid('reload');
 					if(user.user.companyid==1){
-						$.messager.progress('close');
 						$('#ccacdetaildlg').dialog('close');
 						cu.clearSelected("ccac_table");
 					}
 				}else{
 					$.messager.alert('提示','操作失败','warning');
-					$.messager.progress('close');
 				}
 				$('#baseproductcomplate').linkbutton('enable');
 			},error:function(XMLHttpRequest,textStatus,errorThrown){
+				$.messager.progress('close');
                 $.messager.alert('提示',"操作失败！","error");
                 $('#baseproductcomplate').linkbutton('enable');
             }
@@ -483,6 +489,7 @@ function CustomerConsumptonAmount(){
 		if(row){
 			$.messager.confirm('提示信息', '你确认要以《分销结算》此用户信息吗?', function(r){
 				if (r){
+					$.messager.progress();
 					$.ajax({
 						async: false,
 						type:"POST",
@@ -493,6 +500,7 @@ function CustomerConsumptonAmount(){
 							return false;
 						},
 						success : function(data) {
+							$.messager.progress('close');
 							if(data.status){//成功
 								$.messager.alert('提示信息','结算成功!');
 								cu.clearSelected("ccac_table");
@@ -500,6 +508,10 @@ function CustomerConsumptonAmount(){
 							}else{
 								$.messager.alert('提示信息','结算失败!','warning');
 							}
+						},
+						error:function(){
+							$.messager.progress('close');
+			                $.messager.alert('提示',"操作失败！","error");
 						}
 					});
 				}
@@ -513,6 +525,7 @@ function CustomerConsumptonAmount(){
 		if(row){
 			$.messager.confirm('提示信息', '你确认要以《会员结算》此用户信息吗?', function(r){
 				if (r){
+					$.messager.progress();
 					$.ajax({
 						async: false,
 						type:"POST",
@@ -523,6 +536,7 @@ function CustomerConsumptonAmount(){
 							return false;
 						},
 						success : function(data) {
+							$.messager.progress('close');
 							if(data.status){//成功
 								$.messager.alert('提示信息','结算成功!');
 								cu.clearSelected("ccac_table");
@@ -530,6 +544,10 @@ function CustomerConsumptonAmount(){
 							}else{
 								$.messager.alert('提示信息',data.mess,'warning');
 							}
+						},
+						error:function(){
+							$.messager.progress('close');
+			                $.messager.alert('提示',"操作失败！","error");
 						}
 					});
 				}
@@ -617,6 +635,7 @@ function CustomerConsumptonAmount(){
 		id = id.split("_")[1];
 		$.messager.confirm('提示信息', '确认要刷卡结算吗?', function(r){
 			if (r){
+				$.messager.progress();
 				$("#"+id).linkbutton("disable");
 				$.ajax({
 					async: false,
@@ -630,6 +649,7 @@ function CustomerConsumptonAmount(){
 						return false;
 					},
 					success : function(data) {
+						$.messager.progress('close');
 						$("#"+id).linkbutton("enable");
 						if(data.status){//成功
 							$.messager.alert('提示信息','刷卡成功!');
@@ -638,16 +658,21 @@ function CustomerConsumptonAmount(){
 						}else{
 							$.messager.alert('提示信息',data.mess,'warning');
 						}
+					},
+					error:function(){
+						$.messager.progress('close');
+		                $.messager.alert('提示',"操作失败！","error");
 					}
 				});
 			}
-		});	
+		});
 	};
 	this.ptcommit = function(){
 		var row=$('#ccac_table').datagrid('getSelected');
 		if(row){
 			$.messager.confirm('提示信息', '你确认要以《普通结算》此用户信息吗?', function(r){
 				if (r){
+					$.messager.progress();
 					$.ajax({
 						async: false,
 						type:"POST",
@@ -658,6 +683,7 @@ function CustomerConsumptonAmount(){
 							return false;
 						},
 						success : function(data) {
+							$.messager.progress('close');
 							if(data.status){//成功
 								$.messager.alert('提示信息','结算成功!');
 								cu.clearSelected("ccac_table");
@@ -665,6 +691,10 @@ function CustomerConsumptonAmount(){
 							}else{
 								$.messager.alert('提示信息',data.mess,'warning');
 							}
+						},
+						error:function(){
+							$.messager.progress('close');
+			                $.messager.alert('提示',"操作失败！","error");
 						}
 					});
 				}
@@ -678,6 +708,7 @@ function CustomerConsumptonAmount(){
 		if(row){
 			$.messager.confirm('提示信息', '你确认要删除此条消费记录吗?', function(r){
 				if (r){
+					$.messager.progress();
 					$.ajax({
 						async: false,
 						type:"POST",
@@ -688,6 +719,7 @@ function CustomerConsumptonAmount(){
 							return false;
 						},
 						success : function(data) {
+							$.messager.progress('close');
 							if(data){//成功
 								$.messager.alert('提示信息','删除成功!');
 								cu.clearSelected("ccac_table");
@@ -695,6 +727,10 @@ function CustomerConsumptonAmount(){
 							}else{
 								$.messager.alert('提示信息','删除失败!','warning');
 							}
+						},
+						error:function(){
+							$.messager.progress('close');
+			                $.messager.alert('提示',"操作失败！","error");
 						}
 					});
 				}
@@ -708,6 +744,7 @@ function CustomerConsumptonAmount(){
 		if(row){
 			$.messager.confirm('提示信息', '你确认要退款此条消费记录吗?', function(r){
 				if (r){
+					$.messager.progress();
 					$.ajax({
 						async: false,
 						type:"POST",
@@ -718,6 +755,7 @@ function CustomerConsumptonAmount(){
 							return false;
 						},
 						success : function(data) {
+							$.messager.progress('close');
 							if(data){//成功
 								$.messager.alert('提示信息','删除成功!');
 								cu.clearSelected("ccac_table");
@@ -725,6 +763,10 @@ function CustomerConsumptonAmount(){
 							}else{
 								$.messager.alert('提示信息','删除失败!','warning');
 							}
+						},
+						error:function(){
+							$.messager.progress('close');
+			                $.messager.alert('提示',"操作失败！","error");
 						}
 					});
 				}
@@ -755,6 +797,7 @@ function CustomerConsumptonAmount(){
 		if(row){
 			$.messager.confirm('提示信息', '你确认要删除此项配置吗?', function(r){
 				if (r){
+					$.messager.progress();
 					$.ajax({
 						async: false,
 						type:"POST",
@@ -765,6 +808,7 @@ function CustomerConsumptonAmount(){
 							return false;
 						},
 						success : function(data) {
+							$.messager.progress('close');
 							if(data){//成功
 								$.messager.alert('提示信息','删除成功!');
 								cu.clearSelected("ccac_table");
@@ -772,6 +816,10 @@ function CustomerConsumptonAmount(){
 							}else{
 								$.messager.alert('提示信息','删除失败!','warning');
 							}
+						},
+						error:function(){
+							$.messager.progress('close');
+			                $.messager.alert('提示',"操作失败！","error");
 						}
 					});
 				}
@@ -810,6 +858,7 @@ function CustomerConsumptonAmount(){
 		}
 	};
 	this.projectListcomplate = function(){
+		$.messager.progress();
 		$('#projectListcomplate').linkbutton('disable');
 		$('#projectListdlg-fm').form('submit',{
 			url:content+"/consumptonProject/saveOrUpdate",
@@ -817,20 +866,20 @@ function CustomerConsumptonAmount(){
 				return $(this).form('enableValidation').form('validate');
 			},
 			success: function(result){
+				$.messager.progress('close');
 				var data = eval('(' + result + ')');
 				if(data.status || data.status=='true'){
 					var cid = $("#ccacdid").val();
 					$('#projectListdlg-fm').form('clear');
 					cu.disableForm("projectListdlg-fm",false);
-					$.messager.progress('close');
 					$('#projectListdlg').dialog('close');
 					project_dg.datagrid("load",{"consumptonAmountId":cid});
 				}else{
 					$.messager.alert('提示',data.mess,'warning');
-					$.messager.progress('close');
 				}
 				$('#projectListcomplate').linkbutton('enable');
 			},error:function(XMLHttpRequest,textStatus,errorThrown){
+				$.messager.progress('close');
                 $.messager.alert('提示',"操作失败！","error");
                 $('#projectListcomplate').linkbutton('enable');
             }
@@ -841,6 +890,7 @@ function CustomerConsumptonAmount(){
 		if(row){
 			$.messager.confirm('提示信息', '你确认要删除此项配置吗?', function(r){
 				if (r){
+					$.messager.progress();
 					$.ajax({
 						async: false,
 						type:"POST",
@@ -851,12 +901,17 @@ function CustomerConsumptonAmount(){
 							return false;
 						},
 						success : function(data) {
+							$.messager.progress('close');
 							if(data){//成功
 								$.messager.alert('提示信息','删除成功!');
 								$('#project_dg').datagrid('reload');
 							}else{
 								$.messager.alert('提示信息','删除失败!','warning');
 							}
+						},
+						error:function(){
+							$.messager.progress('close');
+			                $.messager.alert('提示',"操作失败！","error");
 						}
 					});
 				}
@@ -891,6 +946,7 @@ function CustomerConsumptonAmount(){
 	this.doupload =function(){
 		var row=$('#ccac_table').datagrid('getSelected');
 		if(row){
+			$.messager.progress();
 			$("#img_orderId").val(row.id);
 			$("#img_customerPhone").val(row.phonenumb);
 			$('#uploadform').form('submit',{
@@ -899,14 +955,13 @@ function CustomerConsumptonAmount(){
 					return $(this).form('enableValidation').form('validate');
 				},
 				success: function(result){
+					$.messager.progress('close');
 					var data = eval('(' + result + ')');
 					if(data.status || data.status=='true'){
 						$('#uploadform').form('clear');
-						$.messager.progress('close');
 						$('#uploaddlg').dialog('close');
 					}else{
 						$.messager.alert('提示',data.mess,'warning');
-						$.messager.progress('close');
 					}
 				}
 			});
@@ -918,6 +973,7 @@ function CustomerConsumptonAmount(){
 		$('#ccac_table').datagrid("selectRow", index);
 		var row=$('#ccac_table').datagrid('getSelected');
 		if(row){
+			$.messager.progress();
 			$.ajax({
 				async: false,
 				type:"POST",
@@ -929,12 +985,17 @@ function CustomerConsumptonAmount(){
 					return false;
 				},
 				success : function(count) {
+					$.messager.progress('close');
 					if(count>0){//成功
 						$("#viewimages").attr("src",content+"/goViewImages?orderId="+row.id+"&customerPhone="+row.phonenumb);
 						$("#viewimagesdlg").dialog("open").dialog("center").dialog("setTitle","就诊图片预览");
 					}else{
 						$.messager.alert('提示信息','没有要查看的照片!','warning');
 					}
+				},
+				error:function(){
+					$.messager.progress('close');
+	                $.messager.alert('提示',"操作失败！","error");
 				}
 			});
 		}else{
@@ -951,6 +1012,7 @@ function CustomerConsumptonAmount(){
 			}
 			$.messager.confirm('提示信息', '你确认要回退用户：“'+row.customername+'”的订单吗?', function(r){
 				if (r){
+					$.messager.progress();
 					$.ajax({
 						async: false,
 						type:"POST",
@@ -962,12 +1024,17 @@ function CustomerConsumptonAmount(){
 							return false;
 						},
 						success : function(data) {
+							$.messager.progress('close');
 							if(data.status){//成功
 								$.messager.alert('提示信息','订单回退成功!');
 								$('#ccac_table').datagrid('reload');
 							}else{
 								$.messager.alert('提示信息','删除失败!','warning');
 							}
+						},
+						error:function(){
+							$.messager.progress('close');
+			                $.messager.alert('提示',"操作失败！","error");
 						}
 					});
 				}

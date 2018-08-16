@@ -62,6 +62,15 @@ public class UserController {
 	public Map<String,Object> saveOrUpdate(TSysUser bean) {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求添加或更新用户配置信息！");
 		try {
+			if(bean.getId()==null) {
+				boolean c = sysUserService.checkUserNameEable(bean.getUsername());
+				if(!c) {
+					logger.info("用户名[" + bean.getUsername() + "]已经存在请重新设置用户名！");
+					paramMap.put("status", false);
+					paramMap.put("mess", "用户《"+bean.getUsername()+"》已经存在请重新设置用户名。");
+					return paramMap;
+				}
+			}
 			int x = sysUserService.saveOrUpdate(bean);
 			if(x==0) {
 				paramMap.put("status", true);
@@ -102,6 +111,32 @@ public class UserController {
 			logger.info(e.getMessage(),e);
 		}
 		return false;
+	 }
+    
+    @ApiOperation(value="查询用户对象列表", notes="查询用户对象列表")
+    @ApiImplicitParam(name = "bean", value = "用户实体对象TSysUser", required = false, dataType = "TSysUser")
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequestMapping(value = "/getSysUserInfo",method=RequestMethod.POST)
+	public TSysUser getSysUserInfo(Long id) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询用户对象列表！");
+		try {
+			return sysUserService.getSysUserInfo(id);
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    
+    @ApiOperation(value="修改用户密码", notes="修改用户密码")
+	@RequestMapping(value = "/changePassword",method=RequestMethod.POST)
+	public Map<String,Object> changePassword(String oldpwd,String newpwd,String snewpwd) {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求【修改用户密码】！");
+		try {
+			return sysUserService.changePassword(oldpwd,newpwd);
+		} catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+		return null;
 	 }
     
 }

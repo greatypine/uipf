@@ -68,6 +68,7 @@ function MyworkforceManagementQuery(){
 		var cls = new Array();
 		var year = $("#queryyear").combobox("getValue");
 		var month = $("#querymonth").combobox("getValue");
+		month = (Number(month)<10)?'0'+Number(month):month;
 		if(year=="" || month == ""){
 			$.messager.alert('提示信息','日期不能为空!','error'); 
 			return "";

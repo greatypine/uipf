@@ -1,17 +1,19 @@
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.ibatis.session.RowBounds;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.gasq.bdp.logn.mapper.TSysTimerLogMapper;
 import com.gasq.bdp.logn.model.TSysTimerLog;
 import com.gasq.bdp.logn.model.TSysTimerLogExample;
 import com.gasq.bdp.logn.model.TSysTimerLogExample.Criteria;
 import com.gasq.bdp.logn.utils.DateUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * 
@@ -45,20 +47,11 @@ public class TSysTimerLogServiceImpl implements com.gasq.bdp.logn.service.TSysTi
 			c.andWfidEqualTo(bean.getWfid());
 		}
 		example.setOrderByClause(" createTime desc ");
-		int count = (int) logMapper.countByExample(example);
-		List<TSysTimerLog> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
-		RowBounds rowBounds = new RowBounds(start, bean.getRows());
-		if(count>0) {
-			list = logMapper.selectByExampleWithBLOBsWithRowbounds(example, rowBounds);
-		}else {
-			list = new ArrayList<TSysTimerLog>();
-		}
+		PageHelper.startPage((bean.getPage()-1) * bean.getRows(), bean.getRows());
+		List<TSysTimerLog> list = logMapper.selectByExample(example);
+		PageInfo<TSysTimerLog> pageinfo = new PageInfo<>(list);
 		result.put("rows",list);
-		result.put("total",count);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

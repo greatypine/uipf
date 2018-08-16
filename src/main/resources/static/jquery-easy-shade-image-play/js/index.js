@@ -3,30 +3,40 @@ $(function(){
 	initlistener();
 });
 function initdata(){
-	if(images.length>0){
-		var datas = images;
-		if(typeof(images) == 'string'){
-			datas = JSON.parse(images);
-		}
-		if(datas.length==1){
-			$("#centent").append(createImages(datas[0],true));
-			$("#centent").append(createImagesBtn());
-		}else{
-			for (var i = 0; i < datas.length; i++) {
-				if(i==0){
-					$("#centent").append(createImages(datas[i],true));
-				}else{
-					if(i==datas.length-1){
-						$("#centent").append(createImages(datas[i],false));
-						$("#centent").append(createImagesBtn());
+	if(images!=null){
+		if(images.length>0){
+			var datas = images;
+			if(typeof(images) == 'string'){
+				datas = JSON.parse(images);
+			}
+			if(datas.length==1){
+				$("#centent").append(createImages(datas[0],true));
+				$("#centent").append(createImagesBtn());
+			}else{
+				for (var i = 0; i < datas.length; i++) {
+					if(i==0){
+						$("#centent").append(createImages(datas[i],true));
 					}else{
-						$("#centent").append(createImages(datas[i],false));
+						if(i==datas.length-1){
+							$("#centent").append(createImages(datas[i],false));
+							$("#centent").append(createImagesBtn());
+						}else{
+							$("#centent").append(createImages(datas[i],false));
+						}
 					}
 				}
 			}
+		}else{
+			$("#centent").append(createImagesBtn());
 		}
-	}else{
-		$("#centent").append(createImagesBtn());
+	}else if(sysuserimage!=null){
+		if(sysuserimage.length>0){
+			var data = {"imgUrl":sysuserimage,"title":"","createUser":""};
+			$("#centent").append(createImages(data,true));
+			$("#centent").append(createImagesBtn());
+		}else{
+			$("#centent").append(createImagesBtn());
+		}
 	}
 }
 function initlistener(){
@@ -105,7 +115,7 @@ function createImages(data,f){
 	var c = "text-on";
 	if(!f) c="";
 	var html = '<figure class="slide '+c+'">'
-					+'<img src="'+content+"/"+data.imgUrl+'" alt="" width="100%" height="100%"/>'
+					+'<img src="'+content+"/"+data.imgUrl+'" alt="'+data.createUser+'" width="100%" height="100%"/>'
 					+'<figcaption>'
 						+'<div class="title">'+data.title+'</div>'
 						+'<div class="author">'+data.createUser+'</div>'

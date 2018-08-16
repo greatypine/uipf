@@ -4,7 +4,6 @@
 package com.gasq.bdp.logn.service.imp;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,8 @@ import com.gasq.bdp.logn.service.TConsumptonProjectService;
 import com.gasq.bdp.logn.service.TInventoryLogService;
 import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author Ju_weigang
@@ -103,12 +104,13 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 		bean.setPage(start);
 		bean.setRows(number);
 		bean.setCompanyid(SystemUserInfo.getSystemUser().getUser().getCompanyid());
-		list = customerConsumptonAmountMapper.queryPagingList(bean);
-		if(list==null || list.size()<=0)list = new ArrayList<Map<String,Object>>(); 
-		Integer count = customerConsumptonAmountMapper.countByBean(bean);
-		result.put("rows",list);
-		result.put("total",count);
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询消费订单金额信息列表完成！查询条数："+count+",查询参数："+CommonUtils.bean2Json(bean));
+		PageHelper.startPage(start, number);
+		List<Map<String, Object>> listmaps = customerConsumptonAmountMapper.queryPagingList(bean);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询消费订单金额信息列表完成！查询条数："+pageinfo.getTotal()+",查询参数："+CommonUtils.bean2Json(bean));
 		return result;
 	}
 

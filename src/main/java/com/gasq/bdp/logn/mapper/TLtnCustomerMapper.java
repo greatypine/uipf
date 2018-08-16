@@ -35,7 +35,7 @@ public interface TLtnCustomerMapper {
     int updateByPrimaryKey(TLtnCustomer record);
     
     List<Map<String, Object>> queryPagingList(@Param("record") TLtnCustomer bean);
-
+    
 	Map<String, Object> queryAmountSum(@Param("record") TLtnCustomer bean);
 
 	List<Map<String, Object>> queryExportDataList(@Param("record") TLtnCustomer customer);
@@ -45,4 +45,6 @@ public interface TLtnCustomerMapper {
 	Map<String, Object> getConsumptionProjects(Integer id);
 
 	Integer countByBean(@Param("record") TLtnCustomer bean);
+
+	List<Map<String, Object>> queryPagingListExt(@Param("record") TLtnCustomer bean);
 }

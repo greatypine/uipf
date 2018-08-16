@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jetty.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class SchedulingCollection {
 	@Autowired TCustomerSubscribeMapper customerSubscribeMapper;
     private final Logger logger = LoggerFactory.getLogger(getClass());
     
-	@Scheduled(cron = "10 50 23 * * ?") // 统计日渠道客户消费情况 10 00 22 * * ?
+	@Scheduled(cron = "10 50 23 * * ?") // 统计日渠道客户消费情况 10 50 23 * * ?
     public String doCountDayOrderChannelCost() {
     	logger.info("定时器【痘卫士-日客户消费统计】后台开始运行........................");
     	TSysTimerSwitchExample example = new TSysTimerSwitchExample();
@@ -50,9 +51,10 @@ public class SchedulingCollection {
     			String mess = getCountDayOrderChannelCostMess(tSysUser,"日客户渠道消费统计","3");
     			String mess2 = getCountProjectsOrderCostMess(tSysUser,"日客户项目消费统计","3");
     			String mess3 = queryCountProjectsOrderAmountCost(tSysUser,"日客户项目消费金额统计","3");
-    			mess += (mess2==null?"":"</br>"+mess2);
-    			mess += (mess3==null?"":"</br>"+mess3);
-    			if(mess!=null) emailService.sendHtmlMail(tSysUser.getEmail(), "痘卫士-日客户渠道消费统计",mess);
+    			if(StringUtil.isBlank(mess)) mess = "";
+    			mess += (StringUtil.isBlank(mess2)?"":"</br>"+mess2);
+    			mess += (StringUtil.isBlank(mess3)?"":"</br>"+mess3);
+    			if(StringUtil.isNotBlank(mess)) emailService.sendHtmlMail(tSysUser.getEmail(), "痘卫士-日客户渠道消费统计",mess);
     		}
     		logger.info("定时器【痘卫士-日客户消费统计】后台运行完毕");
     	}else {
@@ -74,9 +76,10 @@ public class SchedulingCollection {
     			String mess = getCountDayOrderChannelCostMess(tSysUser,"月客户渠道消费统计","2");
     			String mess2 = getCountProjectsOrderCostMess(tSysUser,"月客户项目消费次数统计","2");
     			String mess3 = queryCountProjectsOrderAmountCost(tSysUser,"月客户项目消费金额统计","2");
-    			mess += (mess2==null?"":"</br>"+mess2);
-    			mess += (mess3==null?"":"</br>"+mess3);
-    			if(mess!=null) emailService.sendHtmlMail(tSysUser.getEmail(), "痘卫士-月客户渠道消费统计",mess);
+    			if(StringUtil.isBlank(mess)) mess = "";
+    			mess += (StringUtil.isBlank(mess2)?"":"</br>"+mess2);
+    			mess += (StringUtil.isBlank(mess3)?"":"</br>"+mess3);
+    			if(StringUtil.isNotBlank(mess)) emailService.sendHtmlMail(tSysUser.getEmail(), "痘卫士-月客户渠道消费统计",mess);
     		}
     		logger.info("定时器【痘卫士-月客户渠道消费统计】后台运行完毕");
     	}else {
@@ -218,7 +221,7 @@ public class SchedulingCollection {
     				sb.append("<td style='border-width: 1px;padding: 8px;border-style: solid;border-color: #666666;background-color: #ffffff; text-align:center;'>"+datetime+"</td>");
     				String companyName = map2.get("companyName").toString();
     				sb.append("<td style='border-width: 1px;padding: 8px;border-style: solid;border-color: #666666;background-color: #ffffff; text-align:center;'>"+companyName+"</td>");
-    				String name = map2.get("name").toString();
+    				String name = (map2.get("name")==null)?"":map2.get("name").toString();
     				sb.append("<td style='border-width: 1px;padding: 8px;border-style: solid;border-color: #666666;background-color: #ffffff; text-align:center;'>"+name+"</td>");
     				String text = (map2.get("text")==null)?"":map2.get("text").toString();
     				sb.append("<td style='border-width: 1px;padding: 8px;border-style: solid;border-color: #666666;background-color: #ffffff; text-align:center;'>"+text+"</td>");
@@ -276,6 +279,7 @@ public class SchedulingCollection {
         		record.setStatus(99);
         		TCustomerSubscribeExample example1 = new TCustomerSubscribeExample();
         		example1.createCriteria().andStatusEqualTo(0).andSubscribeDateLessThanOrEqualTo(DateUtil.getDiyDateTime(DateUtil.getSysCurrentDate(), -4));
+//        		example1.or().andSubscribeDateIsNull().andStatusEqualTo(0);
         		customerSubscribeMapper.updateByExampleSelective(record, example1);
         	}
 		} catch (Exception e) {

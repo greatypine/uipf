@@ -35,6 +35,10 @@ public class DateUtil {
 	 */
 	public static final String DATE_NO_FLAG_DATE_FORMAT = "yyyyMMdd";
 	/**
+	 * @return yyyyMM
+	 */
+	public static final String DATE_TIME_FLAG_NO_DATE_FORMAT = "yyyyMM";
+	/**
 	 * @return yyyyMMddHHmmss
 	 */
 	public static final String DATE_NO_FLAG_DATE_TIME_FORMAT = "yyyyMMddHHmmss";

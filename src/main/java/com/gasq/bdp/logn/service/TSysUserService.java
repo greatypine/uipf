@@ -2,6 +2,8 @@ package com.gasq.bdp.logn.service;
 import com.gasq.bdp.logn.iexception.WorkFlowStateException;
 import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.TSysUser;
+import com.gasq.bdp.logn.model.TSysUserExt;
+
 import java.util.List;
 import java.util.Map;
 
@@ -22,5 +24,13 @@ public interface TSysUserService {
 	SystemUser queryFullUser(TSysUser user);
 
 	boolean unlockSubmit(TSysUser bean);
+
+	boolean checkUserNameEable(String username);
+
+	TSysUser getSysUserInfo(Long id);
+
+	TSysUserExt getSysUserExtInfo(Long id);
+
+	Map<String, Object> changePassword(String oldpwd, String newpwd);
 
 }

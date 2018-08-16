@@ -7,8 +7,12 @@ $(function(){
 function initData(){
 	customerSubscribe = new MycustomerSubscribe();
 	var st = null;
+//	var starttime = "";
 	if(cu.hasRoles("q_area_shopManager,q_admin,q_receptionist,q_counselor,q_option")){
 		st = 0;
+//		starttime = cu.date_add(new Date(),-1);
+	}else{
+		
 	}
 	var initQueryParams={status:st};
 	customerSubscribe.initCompant(initQueryParams);
@@ -181,6 +185,7 @@ function MycustomerSubscribe(){
 		}
 	};
 	this.doReception = function(){
+		$.messager.progress();
 		$("#basecomplate").linkbutton("disable");
 		$('#ccacdlg-fm').form('submit',{
 			url:content+"/ccac/saveOrUpdateTFMCust",
@@ -188,12 +193,12 @@ function MycustomerSubscribe(){
 				return $(this).form('enableValidation').form('validate');
 			},
 			success: function(result){
+				$.messager.progress('close');
 				if(result){
 					var counsoler = $("#counsoler").combobox("getValue");
 					var customerName = $("#customername").textbox("getValue");
 					var text = $("#counsoler").combobox("getText");
 					$.messager.alert('提示','操作成功!请美容师'+text+'在《客户消费维护》页面刷新后继续操作!');
-					$.messager.progress('close');
 					$('#ccacdlg').dialog('close');
 					cu.clearSelected("customerSubscribe_table");
 					$('#customerSubscribe_table').datagrid('reload');
@@ -201,11 +206,11 @@ function MycustomerSubscribe(){
 					cu.sendMessage(amq,"topic://before_subscribe_msg",counsoler+"|"+text+"，你有新顾客需要咨询->姓名："+customerName);
 				}else{
 					$.messager.alert('提示','操作失败','warning');
-					$.messager.progress('close');
 				}
 				$('#basecomplate').linkbutton('enable');
 			},error:function(XMLHttpRequest,textStatus,errorThrown){
-                $.messager.alert('提示',"操作失败！","error");
+				$.messager.progress('close');
+				$.messager.alert('提示',"操作失败！","error");
                 $('#basecomplate').linkbutton('enable');
             }
 		});
@@ -216,6 +221,7 @@ function MycustomerSubscribe(){
 		$('#'+id).combobox('loadData',data);
 	};
 	this.complate = function(){
+		$.messager.progress();
 		$("#complatebtn").linkbutton("disable");
 		$('#customerSubscribedlg-fm').form('submit',{
 			url:content+"/customerSubscribe/saveOrUpdate",
@@ -223,6 +229,7 @@ function MycustomerSubscribe(){
 				return $(this).form('enableValidation').form('validate');
 			},
 			success: function(result){
+				$.messager.progress('close');
 				if(result){
 					var id = $("#csid").val();
 					var subscribeDate = $("#subscribeDate").datetimebox("getValue");
@@ -238,10 +245,10 @@ function MycustomerSubscribe(){
 					$('#customerSubscribedlg-fm').form('clear');
 				}else{
 					$.messager.alert('提示','操作失败','warning');
-					$.messager.progress('close');
 				}
 				$('#complatebtn').linkbutton('enable');
 			},error:function(XMLHttpRequest,textStatus,errorThrown){
+				$.messager.progress('close');
                 $.messager.alert('提示',"操作失败！","error");
                 $('#complatebtn').linkbutton('enable');
             }
@@ -256,6 +263,7 @@ function MycustomerSubscribe(){
 		if(row){
 			$.messager.confirm('提示信息', '你确认要关闭此项配置吗?', function(r){
 				if (r){
+					$.messager.progress();
 					$.ajax({
 						data :{id:row.id},
 						url : content+"/customerSubscribe/delete",
@@ -264,12 +272,17 @@ function MycustomerSubscribe(){
 							return false;
 						},
 						success : function(data) {
+							$.messager.progress('close');
 							if(data){//成功
 								$.messager.alert('提示信息','删除成功!');
 								$('#customerSubscribe_table').datagrid('reload');
 							}else{
 								$.messager.alert('提示信息','删除失败!','warning');
 							}
+						},
+						error:function(){
+							$.messager.progress('close');
+			                $.messager.alert('提示',"操作失败！","error");
 						}
 					});
 				}

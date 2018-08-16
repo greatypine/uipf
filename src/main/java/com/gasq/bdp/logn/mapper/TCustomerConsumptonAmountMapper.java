@@ -33,7 +33,7 @@ public interface TCustomerConsumptonAmountMapper {
 
     int updateByPrimaryKey(TCustomerConsumptonAmount record);
 
-	List<Map<String, Object>> queryPagingList(@Param("record") TCustomerConsumptonAmount bean);
-
+    List<Map<String, Object>> queryPagingList(@Param("record") TCustomerConsumptonAmount bean);
+    
 	Integer countByBean(@Param("record") TCustomerConsumptonAmount bean);
 }

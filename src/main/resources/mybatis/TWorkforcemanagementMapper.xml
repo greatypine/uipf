@@ -809,7 +809,7 @@
 		    )
         </foreach>
   </insert>
-  <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
+  <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.LinkedHashMap">
 	SELECT
 		a.*,tc.name as companyName
 	FROM

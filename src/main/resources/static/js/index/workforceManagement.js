@@ -81,6 +81,7 @@ function MyworkforceManagement(){
 		var cls = new Array();
 		var year = $("#queryyear").combobox("getValue");
 		var month = $("#querymonth").combobox("getValue");
+		month = (Number(month)<10)?'0'+Number(month):month;
 		if(year=="" || month == ""){
 			$.messager.alert('提示信息','日期不能为空!','error'); 
 			return "";
@@ -103,20 +104,20 @@ function MyworkforceManagement(){
 			};
 			cls.push(cl);
 		}
-		console.log(cls);
+//		console.log(cls);
 		return cls;
 	};
-	this.createUserWorkforce = function(){
-		var data = $("#userctbbx").combobox("getValues");
-		if(data!=null){
-			if(data.length>0){
-				for (var i = 0; i < data.length; i++) {
-					var row = data[i];
-					console.log(row);
-				}
-			}
-		}
-	}
+//	this.createUserWorkforce = function(){
+//		var data = $("#userctbbx").combobox("getValues");
+//		if(data!=null){
+//			if(data.length>0){
+//				for (var i = 0; i < data.length; i++) {
+//					var row = data[i];
+//					console.log(row);
+//				}
+//			}
+//		}
+//	}
 	this.query = function(){
 		var params = workforceManagement.getParams();
 		workforceManagement_table.datagrid("load",params);
@@ -127,7 +128,7 @@ function MyworkforceManagement(){
 		var month = ($("#querymonth").combobox("getValue")<0)?null:$("#querymonth").combobox("getValue");
 		var params = {};
 		if(companyid!="") {params.companyid = companyid;}
-		if(year!="" && month!="") {params.cycle = year+((Number(month)<10)?"0"+month:month);}
+		if(year!="" && month!="") {params.cycle = year+((Number(month)<10)?"0"+Number(month):month);}
 		return params;
 	};
 	this.clearForm = function(){
@@ -152,6 +153,7 @@ function MyworkforceManagement(){
 		$('#'+id).combobox('loadData',data);
 	};
 	this.complate = function(){
+		$.messager.progress();
 		$('#workforceManagementdlg-fm').form('submit',{
 			url:content+"/workforceManagement/addwf",
 			onSubmit:function(){
@@ -169,6 +171,10 @@ function MyworkforceManagement(){
 					$.messager.alert('提示',data.mess,'warning');
 					$.messager.progress('close');
 				}
+			},
+			error:function(){
+				$.messager.alert('提示','操作失败！');
+				$.messager.progress('close');
 			}
 		});
 	};
@@ -186,6 +192,7 @@ function MyworkforceManagement(){
 		var data = datag.rows;
 		$.messager.confirm('提示信息', '你确认要生成排班吗?', function(r){
 			if (r){
+				$.messager.progress();
 				$.ajax({
 					headers: {
 				        'Accept': 'application/json',
@@ -201,12 +208,17 @@ function MyworkforceManagement(){
 						return false;
 					},
 					success : function(data) {
+						$.messager.progress('close');
 						if(data){//成功
 							$.messager.alert('提示信息','排版生成成功!');
 							$('#workforceManagement_table').datagrid('reload');
 						}else{
 							$.messager.alert('提示信息','操作失败!','warning');
 						}
+					},
+					error:function(){
+						$.messager.progress('close');
+		                $.messager.alert('提示',"操作失败！","error");
 					}
 				});
 			}
@@ -217,6 +229,7 @@ function MyworkforceManagement(){
 		var params = workforceManagement.getParams();
 		$.messager.confirm('提示信息', '你确认要删除《'+params.year+'年'+params.month+'月》排班信息吗?', function(r){
 			if (r){
+				$.messager.progress();
 				$.ajax({
 					data :params,
 					type:"POST",
@@ -226,12 +239,17 @@ function MyworkforceManagement(){
 						return false;
 					},
 					success : function(data) {
+						$.messager.progress('close');
 						if(data){//成功
 							$.messager.alert('提示信息','删除成功!');
 							$('#workforceManagement_table').datagrid('reload');
 						}else{
 							$.messager.alert('提示信息','删除失败!','warning');
 						}
+					},
+					error:function(){
+						$.messager.progress('close');
+		                $.messager.alert('提示',"操作失败！","error");
 					}
 				});
 			}

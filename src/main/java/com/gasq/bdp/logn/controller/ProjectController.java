@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +33,7 @@ public class ProjectController {
     @ApiImplicitParam(name = "bean", value = "项目实体对象TProject", required = false, dataType = "TProject")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
-	public Map<String, Object> queryMapLists(TProject bean) {
+	public Map<String, Object> queryList(TProject bean) {
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表项目配置信息列表！");
 		try {
 			return projectService.queryPagingList(bean);
@@ -82,6 +83,19 @@ public class ProjectController {
 			logger.info(e.getMessage(),e);
 		}
 		return false;
+	 }
+    
+    
+    @ApiOperation(value="查询列表项目配置信息列表", notes="查询列表项目配置信息列表")
+    @ApiImplicitParam(name = "bean", value = "项目实体对象TProject", required = false, dataType = "TProject")
+	@GetMapping(value = "/queryProjectList")
+	public List<TProject> queryProjectList(Integer companyId,Integer index,Integer size) {
+		try {
+			return projectService.queryProjectList(companyId,index,size);
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
 	 }
 }
 

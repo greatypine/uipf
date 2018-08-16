@@ -95,6 +95,34 @@ public class GabdpDBConfig {
         return factoryBean.getObject();
     }
     
+//    @Primary
+//    @Bean(name = "gabdpSqlSessionFactory")
+//    public SqlSessionFactory sqlSessionFactory(@Qualifier("gabdpDataSource") DataSource dataSource) throws Exception {
+//        SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+//        factoryBean.setDataSource(dataSource);
+//        factoryBean.setTypeAliasesPackage("com.gasq.bdp.logn.model");
+//      //分页插件
+//        PageInterceptor iterceptor = new PageInterceptor();
+//        Properties properties = new Properties();
+//        properties.setProperty("reasonable", "true");
+//        properties.setProperty("supportMethodsArguments", "true");
+//        properties.setProperty("returnPageInfo", "check");
+//        properties.setProperty("params", "count=countSql");
+//        iterceptor.setProperties(properties);
+//        PageInterceptor[] interceptors = new PageInterceptor[]{iterceptor};
+//        //添加插件
+//        factoryBean.setPlugins(interceptors);
+//        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+//        try {
+//        	factoryBean.setMapperLocations(resolver.getResources("classpath:mybatis/*.xml"));
+//        	factoryBean.setConfigLocation(resolver.getResource("classpath:mybatis-config.xml"));
+//            return factoryBean.getObject();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(e);
+//        }
+//    }
+    
     @Primary
     @Bean(name = "gabdpTransactionManager")
     public DataSourceTransactionManager transactionManager(@Qualifier("gabdpDataSource") DataSource dataSource) {

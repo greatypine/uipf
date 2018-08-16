@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.gasq.bdp.logn.model.TCompany;
+import com.gasq.bdp.logn.model.TWorkforcemanagement;
 
 /**
  * @author Ju_weigang
@@ -54,5 +55,11 @@ public interface CommonService {
 
 	List<Map<String, Object>> queryCountProjectsOrderAmountCost(Integer companyid, String datatype, String otherMonth,
 			String diyStrDateTime);
+
+	Map<String, Object> queryIndexUserCount();
+
+	Map<String, Object> queryIndexCompanyCount();
+
+	Map<String, Object> queryWorkforceList(TWorkforcemanagement bean);
 
 }

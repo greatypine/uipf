@@ -17,12 +17,24 @@ public class SystemUser extends BaseBean{
 	
 	private TSysUser user;
 	
+	private TSysUserExt userext;
+	
 	private List<TSysRole> role;//角色
 
 	private List<TSysPermission> promissions;//权限
 	
 	private TCompany company;
 	
+	
+	
+	public TSysUserExt getUserext() {
+		return userext;
+	}
+
+	public void setUserext(TSysUserExt userext) {
+		this.userext = userext;
+	}
+
 	public TSysUser getUser() {
 		return user;
 	}

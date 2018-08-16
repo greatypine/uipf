@@ -3,13 +3,11 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +17,8 @@ import com.gasq.bdp.logn.model.TSysBasecodeExample;
 import com.gasq.bdp.logn.model.TSysBasecodeExample.Criteria;
 import com.gasq.bdp.logn.service.BaseCodeService;
 import com.gasq.bdp.logn.utils.DateUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * 
@@ -56,20 +56,11 @@ public class BaseCodeServiceImpl implements BaseCodeService {
 			c.andCompanyIdEqualTo(bean.getCompanyId());
 		}
 		example.setOrderByClause(" createtime desc ");
-		int count = (int) mapper.countByExample(example);
-		List<TSysBasecode> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
-		RowBounds rowBounds = new RowBounds(start, bean.getRows());
-		if(count>0) {
-			list = mapper.selectByExampleWithRowbounds(example, rowBounds);
-		}else {
-			list = new ArrayList<TSysBasecode>(); 
-		}
+		PageHelper.startPage((bean.getPage()-1) * bean.getRows(), bean.getRows());
+		List<TSysBasecode> list = mapper.selectByExample(example);
+		PageInfo<TSysBasecode> pageinfo = new PageInfo<>(list);
 		result.put("rows",list);
-		result.put("total",count);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

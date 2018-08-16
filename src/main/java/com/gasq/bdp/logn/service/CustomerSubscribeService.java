@@ -22,4 +22,6 @@ public interface CustomerSubscribeService {
 
 	String querySubscribeInfo();
 
+	List<TCustomerSubscribe> querySubscribeList();
+
 }

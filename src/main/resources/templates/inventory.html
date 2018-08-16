@@ -15,17 +15,19 @@
 			<a id="append" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="inventory.append()">入库</a>
 			<a id="delivery" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="inventory.delivery()">出库</a> 
 			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="inventory.remove()">删除</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="inventory.clear()">清空</a>
 		</div>
 		<div id="cron_bar">
 			<form id="inventoryform">
 				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+				产品编号: <input id="querycode" name="inventorycode" class="easyui-textbox" style="width: 120px; height: 22px;"/>
 				产品名称: <input id="queryname" name="inventoryname" class="easyui-textbox" style="width: 120px; height: 22px;"/>
 				产品状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
 							<option value="-1">请选择</option>
 							<option value="0">正常</option>
 							<option value="99">下架</option>
 						</select>
-				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/> 
+				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/>
 			</form>
 		</div>
 	</div>

@@ -22,14 +22,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gasq.bdp.logn.mapper.TSysUserExtMapper;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TCompany;
 import com.gasq.bdp.logn.model.TCustomerImages;
+import com.gasq.bdp.logn.model.TCustomerSubscribe;
 import com.gasq.bdp.logn.model.TSysUser;
+import com.gasq.bdp.logn.model.TSysUserExt;
+import com.gasq.bdp.logn.model.TWorkforcemanagement;
 import com.gasq.bdp.logn.service.CommonService;
+import com.gasq.bdp.logn.service.CustomerSubscribeService;
 import com.gasq.bdp.logn.service.TCustomerImagesService;
 import com.gasq.bdp.logn.utils.CommonUtils;
+import com.gasq.bdp.logn.utils.DateUtil;
 
 @RestController
 @RequestMapping(value = "/common")
@@ -37,12 +43,17 @@ public class CommonController {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired CommonService commonService;
 	@Autowired TCustomerImagesService customerImagesService;
+	@Autowired TSysUserExtMapper sysUserExtMapper;
+	@Autowired CustomerSubscribeService subscribeService;
 	/**
      * 在配置文件中配置的文件保存路径
      */
     @Value("${img.location}")
     private String location;
     
+    /**
+     * 客户图片上传
+     */
 	@PostMapping("/img/upload")
     public Map<String,Object> uploadImg(@RequestParam("editormd-image-file") MultipartFile multipartFile,TCustomerImages customerImages)  {
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】开始上传图片！");
@@ -68,8 +79,9 @@ public class CommonController {
         String filePath = location+return_path;
         logger.info("图片保存路径={}", filePath);
         String file_name = null;
+        String postfix = ".png";
         try {
-            file_name = CommonUtils.saveImg(multipartFile, filePath);
+            file_name = CommonUtils.saveImg(multipartFile, filePath,postfix);
             if(StringUtils.isNotBlank(file_name)){
             	markDVo.put("status",true);
             	markDVo.put("mess","上传成功");
@@ -87,11 +99,60 @@ public class CommonController {
             return markDVo;
         }
     }
-	
+	/**
+	 * 系统用户图片上传
+	 */
+	@PostMapping("/userimg/upload")
+    public Map<String,Object> uploadUserImg(@RequestParam("editormd-image-file") MultipartFile multipartFile,TSysUser sysUser)  {
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】开始上传图片！");
+		Map<String,Object> markDVo = new HashMap<>();
+    	markDVo.put("status",false);
+    	if (multipartFile.isEmpty() || StringUtils.isBlank(multipartFile.getOriginalFilename())|| sysUser==null) {
+           logger.error("文件或者订单信息为空！");
+           markDVo.put("mess", "文件或者订单信息为空！");
+           return markDVo;
+        }
+        String contentType = multipartFile.getContentType();
+        if (!contentType.contains("")) {
+            logger.error("图片格式不正确！");
+            markDVo.put("mess", "图片格式不正确！");
+            return markDVo;
+        }
+        String root_fileName = multipartFile.getOriginalFilename();
+        logger.info("上传图片:name={},type={}", root_fileName, contentType);
+        //处理图片
+        TSysUser currentUser = SystemUserInfo.getSystemUser().getUser();
+        //获取路径
+        String return_path = "userimgs"+File.separator+currentUser.getCompanyid();
+        String filePath = location+return_path;
+        logger.info("图片保存路径={}", filePath);
+        String file_name = null;
+        String postfix = ".jpg";
+        try {
+            file_name = CommonUtils.saveSysUserImg(multipartFile, filePath,sysUser.getUsername(),postfix);
+            if(StringUtils.isNotBlank(file_name)){
+            	markDVo.put("status",true);
+            	markDVo.put("mess","上传成功");
+            	markDVo.put("url",return_path+File.separator+file_name);
+            	TSysUserExt sysExtUser = new TSysUserExt();
+            	sysExtUser.setUserId(sysUser.getId());
+            	sysExtUser.setImagePath(return_path+File.separator+file_name);
+            	sysUserExtMapper.updateByPrimaryKeySelective(sysExtUser);
+            }else {
+            	markDVo.put("mess","上传失败");
+            }
+            logger.info("返回值：{}",markDVo);
+            return markDVo;
+        } catch (IOException e) {
+            logger.error("保存图片失败！"+e.getMessage(),e);
+            markDVo.put("mess", "保存图片失败！");
+            return markDVo;
+        }
+    }
 	/**
 	 * 用户来源
 	 */
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryRootIn",method=RequestMethod.POST)
 	public List<Map<String,Object>> queryRootIn(TCompany bean) {
 		try {
@@ -102,7 +163,7 @@ public class CommonController {
     	return null;
 	 }
     
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/querySex",method=RequestMethod.POST)
 	public List<Map<String,Object>> querySex(TCompany bean) {
 		try {
@@ -116,7 +177,7 @@ public class CommonController {
     /**
      * 用户状态
      */
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryUserStatus",method=RequestMethod.POST)
 	public List<Map<String,Object>> queryUserStatus(TCompany bean) {
 		try {
@@ -129,7 +190,7 @@ public class CommonController {
     /**
      * 查询系统美容师
      */
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryCosmetologist",method=RequestMethod.POST)
 	public List<Map<String,Object>> queryCosmetologist(TCompany bean) {
 		try {
@@ -142,7 +203,7 @@ public class CommonController {
     /**
      * 查询系统咨询师
      */
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryCounsoler",method=RequestMethod.POST)
 	public List<Map<String,Object>> queryCounsoler(TCompany bean) {
 		try {
@@ -155,7 +216,7 @@ public class CommonController {
     /**
      * 查询产品
      */
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryProjectInventory",method=RequestMethod.POST)
 	public List<Map<String,Object>> queryProjectInventory(TCompany bean) {
 		try {
@@ -166,7 +227,7 @@ public class CommonController {
     	return null;
 	 }
     
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/getView",method=RequestMethod.POST)
 	public List<Map<String,Object>> getView(TCompany bean) {
 		try {
@@ -177,7 +238,7 @@ public class CommonController {
     	return null;
 	 }
     
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryEmployeeTreatOrderReport",method=RequestMethod.POST)
 	public Map<String, Object> queryEmployeeTreatOrderReport(Integer type,Integer companyid,String datetype,String starttime,String endtime) {
     	Instant start = Instant.now();
@@ -192,7 +253,7 @@ public class CommonController {
     	return null;
 	 }
     
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryEmployeeTreatOrderDataDetail",method=RequestMethod.POST)
 	public Map<String, Object> queryEmployeeTreatOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
     	Instant start = Instant.now();
@@ -207,7 +268,7 @@ public class CommonController {
     	return null;
 	 }
     
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test },logical=Logical.OR)
     @RequestMapping(value = "/queryBackEmployeeOrderReport",method=RequestMethod.POST)
 	public Map<String, Object> queryBackEmployeeOrderReport(Integer type,Integer companyid,String datetype,String starttime,String endtime) {
     	Instant start = Instant.now();
@@ -221,7 +282,7 @@ public class CommonController {
 		}
     	return null;
 	 }
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test },logical=Logical.OR)
     @RequestMapping(value = "/queryBackEmployeeOrderDataDetail",method=RequestMethod.POST)
 	public Map<String, Object> queryBackEmployeeOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
     	Instant start = Instant.now();
@@ -235,7 +296,7 @@ public class CommonController {
 		}
     	return null;
 	 }
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.QUERY,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryCountInventory",method=RequestMethod.POST)
 	public Map<String, Object> queryCountInventory(Integer companyid,String datetype,Integer year,Integer month,Integer page,Integer rows) {
     	Instant start = Instant.now();
@@ -250,7 +311,7 @@ public class CommonController {
     	return null;
 	 }
     
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.QUERY,RoleSign.Q_OPTION },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryCountInventoryPie",method=RequestMethod.POST)
 	public Map<String, Object> queryCountInventoryPie(Integer companyid,String datetype,Integer year,Integer month) {
     	Instant start = Instant.now();
@@ -265,7 +326,7 @@ public class CommonController {
     	return null;
 	 }
     
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.QUERY },logical=Logical.OR)
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR },logical=Logical.OR)
     @RequestMapping(value = "/queryCountBusinessAnalysisDataDetail",method=RequestMethod.POST)
 	public Map<String, Object> queryCountBusinessAnalysisDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
     	Instant start = Instant.now();
@@ -273,6 +334,67 @@ public class CommonController {
     	try {
 			Map<String, Object> map = commonService.queryCountBusinessAnalysisDataDetail(type, companyid, datetype, starttime, endtime, page, rows);
 			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计商业报表列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
+			return map;
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR },logical=Logical.OR)
+    @RequestMapping(value = "/queryIndexUserCount",method=RequestMethod.POST)
+	public Map<String, Object> queryIndexUserCount() {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求【首页前台系统用户信息统计】！");
+    	try {
+			Map<String, Object> map = commonService.queryIndexUserCount();
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】结束【首页前台系统用户信息统计】请求！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
+			return map;
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR },logical=Logical.OR)
+    @RequestMapping(value = "/queryIndexCompanyCount",method=RequestMethod.POST)
+	public Map<String, Object> queryIndexCompanyCount() {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求【首页前台门店信息统计】！");
+    	try {
+			Map<String, Object> map = commonService.queryIndexCompanyCount();
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】结束【首页前台系统门店信息统计】请求！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
+			return map;
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_ADMIN,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR},logical=Logical.OR)
+    @RequestMapping(value = "/queryWorkforceList",method=RequestMethod.POST)
+	public Map<String, Object> queryWorkforceList() {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求【首页前台门店排班信息统计】！");
+    	try {
+    		TWorkforcemanagement bean = new TWorkforcemanagement();
+    		bean.setCycle(DateUtil.getDateStr(DateUtil.getSysCurrentDate(), DateUtil.DATE_TIME_FLAG_NO_DATE_FORMAT));
+    		bean.setCompanyid(SystemUserInfo.getSystemUser().getCompany().getId());
+			Map<String, Object> map = commonService.queryWorkforceList(bean);
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】结束【首页前台门店排班信息统计】请求！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
+			return map;
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_ADMIN,RoleSign.H_OPTION },logical=Logical.OR)
+    @RequestMapping(value = "/querySubscribeList",method=RequestMethod.POST)
+	public List<TCustomerSubscribe> querySubscribeList() {
+    	Instant start = Instant.now();
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求【首页前台门预约息统计】！");
+    	try {
+			List<TCustomerSubscribe> map = subscribeService.querySubscribeList();
+			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】结束【首页前台门预约息统计】请求！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);

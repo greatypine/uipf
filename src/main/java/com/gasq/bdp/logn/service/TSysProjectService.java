@@ -17,4 +17,6 @@ public interface TSysProjectService {
 	boolean delete(int id);
 
 	TProject selectByPrimaryKey(Long id);
+
+	List<TProject> queryProjectList(Integer companyId, Integer index, Integer size);
 }

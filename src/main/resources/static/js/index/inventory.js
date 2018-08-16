@@ -27,6 +27,7 @@ function Myinventory(){
 				},
 		        columns:[[
 		        	 	{field:'id',title:'编号',hidden:true},
+		        	 	{field:'code',title:'编码',width:"10%"},
 				        {field:'name',title:'名称',width:"15%"},
 				        {field:'status',title:'状态',width:"5%",align:'center',formatter:function(val,row){
 				        	if(val==0){
@@ -37,9 +38,9 @@ function Myinventory(){
 				        }},
 				        {field:'factory',title:'商品厂商',width:"14%",align:'left'},
 				        {field:'companyName',title:'所属公司',width:"10%",align:'center'},
-				        {field:'inventory',title:'库存数',width:"8%",align:'center'},
-				        {field:'price',title:'单价',width:"8%",align:'center'},
-				        {field:'createuser',title:'入库人',width:"8%",align:'center'},
+				        {field:'inventory',title:'库存数',width:"5%",align:'center'},
+				        {field:'price',title:'单价',width:"5%",align:'center'},
+				        {field:'createuser',title:'入库人',width:"5%",align:'center'},
 				        {field:'createtime',title:'入库时间',width:"10%",align:'center',formatter:function(val,row){
 				        	return CU.DateTimeFormatter(val,1);
 				        }},
@@ -77,11 +78,13 @@ function Myinventory(){
 	this.query = function(){
 		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager")?$("#querycompanyid").combobox("getValue"):null;
 		var name = $("#queryname").textbox("getValue");
+		var code = $("#querycode").textbox("getValue");
 		var status = ($("#querystatus").combobox("getValue")<0)?null:$("#querystatus").combobox("getValue");
 		var createTime = ($("#querycreateTime").datebox('getValue')=="")?null:$("#querycreateTime").datebox('getValue');
 		var params = {};
 		if(name!="") {params.name = name;}
 		params.status = status;
+		if(code!="") {params.code = code;}
 		if(createTime!="" && createTime!=null) {params.createtime = createTime;}
 		params.companyid = companyid;
 		inventory_table.datagrid("load",params);
@@ -156,6 +159,9 @@ function Myinventory(){
 		}else{
 			$.messager.alert('提示','请先选中要操作的数据！','error');
 		}
+	};
+	this.clear = function(){
+		$("#inventoryform").form("clear");
 	};
 	this.append = function(){
 		var row=$('#inventory_table').datagrid('getSelected');

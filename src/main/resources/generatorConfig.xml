@@ -58,7 +58,7 @@
 <!-- <table schema="" tableName="t_sys_user"></table>  -->
 <!-- <table schema="" tableName="t_workforceManagement"></table> -->
 <!-- <table schema="" tableName="t_sys_basecode"></table>  -->
-<table schema="" tableName="t_sys_views"></table> 
+<!-- <table schema="" tableName="t_sys_views"></table>  -->
 <!-- <table schema="" tableName="t_sys_user_ext"></table>  -->
 <!-- <table schema="" tableName="t_sys_user_role"></table> -->
 <!-- <table schema="" tableName="t_company"></table>  -->

@@ -132,6 +132,9 @@ public class TInventoryServiceImpl implements TInventoryService {
 		if(bean.getName()!=null) {
 			params.put("name", bean.getName());
 		}
+		if(bean.getCode()!=null) {
+			params.put("code", bean.getCode());
+		}
 		if(bean.getStatus()!=null) {
 			params.put("status", bean.getStatus());
 		}

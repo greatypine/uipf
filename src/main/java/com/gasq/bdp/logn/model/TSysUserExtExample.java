@@ -733,6 +733,76 @@ public class TSysUserExtExample {
             addCriterion("areaName not between", value1, value2, "areaname");
             return (Criteria) this;
         }
+
+        public Criteria andImagePathIsNull() {
+            addCriterion("image_path is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathIsNotNull() {
+            addCriterion("image_path is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathEqualTo(String value) {
+            addCriterion("image_path =", value, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathNotEqualTo(String value) {
+            addCriterion("image_path <>", value, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathGreaterThan(String value) {
+            addCriterion("image_path >", value, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathGreaterThanOrEqualTo(String value) {
+            addCriterion("image_path >=", value, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathLessThan(String value) {
+            addCriterion("image_path <", value, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathLessThanOrEqualTo(String value) {
+            addCriterion("image_path <=", value, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathLike(String value) {
+            addCriterion("image_path like", value, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathNotLike(String value) {
+            addCriterion("image_path not like", value, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathIn(List<String> values) {
+            addCriterion("image_path in", values, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathNotIn(List<String> values) {
+            addCriterion("image_path not in", values, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathBetween(String value1, String value2) {
+            addCriterion("image_path between", value1, value2, "imagePath");
+            return (Criteria) this;
+        }
+
+        public Criteria andImagePathNotBetween(String value1, String value2) {
+            addCriterion("image_path not between", value1, value2, "imagePath");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

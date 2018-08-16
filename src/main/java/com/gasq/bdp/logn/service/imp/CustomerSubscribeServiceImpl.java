@@ -321,4 +321,12 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 		return mess;
 	}
 
+	@Override
+	public List<TCustomerSubscribe> querySubscribeList() {
+		TCustomerSubscribe bean = new TCustomerSubscribe();
+		bean.setCompanyId(SystemUserInfo.getSystemUser().getUser().getCompanyid());
+		List<TCustomerSubscribe> lists = customerSubscribeMapper.querySubscribeList(bean);
+		return lists;
+	}
+
 }

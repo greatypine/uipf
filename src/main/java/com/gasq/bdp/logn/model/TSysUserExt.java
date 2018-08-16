@@ -1,10 +1,6 @@
 package com.gasq.bdp.logn.model;
 
-public class TSysUserExt  extends ParamsObject{
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class TSysUserExt {
     private Long userId;
 
     private String password;
@@ -24,6 +20,8 @@ public class TSysUserExt  extends ParamsObject{
     private String departmentname;
 
     private String areaname;
+
+    private String imagePath;
 
     public Long getUserId() {
         return userId;
@@ -103,5 +101,13 @@ public class TSysUserExt  extends ParamsObject{
 
     public void setAreaname(String areaname) {
         this.areaname = areaname == null ? null : areaname.trim();
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath == null ? null : imagePath.trim();
     }
 }

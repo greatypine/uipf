@@ -42,4 +42,6 @@ public interface TCustomerSubscribeMapper {
 	List<Map<String, Object>> querySubscribeInfo();
 
 	List<Map<String, Object>> querySubscribeInfo(Integer companyid);
+
+	List<TCustomerSubscribe> querySubscribeList(@Param("record") TCustomerSubscribe bean);
 }

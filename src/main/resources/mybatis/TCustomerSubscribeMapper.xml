@@ -490,13 +490,13 @@
 		GROUP_CONCAT(a.customer_name ORDER BY a.create_time) customer_name
 		, DATE_FORMAT(a.create_time, '%Y-%m-%d') datetime
 		,tsu.nickname,
-		(select count(*) from t_customer_subscribe b where b.`status` = 1 and b.subscribe_date= DATE_FORMAT(DATE_SUB(curdate(),INTERVAL 1 DAY),'%Y-%m-%d')) jiezhennumbs
+		(select count(*) from t_customer_subscribe b where b.`status` = 1 and DATE_FORMAT(b.subscribe_date,'%Y-%m-%d')= DATE_FORMAT(DATE_SUB(curdate(),INTERVAL 1 DAY),'%Y-%m-%d')) jiezhennumbs
 	FROM
 		t_customer_subscribe a
 	LEFT JOIN t_sys_user tsu  on a.create_user = tsu.username
 	WHERE
 		a.`status` = 0 and a.create_user = 'yuj'
-	AND (a.subscribe_date &lt;= DATE_FORMAT(DATE_SUB(curdate(),INTERVAL 1 DAY),'%Y-%m-%d') or a.subscribe_date is null)
+	AND (DATE_FORMAT(a.subscribe_date,'%Y-%m-%d') &lt;= DATE_FORMAT(DATE_SUB(curdate(),INTERVAL 1 DAY),'%Y-%m-%d') or a.subscribe_date is null)
 	 AND DATE_FORMAT(a.create_time, '%Y-%m-%d') &lt;= DATE_FORMAT(DATE_SUB(curdate(),INTERVAL 1 DAY),'%Y-%m-%d')
 	GROUP BY DATE_FORMAT(a.create_time, '%Y-%m-%d'),tsu.nickname;
 </select>
@@ -505,7 +505,7 @@
 	SELECT
 		GROUP_CONCAT(a.customer_name ORDER BY a.create_time) customer_name
 		, DATE_FORMAT(a.create_time, '%Y-%m-%d') datetime,
-		(select count(*) from t_customer_subscribe b where b.`status` = 0 and b.company_id=#{companyid} and b.subscribe_date= DATE_FORMAT(now(),'%Y-%m-%d')) daozhennumbs,
+		(select count(*) from t_customer_subscribe b where b.`status` = 0 and b.company_id=#{companyid} and DATE_FORMAT(b.subscribe_date,'%Y-%m-%d')= DATE_FORMAT(now(),'%Y-%m-%d')) daozhennumbs,
 		tsu.nickname
 	FROM
 		t_customer_subscribe a
@@ -514,5 +514,19 @@
 		a.`status` = 0 and a.company_id=#{companyid}
 	AND DATE_FORMAT(a.create_time, '%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
 	GROUP BY DATE_FORMAT(a.create_time, '%Y-%m-%d'),tsu.nickname
+</select>
+
+<select id="querySubscribeList" parameterType="com.gasq.bdp.logn.model.TCustomerSubscribe" resultType="com.gasq.bdp.logn.model.TCustomerSubscribe">
+	SELECT
+		p.id,p.company_id as companyId,p.create_time as createTime,p.customer_name customerName,p.customer_phone as customerPhone,p.project,p.remark,p.root_in as rootIn,
+		p.sex as sex,p.subscribe_date as subscribeDate,p.update_time as updateTime,p.update_user as updateUser,p.status,
+		p.email,p.profession,tsu.nickname as createUser
+	FROM
+		t_customer_subscribe p
+	LEFT JOIN t_sys_user tsu on p.create_user = tsu.username
+	WHERE
+		p.`status` = 0 and p.company_id=#{record.companyId}
+	order by p.subscribe_date is null,p.subscribe_date asc
+	limit 8
 </select>
 </mapper>

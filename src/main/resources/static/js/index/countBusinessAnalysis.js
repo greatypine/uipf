@@ -48,7 +48,7 @@ function CountReport(){
 			url:content+'/company/queryMapBeanList'
 		});
 		$("#datetype").combobox('select', '3');
-		$('#starttime').datebox('setValue', cu.date_add(new Date(),-31));
+		$('#starttime').datebox('setValue', cu.date_add(new Date(),-8));
 		$('#endtime').datebox('setValue', cu.date_add(new Date(),-1));
 	};
 	this.initCompant = function(){

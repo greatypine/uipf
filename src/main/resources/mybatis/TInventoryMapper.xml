@@ -365,6 +365,9 @@
 	<if test="status !=null">
 		and p.status=#{status}
 	</if>
+	<if test="code !=null">
+		and p.code=#{code}
+	</if>
 	<if test="companyid !=null">
 		and p.companyid=#{companyid}
 	</if>
@@ -389,6 +392,9 @@
 		</if>
 		<if test="status !=null">
 			and p.status=#{status}
+		</if>
+		<if test="code !=null">
+			and p.code=#{code}
 		</if>
 		<if test="companyid !=null">
 			and p.companyid=#{companyid}

@@ -37,6 +37,7 @@ import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TCustomerImages;
 import com.gasq.bdp.logn.model.TSysUser;
+import com.gasq.bdp.logn.model.TSysUserExt;
 import com.gasq.bdp.logn.service.CustomerSubscribeService;
 import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.service.TCustomerImagesService;
@@ -540,6 +541,15 @@ public class IndexController {
 		bean.setCustomerPhone(customerPhone);
 		List<TCustomerImages> list = customerImagesService.selectByExample(bean);
 		mmap.addAttribute("images", list);
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】进入就诊图片预览界面！");
+		return "viewimages";
+	}
+	@GetMapping("/goUserImage")
+	public String goUserImage(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr,Integer id) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		TSysUserExt userExt = userService.getSysUserExtInfo(id.longValue());
+		mmap.addAttribute("image", userExt.getImagePath());
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】进入就诊图片预览界面！");
 		return "viewimages";
 	}

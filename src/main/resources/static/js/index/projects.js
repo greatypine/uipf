@@ -85,11 +85,15 @@ function MyProject(){
 	};
 	this.query = function(){
 		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager,h_option")?$("#querycompanyid").combobox("getValue"):null;
-		var name = $("#queryname").val();
+		var name = $("#queryname").textbox("getValue");
+		var pm = ($("#querypm").combobox("getValue")<0)?null:$("#querypm").combobox("getValue");
+		var pt = ($("#querypt").combobox("getValue")<0)?null:$("#querypt").combobox("getValue");
 		var status = ($("#querystatus").combobox("getValue")<0)?null:$("#querystatus").combobox("getValue");
 		var createTime = ($("#querycreateTime").datebox('getValue')=="")?null:$("#querycreateTime").datebox('getValue');
 		var params = {};
 		if(name!="") {params.projectName = name;}
+		params.projectModel = pm;
+		params.projectType = pt;
 		params.status = status;
 		if(createTime!="" && createTime!=null) {params.createtime = createTime;}
 		params.companyId = companyid;
@@ -110,6 +114,9 @@ function MyProject(){
 		project.initClearCombobox("projectModel");
 		project.initClearCombobox("projectType");
 		$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","添加产品");
+	};
+	this.clear = function(){
+		$("#projectform").form("clear");
 	};
 	this.initClearCombobox = function(id){
 		var data = $('#'+id).combobox('getData');

@@ -74,4 +74,8 @@ public interface TCompanyMapper {
 	List<Map<String, Object>> queryCountProjectsOrderCost(Map<String, Object> map);
 
 	List<Map<String, Object>> queryCountProjectsOrderAmountCost(Map<String, Object> map);
+
+	List<Map<String, Object>> queryIndexUserCount(@Param("companyid") Integer companyid);
+
+	List<Map<String, Object>> queryIndexCompanyCount(@Param("companyid") Integer companyid);
 }

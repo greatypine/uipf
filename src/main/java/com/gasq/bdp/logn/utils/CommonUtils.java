@@ -526,16 +526,17 @@ public class CommonUtils {
      * 保存文件，直接以multipartFile形式
      * @param multipartFile
      * @param path 文件保存绝对路径
+	 * @param postfix 
      * @return 返回文件名
      * @throws IOException
      */
-    public static String saveImg(MultipartFile multipartFile,String path) throws IOException {
+    public static String saveImg(MultipartFile multipartFile,String path, String postfix) throws IOException {
         File file = new File(path);
         if (!file.exists()) {
             file.mkdirs();
         }
         FileInputStream fileInputStream = (FileInputStream) multipartFile.getInputStream();
-        String fileName = UUID.randomUUID().toString() + ".png";
+        String fileName = UUID.randomUUID().toString() + postfix;
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(path + File.separator + fileName));
         byte[] bs = new byte[1024];
         int len;
@@ -560,6 +561,24 @@ public class CommonUtils {
 //        我的名字是雷锋,结果是true，可信度是%100
 //        我的名字是雷锋,结果是true，可信度是%100
     	
-    	System.out.println(CommonUtils.change2MD5("ltn1234"));
+//    	System.out.println(CommonUtils.change2MD5("ltn1234"));
     }
+
+	public static String saveSysUserImg(MultipartFile multipartFile, String path, String filename, String postfix) throws IOException {
+		 File file = new File(path);
+	        if (!file.exists()) {
+	            file.mkdirs();
+	        }
+	        FileInputStream fileInputStream = (FileInputStream) multipartFile.getInputStream();
+	        String fileName = filename + postfix;
+	        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(path + File.separator + fileName));
+	        byte[] bs = new byte[1024];
+	        int len;
+	        while ((len = fileInputStream.read(bs)) != -1) {
+	            bos.write(bs, 0, len);
+	        }
+	        bos.flush();
+	        bos.close();
+	        return fileName;
+	}
 }

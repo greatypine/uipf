@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -114,6 +115,15 @@ public class TProjectServiceImpl implements TSysProjectService {
 		if(bean.getStatus()!=null) {
 			params.put("status", bean.getStatus());
 		}
+		if(bean.getProjectModel()!=null) {
+			params.put("projectModel", bean.getProjectModel());
+		}
+		if(bean.getProjectType()!=null) {
+			params.put("projectType", bean.getProjectType());
+		}
+		if(bean.getStatus()!=null) {
+			params.put("status", bean.getStatus());
+		}
 		if(bean.getDiscount()!=null) {
 			params.put("discount", bean.getDiscount());
 		}
@@ -149,6 +159,22 @@ public class TProjectServiceImpl implements TSysProjectService {
 		}
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】项目插入或更新完成！");
 		return true;
+	}
+
+	@Override
+	public List<TProject> queryProjectList(Integer companyId, Integer index, Integer size) {
+		TProjectExample example = new TProjectExample();
+		Criteria c = example.createCriteria();
+		if(companyId!=null) {
+			c.andCompanyIdEqualTo(companyId);
+		}
+		c.andStatusEqualTo(true);
+		int start = 0;
+		int intPage = ( index==0) ? 1 : index;
+		int number = (size==0) ? 10 : size;
+		start = (intPage - 1) * number;
+		RowBounds rowBounds = new RowBounds(start, size);
+		return projectMapper.selectByExampleWithRowbounds(example, rowBounds);
 	}
 
 }

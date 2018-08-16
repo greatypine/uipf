@@ -13,17 +13,20 @@
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="project.query()">查询</a> 
 			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="project.add()">添加</a> 
 			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="project.remove()">删除</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="project.clear()">清空</a>
 		</div>
 		<div id="cron_bar">
 			<form id="projectform">
 				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
-				产品名称: <input id="queryname" name="projectname" class="easyui-text" style="width: 120px; height: 22px;"/>
+				项目名称: <input id="queryname" name="projectname" class="easyui-textbox" style="width: 120px; height: 22px;"/>
+				项目名称: <input id="querypm" name="projectModel" class="easyui-combobox projectModel" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'value',textField:'name'"/>
+				项目名称: <input id="querypt" name="projectType" class="easyui-combobox projectType" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'value',textField:'name'"/>
 				项目状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
 							<option value="-1">请选择</option>
 							<option value="1">开启</option>
 							<option value="0">关闭</option>
 						</select>
-				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/> 
+				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/>
 			</form>
 		</div>
 	</div>

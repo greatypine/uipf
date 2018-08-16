@@ -1,3 +1,17 @@
+Array.prototype.indexOf = function (val) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+    }
+    return -1;
+};
+
+Array.prototype.remove = function (val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
+
 function CommonUtils(){
 	this.DATE_FULL_FORMAT = "yyyy-MM-dd hh:mm:ss";
 	this.DATE_DAY_FORMAT = "yyyy-MM-dd";
@@ -51,7 +65,7 @@ function CommonUtils(){
 		}
 	};
 	/**
-	 * 返回yyyy-mm-dd hh:mm:ss格式
+	 * 返回yyyy年
 	 */
 	this.getCurrentYear = function(){
 		var t = new Date();
@@ -59,12 +73,29 @@ function CommonUtils(){
         return y;
 	};
 	/**
-	 * 返回yyyy-mm-dd hh:mm:ss格式
+	 * 返回mm年
 	 */
 	this.getCurrentMonth = function(){
 		var t = new Date();
         var m = t.getMonth() + 1;
         return (m < 10 ? '0' + m : m);
+	};
+	/**
+	 * 返回dd日
+	 */
+	this.getCurrentDay = function(){
+		var t = new Date();
+		var d = t.getDate();
+        return d;
+	};
+	/**
+	 * 返回当前年月yyyy-mm
+	 */
+	this.getCurrentDateMonth = function(){
+		var t = new Date();
+		var y = t.getFullYear();
+        var m = t.getMonth() + 1;
+        return y+"-"+(m < 10 ? '0' + m : m);
 	};
 	/**
 	 * 返回yyyy-mm-dd hh:mm:ss格式
@@ -275,6 +306,14 @@ function CommonUtils(){
 		$("#"+id).html(new Date().toLocaleString());
 		setTimeout("cu.showtime('currenttime')",1000);
 	}
+	
+	this.getParentWindow = function(){
+        var c = window;
+        while(c!= c.parent){
+        	c = c.parent;
+        }
+        return c;
+    }
 }
 $.fn.serializeJson=function(){
     var serializeObj={};

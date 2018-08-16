@@ -32,14 +32,14 @@ function CountReport(){
 				        {field:'total_amont',title:'订单总金额',width:"10%",align:'center',formatter:function(val,row){
 				        	return (val!=0)?"￥"+(Number(val)*10000).toFixed(2):"￥"+0.00;
 				        }},
-				        {field:'c_total_amount',title:'出诊金额',width:"10%",align:'center',formatter:function(val,row){
+				        {field:'c_total_amount',title:'初诊金额',width:"10%",align:'center',formatter:function(val,row){
 				        	return (val!=0)?"￥"+(Number(val)*10000).toFixed(2):"￥"+0.00;
 				        }},
 				        {field:'f_total_amount',title:'复诊金额',width:"10%",align:'center',formatter:function(val,row){
 				        	return (val!=0)?"￥"+(Number(val)*10000).toFixed(2):"￥"+0.00;
 				        }},
 				        {field:'employeeTotalOrder',title:'接诊总人数',width:"10%",align:'center'},
-				        {field:'CHUZHEN',title:'出诊人数',width:"8%",align:'center'},
+				        {field:'CHUZHEN',title:'初诊人数',width:"8%",align:'center'},
 				        {field:'FUZHEN',title:'复诊人数',width:"8%",align:'center'},
 				        {field:'employeeWastageOrder',title:'流失人数',width:"8%",align:'center'},
 				        {field:'jiezhenl',title:'接诊率',width:'16%',
@@ -88,7 +88,7 @@ function CountReport(){
 	};
 	this.initDatas = function(){
 		$("#datetype").combobox('select', '3');
-		$('#starttime').datebox('setValue', cu.date_add(new Date(),-31));
+		$('#starttime').datebox('setValue', cu.date_add(new Date(),-8));
 		$('#endtime').datebox('setValue', cu.date_add(new Date(),-1));
 	};
 	this.initCompant = function(){
