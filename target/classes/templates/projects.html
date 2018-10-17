@@ -11,18 +11,22 @@
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="project.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="project.add()">添加</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="project.remove()">删除</a>
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="project.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="project.remove()">删除</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="project.clear()">清空</a>
 		</div>
 		<div id="cron_bar">
 			<form id="projectform">
-				产品名称: <input id="queryname" name="projectname" class="easyui-text" style="width: 120px; height: 22px;"/>
-				脚本状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+				项目名称: <input id="queryname" name="projectname" class="easyui-textbox" style="width: 120px; height: 22px;"/>
+				项目名称: <input id="querypm" name="projectModel" class="easyui-combobox projectModel" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'value',textField:'name'"/>
+				项目名称: <input id="querypt" name="projectType" class="easyui-combobox projectType" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'value',textField:'name'"/>
+				项目状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
 							<option value="-1">请选择</option>
 							<option value="1">开启</option>
 							<option value="0">关闭</option>
 						</select>
-				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/> 
+				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/>
 			</form>
 		</div>
 	</div>
@@ -31,7 +35,7 @@
 		<form id="projectdlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>
-	    			<td class="tdname">产品名称：</td>
+	    			<td class="tdname">项目名称：</td>
 	    			<td class="tdnamebox">
 	    				<input id="projectName" name="projectName" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
 	    			</td>
@@ -40,24 +44,50 @@
 	    				<input name="status" id="status" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:1,text:'开启'},{value:0,text:'关闭'}]"/>
 	    			</td>
 	    		</tr>
-	    		<tr>
+	    		<tr shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager">
 	    			<td class="tdname">公司：</td>
 	    			<td class="tdnamebox" colspan="3">
 	    				<input id="companyId" name="companyId" class="easyui-combobox companylist" style="width: 100%;" data-options="required:true,editable:false,valueField:'companyid',textField:'companyName'"/>
 	    			</td>
 	    		</tr>
 	    		<tr>
-	    			<td class="tdname">产品金额：</td>
+	    			<td class="tdname">项目类型：</td>
+	    			<td class="tdnamebox">
+	    				<input id="projectModel" name="projectModel" class="easyui-combobox projectModel" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'name'"/>
+	    			</td>
+	    			<td class="tdname">消费类型：</td>
+	    			<td class="tdnamebox">
+	    				<input id="projectType" name="projectType" class="easyui-combobox projectType" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'name'"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">项目次数：</td>
+	    			<td class="tdnamebox">
+	    				<input id="projectNums" name="projectNums" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    			<td class="tdname">项目期限：</td>
+	    			<td class="tdnamebox">
+	    				<input id="deadline" name="deadline" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">项目金额：</td>
 	    			<td class="tdnamebox">
 	    				<input id="money" name="money" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2"/>
 	    			</td>
-	    			<td class="tdname">产品折扣：</td>
+	    			<td class="tdname">项目折扣：</td>
 	    			<td class="tdnamebox"><input name="discount" id="discount" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2,max:1,prompt:'最大为1 eg:85折=0.85'"/></td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">拼音缩写：</td>
+	    			<td class="tdnamebox">
+	    				<input id="spell" name="spell" class="easyui-textbox" style="width: 100%;" data-options="required:true,prompt:'中午拼音首字母（小写）'"/>
+	    			</td>
 	    		</tr>
 	    		<tr>
 	    			<td class="tdname" colspan="1">描述：</td>
 	    			<td class="tdnamebox" colspan="3">
-	    				<input id="remark" name="remark" data-options="multiline:false,required:false" class="easyui-textbox" style="width: 100%;"/>
+	    				<input id="remark" name="remark" data-options="multiline:false,required:false" class="easyui-textbox" style="width: 100%;height:50px;"/>
 	    			</td>
 	    		</tr>
 	    	</table>
@@ -65,7 +95,7 @@
 		</form>
 	</div>
 	<div id="project_dlg-buttons">
-		<a shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="project.complate()" style="width: 90px">确认</a> 
+		<a id="basecomplate" shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="project.complate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#projectdlg-fm').form('clear');$('#projectdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 </body>

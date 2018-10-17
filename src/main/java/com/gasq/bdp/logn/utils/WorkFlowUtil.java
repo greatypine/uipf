@@ -3,7 +3,6 @@
  */
 package com.gasq.bdp.logn.utils;
 
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -19,23 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gasq.bdp.logn.iexception.WorkFlowJobException;
-import com.gasq.bdp.logn.mapper.TCustomerSubscribeMapper;
-import com.gasq.bdp.logn.mapper.TLtnCustomerMapper;
-import com.gasq.bdp.logn.mapper.TSysUserMapper;
-import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.SystemUserInfo;
-import com.gasq.bdp.logn.model.TCustomerSubscribe;
-import com.gasq.bdp.logn.model.TCustomerSubscribeExample;
-import com.gasq.bdp.logn.model.TLtnCustomer;
-import com.gasq.bdp.logn.model.TLtnCustomerExample;
 import com.gasq.bdp.logn.model.TSysSqlUpdateColumns;
 import com.gasq.bdp.logn.model.TSysSqlUpdateKeys;
 import com.gasq.bdp.logn.model.TSysTimerJobSqlInsertUpdate;
-import com.gasq.bdp.logn.model.TSysTimerLog;
-import com.gasq.bdp.logn.model.TSysUser;
-import com.gasq.bdp.logn.model.TSysUserExample;
-import com.gasq.bdp.logn.service.EmailManager;
-import com.gasq.bdp.logn.service.TSysTimerLogService;
 
 /**
  * @author 巨伟刚
@@ -440,87 +426,5 @@ public class WorkFlowUtil {
 			}
 		}
 		return f;
-	}
-	/**
-	 * 执行前台回访
-	 */
-	public static void executeReceptionRemind(String name,String group) {
-		try {
-			TLtnCustomerExample example = new TLtnCustomerExample();
-			example.createCriteria().andStatusEqualTo(1).andCompanyIdEqualTo(Integer.parseInt(group)).andRemindtimeEqualTo(DateUtil.parseStr(DateUtil.getDiyStrDateTime(0), DateUtil.DATE_DEFAULT_FORMAT));
-			List<TLtnCustomer> ltnCustomers = SpringApplicationUtils.getBean(TLtnCustomerMapper.class).selectByExample(example);
-			if(ltnCustomers!=null && ltnCustomers.size()>0) {
-				String title = "回访提醒！";
-				StringBuffer context = new StringBuffer();
-				for (TLtnCustomer customer : ltnCustomers) {
-					TSysUser sysUser = SpringApplicationUtils.getBean(TSysUserMapper.class).selectByPrimaryKey((long)customer.getCounsoler());
-					String email = sysUser.getEmail();
-					if(email==null || email=="") continue;
-					String[] toEmailNames = {email};
-					Map<String, Object> queryAmountSum = SpringApplicationUtils.getBean(TLtnCustomerMapper.class).getConsumptionProjects(customer.getId());
-					if(queryAmountSum!=null && !queryAmountSum.isEmpty()) {
-						BigDecimal bd = new BigDecimal(queryAmountSum.get("total_amount").toString());
-						String projects = queryAmountSum.get("project_name").toString();
-						context.append("你好,").append(sysUser.getNickname()).append("医师").append(": \n\n").append("  ●明天有您的回访客户:\n    ◎客户姓名：").append(customer.getCustomername()).append("\n    ◎联系方式：").append(customer.getPhonenumb()).append("\n    ◎消费项目：").append(projects).append("\n    ◎消费总金额：").append(bd.doubleValue()).append("\n    ◎上次治疗时间：").append(DateUtil.getDateStr(customer.getCreatetime(),DateUtil.TIME_DEFAULT_FORMAT)).append("\n\n  请您及时处理，如有问题请联系《客户消费信息平台》管理人员。\n\n").append("发送者：客户消费信息平台").toString();
-						SpringApplicationUtils.getBean(EmailManager.class).sendHtmlMails(toEmailNames, title, context.toString());
-					}
-				}
-				context = null;
-				ltnCustomers = null;
-				String mess = "定时器回访提醒运行成功。邮件已经发送！";
-				logger.info(mess);
-				SpringApplicationUtils.getBean(TSysTimerLogService.class).add(new TSysTimerLog(group + "->" + name ,InitProperties.TIMMERLOG_SUCCESS,null,null,null,0,DateUtil.getSysCurrentDate(),InitProperties.DEFAULT_USERNAME,mess));
-			}else {
-				String mess = "定时器 [" + group + "->" + name + "] 运行失败！没有找到对应的定时器配置。";
-				logger.error(mess);
-				SpringApplicationUtils.getBean(TSysTimerLogService.class).add(new TSysTimerLog(group + "->" + name ,InitProperties.TimmerLog_FAIL,null,null,null,0,DateUtil.getSysCurrentDate(),InitProperties.DEFAULT_USERNAME,mess));
-			}
-		} catch (Exception e) {
-			logger.error("定时器回访提醒 [" + group + "->" + name + "] Exception:", e);
-			SpringApplicationUtils.getBean(TSysTimerLogService.class).add(new TSysTimerLog(group + "->" + name ,InitProperties.TimmerLog_FAIL,null,null,null,0,DateUtil.getSysCurrentDate(),InitProperties.DEFAULT_USERNAME,"定时器回访提醒 [" + group + "->" + name + "] Exception:"+e));
-			return ;
-		}
-		
-	}
-	public static void executeBackgroupRemind(String name, String group) {
-		try {
-			TCustomerSubscribeExample example = new TCustomerSubscribeExample();
-			example.createCriteria().andStatusEqualTo(0).andCompanyIdEqualTo(Integer.parseInt(group)).andSubscribeDateLessThan(DateUtil.getSysCurrentDate());
-			List<TCustomerSubscribe> customerSubscribes = SpringApplicationUtils.getBean(TCustomerSubscribeMapper.class).selectByExample(example);
-			if(customerSubscribes!=null && customerSubscribes.size()>0) {
-				String title = "回访提醒！";
-				StringBuffer context = new StringBuffer();
-				for (TCustomerSubscribe customer : customerSubscribes) {
-					TSysUserExample sysUserExample = new TSysUserExample();
-					sysUserExample.createCriteria().andUsernameEqualTo(customer.getCreateUser()).andCompanyidEqualTo(customer.getCompanyId());
-					List<TSysUser> sysUsers = SpringApplicationUtils.getBean(TSysUserMapper.class).selectByExample(sysUserExample);
-					if(sysUsers!=null && sysUsers.size()>0) {
-						TSysUser sysUser = sysUsers.get(0);
-						String email = sysUser.getEmail();
-						if(email==null || email=="") continue;
-						String[] toEmailNames = {email};
-						Map<String, Object> queryAmountSum = SpringApplicationUtils.getBean(TLtnCustomerMapper.class).getConsumptionProjects(customer.getId());
-						if(queryAmountSum!=null && !queryAmountSum.isEmpty()) {
-							BigDecimal bd = new BigDecimal(queryAmountSum.get("total_amount").toString());
-							String projects = queryAmountSum.get("project_name").toString();
-							context.append("你好,").append(sysUser.getNickname()).append(": \n\n").append("  ●您有未到店就诊的预约客户:\n    ◎客户姓名：").append(customer.getCustomerName()).append("\n    ◎联系方式：").append(customer.getCustomerName()).append("\n    ◎消费项目：").append(projects).append("\n    ◎消费总金额：").append(bd.doubleValue()).append("\n    ◎门诊时间：").append(DateUtil.getDateStr(customer.getSubscribeDate(),DateUtil.TIME_DEFAULT_FORMAT)).append("\n\n  请您及时处理，如有问题请联系《客户消费信息平台》管理人员。\n\n").append("发送者：客户消费信息平台").toString();
-							SpringApplicationUtils.getBean(EmailManager.class).sendHtmlMails(toEmailNames, title, context.toString());
-						}
-					}
-				}
-				context = null;
-				String mess = "定时器回访提醒运行成功。邮件已经发送！";
-				logger.info(mess);
-				SpringApplicationUtils.getBean(TSysTimerLogService.class).add(new TSysTimerLog(group + "->" + name ,InitProperties.TIMMERLOG_SUCCESS,null,null,null,0,DateUtil.getSysCurrentDate(),InitProperties.DEFAULT_USERNAME,mess));
-			}else {
-				String mess = "定时器 [" + group + "->" + name + "] 运行失败！没有找到对应的定时器配置。";
-				logger.error(mess);
-				SpringApplicationUtils.getBean(TSysTimerLogService.class).add(new TSysTimerLog(group + "->" + name ,InitProperties.TimmerLog_FAIL,null,null,null,0,DateUtil.getSysCurrentDate(),InitProperties.DEFAULT_USERNAME,mess));
-			}
-		} catch (Exception e) {
-			logger.error("定时器回访提醒 [" + group + "->" + name + "] Exception:", e);
-			SpringApplicationUtils.getBean(TSysTimerLogService.class).add(new TSysTimerLog(group + "->" + name ,InitProperties.TimmerLog_FAIL,null,null,null,0,DateUtil.getSysCurrentDate(),InitProperties.DEFAULT_USERNAME,"定时器回访提醒 [" + group + "->" + name + "] Exception:"+e));
-			return ;
-		}
 	}
 }

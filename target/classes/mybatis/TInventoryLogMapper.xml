@@ -312,21 +312,12 @@
 	LEFT JOIN v_inventory_option_type vipt ON til.option_type = vipt.`value`
 	LEFT JOIN t_sys_user tsu on til.create_user=tsu.username
 	where 1=1  
-	<if test="name !=null and name!=''">
-		and til.customername like concat('%',#{customername},'%')
-	</if>
-	<if test="name !=null and name!=''">
-		and ti.name like concat('%',#{name},'%')
-	</if>
-	<if test="optioner !=null and optioner!=''">
-		and tsu.nickname like concat('%',#{optioner},'%')
-	</if>
 	<if test="companyid !=null">
 		and til.companyid=#{companyid}
 	</if>
-	order by til.create_time desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
+	<if test="createTime !=null">
+		and til.create_time &gt;= #{createTime}
 	</if>
+	order by til.create_time desc 
 </select>
 </mapper>

@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.gasq.bdp.logn.model.TInventory">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="spell" jdbcType="VARCHAR" property="spell" />
     <result column="code" jdbcType="VARCHAR" property="code" />
     <result column="factory" jdbcType="VARCHAR" property="factory" />
     <result column="inventory" jdbcType="DECIMAL" property="inventory" />
@@ -75,7 +76,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, code, factory, inventory, units, price, status, createUser, createTime, 
+    id, name, spell, code, factory, inventory, units, price, status, createUser, createTime, 
     updateUser, updateTime, companyid
   </sql>
   <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TInventoryExample" resultMap="BaseResultMap">
@@ -109,18 +110,18 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.gasq.bdp.logn.model.TInventory">
-    insert into t_inventory (id, name, code, 
-      factory, inventory, units, 
-      price, status, createUser, 
-      createTime, updateUser, updateTime, 
-      companyid)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
-      #{factory,jdbcType=VARCHAR}, #{inventory,jdbcType=DECIMAL}, #{units,jdbcType=VARCHAR}, 
-      #{price,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER}, #{createuser,jdbcType=VARCHAR}, 
-      #{createtime,jdbcType=TIMESTAMP}, #{updateuser,jdbcType=VARCHAR}, #{updatetime,jdbcType=TIMESTAMP}, 
-      #{companyid,jdbcType=INTEGER})
+    insert into t_inventory (id, name, spell, 
+      code, factory, inventory, 
+      units, price, status, 
+      createUser, createTime, updateUser, 
+      updateTime, companyid)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{spell,jdbcType=VARCHAR}, 
+      #{code,jdbcType=VARCHAR}, #{factory,jdbcType=VARCHAR}, #{inventory,jdbcType=DECIMAL}, 
+      #{units,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER}, 
+      #{createuser,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{updateuser,jdbcType=VARCHAR}, 
+      #{updatetime,jdbcType=TIMESTAMP}, #{companyid,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TInventory">
+  <insert id="insertSelective" parameterType="com.gasq.bdp.logn.model.TInventory">
     insert into t_inventory
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -128,6 +129,9 @@
       </if>
       <if test="name != null">
         name,
+      </if>
+      <if test="spell != null">
+        spell,
       </if>
       <if test="code != null">
         code,
@@ -169,6 +173,9 @@
       </if>
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="spell != null">
+        #{spell,jdbcType=VARCHAR},
       </if>
       <if test="code != null">
         #{code,jdbcType=VARCHAR},
@@ -220,6 +227,9 @@
       <if test="record.name != null">
         name = #{record.name,jdbcType=VARCHAR},
       </if>
+      <if test="record.spell != null">
+        spell = #{record.spell,jdbcType=VARCHAR},
+      </if>
       <if test="record.code != null">
         code = #{record.code,jdbcType=VARCHAR},
       </if>
@@ -262,6 +272,7 @@
     update t_inventory
     set id = #{record.id,jdbcType=INTEGER},
       name = #{record.name,jdbcType=VARCHAR},
+      spell = #{record.spell,jdbcType=VARCHAR},
       code = #{record.code,jdbcType=VARCHAR},
       factory = #{record.factory,jdbcType=VARCHAR},
       inventory = #{record.inventory,jdbcType=DECIMAL},
@@ -282,6 +293,9 @@
     <set>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="spell != null">
+        spell = #{spell,jdbcType=VARCHAR},
       </if>
       <if test="code != null">
         code = #{code,jdbcType=VARCHAR},
@@ -322,6 +336,7 @@
   <update id="updateByPrimaryKey" parameterType="com.gasq.bdp.logn.model.TInventory">
     update t_inventory
     set name = #{name,jdbcType=VARCHAR},
+      spell = #{spell,jdbcType=VARCHAR},
       code = #{code,jdbcType=VARCHAR},
       factory = #{factory,jdbcType=VARCHAR},
       inventory = #{inventory,jdbcType=DECIMAL},
@@ -351,10 +366,10 @@
   </select>
   <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
 	SELECT
-		p.id,p.companyid,p.`code`,p.`name`,p.factory,p.inventory,p.price,p.`status`,p.units,p.createuser,p.createtime,tc.`name` as companyName,p.updatetime,p.updateuser
+		p.id,p.companyid,p.spell,p.`code`,p.`name`,p.factory,p.inventory,p.price,p.`status`,p.units,p.createuser,p.createtime,tc.`name` as companyName,p.updatetime,p.updateuser
 	FROM
 		`t_inventory` p
-	LEFT JOIN t_company tc on p.companyid=tc.id
+	INNER JOIN t_company tc on p.companyid=tc.id and tc.`status`=1
 	where 1=1  
 	<if test="name !=null and name!=''">
 		and p.name like concat('%',#{name},'%')
@@ -365,13 +380,12 @@
 	<if test="status !=null">
 		and p.status=#{status}
 	</if>
+	<if test="code !=null">
+		and p.code=#{code}
+	</if>
 	<if test="companyid !=null">
 		and p.companyid=#{companyid}
 	</if>
 	order by p.updateTime desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
 </select>
-  
 </mapper>

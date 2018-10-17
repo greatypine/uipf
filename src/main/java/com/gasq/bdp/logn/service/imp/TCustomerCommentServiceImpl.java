@@ -3,7 +3,6 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,8 @@ import com.gasq.bdp.logn.model.TCustomerCommentExample;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.service.TCustomerCommentService;
 import com.gasq.bdp.logn.utils.DateUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author Ju_weigang
@@ -44,22 +45,16 @@ public class TCustomerCommentServiceImpl implements TCustomerCommentService{
 	@Override
 	public Map<String, Object> queryPagingList(TCustomerComment bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String, Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
 		Map<String, Object> params= new  HashMap<String, Object>();
-		params.put("index", start);
-		params.put("pageSize", number);
 		if(bean.getVipId()!=null) {
 			params.put("vip_id", bean.getVipId());
 		}
-		list = customerCommentMapper.queryPagingList(params);
-		if(list==null) list = new ArrayList<Map<String,Object>>(); 
-		Integer count = customerCommentMapper.countByBean(params);
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<Map<String, Object>> listmaps = customerCommentMapper.queryPagingList(params);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

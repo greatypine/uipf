@@ -1,5 +1,7 @@
 package com.gasq.bdp.logn.model;
 
+import java.util.List;
+
 public class TSysMenu extends ParamsObject{
     /**
 	 * 
@@ -25,6 +27,8 @@ public class TSysMenu extends ParamsObject{
     private Integer parendid;
     
     private String roleids;
+    
+    private List<TSysMenu> childMenu;
 
     public Integer getId() {
         return id;
@@ -104,6 +108,14 @@ public class TSysMenu extends ParamsObject{
 
 	public void setRoleids(String roleids) {
 		this.roleids = roleids;
+	}
+
+	public List<TSysMenu> getChildMenu() {
+		return childMenu;
+	}
+
+	public void setChildMenu(List<TSysMenu> childMenu) {
+		this.childMenu = childMenu;
 	}
     
 }

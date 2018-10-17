@@ -24,6 +24,7 @@ import com.gasq.bdp.logn.model.TCompany;
 import com.gasq.bdp.logn.model.TWorkforcemanagement;
 import com.gasq.bdp.logn.service.CommonService;
 import com.gasq.bdp.logn.utils.CommonUtils;
+import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -66,6 +67,9 @@ public class CommonServiceImpl implements CommonService {
 
 	@Override
 	public List<Map<String, Object>> queryProjectInventory(TCompany bean) {
+		if(bean.getQ().equals(" ")) {
+			bean.setQ(null);
+		}
 		return companyMapper.queryProjectInventory(bean);
 	}
 
@@ -136,12 +140,6 @@ public class CommonServiceImpl implements CommonService {
 		map.put("endtime", endtime);
 		map.put("datetype", datetype);
 		map.put("type", type);
-		int start = 0;
-		int intPage = (page==0) ? 1 : page;
-		int number = (rows==0) ? 10 : rows;
-		start = (intPage - 1) * number;
-		map.put("index", start);
-		map.put("pageSize", number);
 		if(companyid!=null) {
 			map.put("companyid", companyid);
 		}else {
@@ -149,7 +147,7 @@ public class CommonServiceImpl implements CommonService {
 				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
 			}
 		}
-		PageHelper.startPage(start, number);
+		PageHelper.startPage(page,rows);
 		List<Map<String, Object>> listmaps = companyMapper.countConsumptionReport(map);
 		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
 		map.clear();
@@ -166,12 +164,6 @@ public class CommonServiceImpl implements CommonService {
 		map.put("endtime", endtime);
 		map.put("datetype", datetype);
 		map.put("type", type);
-		int start = 0;
-		int intPage = (page==0) ? 1 : page;
-		int number = (rows==0) ? 10 : rows;
-		start = (intPage - 1) * number;
-		map.put("index", start);
-		map.put("pageSize", number);
 		if(companyid!=null) {
 			map.put("companyid", companyid);
 		}else {
@@ -179,7 +171,7 @@ public class CommonServiceImpl implements CommonService {
 				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
 			}
 		}
-		PageHelper.startPage(start, number);
+		PageHelper.startPage(page, rows);
 		List<Map<String, Object>> listmaps = companyMapper.countSubscribeReport(map);
 		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
 		map.clear();
@@ -254,12 +246,6 @@ public class CommonServiceImpl implements CommonService {
 		map.put("year", year);
 		if(month!=null) map.put("month", (month>0&&month<10)?"0"+month:month);
 		map.put("datetype", datetype);
-		int start = 0;
-		int intPage = (page==0) ? 1 : page;
-		int number = (rows==0) ? 10 : rows;
-		start = (intPage - 1) * number;
-		map.put("index", start);
-		map.put("pageSize", number);
 		if(companyid!=null) {
 			map.put("companyid", companyid);
 		}else {
@@ -267,7 +253,7 @@ public class CommonServiceImpl implements CommonService {
 				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
 			}
 		}
-		PageHelper.startPage(start, number);
+		PageHelper.startPage(page, rows);
 		List<Map<String, Object>> listmaps = companyMapper.queryCountInventory(map);
 		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
 		map.clear();
@@ -321,14 +307,6 @@ public class CommonServiceImpl implements CommonService {
 		map.put("endtime", endtime);
 		map.put("datetype", datetype);
 		map.put("type", type);
-		int start = 0;
-		int intPage = (page==0) ? 1 : page;
-		int number = (rows==0) ? 10 : rows;
-		start = (intPage - 1) * number;
-		if(rows<=0) {
-			map.put("index", start);
-			map.put("pageSize", number);
-		}
 		if(companyid!=null) {
 			map.put("companyid", companyid);
 		}else {
@@ -341,7 +319,7 @@ public class CommonServiceImpl implements CommonService {
 		int total_nums = 0;
 		double total_amount_all = 0.0;
 		double total_amount_avg_all = 0.0;
-		PageHelper.startPage(start, number);
+		PageHelper.startPage(page, rows);
 		List<Map<String, Object>> listmaps = companyMapper.queryCountBusinessAnalysisDataDetail(map);
 		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
 		if(listmaps==null || listmaps.size()<=0) return null;
@@ -418,9 +396,9 @@ public class CommonServiceImpl implements CommonService {
 	@Override
 	public Map<String, Object> queryIndexCompanyCount() {
 		Map<String, Object> map = new  HashMap<String, Object>();
-		String companyname = "";
 		Integer companyid = SystemUserInfo.getSystemUser().getCompany().getId();
 		if(WorkFlowUtil.hasAnyRoles(RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER)) companyid = null;
+		String companyname = "";
 		if(companyid==null) {
 			companyname = "所有门店统计";
 		}else {
@@ -459,7 +437,6 @@ public class CommonServiceImpl implements CommonService {
 		}
 		list = workforcemanagementMapper.queryPagingList(params);
 		if(list==null) list = new ArrayList<Map<String,Object>>();
-		Integer count = workforcemanagementMapper.counTWorkforcemanagementByBean(params);
 		List<Map<String, Object>> list1 = new ArrayList<Map<String,Object>>();
 		if(!list.isEmpty()) {
 			LocalDate localDate = LocalDate.now();
@@ -492,7 +469,66 @@ public class CommonServiceImpl implements CommonService {
 			}
 		}
 		result.put("rows",list1);
-		result.put("total",count);
+		result.put("total",0);
 		return result;
+	}
+
+	@Override
+	public Map<String, Object> queryProjectTypeReport(Integer companyid, String starttime, String endtime) {
+		Map<String, Object> map = new  HashMap<String, Object>();
+//		Integer companyid = SystemUserInfo.getSystemUser().getCompany().getId();
+		if(WorkFlowUtil.hasAnyRoles(RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER)) companyid = null;
+		String companyname = "";
+		if(companyid==null) {
+			companyname = "所有门店统计";
+		}else {
+			TCompany tCompany = companyMapper.selectByPrimaryKey(companyid);
+			companyname = tCompany.getName()+"统计";
+		}
+		map.put("companyid", companyid);
+		map.put("starttime", starttime);
+		map.put("endtime", endtime);
+		List<Map<String,Object>> lists = companyMapper.queryProjectTypeReport(map);
+		map.clear();
+		if(lists!=null) {
+			List<String> names = lists.stream().map(f->f.get("name").toString()).collect(Collectors.toList());
+			List<Object> procounts = lists.stream().map(f->Integer.parseInt(f.get("procounts").toString())).collect(Collectors.toList());
+			map.put("xAxis", names!=null?names:null);
+			map.put("data", procounts!=null?procounts:null);
+		}
+		map.put("titile", companyname);
+		return map;
+	}
+
+	@Override
+	public Map<String, Object> queryProjectTypeChangeReport(Integer companyid, String starttime, String endtime) {
+		Map<String, Object> map = new  HashMap<String, Object>();
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+			}
+		}
+		map.put("starttime", starttime);
+		map.put("endtime", endtime==null?DateUtil.getCurrentDate():endtime);
+		PageHelper.startPage(1, 1);
+		List<Map<String, Object>> listmaps = companyMapper.queryProjectTypeChangeReport(map);
+		map.clear();
+		if(listmaps.size()<=0) {
+			Map<String, Object> map1 = new  HashMap<String, Object>();
+			map1.put("p1", 0);
+			map1.put("p2", 0);
+			map1.put("p3", 0);
+			map1.put("p4", 0);
+			map1.put("p5", 0);
+			map1.put("p6", 0);
+			map1.put("p7", 0);
+			listmaps.add(map1);
+		}
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		map.put("rows",listmaps);
+		map.put("total",pageinfo.getTotal());
+		return map;
 	}
 }

@@ -1,7 +1,5 @@
 package com.gasq.bdp.logn.controller;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TCompany;
+import com.gasq.bdp.logn.provider.Ilogger;
 import com.gasq.bdp.logn.service.TCompanyService;
 
 import io.swagger.annotations.Api;
@@ -32,16 +31,14 @@ public class CompanyController {
     //错误信息
     Map<String,Object> map = new HashMap<String,Object>();
     
+    @Ilogger(value="查询公司列表")
     @ApiOperation(value="查询列表公司配置信息列表", notes="查询列表公司配置信息列表")
     @ApiImplicitParam(name = "bean", value = "公司实体对象TCompany", required = false, dataType = "TCompany")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
 	public Map<String, Object> queryList(TCompany bean) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】开始查询公司列表！");
 		try {
 			map = companyService.queryPagingList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -60,13 +57,12 @@ public class CompanyController {
 		}
     	return null;
 	 }
-    
+    @Ilogger(value="添加或更新公司信息")
     @ApiOperation(value="添加或更新公司配置信息", notes="添加或更新公司配置信息（管理员、操作、测试）")
     @ApiImplicitParam(name = "bean", value = "公司实体对象TCompany", required = true, dataType = "TCompany")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
 	public boolean saveOrUpdate(TCompany bean) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】开始添加或更新公司配置信息！");
 		try {
 			return companyService.saveOrUpdate(bean);
 		} catch (Exception e) {
@@ -74,13 +70,12 @@ public class CompanyController {
 		}
 		return false;
 	 }
-    
+    @Ilogger(value="删除公司配置信息")
     @ApiOperation(value="删除公司配置信息", notes="删除公司配置信息（管理员、操作）")
     @ApiImplicitParam(name = "id", value = "公司实体id", required = true, dataType = "Integer", paramType="query")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/delete",method=RequestMethod.POST)
 	public boolean delete(Integer id) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】删除公司配置信息！");
 		try {
 			return companyService.delete(id);
 		} catch (Exception e) {

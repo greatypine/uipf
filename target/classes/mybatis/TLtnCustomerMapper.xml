@@ -12,8 +12,11 @@
     <result column="counsoler" jdbcType="INTEGER" property="counsoler" />
     <result column="therapeutist" jdbcType="INTEGER" property="therapeutist" />
     <result column="remindTime" jdbcType="DATE" property="remindtime" />
+    <result column="cure_time" jdbcType="DATE" property="cureTime" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="root_in" jdbcType="INTEGER" property="rootIn" />
+    <result column="profession" jdbcType="INTEGER" property="profession" />
     <result column="subscribe_id" jdbcType="INTEGER" property="subscribeId" />
     <result column="createUser" jdbcType="VARCHAR" property="createuser" />
     <result column="updateUser" jdbcType="VARCHAR" property="updateuser" />
@@ -83,8 +86,8 @@
   </sql>
   <sql id="Base_Column_List">
     id, company_id, chu_fu_zhen, customername, phonenumb, sex, card_id, counsoler, therapeutist, 
-    remindTime, status, type, subscribe_id, createUser, updateUser, createTime, updateTime, 
-    importTime, importUser, remark
+    remindTime, cure_time, status, type, root_in, profession, subscribe_id, createUser, 
+    updateUser, createTime, updateTime, importTime, importUser, remark
   </sql>
   <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TLtnCustomerExample" resultMap="BaseResultMap">
     select
@@ -116,18 +119,20 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.gasq.bdp.logn.model.TLtnCustomer">
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TLtnCustomer">
     insert into t_ltn_customer (id, company_id, chu_fu_zhen, 
       customername, phonenumb, sex, 
       card_id, counsoler, therapeutist, 
-      remindTime, status, type, 
+      remindTime, cure_time, status, 
+      type, root_in, profession, 
       subscribe_id, createUser, updateUser, 
       createTime, updateTime, importTime, 
       importUser, remark)
     values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{chuFuZhen,jdbcType=INTEGER}, 
       #{customername,jdbcType=VARCHAR}, #{phonenumb,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, 
       #{cardId,jdbcType=VARCHAR}, #{counsoler,jdbcType=INTEGER}, #{therapeutist,jdbcType=INTEGER}, 
-      #{remindtime,jdbcType=DATE}, #{status,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+      #{remindtime,jdbcType=DATE}, #{cureTime,jdbcType=DATE}, #{status,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{rootIn,jdbcType=INTEGER}, #{profession,jdbcType=INTEGER}, 
       #{subscribeId,jdbcType=INTEGER}, #{createuser,jdbcType=VARCHAR}, #{updateuser,jdbcType=VARCHAR}, 
       #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}, #{importtime,jdbcType=TIMESTAMP}, 
       #{importuser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
@@ -165,11 +170,20 @@
       <if test="remindtime != null">
         remindTime,
       </if>
+      <if test="cureTime != null">
+        cure_time,
+      </if>
       <if test="status != null">
         status,
       </if>
       <if test="type != null">
         type,
+      </if>
+      <if test="rootIn != null">
+        root_in,
+      </if>
+      <if test="profession != null">
+        profession,
       </if>
       <if test="subscribeId != null">
         subscribe_id,
@@ -227,11 +241,20 @@
       <if test="remindtime != null">
         #{remindtime,jdbcType=DATE},
       </if>
+      <if test="cureTime != null">
+        #{cureTime,jdbcType=DATE},
+      </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
       </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
+      </if>
+      <if test="rootIn != null">
+        #{rootIn,jdbcType=INTEGER},
+      </if>
+      <if test="profession != null">
+        #{profession,jdbcType=INTEGER},
       </if>
       <if test="subscribeId != null">
         #{subscribeId,jdbcType=INTEGER},
@@ -298,11 +321,20 @@
       <if test="record.remindtime != null">
         remindTime = #{record.remindtime,jdbcType=DATE},
       </if>
+      <if test="record.cureTime != null">
+        cure_time = #{record.cureTime,jdbcType=DATE},
+      </if>
       <if test="record.status != null">
         status = #{record.status,jdbcType=INTEGER},
       </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.rootIn != null">
+        root_in = #{record.rootIn,jdbcType=INTEGER},
+      </if>
+      <if test="record.profession != null">
+        profession = #{record.profession,jdbcType=INTEGER},
       </if>
       <if test="record.subscribeId != null">
         subscribe_id = #{record.subscribeId,jdbcType=INTEGER},
@@ -345,8 +377,11 @@
       counsoler = #{record.counsoler,jdbcType=INTEGER},
       therapeutist = #{record.therapeutist,jdbcType=INTEGER},
       remindTime = #{record.remindtime,jdbcType=DATE},
+      cure_time = #{record.cureTime,jdbcType=DATE},
       status = #{record.status,jdbcType=INTEGER},
       type = #{record.type,jdbcType=INTEGER},
+      root_in = #{record.rootIn,jdbcType=INTEGER},
+      profession = #{record.profession,jdbcType=INTEGER},
       subscribe_id = #{record.subscribeId,jdbcType=INTEGER},
       createUser = #{record.createuser,jdbcType=VARCHAR},
       updateUser = #{record.updateuser,jdbcType=VARCHAR},
@@ -389,11 +424,20 @@
       <if test="remindtime != null">
         remindTime = #{remindtime,jdbcType=DATE},
       </if>
+      <if test="cureTime != null">
+        cure_time = #{cureTime,jdbcType=DATE},
+      </if>
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="rootIn != null">
+        root_in = #{rootIn,jdbcType=INTEGER},
+      </if>
+      <if test="profession != null">
+        profession = #{profession,jdbcType=INTEGER},
       </if>
       <if test="subscribeId != null">
         subscribe_id = #{subscribeId,jdbcType=INTEGER},
@@ -433,8 +477,11 @@
       counsoler = #{counsoler,jdbcType=INTEGER},
       therapeutist = #{therapeutist,jdbcType=INTEGER},
       remindTime = #{remindtime,jdbcType=DATE},
+      cure_time = #{cureTime,jdbcType=DATE},
       status = #{status,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},
+      root_in = #{rootIn,jdbcType=INTEGER},
+      profession = #{profession,jdbcType=INTEGER},
       subscribe_id = #{subscribeId,jdbcType=INTEGER},
       createUser = #{createuser,jdbcType=VARCHAR},
       updateUser = #{updateuser,jdbcType=VARCHAR},
@@ -459,7 +506,7 @@
       order by ${orderByClause}
     </if>
   </select>
-    <select id="queryPagingList" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
+      <select id="queryPagingList" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
  		SELECT
 			a.id,
 			a.company_id as companyId,
@@ -471,12 +518,13 @@
 			a.therapeutist,
 			a.customername,
 			DATE_FORMAT(a.remindtime,'%Y-%m-%d')remindtime,
+			DATE_FORMAT(a.cure_time,'%Y-%m-%d')cureTime,
 			a.createUser,
 			a.updateUser,
 			a.createTime,
 			a.updateTime,
 			a.remark,
-			ifnull((select sum(ifnull(cc.total_amount,0)) from t_ltn_customer_consumpton_amount cc where cc.customer_id= a.id),0) as totalConsumptonAmount,
+			ifnull((select sum(ifnull(cc.total_amount,0)) from t_customer_consumpton_amount cc where cc.customer_id= a.id),0) as totalConsumptonAmount,
 			u.nickname as therapeutistName,
 			vct.text as typeName,
 			a.sex,
@@ -485,33 +533,313 @@
 			a.counsoler,
 			u1.nickname as counsolerName,
 			u2.nickname as subscribeName,
-			vcos.text as statusName
+			vcos.text as statusName,
+			a.profession,
+			vcp.text as professionName,
+			a.root_in as rootIn,
+			vri.name as rootInName,
+			ttti.treatment_time as treatmentOptionTime,
+			ttti.day treatmentOptionDay,
+			vtt.text as treatmentOptionTimeName
 		from t_ltn_customer a 
-		LEFT JOIN t_customer_subscribe tcs on a.subscribe_id=tcs.id
-		<if test="record.companyId !=null">
-		 and tcs.company_id=#{record.companyId}
-		</if>
-		LEFT JOIN t_sys_user u2 on tcs.create_user=u2.username
-		<if test="record.companyId !=null">
-		 and u2.companyid=#{record.companyId}
-		</if>
-		left join v_consume_type vct on a.type=vct.value
-		<if test="record.companyId !=null">
-		 and vct.companyid=#{record.companyId}
-		</if>
-		LEFT JOIN t_sys_user u on a.therapeutist = u.id
-		<if test="record.companyId !=null">
-		 and u.companyid=#{record.companyId}
-		</if>
-		LEFT JOIN t_sys_user u1 on a.counsoler = u1.id
-		<if test="record.companyId !=null">
-		 and u1.companyid=#{record.companyId}
-		</if>
+		LEFT JOIN v_root_in vri on a.root_in = vri.value and vri.companyid=a.company_id
+		LEFT JOIN v_customer_profession vcp on a.profession=vcp.value
+		LEFT JOIN t_customer_subscribe tcs on a.subscribe_id=tcs.id and tcs.company_id=a.company_id
+		LEFT JOIN t_sys_user u2 on tcs.create_user=u2.username and u2.companyid=a.company_id
+		left join v_consume_type vct on a.type=vct.value and vct.companyid=a.company_id
+		LEFT JOIN t_sys_user u on a.therapeutist = u.id and u.companyid=a.company_id
+		LEFT JOIN t_sys_user u1 on a.counsoler = u1.id and u1.companyid=a.company_id
 		left join t_company c on a.company_id = c.id
-		left join v_sex vs on a.sex=vs.value
-		<if test="record.companyId !=null">
-		 and vs.companyid=#{record.companyId}
-		</if>
+		left join v_sex vs on a.sex=vs.value and vs.companyid=a.company_id
+		LEFT JOIN v_customer_order_status vcos on a.`status`= vcos.`value`
+		LEFT JOIN t_therapist_treatment_time_info ttti on a.id = ttti.order_id and ttti.`status`=1
+		left join v_treatment_time vtt on ttti.treatment_time = vtt.value
+		where 1=1 
+ 		<if test="record.companyId &gt; 0 and record.companyId!=null">
+			and a.company_id=#{record.companyId}
+ 		</if>
+ 		<if test="record.phonenumb !='' and record.phonenumb!=null">
+			and a.phonenumb like concat(#{record.phonenumb},'%')
+ 		</if>
+ 		<if test="record.customername !='' and record.customername!=null">
+			and a.customername like concat(#{record.customername},'%')
+ 		</if>
+ 		<if test="record.therapeutist !='' and record.therapeutist!=null">
+			and a.therapeutist = #{record.therapeutist}
+ 		</if>
+ 		<if test="record.chuFuZhen !='' and record.chuFuZhen!=null">
+			and a.chu_fu_zhen = #{record.chuFuZhen}
+ 		</if>
+ 		<if test="record.statuss!=null">
+			and a.status in
+			<foreach item="item" index="index" collection="record.statuss" 
+                         open="(" separator="," close=")">
+                        #{item}
+            </foreach>
+ 		</if>
+ 		<if test="record.type!=null">
+			and a.type = #{record.type}
+ 		</if>
+ 		<if test="record.id!=null">
+			and a.id = #{record.id}
+ 		</if>
+ 		<if test="record.createtime!=null">
+			and a.createtime &gt;= #{record.createtime}
+ 		</if>
+ 		<if test="record.endtime!=null">
+			and a.createtime &lt;= #{record.endtime}
+ 		</if>
+ 		<if test="record.rootIn!=null">
+ 			and a.root_in = #{record.rootIn}
+ 		</if>
+ 		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text,vcp.text,vri.name,ttti.id,vtt.text
+		order by a.createtime desc 
+ </select>
+ 
+  <select id="queryAmountSum" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
+  	<if test="record.id==null">
+  		SELECT 
+			sum(
+				ifnull(
+					cc.total_amount,
+					0
+				)
+			) AS total_amount
+		 from (
+	  		SELECT
+				a.id
+			from t_ltn_customer a 
+			LEFT JOIN t_customer_subscribe tcs on a.subscribe_id=tcs.id and tcs.company_id=a.company_id
+			LEFT JOIN t_sys_user u2 on tcs.create_user=u2.username and u2.companyid=a.company_id
+			left join v_consume_type vct on a.type=vct.value and vct.companyid=a.company_id
+			LEFT JOIN t_sys_user u on a.therapeutist = u.id and u.companyid=a.company_id
+			LEFT JOIN t_sys_user u1 on a.counsoler = u1.id and u1.companyid=a.company_id
+			left join t_company c on a.company_id = c.id
+			left join v_sex vs on a.sex=vs.value and vs.companyid=a.company_id
+			LEFT JOIN v_customer_order_status vcos on a.`status`= vcos.`value`
+			where 1 = 1
+	 		<if test="record.companyId &gt; 0 and record.companyId!=null">
+				and a.company_id=#{record.companyId}
+	 		</if>
+	 		<if test="record.phonenumb !='' and record.phonenumb!=null">
+				and a.phonenumb like concat(#{record.phonenumb},'%')
+	 		</if>
+	 		<if test="record.customername !='' and record.customername!=null">
+				and a.customername like concat(#{record.customername},'%')
+	 		</if>
+	 		<if test="record.therapeutist !='' and record.therapeutist!=null">
+				and a.therapeutist = #{record.therapeutist}
+	 		</if>
+	 		<if test="record.chuFuZhen !='' and record.chuFuZhen!=null">
+				and a.chu_fu_zhen = #{record.chuFuZhen}
+	 		</if>
+	 		<if test="record.statuss!=null">
+				and a.status in
+				<foreach item="item" index="index" collection="record.statuss" 
+	                         open="(" separator="," close=")">
+	                        #{item}
+	            </foreach>
+	 		</if>
+	 		<if test="record.type!=null">
+				and a.type = #{record.type}
+	 		</if>
+	 		<if test="record.id!=null">
+				and a.id = #{record.id}
+	 		</if>
+	 		<if test="record.createtime!=null">
+				and a.createtime &gt;= #{record.createtime}
+	 		</if>
+	 		<if test="record.endtime!=null">
+				and a.createtime &lt;= #{record.endtime}
+	 		</if>
+	 		<if test="record.rootIn!=null">
+	 			and a.root_in = #{record.rootIn}
+	 		</if>
+	 		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text
+	 	) aa
+		LEFT JOIN (SELECT sum(cc.total_amount)total_amount,cc.customer_id  FROM t_customer_consumpton_amount cc GROUP BY cc.customer_id) cc on cc.customer_id=aa.id	
+  	</if>
+  	<if test="record.id!=null">
+  		SELECT
+		sum(cc.total_amount) total_amount,
+		(
+			SELECT
+				sum(b.total_amount) total_amount
+			FROM
+				t_customer_consumpton_amount b
+			INNER JOIN t_ltn_customer b1 ON b.customer_id = b1.id
+			WHERE b.customer_id=#{record.id} 
+			AND b1.company_id = #{record.companyId} 
+			and b1.status=1
+		) AS one_total_amount
+	FROM
+		t_ltn_customer a
+		left join t_customer_consumpton_amount cc on a.id = cc.customer_id
+	WHERE
+		a.status = 1 
+		and a.company_id = #{record.companyId}
+  	</if>
+  </select>
+  
+  <select id="queryExportDataList" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.LinkedHashMap">
+  		 SELECT
+			lc.customername as '客户姓名',
+			lc.phonenumb '客户电话',
+			ifnull(vri.`name`,'') '客户来源',
+			ifnull(vcp.text,'') '客户职业',
+			ifnull(vcos.text,'') as '结算状态',
+			ifnull(vct.text,'') as '结算类型',
+			ifnull(u2.nickname,'') '预约人',
+			ifnull(u1.nickname,'') '咨询师',
+			ifnull(u.nickname,'') '治疗师',
+			ifnull(tcdt.projectnames,'') '就诊项目',
+			ifnull((select sum(ifnull(cc.total_amount,0)) from t_customer_consumpton_amount cc where cc.customer_id= lc.id),0) '消费总金额',
+			ifnull(lc.remindtime,'') '回访时间',
+			ifnull(u3.nickname,'') '创建人',
+			DATE_FORMAT(lc.createTime,'%Y-%m-%d %H:%i:%S') as '创建时间',
+			ifnull(lc.remark,'') as '说明'
+		from t_ltn_customer lc 
+		LEFT JOIN v_root_in vri on lc.root_in = vri.value and vri.companyid=lc.company_id
+		LEFT JOIN v_customer_profession vcp on lc.profession=vcp.value
+		LEFT JOIN t_customer_subscribe tcs on lc.subscribe_id=tcs.id and tcs.company_id=lc.company_id
+		LEFT JOIN t_sys_user u3 on lc.createUser=u3.username and u3.companyid=lc.company_id
+		LEFT JOIN t_sys_user u2 on tcs.create_user=u2.username and u2.companyid=lc.company_id
+		LEFT JOIN t_sys_user u on lc.therapeutist = u.id and u.companyid=lc.company_id
+		left join v_consume_type vct on lc.type=vct.value and vct.companyid=lc.company_id
+		LEFT JOIN t_sys_user u1 on lc.counsoler = u1.id and u1.companyid=lc.company_id
+		LEFT JOIN v_customer_order_status vcos on lc.`status`= vcos.`value`
+		LEFT JOIN (select GROUP_CONCAT(tp.project_name order by tca.createTime SEPARATOR '/') as projectnames,tca.customer_id from t_customer_consumpton_amount tca LEFT JOIN t_project tp on tca.project_id=tp.id GROUP BY tca.customer_id) tcdt on tcdt.customer_id=lc.id
+		where 1=1
+		<if test="record.companyId &gt; 0 and record.companyId!=null">
+			and lc.company_id=#{record.companyId}
+ 		</if>
+ 		<if test="record.phonenumb !='' and record.phonenumb!=null">
+			and lc.phonenumb like concat(#{record.phonenumb},'%')
+ 		</if>
+ 		<if test="record.customername !='' and record.customername!=null">
+			and lc.customername like concat(#{record.customername},'%')
+ 		</if>
+ 		<if test="record.therapeutist !='' and record.therapeutist!=null">
+			and lc.therapeutist = #{record.therapeutist}
+ 		</if>
+ 		<if test="record.chuFuZhen !='' and record.chuFuZhen!=null">
+			and lc.chu_fu_zhen = #{record.chuFuZhen}
+ 		</if>
+ 		<if test="record.status!=null">
+			and lc.status = #{record.status}
+ 		</if>
+ 		<if test="record.id!=null">
+			and lc.id = #{record.id}
+ 		</if>
+ 		<if test="record.createtime!=null">
+			and lc.createtime &gt;= #{record.createtime}
+ 		</if>
+ 		<if test="record.endtime!=null">
+			and lc.createtime &lt;= #{record.endtime}
+ 		</if>
+ 		GROUP BY lc.id,lc.company_id,vct.text,u2.nickname,tcdt.projectnames,u3.nickname,vcos.text,vcp.text,vri.name
+		order by lc.createtime desc
+  </select>
+  <select id="getConsumptionProjects" parameterType="java.lang.Integer" resultType="java.util.Map">
+  		select GROUP_CONCAT(p.project_name)project_name,sum(a.total_amount)total_amount from t_customer_consumpton_amount a LEFT JOIN t_project p on a.project_id=p.id 
+  		where a.customer_id=#{id}
+  </select>
+  <select id="countConsumptionReport" parameterType="java.util.Map" resultType="java.util.Map">
+  	SELECT temp1.datetime,sum(temp1.c_total_amount)c_total_amount,sum(temp1.f_total_amount)f_total_amount,sum(temp1.CHUZHEN) CHUZHEN,sum(temp1.FUZHEN) FUZHEN from (
+		SELECT
+			<if test="datetype!=null and datetype!=''">
+				<if test="datetype==1">
+					DATE_FORMAT(a.createTime, '%Y') datetime,
+				</if>
+				<if test="datetype==2">
+					DATE_FORMAT(a.createTime, '%Y%m') datetime,
+				</if>
+				<if test="datetype==3">
+					DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
+				</if>
+			</if>
+			<if test="datetype==null or datetype==''">
+				DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
+			</if>
+			
+			(
+				sum(if(a.chu_fu_zhen=0,ifnull(b.total_amount, 0),0)) / 10000
+			) c_total_amount,
+			(
+				sum(if(a.chu_fu_zhen=1,ifnull(b.total_amount, 0),0)) / 10000
+			) f_total_amount,
+			sum(IF(a.chu_fu_zhen=0,1,0)) CHUZHEN,
+			sum(IF(a.chu_fu_zhen=1,1,0)) FUZHEN
+		FROM
+			t_ltn_customer a
+		LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_customer_consumpton_amount b GROUP BY b.customer_id) b on a.id = b.id
+		INNER JOIN t_customer_porject tcp on a.id = tcp.order_id and tcp.update_time is null and DATE_FORMAT(a.createTime,'%Y-%m-%d')=DATE_FORMAT(tcp.create_time, '%Y-%m-%d')
+		where a.status=1
+		
+			<if test="starttime!=null and starttime!=''">
+				and DATE_FORMAT(a.createTime, '%Y-%m-%d') &gt;= #{starttime}
+			</if>
+			<if test="endtime!=null and endtime!=''">
+				and DATE_FORMAT(a.createTime, '%Y-%m-%d') &lt;= #{endtime}
+			</if>
+			<if test="companyid!=null">
+				and a.company_id = #{companyid}
+			</if>
+			GROUP BY datetime
+	 union ALL
+	
+		SELECT 
+			<if test="datetype!=null and datetype!=''">
+				<if test="datetype==1">
+					DATE_FORMAT(tcpl.create_time, '%Y') datetime,
+				</if>
+				<if test="datetype==2">
+					DATE_FORMAT(tcpl.create_time, '%Y%m') datetime,
+				</if>
+				<if test="datetype==3">
+					DATE_FORMAT(tcpl.create_time, '%Y%m%d') datetime,
+				</if>
+			</if>
+			<if test="datetype==null or datetype==''">
+				DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
+			</if>
+			0 as c_total_amount,
+			0 as f_total_amount,
+			0 as CHUZHEN,
+			count(tcpl.id) FUZHEN
+			from t_ltn_customer a 
+			INNER JOIN t_customer_porject tcp on a.id = tcp.order_id  and DATE_FORMAT(a.createTime,'%Y-%m-%d')&lt; DATE_FORMAT(tcp.update_time, '%Y-%m-%d')
+			INNER JOIN t_customer_project_log tcpl on tcp.id=tcpl.cp_id
+			INNER JOIN t_company tc ON a.company_id = tc.id and tc.`status`=1
+			where a.`status`=1 
+				<if test="starttime!=null and starttime!=''">
+					and DATE_FORMAT(tcpl.create_time, '%Y-%m-%d') &gt;= #{starttime}
+				</if>
+				<if test="endtime!=null and endtime!=''">
+					and DATE_FORMAT(tcpl.create_time, '%Y-%m-%d') &lt;= #{endtime}
+				</if>
+				<if test="companyid!=null">
+					and a.company_id = #{companyid}
+				</if>
+			GROUP BY datetime
+	) temp1  GROUP BY temp1.datetime
+	order by datetime desc
+  </select>
+  
+  <select id="countByBean" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.lang.Integer">
+ 	select count(*) from(
+ 		SELECT
+			a.id
+		from t_ltn_customer a 
+		LEFT JOIN v_root_in vri on a.root_in = vri.value and vri.companyid=a.company_id
+		LEFT JOIN v_customer_profession vcp on a.profession=vcp.value
+		LEFT JOIN t_customer_subscribe tcs on a.subscribe_id=tcs.id and tcs.company_id=a.company_id
+		LEFT JOIN t_sys_user u2 on tcs.create_user=u2.username and u2.companyid=a.company_id
+		left join v_consume_type vct on a.type=vct.value and vct.companyid=a.company_id
+		LEFT JOIN t_sys_user u on a.therapeutist = u.id and u.companyid=a.company_id
+		LEFT JOIN t_sys_user u1 on a.counsoler = u1.id and u1.companyid=a.company_id
+		left join t_company c on a.company_id = c.id
+		left join v_sex vs on a.sex=vs.value and vs.companyid=a.company_id
 		LEFT JOIN v_customer_order_status vcos on a.`status`= vcos.`value`
 		where 1=1 
  		<if test="record.companyId &gt; 0 and record.companyId!=null">
@@ -548,167 +876,95 @@
  		<if test="record.endtime!=null">
 			and a.createtime &lt;= #{record.endtime}
  		</if>
-		order by a.updateTime desc 
-		<if test="record.rows !=null and record.page!=null">
-			limit #{record.page},#{record.rows}
-		</if>
+ 		<if test="record.rootIn!=null">
+ 			and a.root_in = #{record.rootIn}
+ 		</if>
+ 		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text,vcp.text,vri.name
+	) temp
  </select>
  
-  <select id="queryAmountSum" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
-  	<if test="record.id==null">
-  		select sum(cc.total_amount) as total_amount from t_ltn_customer a left join t_ltn_customer_consumpton_amount cc on a.id = cc.customer_id
-		WHERE
-		a.company_id = #{record.companyId}
-  	
-  	</if>
-  	<if test="record.id!=null">
-  		SELECT
-		sum(cc.total_amount) total_amount,
-		(
-			SELECT
-				sum(b.total_amount) total_amount
-			FROM
-				t_ltn_customer_consumpton_amount b
-			INNER JOIN t_ltn_customer b1 ON b.customer_id = b1.id
-			WHERE b.customer_id=#{record.id} 
-			AND b1.company_id = #{record.companyId} 
-		) AS one_total_amount
-	FROM
-		t_ltn_customer a
-		left join t_ltn_customer_consumpton_amount cc on a.id = cc.customer_id
-	WHERE
-		a.company_id = #{record.companyId}
-  	</if>
-  </select>
-  
-  <select id="queryExportDataList" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.LinkedHashMap">
-  		 SELECT
-			lc.customername as '客户姓名',
-			lc.phonenumb '客户电话',
-			vcos.text as '结算状态',
-			ifnull(vct.text,'') as '结算类型',
-			ifnull(u2.nickname,'') '预约人',
-			ifnull(u1.nickname,'') '咨询师',
-			ifnull(u.nickname,'') '治疗师',
-			ifnull(tcdt.projectnames,'') '就诊项目',
-			ifnull((select sum(ifnull(cc.total_amount,0)) from t_ltn_customer_consumpton_amount cc where cc.customer_id= lc.id),0) '消费总金额',
-			ifnull(lc.remindtime,'') '回访时间',
-			ifnull(u3.nickname,'') '创建人',
-			DATE_FORMAT(lc.createTime,'%Y-%m-%d %H:%i:%S') as '创建时间',
-			ifnull(lc.remark,'') as '说明'
-		from t_ltn_customer lc 
-		LEFT JOIN t_customer_subscribe tcs on lc.subscribe_id=tcs.id
-		<if test="record.companyId !=null">
-		 and tcs.company_id=#{record.companyId}
-		</if>
-		LEFT JOIN t_sys_user u3 on lc.createUser=u3.username
-		<if test="record.companyId !=null">
-		 and u3.companyid=#{record.companyId}
-		</if>
-		LEFT JOIN t_sys_user u2 on tcs.create_user=u2.username
-		<if test="record.companyId !=null">
-		 and u2.companyid=#{record.companyId}
-		</if>
-		LEFT JOIN t_sys_user u on lc.therapeutist = u.id
-		<if test="record.companyId !=null">
-		 and u.companyid=#{record.companyId}
-		</if>
-		left join v_consume_type vct on lc.type=vct.value
-		<if test="record.companyId !=null">
-		 and vct.companyid=#{record.companyId}
-		</if>
-		LEFT JOIN t_sys_user u1 on lc.counsoler = u1.id
-		<if test="record.companyId !=null">
-		 and u1.companyid=#{record.companyId}
-		</if>
-		LEFT JOIN v_customer_order_status vcos on lc.`status`= vcos.`value`
-		LEFT JOIN (select GROUP_CONCAT(tp.project_name order by tca.createTime SEPARATOR '/') as projectnames,tca.customer_id from t_ltn_customer_consumpton_amount tca LEFT JOIN t_project tp on tca.project_id=tp.id GROUP BY tca.customer_id) tcdt on tcdt.customer_id=lc.id
-		where 1=1
-		<if test="record.companyId &gt; 0 and record.companyId!=null">
-			and lc.company_id=#{record.companyId}
+ <select id="queryPagingListExt" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
+ 		SELECT
+			a.id,
+			a.company_id as companyId,
+			c.name as companyName,
+			ifnull(a.chu_fu_zhen,0) as chuFuZhen,
+			a.phonenumb,
+			a.status,
+			a.type,
+			a.therapeutist,
+			a.customername,
+			DATE_FORMAT(a.remindtime,'%Y-%m-%d')remindtime,
+			DATE_FORMAT(a.cure_time,'%Y-%m-%d')cureTime,
+			a.createUser,
+			a.updateUser,
+			a.createTime,
+			a.updateTime,
+			a.remark,
+			ifnull((select sum(ifnull(cc.total_amount,0)) from t_customer_consumpton_amount cc where cc.customer_id= a.id),0) as totalConsumptonAmount,
+			u.nickname as therapeutistName,
+			vct.text as typeName,
+			a.sex,
+			vs.text as sexName,
+			a.card_id as cardId,
+			a.counsoler,
+			u1.nickname as counsolerName,
+			u2.nickname as subscribeName,
+			vcos.text as statusName,
+			a.profession,
+			vcp.text as professionName,
+			a.root_in as rootIn,
+			vri.name as rootInName
+		from t_ltn_customer a 
+		LEFT JOIN v_root_in vri on a.root_in = vri.value and vri.companyid=a.company_id
+		LEFT JOIN v_customer_profession vcp on a.profession=vcp.value
+		LEFT JOIN t_customer_subscribe tcs on a.subscribe_id=tcs.id and tcs.company_id=a.company_id
+		LEFT JOIN t_sys_user u2 on tcs.create_user=u2.username and u2.companyid=a.company_id
+		left join v_consume_type vct on a.type=vct.value and vct.companyid=a.company_id
+		LEFT JOIN t_sys_user u on a.therapeutist = u.id and u.companyid=a.company_id
+		LEFT JOIN t_sys_user u1 on a.counsoler = u1.id and u1.companyid=a.company_id
+		left join t_company c on a.company_id = c.id
+		left join v_sex vs on a.sex=vs.value and vs.companyid=a.company_id
+		LEFT JOIN v_customer_order_status vcos on a.`status`= vcos.`value`
+		where 1=1 
+ 		<if test="record.companyId &gt; 0 and record.companyId!=null">
+			and a.company_id=#{record.companyId}
  		</if>
  		<if test="record.phonenumb !='' and record.phonenumb!=null">
-			and lc.phonenumb like concat(#{record.phonenumb},'%')
+			and a.phonenumb like concat(#{record.phonenumb},'%')
  		</if>
  		<if test="record.customername !='' and record.customername!=null">
-			and lc.customername like concat(#{record.customername},'%')
+			and a.customername like concat(#{record.customername},'%')
  		</if>
  		<if test="record.therapeutist !='' and record.therapeutist!=null">
-			and lc.therapeutist = #{record.therapeutist}
+			and a.therapeutist = #{record.therapeutist}
  		</if>
  		<if test="record.chuFuZhen !='' and record.chuFuZhen!=null">
-			and lc.chu_fu_zhen = #{record.chuFuZhen}
+			and a.chu_fu_zhen = #{record.chuFuZhen}
  		</if>
- 		<if test="record.status!=null">
-			and lc.status = #{record.status}
+ 		<if test="record.statuss!=null">
+			and a.status in
+			<foreach item="item" index="index" collection="record.statuss" 
+                         open="(" separator="," close=")">
+                        #{item}
+            </foreach>
+ 		</if>
+ 		<if test="record.type!=null">
+			and a.type = #{record.type}
  		</if>
  		<if test="record.id!=null">
-			and lc.id = #{record.id}
+			and a.id = #{record.id}
  		</if>
  		<if test="record.createtime!=null">
-			and lc.createtime &gt;= #{record.createtime}
+			and a.createtime &gt;= #{record.createtime}
  		</if>
  		<if test="record.endtime!=null">
-			and lc.createtime &lt;= #{record.endtime}
+			and a.createtime &lt;= #{record.endtime}
  		</if>
- 		GROUP BY lc.id,lc.company_id,vct.text,u2.nickname,tcdt.projectnames,u3.nickname,vcos.text
-		order by lc.updateTime desc
-  </select>
-  <select id="getConsumptionProjects" parameterType="java.lang.Integer" resultType="java.util.Map">
-  		select GROUP_CONCAT(p.project_name)project_name,sum(a.total_amount)total_amount from t_ltn_customer_consumpton_amount a LEFT JOIN t_project p on a.project_id=p.id 
-  		where a.customer_id=#{id}
-  </select>
-  <select id="countConsumptionReport" parameterType="java.util.Map" resultType="java.util.Map">
-  	SELECT
-  	<if test="datetype!=null and datetype!=''">
-		<if test="datetype==1">
-			DATE_FORMAT(a.createTime, '%Y') datetime,
-		</if>
-		<if test="datetype==2">
-			DATE_FORMAT(a.createTime, '%Y%m') datetime,
-		</if>
-		<if test="datetype==3">
-			DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
-		</if>
-	</if>
-	<if test="datetype==null or datetype==''">
-		DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
-	</if>
-		(
-			sum(if(a.chu_fu_zhen=0,ifnull(b.total_amount, 0),0)) / 10000
-		) c_total_amount,
-		(
-			sum(if(a.chu_fu_zhen=1,ifnull(b.total_amount, 0),0)) / 10000
-		) f_total_amount,
-		sum(IF(a.chu_fu_zhen=0,1,0)) CHUZHEN,
-		sum(IF(a.chu_fu_zhen=1,1,0)) FUZHEN
-	FROM
-		t_ltn_customer a
-	LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_ltn_customer_consumpton_amount b GROUP BY b.customer_id) b on a.id = b.id
-	where a.status=1
-	<if test="starttime!=null and starttime!=''">
-		and DATE_FORMAT(a.createTime, '%Y-%m-%d') &gt;= #{starttime}
-	</if>
-	<if test="endtime!=null and endtime!=''">
-		and DATE_FORMAT(a.createTime, '%Y-%m-%d') &lt;= #{endtime}
-	</if>
-	<if test="companyid!=null">
-		and a.company_id = #{companyid}
-	</if>
-	<if test="datetype!=null and datetype!=''">
-		<if test="datetype==1">
-			GROUP BY DATE_FORMAT(a.createTime, '%Y')
-		</if>
-		<if test="datetype==2">
-			GROUP BY DATE_FORMAT(a.createTime, '%Y%m')
-		</if>
-		<if test="datetype==3">
-			GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d')
-		</if>
-	</if>
-	<if test="datetype==null or datetype==''">
-		GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d')
-	</if>
-	order by datetime asc
-  </select>
+ 		<if test="record.rootIn!=null">
+ 			and a.root_in = #{record.rootIn}
+ 		</if>
+ 		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text,vcp.text,vri.name
+		order by a.createtime desc 
+ </select>
 </mapper>

@@ -96,15 +96,8 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 	@Override
 	public Map<String, Object> queryPagingList(TCustomerConsumptonAmount bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String,Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
-		bean.setPage(start);
-		bean.setRows(number);
 		bean.setCompanyid(SystemUserInfo.getSystemUser().getUser().getCompanyid());
-		PageHelper.startPage(start, number);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
 		List<Map<String, Object>> listmaps = customerConsumptonAmountMapper.queryPagingList(bean);
 		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
 		result.clear();
@@ -138,12 +131,12 @@ public class CustomerConsumptonAmountServiceImpl implements CustomerConsumptonAm
 			if(bean.getId()!=null) {
 				bean.setUpdateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
 				customerConsumptonAmountMapper.updateByPrimaryKeySelective(bean);
-				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新订单消费金额操作成功！更新信息为："+CommonUtils.bean2Json(bean));
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】更新订单消费金额操作成功！更新信息为："+bean.toString());
 			}else {
 				bean.setCreateuser(SystemUserInfo.getSystemUser().getUser().getUsername());
 				bean.setCreatetime(DateUtil.getSysCurrentDate());
 				customerConsumptonAmountMapper.insertSelective(bean);
-				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加订单消费金额操作成功！更新信息为："+CommonUtils.bean2Json(bean));
+				logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】添加订单消费金额操作成功！更新信息为："+bean.toString());
 			}
 			return bean;
 		}catch (Exception e) {

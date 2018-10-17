@@ -21,6 +21,7 @@ import com.gasq.bdp.logn.model.TCustomerProjectLog;
 import com.gasq.bdp.logn.model.TLtnCustomer;
 import com.gasq.bdp.logn.model.TVipCustomer;
 import com.gasq.bdp.logn.model.TVipCustomerExample;
+import com.gasq.bdp.logn.provider.Ilogger;
 import com.gasq.bdp.logn.service.CustomerService;
 import com.gasq.bdp.logn.service.TCustomerProjectService;
 import com.gasq.bdp.logn.service.TVipCustomerService;
@@ -40,6 +41,7 @@ public class CustomerProjectController {
     //错误信息
     Map<String,Object> paramMap = new HashMap<String,Object>();
     
+    @Ilogger(value="查询列表用户项目信息列表")
     @ApiOperation(value="查询列表用户项目信息列表", notes="查询列表用户项目信息列表")
     @ApiImplicitParam(name = "bean", value = "sql实体对象TCustomerPorject", required = false, dataType = "TCustomerPorject")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION},logical=Logical.OR)
@@ -56,13 +58,12 @@ public class CustomerProjectController {
 		}
     	return null;
 	 }
-    
+    @Ilogger(value="添加或更新用户项目信息")
     @ApiOperation(value="添加或更新用户项目信息", notes="添加或更新用户项目信息（管理员、操作用户、测试用户）")
     @ApiImplicitParam(name = "bean", value = "sql实体对象TCustomerPorject", required = true, dataType = "TCustomerPorject")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test,RoleSign.Q_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
 	public boolean saveOrUpdate(TCustomerPorject bean) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求添加或更新用户项目信息！");
 		try {
 			return customerProjectService.saveOrUpdate(bean);
 		} catch (Exception e) {
@@ -70,13 +71,12 @@ public class CustomerProjectController {
 		}
 		return false;
 	 }
-    
+    @Ilogger(value="删除用户项目信息")
     @ApiOperation(value="删除用户项目信息", notes="删除用户项目信息（管理员、操作用户）")
     @ApiImplicitParam(name = "id", value = "sql实体id", required = true, dataType = "Integer", paramType="query")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/delete",method=RequestMethod.GET)
 	public boolean delete(Integer id) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除用户项目信息！");
 		try {
 			return customerProjectService.delete(id);
 		} catch (Exception e) {
@@ -84,13 +84,12 @@ public class CustomerProjectController {
 		}
 		return false;
 	 }
-    
+    @Ilogger(value="查询列表用户消费套餐信息列表")
     @ApiOperation(value="查询列表用户消费套餐信息列表", notes="查询列表用户消费套餐信息列表")
     @ApiImplicitParam(name = "bean", value = "实体对象TCustomerConsumptonAmount", required = false, dataType = "TCustomerConsumptonAmount")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryCustomerAmountListByCustomerPhone",method=RequestMethod.POST)
 	public Map<String, Object> queryCustomerAmountListByCustomerPhone(TLtnCustomer bean) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费套餐信息列表！");
 		try {
 			TVipCustomerExample example = new TVipCustomerExample();
 			example.createCriteria().andCustomerPhoneEqualTo(bean.getPhonenumb()).andStatusEqualTo(1);
@@ -107,12 +106,12 @@ public class CustomerProjectController {
 		}
     	return null;
 	 }
+    @Ilogger(value="刷卡结算用户项目信息")
     @ApiOperation(value="刷卡结算用户项目信息", notes="刷卡结算用户项目信息（管理员、操作用户）")
     @ApiImplicitParam(name = "id", value = "实体id", required = true, dataType = "Integer", paramType="query")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/swipingCardCommit",method=RequestMethod.POST)
 	public Map<String,Object> swipingCardCommit(Integer id) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求刷卡结算用户项目信息！");
 		try {
 			return customerProjectService.swipingCardCommit(id);
 		} catch (Exception e) {
@@ -120,13 +119,12 @@ public class CustomerProjectController {
 		}
 		return null;
 	 }
-    
+    @Ilogger(value="刷卡结算记录用户项目信息")
     @ApiOperation(value="刷卡结算记录用户项目信息", notes="刷卡结算记录用户项目信息（管理员、操作用户）")
     @ApiImplicitParam(name = "id", value = "实体id", required = true, dataType = "Integer", paramType="query")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/queryCustomerProjectLogs",method=RequestMethod.POST)
 	public Map<String,Object> queryCustomerProjectLogs(TCustomerProjectLog customerProjectLog) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求刷卡结算记录用户项目信息！");
 		try {
 			return customerProjectService.queryCustomerProjectLogs(customerProjectLog);
 		} catch (Exception e) {

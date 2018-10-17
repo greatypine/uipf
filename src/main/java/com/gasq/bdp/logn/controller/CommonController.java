@@ -2,8 +2,6 @@ package com.gasq.bdp.logn.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +29,7 @@ import com.gasq.bdp.logn.model.TCustomerSubscribe;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TSysUserExt;
 import com.gasq.bdp.logn.model.TWorkforcemanagement;
+import com.gasq.bdp.logn.provider.Ilogger;
 import com.gasq.bdp.logn.service.CommonService;
 import com.gasq.bdp.logn.service.CustomerSubscribeService;
 import com.gasq.bdp.logn.service.TCustomerImagesService;
@@ -226,7 +225,6 @@ public class CommonController {
 		}
     	return null;
 	 }
-    
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/getView",method=RequestMethod.POST)
 	public List<Map<String,Object>> getView(TCompany bean) {
@@ -237,169 +235,163 @@ public class CommonController {
 		}
     	return null;
 	 }
-    
+    @Ilogger("查询统计员工订单接诊报表数据")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryEmployeeTreatOrderReport",method=RequestMethod.POST)
 	public Map<String, Object> queryEmployeeTreatOrderReport(Integer type,Integer companyid,String datetype,String starttime,String endtime) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊报表数据！");
 		try {
 			Map<String, Object> map = commonService.queryEmployeeTreatOrderReport(type,companyid,datetype,starttime,endtime);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊报表数据结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
-    
+    @Ilogger("查询统计员工订单接诊数据列表")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryEmployeeTreatOrderDataDetail",method=RequestMethod.POST)
 	public Map<String, Object> queryEmployeeTreatOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表！");
     	try {
 			Map<String, Object> map = commonService.queryEmployeeTreatOrderDataDetail(type,companyid,datetype,starttime,endtime,page,rows);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
     	}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
-    
+    @Ilogger("查询统计员工订单报表数据")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test },logical=Logical.OR)
     @RequestMapping(value = "/queryBackEmployeeOrderReport",method=RequestMethod.POST)
 	public Map<String, Object> queryBackEmployeeOrderReport(Integer type,Integer companyid,String datetype,String starttime,String endtime) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单报表数据！");
     	try {
 			Map<String, Object> map = commonService.queryBackEmployeeOrderReport(type,companyid,datetype,starttime,endtime);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单接诊数据列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
+    @Ilogger("查询统计员工订单数据列表")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test },logical=Logical.OR)
     @RequestMapping(value = "/queryBackEmployeeOrderDataDetail",method=RequestMethod.POST)
 	public Map<String, Object> queryBackEmployeeOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单数据列表！");
     	try {
 			Map<String, Object> map = commonService.queryBackEmployeeOrderDataDetail(type,companyid,datetype,starttime,endtime,page,rows);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计员工订单数据列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
+    @Ilogger("查询统计库存数据")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryCountInventory",method=RequestMethod.POST)
 	public Map<String, Object> queryCountInventory(Integer companyid,String datetype,Integer year,Integer month,Integer page,Integer rows) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计库存数据！");
 		try {
 			Map<String, Object> map = commonService.queryCountInventory(companyid,datetype,year,month,page,rows);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计库存数据结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
-    
+    @Ilogger("查询统计库存饼图")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryCountInventoryPie",method=RequestMethod.POST)
 	public Map<String, Object> queryCountInventoryPie(Integer companyid,String datetype,Integer year,Integer month) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计库存饼图！");
 		try {
 			Map<String, Object> map = commonService.queryCountInventoryPie(companyid,datetype,year,month);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计库存饼图结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
-    
+    @Ilogger("查询统计商业报表列表")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR },logical=Logical.OR)
     @RequestMapping(value = "/queryCountBusinessAnalysisDataDetail",method=RequestMethod.POST)
 	public Map<String, Object> queryCountBusinessAnalysisDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计商业报表列表！");
     	try {
 			Map<String, Object> map = commonService.queryCountBusinessAnalysisDataDetail(type, companyid, datetype, starttime, endtime, page, rows);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计商业报表列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
+    @Ilogger("首页前台系统用户信息统计")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR },logical=Logical.OR)
     @RequestMapping(value = "/queryIndexUserCount",method=RequestMethod.POST)
 	public Map<String, Object> queryIndexUserCount() {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求【首页前台系统用户信息统计】！");
     	try {
 			Map<String, Object> map = commonService.queryIndexUserCount();
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】结束【首页前台系统用户信息统计】请求！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
-    
+    @Ilogger("首页前台门店信息统计")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR },logical=Logical.OR)
     @RequestMapping(value = "/queryIndexCompanyCount",method=RequestMethod.POST)
 	public Map<String, Object> queryIndexCompanyCount() {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求【首页前台门店信息统计】！");
     	try {
 			Map<String, Object> map = commonService.queryIndexCompanyCount();
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】结束【首页前台系统门店信息统计】请求！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
-    
+    @Ilogger("首页前台门店排班信息统计")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_ADMIN,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR},logical=Logical.OR)
     @RequestMapping(value = "/queryWorkforceList",method=RequestMethod.POST)
 	public Map<String, Object> queryWorkforceList() {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求【首页前台门店排班信息统计】！");
     	try {
     		TWorkforcemanagement bean = new TWorkforcemanagement();
     		bean.setCycle(DateUtil.getDateStr(DateUtil.getSysCurrentDate(), DateUtil.DATE_TIME_FLAG_NO_DATE_FORMAT));
     		bean.setCompanyid(SystemUserInfo.getSystemUser().getCompany().getId());
 			Map<String, Object> map = commonService.queryWorkforceList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】结束【首页前台门店排班信息统计】请求！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
+    @Ilogger("首页前台门预约息统计")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_ADMIN,RoleSign.H_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/querySubscribeList",method=RequestMethod.POST)
 	public List<TCustomerSubscribe> querySubscribeList() {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求【首页前台门预约息统计】！");
     	try {
 			List<TCustomerSubscribe> map = subscribeService.querySubscribeList();
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】结束【首页前台门预约息统计】请求！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
-    
+    @Ilogger("查询统计项目类型数据")
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test },logical=Logical.OR)
+    @RequestMapping(value = "/queryProjectTypeReport",method=RequestMethod.POST)
+	public Map<String, Object> queryProjectTypeReport(Integer companyid,String starttime,String endtime) {
+    	try {
+			Map<String, Object> map = commonService.queryProjectTypeReport(companyid,starttime,endtime);
+			return map;
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
+    @Ilogger("查询统计项目类型转化数据")
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test },logical=Logical.OR)
+    @RequestMapping(value = "/queryProjectTypeChangeReport",method=RequestMethod.POST)
+	public Map<String, Object> queryProjectTypeChangeReport(Integer companyid,String starttime,String endtime) {
+    	try {
+			Map<String, Object> map = commonService.queryProjectTypeChangeReport(companyid,starttime,endtime);
+			return map;
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
 }

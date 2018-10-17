@@ -1,4 +1,5 @@
 package com.gasq.bdp.logn.component;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,17 +11,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.gasq.bdp.logn.mapper.TCompanyMapper;
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeMapper;
 import com.gasq.bdp.logn.mapper.TLtnCustomerMapper;
 import com.gasq.bdp.logn.mapper.TSysTimerSwitchMapper;
 import com.gasq.bdp.logn.mapper.TSysUserMapper;
+import com.gasq.bdp.logn.mapper.TTherapistTreatmentTimeQueryMapper;
 import com.gasq.bdp.logn.model.RoleSign;
+import com.gasq.bdp.logn.model.TCompany;
+import com.gasq.bdp.logn.model.TCompanyExample;
 import com.gasq.bdp.logn.model.TCustomerSubscribe;
 import com.gasq.bdp.logn.model.TCustomerSubscribeExample;
 import com.gasq.bdp.logn.model.TLtnCustomer;
 import com.gasq.bdp.logn.model.TLtnCustomerExample;
 import com.gasq.bdp.logn.model.TSysTimerSwitchExample;
 import com.gasq.bdp.logn.model.TSysUser;
+import com.gasq.bdp.logn.model.TTherapistTreatmentTimeQuery;
 import com.gasq.bdp.logn.service.CommonService;
 import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.utils.DateUtil;
@@ -36,6 +42,8 @@ public class SchedulingCollection {
 	@Autowired TSysTimerSwitchMapper timmerSwitchMapper;
 	@Autowired TLtnCustomerMapper customerMapper;
 	@Autowired TCustomerSubscribeMapper customerSubscribeMapper;
+	@Autowired TCompanyMapper companyMapper;
+	@Autowired TTherapistTreatmentTimeQueryMapper treatmentTimeQueryMapper;
     private final Logger logger = LoggerFactory.getLogger(getClass());
     
 	@Scheduled(cron = "10 50 23 * * ?") // 统计日渠道客户消费情况 10 50 23 * * ?
@@ -282,6 +290,45 @@ public class SchedulingCollection {
 //        		example1.or().andSubscribeDateIsNull().andStatusEqualTo(0);
         		customerSubscribeMapper.updateByExampleSelective(record, example1);
         	}
+		} catch (Exception e) {
+			logger.info("定时器【预约订单关闭】运行失败,错误信息如下："+e.getMessage(),e);
+		}
+    	logger.info("定时器【预约订单关闭】后台运行完毕");
+    	return "";
+    }
+    
+    @Scheduled(cron = "30 24 12 * * ?") // 每天凌晨生成空的治疗师时间表
+    public String doCreateTherapistTreatmentTime() {
+    	logger.info("定时器【预约订单关闭】后台开始运行........................");
+    	try {
+    		TCompanyExample cmpexample = new TCompanyExample();
+    		cmpexample.createCriteria().andStatusEqualTo(true);
+    		List<TCompany> complist = companyMapper.selectByExample(cmpexample);
+    		if(complist.size()>0) {
+    			for (TCompany tCompany : complist) {
+    				tCompany.setViewname("v_cosmetologist");
+    				tCompany.setSortName("sort");
+					List<Map<String, Object>> vcs = commonService.getView(tCompany);
+					if(vcs.size()>0) {
+						List<TTherapistTreatmentTimeQuery> tttqs = new ArrayList<TTherapistTreatmentTimeQuery>();
+						for (Map<String, Object> map : vcs) {
+							String nickname = map.get("nickname").toString();
+//							Integer userid = Integer.parseInt(map.get("id").toString());
+							Boolean disabled = Boolean.parseBoolean(map.get("disabled").toString());
+							if(!disabled) {
+//								for (int i = 0; i < 7; i++) {
+									TTherapistTreatmentTimeQuery tttq = new TTherapistTreatmentTimeQuery();
+									tttq.setCompanyid(tCompany.getId());
+									tttq.setCycle(DateUtil.dateToString(DateUtil.getDiyDateTime(DateUtil.getSysCurrentDate(), 7)));
+									tttq.setUsername(nickname);
+									tttqs.add(tttq);
+//								}
+							}
+						}
+						treatmentTimeQueryMapper.insertBatch(tttqs);
+					}
+				}
+    		}
 		} catch (Exception e) {
 			logger.info("定时器【预约订单关闭】运行失败,错误信息如下："+e.getMessage(),e);
 		}

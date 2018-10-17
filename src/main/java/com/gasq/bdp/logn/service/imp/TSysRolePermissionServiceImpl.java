@@ -3,12 +3,10 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +16,8 @@ import com.gasq.bdp.logn.model.TSysRolePermissionExample;
 import com.gasq.bdp.logn.model.TSysRolePermissionExample.Criteria;
 import com.gasq.bdp.logn.service.TSysRolePermissionService;
 import com.gasq.bdp.logn.utils.CommonUtils;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author 巨伟刚
@@ -59,20 +59,12 @@ public class TSysRolePermissionServiceImpl implements TSysRolePermissionService 
 			c.andRoleIdEqualTo(bean.getRoleId());
 		}
 		example.setOrderByClause(" createTime desc ");
-		int count = (int) mapper.countByExample(example);
-		List<TSysRolePermission> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
-		RowBounds rowBounds = new RowBounds(start, bean.getRows());
-		if(count>0) {
-			list = mapper.selectByExampleWithRowbounds(example, rowBounds);
-		}else {
-			list = new ArrayList<TSysRolePermission>(); 
-		}
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<TSysRolePermission> listmaps = mapper.selectByExample(example);
+		PageInfo<TSysRolePermission> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

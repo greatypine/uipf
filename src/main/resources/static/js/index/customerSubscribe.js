@@ -143,7 +143,7 @@ function MycustomerSubscribe(){
 		if(phone!="") {params.customerPhone = phone;}
 		if(createTime!="" && createTime!=null) {params.createtime = createTime;}
 		params.companyId = companyid;
-		if(cu.hasRoles("q_area_shopManager,q_admin,q_receptionist,q_counselor")){
+		if(cu.hasRoles("q_area_shopManager,q_admin,q_receptionist,q_counselor,q_option")){
 			params.status=0;
 		}
 		customerSubscribe_table.datagrid("load",params);
@@ -155,6 +155,8 @@ function MycustomerSubscribe(){
 		$('#customerSubscribeform').form('clear');
 	};
 	this.add = function(){
+		$("#customerSubscribedlg").dialog("open").dialog("center").dialog("setTitle","添加预约客户信息");
+		cu.disableForm("customerSubscribedlg-fm",false);
 		$("#basecomplate").show();
 		$("#customerSubscribedlg-fm").form("clear");
 		if(cu.hasRoles("h_admin,h_option")){
@@ -163,9 +165,7 @@ function MycustomerSubscribe(){
 			cu.initClearCombobox("companyId");
 			cu.initClearCombobox("profession");
 		}
-		cu.disableForm("ccustomerSubscribedlg-fm",false);
 		$("#complatebtn").show();
-		$("#customerSubscribedlg").dialog("open").dialog("center").dialog("setTitle","添加预约客户信息");
 	};
 	this.reception = function(){
 		var row=$('#customerSubscribe_table').datagrid('getSelected');

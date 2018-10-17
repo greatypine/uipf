@@ -233,21 +233,5 @@
 		and p.vip_id=#{vip_id}
 	</if>
 	order by p.create_time desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
-</select>
-<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
-	select count(*) from (
-		SELECT
-			p.id,p.remark,p.create_user as nickname,p.create_time,p.vip_id as vipId
-		FROM
-			`t_customer_comment` p
-		LEFT JOIN t_vip_customer tvc on p.vip_id=tvc.id
-		where 1=1  
-		<if test="vip_id !=null">
-			and p.vip_id=#{vip_id}
-		</if>
-	) temp
 </select>
 </mapper>

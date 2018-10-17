@@ -552,7 +552,7 @@ public class CommonUtils {
      * @param args
      */
     public static void main(String... args) {
-        //{}被转义，不会被替换
+    	//{}被转义，不会被替换
 //        System.out.println(parse("{", "}", "我的名字是\\{},结果是{}，可信度是%{}", "雷锋", true, 100));
 //        System.out.println(parse0("我的名字是'${}',结果是'${}'，可信度是%${}", "雷锋", true, 100));
 //        System.out.println(parse1("我的名字是{},结果是{}，可信度是%{}", "雷锋", true, 100));

@@ -24,8 +24,8 @@
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="ccac.clear()">清空</a>
 		</div>
 		<div id="cron_bar">
-			<form id="ccacform">
-				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager,h_option">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 100px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+			<form id="ccacform" class="pc-ccacform">
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 100px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
 				客户名称：<input id="queryname" name="customername" class="easyui-textbox" style="width: 100px; height: 22px;"/>
 				客户电话：<input id="queryphone" name="cphone" class="easyui-textbox" style="width: 100px; height: 22px;"/>
 				治疗师：<input name="therapeutist" id="userid" class="easyui-combobox therapeutist" style="width: 100px; height: 22px;" data-options="editable:false,valueField:'id',textField:'nickname'"/>
@@ -42,13 +42,18 @@
 							<option value="1">复诊</option>
 						 </select>
 				来源：<input id="queryrootIn" name="rootIn" class="easyui-combobox rootIn" style="width: 100px; height: 22px;" data-options="editable:false,valueField:'value',textField:'name'"/>
-				治疗时间：起始 <input id="querycreateTime" name="createTime" class="easyui-datebox" style="width: 100px; height: 22px;"/>
-				截止<input id="queryendTime" name="endtime" class="easyui-datebox" style="width: 100px; height: 22px;"/>
+				治疗时间：起始 <input id="querycreateTime" name="createTime" class="easyui-datebox" style="width: 100px; height: 22px;" data-options="editable:false"/>
+				截止<input id="queryendTime" name="endtime" class="easyui-datebox" style="width: 100px; height: 22px;" data-options="editable:false"/>
+			</form>
+			<form id="ccacform" class="mb-ccacform">
+				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 90px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
+				名称：<input id="queryname" name="customername" class="easyui-textbox" style="width: 90px; height: 22px;"/>
+				时间： <input id="querycreateTime" name="createTime" class="easyui-datebox" style="width: 90px; height: 22px;"/>
 			</form>
 		</div>
 	</div>
 </div>
-	<div id="ccacdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#ccac_dlg-buttons">
+	<div id="ccacdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: auto;" closed="true" buttons="#ccac_dlg-buttons">
 		<form id="ccacdlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>
@@ -70,7 +75,7 @@
 	    		<tr>
 	    			<td class="tdname">初复诊：</td>
 	    			<td class="tdnamebox">
-	    				<input name="chuFuZhen" id="chuFuZhen" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:0,text:'初诊'},{value:1,text:'复诊'}]"/>
+	    				<input name="chuFuZhen" id="chuFuZhen" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text'"/>
 	    			</td>
 	    			<td class="tdname">来源：</td>
 	    			<td class="tdnamebox">
@@ -79,13 +84,22 @@
 	    		</tr>
 	    		<tr>
 		    		<td class="tdname">咨询师：</td>
-	    			<td class="tdnamebox"><input name="counsoler" id="counsoler" class="easyui-combobox counsoler" style="width: 100%" data-options="editable:false,valueField:'id',textField:'nickname'"/></td>
+	    			<td class="tdnamebox">
+	    				<input name="counsoler" id="counsoler" class="easyui-combobox counsoler" style="width: 100%" data-options="required:true,editable:false,valueField:'id',textField:'username'"/>
+	    			</td>
 		    		<td class="tdname">回访时间：</td>
 		    		<td class="tdnamebox"><input name="remindtime" id="remindtime" class="easyui-datebox" style="width: 100%;" data-options="required:false"/></td>
 	    		</tr>
+	    		
 	    		<tr>
 	    			<td class="tdname">治疗师：</td>
-	    			<td class="tdnamebox"><input name="therapeutist" id="therapeutist" class="easyui-combobox therapeutist" style="width: 100%" data-options="editable:false,valueField:'id',textField:'nickname'"/></td>
+	    			<td class="tdnamebox"><input name="therapeutist" id="therapeutist" class="easyui-combobox therapeutist" style="width: 100%" data-options="required:true,editable:false,valueField:'id',textField:'username'"/></td>
+	    			<td class="tdname">治疗日期：</td>
+	    			<td class="tdnamebox"><input name="cureTime" id="cureTime" class="easyui-datebox" style="width: 100%" data-options="required:true,editable:false"/></td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">治疗时间：</td>
+	    			<td class="tdnamebox"><input name="treatmentTime" id="treatmentTime" class="easyui-combobox treatmentTime" style="width: 100%" data-options="required:true,editable:false,valueField:'value',textField:'text'"/></td>
 	    			<td class="tdname">客户职业：</td>
 	    			<td class="tdnamebox"><input name="profession" id="profession" class="easyui-combobox profession" style="width: 100%" data-options="editable:false,valueField:'value',textField:'text'"/></td>
 	    		</tr>
@@ -111,7 +125,7 @@
 				<table cellpadding="5" style="width: 100%">
 		    		<tr>
 		    			<td class="tdname">产品套餐：</td>
-		    			<td class="tdnamebox"><input name="projectId" id="projectId" class="easyui-combobox projectId" style="width: 100%" data-options="required:true,editable:false,valueField:'id',textField:'projectName'"/></td>
+		    			<td class="tdnamebox"><input name="projectId" id="projectId" class="easyui-combobox projectId" style="width: 100%" data-options=""/></td>
 		    			<td class="tdname">产品金额：</td>
 		    			<td class="tdnamebox">
 		    				<input id="projectAmount" name="projectAmount" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2,editable:false"/>
@@ -172,7 +186,7 @@
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>
 	    			<td class="tdname">产品：</td>
-	    			<td class="tdnamebox"><input name="projectId" id="inventoryId" class="easyui-combobox" style="width: 100%" data-options="required:true,editable:false,valueField:'id',textField:'name'"/></td>
+	    			<td class="tdnamebox"><input name="projectId" id="inventoryId" class="easyui-combobox" style="width: 100%" data-options="valueField:'id',textField:'name'"/></td>
 	    			<td class="tdname">数量：</td>
 	    			<td class="tdnamebox">
 	    				<input id="numbs" name="numbs" class="easyui-numberbox" style="width: 100%;" data-options="required:true"/>
@@ -234,6 +248,18 @@
     </div>
     <div id="viewimagesdlg-buttons">
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#viewimagesdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	
+	<div id="zlsdlg" class="easyui-dialog"  data-options="modal:true" style="width: 55%; overflow: hidden;" closed="true" buttons="#zls-buttons">
+		<table id="queryZLS" class="easyui-propertygrid" style="width:300px" data-options="
+					method:'get',
+					showGroup:true,
+					scrollbarSize:0">
+		</table>
+	</div>
+	<div id="zls-buttons">
+    	<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_counselor" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="ccac.doupload()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="$('#zlsdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 <div id="test" style="display: none;">
       <table style="width: 241mm;height: 93mm;margin: auto;border: 1px solid #000;">

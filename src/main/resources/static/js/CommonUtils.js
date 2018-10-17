@@ -111,7 +111,7 @@ function CommonUtils(){
         return y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d) + ' ' + (h < 10 ? '0' + h : h) + ':' + (i < 10 ? '0' + i : i) + ':' + (s < 10 ? '0' + s : s);
 	};
 	/**
-	 * 返回yyyy-mm-dd hh:mm:ss格式
+	 * 返回yyyy-mm-dd格式
 	 */
 	this.getCurrentDate = function(){
 		var t = new Date();
@@ -135,6 +135,18 @@ function CommonUtils(){
 		var m=d.getMonth()+1;
 		return d.getFullYear()+'-'+m+'-'+d.getDate();
      };
+     /**
+ 	 * 增加days天数
+ 	 */
+ 	this.month_add = function(date,months){
+ 		if(months==null || months==undefined || months =="") return null;
+ 		var d = null;
+ 		if(date == null) d = new Date();
+ 		else d=new Date(date);
+ 		d.setMonth(d.getMonth()+months);
+ 		var m=d.getMonth()+1;
+ 		return d.getFullYear()+'-'+m+'-'+d.getDate();
+      };
 	/**
 	 * @param value:时间戳
 	 * @param type : type为1时带时间yyyy-MM-dd hh:mm:ss,type为0时不带时间yyyy-MM-dd
@@ -314,6 +326,13 @@ function CommonUtils(){
         }
         return c;
     }
+	this.isPC = function(){
+		if(/Android|webOS|iPhone|ipad|BlackBerry/i.test(navigator.userAgent)) {
+			return false;
+		}else{
+			return true;
+		}
+	}
 }
 $.fn.serializeJson=function(){
     var serializeObj={};

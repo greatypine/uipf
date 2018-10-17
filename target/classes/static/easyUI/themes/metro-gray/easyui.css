@@ -2529,7 +2529,7 @@
   padding: 0;
 }
 .tree-node {
-  height: 18px;
+  height: 25px;
   white-space: nowrap;
   cursor: pointer;
 }

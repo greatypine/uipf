@@ -3,7 +3,6 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +24,8 @@ import com.gasq.bdp.logn.model.TCustomerProjectLog;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.service.TCustomerProjectService;
 import com.gasq.bdp.logn.utils.DateUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author Ju_weigang
@@ -51,22 +52,16 @@ public class TCustomerProjectServiceImpl implements TCustomerProjectService{
 	@Override
 	public Map<String, Object> queryPagingList(TCustomerPorject bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String, Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
 		Map<String, Object> params= new  HashMap<String, Object>();
-		params.put("index", start);
-		params.put("pageSize", number);
 		if(bean.getVipId()!=null) {
 			params.put("vip_id", bean.getVipId());
 		}
-		list = customerProjectMapper.queryPagingList(params);
-		if(list==null) list = new ArrayList<Map<String,Object>>(); 
-		Integer count = customerProjectMapper.countByBean(params);
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<Map<String, Object>> listmaps = customerProjectMapper.queryPagingList(params);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 
@@ -144,22 +139,16 @@ public class TCustomerProjectServiceImpl implements TCustomerProjectService{
 	@Override
 	public Map<String, Object> queryCustomerProjectLogs(TCustomerProjectLog bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String, Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
 		Map<String, Object> params= new  HashMap<String, Object>();
-		params.put("index", start);
-		params.put("pageSize", number);
 		if(bean.getCpId()!=null) {
 			params.put("cpid", bean.getCpId());
 		}
-		list = customerProjectLogMapper.queryPagingList(params);
-		if(list==null) list = new ArrayList<Map<String,Object>>(); 
-		Integer count = customerProjectLogMapper.countByBean(params);
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<Map<String, Object>> listmaps = customerProjectLogMapper.queryPagingList(params);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

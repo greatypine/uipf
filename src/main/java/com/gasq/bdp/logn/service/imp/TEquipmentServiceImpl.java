@@ -3,7 +3,6 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +19,8 @@ import com.gasq.bdp.logn.model.TEquipmentExample;
 import com.gasq.bdp.logn.service.TEquipmentService;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author 巨伟刚
@@ -55,14 +56,7 @@ public class TEquipmentServiceImpl implements TEquipmentService {
 	@Override
 	public Map<String, Object> queryPagingList(TEquipment bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String, Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
 		Map<String, Object> params= new  HashMap<String, Object>();
-		params.put("index", start);
-		params.put("pageSize", number);
 		if(bean.getName()!=null) {
 			params.put("name", bean.getName());
 		}
@@ -79,11 +73,12 @@ public class TEquipmentServiceImpl implements TEquipmentService {
 				params.put("companyid", SystemUserInfo.getSystemUser().getCompany().getId());
 			}
 		}
-		list = mapper.queryPagingList(params);
-		if(list==null) list = new ArrayList<Map<String,Object>>(); 
-		Integer count = mapper.countByBean(params);
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<Map<String, Object>> listmaps = mapper.queryPagingList(params);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

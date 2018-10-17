@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +20,8 @@ import com.gasq.bdp.logn.model.TSysMenuExample.Criteria;
 import com.gasq.bdp.logn.model.TSysRoleMenuExample;
 import com.gasq.bdp.logn.model.TSysRoleMenuKey;
 import com.gasq.bdp.logn.service.TSysMenuService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author 巨伟刚
@@ -115,20 +116,12 @@ public class TSysMenuServiceImpl implements TSysMenuService{
 		}
 		c.andCompanyidEqualTo(SystemUserInfo.getSystemUser().getCompany().getId());
 		example.setOrderByClause(" code asc ");
-		int count = (int) menuMapper.countByExample(example);
-		List<TSysMenu> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
-		RowBounds rowBounds = new RowBounds(start, bean.getRows());
-		if(count>0) {
-			list = menuMapper.selectByExampleWithRowbounds(example, rowBounds);
-		}else {
-			list = new ArrayList<TSysMenu>(); 
-		}
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<TSysMenu> listmaps = menuMapper.selectByExample(example);
+		PageInfo<TSysMenu> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 
@@ -150,7 +143,7 @@ public class TSysMenuServiceImpl implements TSysMenuService{
 				}
 				menuMapper.updateByPrimaryKeySelective(bean);
 			}else {
-				String code = menuMapper.getNextCode(bean.getCode(),SystemUserInfo.getSystemUser().getCompany().getId());
+				String code = menuMapper.getNextCode(bean.getCode().equals("0")?null:bean.getCode(),SystemUserInfo.getSystemUser().getCompany().getId());
 				bean.setCode(code);
 				menuMapper.insertSelective(bean);
 				if(bean.getRoleids()!=null) {

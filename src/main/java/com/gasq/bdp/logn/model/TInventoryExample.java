@@ -236,6 +236,76 @@ public class TInventoryExample {
             return (Criteria) this;
         }
 
+        public Criteria andSpellIsNull() {
+            addCriterion("spell is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellIsNotNull() {
+            addCriterion("spell is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellEqualTo(String value) {
+            addCriterion("spell =", value, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellNotEqualTo(String value) {
+            addCriterion("spell <>", value, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellGreaterThan(String value) {
+            addCriterion("spell >", value, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellGreaterThanOrEqualTo(String value) {
+            addCriterion("spell >=", value, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellLessThan(String value) {
+            addCriterion("spell <", value, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellLessThanOrEqualTo(String value) {
+            addCriterion("spell <=", value, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellLike(String value) {
+            addCriterion("spell like", value, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellNotLike(String value) {
+            addCriterion("spell not like", value, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellIn(List<String> values) {
+            addCriterion("spell in", values, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellNotIn(List<String> values) {
+            addCriterion("spell not in", values, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellBetween(String value1, String value2) {
+            addCriterion("spell between", value1, value2, "spell");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpellNotBetween(String value1, String value2) {
+            addCriterion("spell not between", value1, value2, "spell");
+            return (Criteria) this;
+        }
+
         public Criteria andCodeIsNull() {
             addCriterion("code is null");
             return (Criteria) this;

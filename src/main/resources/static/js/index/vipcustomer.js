@@ -515,4 +515,17 @@ function systemvipcustomer(){
 			$.messager.alert('提示','请先选中要操作的数据！','error');
 		}
 	};
+	
+	this.openTransferTreatment = function(){
+		var row=$('#systemvipcustomer_table').datagrid('getSelected');
+		if(row){
+			$("#transferTreatmentdlg-fm").form("clear").form("load",row);
+			$("#transferTreatmentdlg").dialog("open").dialog("center").dialog("setTitle","客户转诊");
+		}else{
+			$.messager.alert('提示','请先选中要操作的数据！','error');
+		}
+	};
+	this.transferTreatment = function(){
+		
+	};
 }

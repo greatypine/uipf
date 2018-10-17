@@ -643,6 +643,78 @@ function Reports(){
 		employeeTreatOrder.setOption(option);
 	};
 	
+	this.initProjectType = function(params){
+		var projectTypeOrder = echarts.init(document.getElementById("projecttypeReprot"),theme);
+		var option = {
+			    tooltip : {
+			        trigger: 'axis',
+			        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+			            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+			        }
+			    },
+			    grid: {
+			        left: '3%',
+			        right: '4%',
+			        bottom: '3%',
+			        containLabel: true
+			    },
+			    toolbox: {
+			        show: true,
+			        orient: 'vertical',
+			        left: 'right',
+			        top: 'center',
+			        feature: {
+			            mark: {show: true},
+			            dataView: {show: false, readOnly: false},
+			            magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+			            restore: {show: true},
+			            saveAsImage: {show: true}
+			        }
+			    },
+			    xAxis : [
+			        {
+			            type : 'category',
+			            data : params.xAxis,
+			            axisTick: {
+			                alignWithLabel: true
+			            }
+			        }
+			    ],
+			    yAxis : [
+			        {
+			            type : 'value'
+			        }
+			    ],
+			    series : [
+			        {
+			            name:'数量',
+			            type:'bar',
+			            barWidth: '60%',
+			            data:params.data,
+						itemStyle : {
+							normal : {
+								label : {
+									show : true,
+									position : 'top',
+									formatter : function(val){
+										return val.value;
+									}
+								},
+								labelLine : {
+									show : true,
+								},
+								areaStyle : {
+									type : "default"
+								}
+							}
+						}
+			        }
+			    ],
+			    backgroundColor : "#fafafa"
+			};
+		projectTypeOrder.setOption(option);
+	};
+	
 	this.initDataTable = function(params){
 		//预编译模板
 		rm_datatable = $('#rm_datatable').DataTable({

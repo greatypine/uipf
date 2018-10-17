@@ -128,6 +128,9 @@ function menuSet(){
 	    		    ]],
 	                onDblClickRow:function(index,row){
 	                	$("#menucolumnsdlg").dialog("open").dialog("center").dialog("setTitle","更新字段");
+	                	cu.initClearCombobox("roleids");
+	                	cu.initClearCombobox("state");
+	                	cu.initClearCombobox("status");
 						$("#menucolumnsdlg-fm").form("clear").form("load",row);
 	                },
 	                onSelect:function(index,row){
@@ -156,6 +159,9 @@ function menuSet(){
 	};
 	this.add = function(){
 		$("#menucolumnsdlg").dialog("open").dialog("center").dialog("setTitle","添加数据字段");
+		cu.initClearCombobox("roleids");
+		cu.initClearCombobox("state");
+		cu.initClearCombobox("status");
 		$("#menucolumnsdlg-fm").form("clear");
 	};
 	this.complate = function(){

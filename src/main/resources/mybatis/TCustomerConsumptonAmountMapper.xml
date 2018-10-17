@@ -461,23 +461,5 @@
 			and a.customer_id=#{record.customerId}
  		</if>
 		order by a.updateTime desc 
-		<if test="record.rows !=null and record.page!=null">
-			limit #{record.page},#{record.rows}
-		</if>
- </select>
- <select id="countByBean" parameterType="com.gasq.bdp.logn.model.TCustomerConsumptonAmount" resultType="java.lang.Integer"> 
- 	select count(*) from(
-	 		SELECT
-				a.id
-			from t_customer_consumpton_amount a 
-			left join t_project p on a.project_id = p.id
-			<if test="record.companyid !=null">
-			 and p.company_id=#{record.companyid}
-			</if>
-			where 1=1 
-	 		<if test="record.customerId &gt; 0 and record.customerId!=null">
-				and a.customer_id=#{record.customerId}
-	 		</if>
-		) temp
  </select>
 </mapper>

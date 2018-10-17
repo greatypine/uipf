@@ -27,14 +27,17 @@ public class TLtnCustomer extends ParamsObject{
     private Integer counsoler;
 
     private Integer therapeutist;
-
+    
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date remindtime;
+    
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    private Date cureTime;
 
     private Integer status;
 
     private Integer type;
-    
+
     private Integer rootIn;
 
     private Integer profession;
@@ -44,26 +47,52 @@ public class TLtnCustomer extends ParamsObject{
     private String createuser;
 
     private String updateuser;
-
+    
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createtime;
-
+    
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date updatetime;
-
+    
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date importtime;
 
     private String importuser;
+
+    private String remark;
     
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date endtime;
 
-    private String remark;
-    
     private String[] statuss;
+    
+    private Integer treatmentTime;
+    
+    public Date getEndtime() {
+		return endtime;
+	}
 
-    public Integer getId() {
+	public void setEndtime(Date endtime) {
+		this.endtime = endtime;
+	}
+
+	public String[] getStatuss() {
+		return statuss;
+	}
+
+	public void setStatuss(String[] statuss) {
+		this.statuss = statuss;
+	}
+
+	public Integer getTreatmentTime() {
+		return treatmentTime;
+	}
+
+	public void setTreatmentTime(Integer treatmentTime) {
+		this.treatmentTime = treatmentTime;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -143,6 +172,14 @@ public class TLtnCustomer extends ParamsObject{
         this.remindtime = remindtime;
     }
 
+    public Date getCureTime() {
+        return cureTime;
+    }
+
+    public void setCureTime(Date cureTime) {
+        this.cureTime = cureTime;
+    }
+
     public Integer getStatus() {
         return status;
     }
@@ -157,6 +194,22 @@ public class TLtnCustomer extends ParamsObject{
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Integer getRootIn() {
+        return rootIn;
+    }
+
+    public void setRootIn(Integer rootIn) {
+        this.rootIn = rootIn;
+    }
+
+    public Integer getProfession() {
+        return profession;
+    }
+
+    public void setProfession(Integer profession) {
+        this.profession = profession;
     }
 
     public Integer getSubscribeId() {
@@ -222,38 +275,4 @@ public class TLtnCustomer extends ParamsObject{
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
     }
-
-	public Date getEndtime() {
-		return endtime;
-	}
-
-	public void setEndtime(Date endtime) {
-		this.endtime = endtime;
-	}
-
-	public String[] getStatuss() {
-		return statuss;
-	}
-
-	public void setStatuss(String[] statuss) {
-		this.statuss = statuss;
-	}
-
-	public Integer getRootIn() {
-		return rootIn;
-	}
-
-	public void setRootIn(Integer rootIn) {
-		this.rootIn = rootIn;
-	}
-
-	public Integer getProfession() {
-		return profession;
-	}
-
-	public void setProfession(Integer profession) {
-		this.profession = profession;
-	}
-    
-	
 }

@@ -87,7 +87,7 @@ function systemuser(){
 		var createTime = ($("#querycreateTime").datebox('getValue')=="")?null:$("#querycreateTime").datebox('getValue');
 		var endTime = ($("#queryendTime").datebox('getValue')=="")?null:$("#queryendTime").datebox('getValue');
 		if(name!="") {params.name = name;}
-		params.roleid = roleid;
+		params.roleids = roleid;
 		params.companyid = companyid;
 		params.status = status;
 		if(createTime!="" && createTime!=null) {params.createTime = createTime;}

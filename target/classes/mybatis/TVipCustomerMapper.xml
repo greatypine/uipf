@@ -12,6 +12,7 @@
     <result column="city_id" jdbcType="INTEGER" property="cityId" />
     <result column="county_id" jdbcType="INTEGER" property="countyId" />
     <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="profession" jdbcType="INTEGER" property="profession" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="actual_amount" jdbcType="DECIMAL" property="actualAmount" />
@@ -83,8 +84,8 @@
   </sql>
   <sql id="Base_Column_List">
     id, customer_name, customer_phone, email, sex, brithday, province_id, city_id, county_id, 
-    address, type, status, actual_amount, give_amount, company_id, create_user, create_time, 
-    update_user, update_time, remark
+    address, profession, type, status, actual_amount, give_amount, company_id, create_user, 
+    create_time, update_user, update_time, remark
   </sql>
   <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TVipCustomerExample" resultMap="BaseResultMap">
     select
@@ -120,19 +121,21 @@
     insert into t_vip_customer (id, customer_name, customer_phone, 
       email, sex, brithday, 
       province_id, city_id, county_id, 
-      address, type, status, 
-      actual_amount, give_amount, company_id, 
-      create_user, create_time, update_user, 
-      update_time, remark)
+      address, profession, type, 
+      status, actual_amount, give_amount, 
+      company_id, create_user, create_time, 
+      update_user, update_time, remark
+      )
     values (#{id,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, #{customerPhone,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, #{brithday,jdbcType=DATE}, 
       #{provinceId,jdbcType=INTEGER}, #{cityId,jdbcType=INTEGER}, #{countyId,jdbcType=INTEGER}, 
-      #{address,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
-      #{actualAmount,jdbcType=DECIMAL}, #{giveAmount,jdbcType=DECIMAL}, #{companyId,jdbcType=INTEGER}, 
-      #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateUser,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+      #{address,jdbcType=VARCHAR}, #{profession,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{actualAmount,jdbcType=DECIMAL}, #{giveAmount,jdbcType=DECIMAL}, 
+      #{companyId,jdbcType=INTEGER}, #{createUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateUser,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TVipCustomer">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"  parameterType="com.gasq.bdp.logn.model.TVipCustomer">
     insert into t_vip_customer
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -164,6 +167,9 @@
       </if>
       <if test="address != null">
         address,
+      </if>
+      <if test="profession != null">
+        profession,
       </if>
       <if test="type != null">
         type,
@@ -226,6 +232,9 @@
       </if>
       <if test="address != null">
         #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="profession != null">
+        #{profession,jdbcType=INTEGER},
       </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
@@ -298,6 +307,9 @@
       <if test="record.address != null">
         address = #{record.address,jdbcType=VARCHAR},
       </if>
+      <if test="record.profession != null">
+        profession = #{record.profession,jdbcType=INTEGER},
+      </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
       </if>
@@ -345,6 +357,7 @@
       city_id = #{record.cityId,jdbcType=INTEGER},
       county_id = #{record.countyId,jdbcType=INTEGER},
       address = #{record.address,jdbcType=VARCHAR},
+      profession = #{record.profession,jdbcType=INTEGER},
       type = #{record.type,jdbcType=INTEGER},
       status = #{record.status,jdbcType=INTEGER},
       actual_amount = #{record.actualAmount,jdbcType=DECIMAL},
@@ -388,6 +401,9 @@
       </if>
       <if test="address != null">
         address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="profession != null">
+        profession = #{profession,jdbcType=INTEGER},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
@@ -433,6 +449,7 @@
       city_id = #{cityId,jdbcType=INTEGER},
       county_id = #{countyId,jdbcType=INTEGER},
       address = #{address,jdbcType=VARCHAR},
+      profession = #{profession,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},
       status = #{status,jdbcType=INTEGER},
       actual_amount = #{actualAmount,jdbcType=DECIMAL},
@@ -460,7 +477,7 @@
     </if>
   </select>
   
-  <select id="queryPagingList" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
+    <select id="queryPagingList" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
  		SELECT
 			a.id,
 			a.company_id as companyId,
@@ -486,8 +503,11 @@
 			tp.`name` as provinceName,
 			tc.name as cityName,
 			tcy.name as countyName,
-			concat(ifnull(tp.`name`,''),ifnull(tc.`name`,''),ifnull(tcy.`name`,''),ifnull(a.address,''))as alladdress
+			concat(ifnull(tp.`name`,''),ifnull(tc.`name`,''),ifnull(tcy.`name`,''),ifnull(a.address,''))as alladdress,
+			a.profession,
+			vcp.text as professionName
 		from t_vip_customer a 
+		LEFT JOIN v_customer_profession vcp on a.profession=vcp.value
 		LEFT JOIN t_sys_user u on a.create_user=u.username
 		<if test="record.companyId !=null">
 		 and u.companyid=#{record.companyId}
@@ -537,60 +557,8 @@
  		<if test="record.endtime!=null">
 			and a.create_time &lt;= #{record.createTime}
  		</if>
-		order by a.update_time desc 
-		<if test="record.rows !=null and record.page!=null">
-			limit #{record.page},#{record.rows}
-		</if>
+ 		GROUP BY a.id,a.`status`,u.nickname,vs.text,vvcs.`name`,vvct.name,vcp.`text`
+		order by a.create_time desc 
  </select>
  
- <select id="queryMapGridList" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
- 		SELECT
-			a.customer_name,a.accountBalance,a.customer_phone,tcpy.`name` as companyName,
-			a.totalConsumptonAmount,
-			DATE_FORMAT(a.create_time,'%Y-%m-%d %H:%i:%S') createTime,a.id
-			,'closed' as state,0 as parendId,a.type,vct.text as consumeName
-		FROM
-			t_customer_consumpton_log a
-		INNER JOIN t_vip_customer b on a.customer_phone=a.customer_phone
-		LEFT JOIN v_vip_customer_type vvct on b.type = vvct.`value`
-		left join v_sex vs on b.sex=vs.value
-		left join t_company tcpy on a.company_id = tcpy.id
-		LEFT JOIN v_consume_type vct on a.type = vct.`value` and a.company_id = vct.companyid
-		where 1=1 
- 		<if test="record.customerPhone !='' and record.customerPhone!=null">
-			and a.customer_phone = #{record.customerPhone}
- 		</if>
-		GROUP BY a.id,a.company_id,a.create_time,vct.text
-		order by a.create_time desc
- </select>
- 
- <select id="queryMapGridChildren" parameterType="java.util.HashMap" resultType="java.util.Map">
- 		SELECT
-			a.id,
-			tvc.customer_name,
-			p.project_name as projectName,
-			tlc.accountBalance,
-			tvc.customer_phone,
-			a.total_amount as totalConsumptonAmount,
-			DATE_FORMAT(a.createTime,'%Y-%m-%d %H:%i:%S') createTime,
-			GROUP_CONCAT(ti.`name`) products,
-			tlc.type,
-			tcpy.`name` as companyName
-		from t_ltn_customer_consumpton_amount a 
-		INNER JOIN t_customer_consumpton_log tlc on a.customer_id=tlc.id
-		left join t_project p on a.project_id = p.id and p.company_id=tlc.company_id
-		INNER JOIN t_vip_customer tvc on tlc.customer_phone=tvc.customer_phone
-		LEFT JOIN t_consumpton_project tcp on a.id = tcp.consumpton_amount_id
-		LEFT JOIN t_inventory ti on tcp.project_id=ti.id and ti.companyid=tlc.company_id
-		LEFT JOIN t_company tcpy on tlc.company_id=tcpy.id
-		where 1=1 
-		<if test="record.companyid !=null">
-		 and p.company_id=#{record.companyid}
-		</if>
- 		<if test="record.customerId &gt; 0 and record.customerId!=null">
-			and a.customer_id=#{record.customerId}
- 		</if>
-		GROUP BY a.id,p.id,tlc.id,tlc.create_time,tvc.id
-		order by a.updateTime desc 
- </select>
 </mapper>

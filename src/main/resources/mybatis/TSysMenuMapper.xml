@@ -303,7 +303,7 @@
  			and tsm.companyid = #{companyid}
  		</if>
  		GROUP BY tsm.id,tsrm.companyid
- 		ORDER BY tsm.code asc 
+ 		ORDER BY tsm.sort,tsm.code asc 
  	</if>
 	<if test="pid == -1">
 		select 0 as id,'系统菜单' as text,'0' as code,'' as view,'' as jsp,'closed' as state,1 as status,1 as companyid,'' as iconCls,-1 as parendId from dual
@@ -337,7 +337,7 @@
  			and a.companyid = #{companyid}
  		</if>
 		GROUP BY a.id
- 		ORDER BY a.code asc 
+ 		ORDER BY a.sort,a.code asc 
  	</if>
 	<if test="pid == -1">
 		select 0 as id,'系统菜单' as text,'0' as code,'' as view,'' as jsp,'closed' as state,1 as status,'' as iconCls,1 as companyid,-1 as parendId,0 checked from dual
@@ -364,7 +364,7 @@
 		and a.companyid = #{companyid}
 	</if>
 	GROUP BY a.id
-		ORDER BY a.code asc 
+		ORDER BY a.sort,a.code asc 
  </select>
  <select id="getNextCode" parameterType="java.lang.String" resultType="java.lang.String">
 	<if test="pcode !=null and pcode!=''">

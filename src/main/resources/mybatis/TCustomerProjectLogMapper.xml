@@ -224,30 +224,24 @@
   </select>
  <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
 	SELECT
-		p.id,p.cp_id as ciId,p.type,vcpt.text as typeName,p.create_user,p.create_time
+		p.id,p.cp_id as ciId,p.type,vcpt.text as typeName,p.create_user,p.create_time,tcp.project_nums,if(tcp.project_type=1,'',tcp.deadline) as deadline,vpt.`name` as projectName,tp.project_name,tvc.customer_name,tvc.customer_phone
 	FROM
 		`t_customer_project_log` p
 	left join v_customer_project_type vcpt on p.type = vcpt.value
+	inner join t_customer_porject tcp on tcp.id = p.cp_id
+	inner JOIN t_project tp on tcp.project_id = tp.id
+	inner JOIN t_vip_customer tvc on tcp.vip_id = tvc.id
+	inner JOIN v_project_type vpt on tcp.project_type = vpt.`value` and tvc.company_id=vpt.companyid
 	where 1=1 
 	<if test="cpid !=null">
 		and p.cp_id=#{cpid}
 	</if>
-	order by p.create_time desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
+	<if test="companyid!=null">
+		and tvc.company_id=#{companyid}
 	</if>
-</select>
-<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
-	select count(*) from (
-		SELECT
-		p.id,p.cp_id as ciId,p.type,vcpt.text as typeName,p.create_user,p.create_time
-	FROM
-		`t_customer_project_log` p
-	left join v_customer_project_type vcpt on p.type = vcpt.value
-	where 1=1   
-		<if test="cpid !=null">
-			and p.cp_id=#{cpid}
-		</if>
-	) temp
+	<if test="createTime!=null">
+		and p.create_time &gt;=date_format(#{createTime},'%Y-%m-%d')
+	</if>
+	order by p.create_time desc 
 </select>
 </mapper>

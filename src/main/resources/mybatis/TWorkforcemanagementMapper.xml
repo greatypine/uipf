@@ -824,22 +824,6 @@
 		and a.companyid=#{companyid}
 	</if>
 	order by vc.nickname desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
-</select>
-<select id="counTWorkforcemanagementByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
-	SELECT
-		count(a.id)
-	FROM
-		t_workforceManagement a 
-	where 1=1 
-	<if test="cycle !=null and cycle!=''">
-		and a.cycle like concat('%',#{cycle},'%')
-	</if>
-	<if test="companyid!=null">
-		and a.companyid=#{companyid}
-	</if>
 </select>
 
 <select id="queryExportDataList" parameterType="com.gasq.bdp.logn.model.TWorkforcemanagement" resultType="java.util.LinkedHashMap"  statementType="STATEMENT">

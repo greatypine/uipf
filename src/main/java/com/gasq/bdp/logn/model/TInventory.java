@@ -13,6 +13,8 @@ public class TInventory extends ParamsObject{
 
     private String name;
 
+    private String spell;
+
     private String code;
 
     private String factory;
@@ -49,6 +51,14 @@ public class TInventory extends ParamsObject{
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public String getSpell() {
+        return spell;
+    }
+
+    public void setSpell(String spell) {
+        this.spell = spell == null ? null : spell.trim();
     }
 
     public String getCode() {

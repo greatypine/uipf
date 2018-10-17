@@ -762,6 +762,66 @@ public class TLtnCustomerExample {
             return (Criteria) this;
         }
 
+        public Criteria andCureTimeIsNull() {
+            addCriterion("cure_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeIsNotNull() {
+            addCriterion("cure_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeEqualTo(Date value) {
+            addCriterionForJDBCDate("cure_time =", value, "cureTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeNotEqualTo(Date value) {
+            addCriterionForJDBCDate("cure_time <>", value, "cureTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeGreaterThan(Date value) {
+            addCriterionForJDBCDate("cure_time >", value, "cureTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeGreaterThanOrEqualTo(Date value) {
+            addCriterionForJDBCDate("cure_time >=", value, "cureTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeLessThan(Date value) {
+            addCriterionForJDBCDate("cure_time <", value, "cureTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeLessThanOrEqualTo(Date value) {
+            addCriterionForJDBCDate("cure_time <=", value, "cureTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeIn(List<Date> values) {
+            addCriterionForJDBCDate("cure_time in", values, "cureTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeNotIn(List<Date> values) {
+            addCriterionForJDBCDate("cure_time not in", values, "cureTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeBetween(Date value1, Date value2) {
+            addCriterionForJDBCDate("cure_time between", value1, value2, "cureTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCureTimeNotBetween(Date value1, Date value2) {
+            addCriterionForJDBCDate("cure_time not between", value1, value2, "cureTime");
+            return (Criteria) this;
+        }
+
         public Criteria andStatusIsNull() {
             addCriterion("status is null");
             return (Criteria) this;

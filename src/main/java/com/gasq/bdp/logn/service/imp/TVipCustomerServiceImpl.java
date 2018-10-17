@@ -17,16 +17,25 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.gasq.bdp.logn.iexception.WorkFlowJobException;
+import com.gasq.bdp.logn.mapper.TConsumptonProjectMapper;
 import com.gasq.bdp.logn.mapper.TCustomerConsumptonAmountMapper;
 import com.gasq.bdp.logn.mapper.TLtnCustomerMapper;
 import com.gasq.bdp.logn.mapper.TMessageMapper;
+import com.gasq.bdp.logn.mapper.TProjectMapper;
 import com.gasq.bdp.logn.mapper.TVipCustomerLogMapper;
 import com.gasq.bdp.logn.mapper.TVipCustomerMapper;
 import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
+import com.gasq.bdp.logn.model.TConsumptonProject;
+import com.gasq.bdp.logn.model.TConsumptonProjectExample;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmount;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmountExample;
 import com.gasq.bdp.logn.model.TLtnCustomer;
+import com.gasq.bdp.logn.model.TLtnCustomerExample;
 import com.gasq.bdp.logn.model.TMessage;
+import com.gasq.bdp.logn.model.TProject;
+import com.gasq.bdp.logn.model.TProjectExample;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TVipCustomer;
 import com.gasq.bdp.logn.model.TVipCustomerExample;
@@ -37,6 +46,8 @@ import com.gasq.bdp.logn.service.TVipCustomerService;
 import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author 巨伟刚
@@ -53,6 +64,8 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 	@Autowired TCustomerConsumptonAmountMapper consumptonAmountMapper;
 	@Autowired TMessageMapper messagemapper;
 	@Autowired EmailManager emailManager;
+	@Autowired TProjectMapper projectMapper;
+	@Autowired TConsumptonProjectMapper consumptonProjectMapper;
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
@@ -88,13 +101,6 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 	@Override
 	public Map<String, Object> queryPagingList(TVipCustomer bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String,Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
-		bean.setPage(start);
-		bean.setRows(number);
 		if(bean.getCompanyId()!=null) {
 			bean.setCompanyId(SystemUserInfo.getSystemUser().getCompany().getId());
 		}else {
@@ -114,12 +120,13 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 			String statuss = String.join(",",bean.getStatus().toString());
 			bean.setStatuss(statuss.split(","));
 		}
-		list = mapper.queryPagingList(bean);
-		if(list==null || list.size()<=0)list = new ArrayList<Map<String,Object>>(); 
-		Integer count = mapper.countByBean(bean);
-		result.put("rows",list);
-		result.put("total",count);
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询会员用户信息列表完成！查询条数："+count+",查询参数："+CommonUtils.bean2Json(bean));
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<Map<String, Object>> listmaps = mapper.queryPagingList(bean);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询会员用户信息列表完成！查询条数："+pageinfo.getTotal()+",查询参数："+CommonUtils.bean2Json(bean));
 		return result;
 	}
 
@@ -228,5 +235,75 @@ public class TVipCustomerServiceImpl implements TVipCustomerService {
 		customerMapper.insertSelective(customer);
 		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】从会员信息快速生成客户消费订单信息成功！生成内容："+CommonUtils.bean2Json(customer));
 		return true;
+	}
+
+	@Override
+	@Transactional(rollbackFor=Exception.class)
+	public boolean transferTreatment(TVipCustomer bean)throws Exception {
+		try {
+			if(bean.getCompanyId()==bean.getCompanyId1()) return false;
+			TVipCustomer vipcustomer = mapper.selectByPrimaryKey(bean.getId());
+			Integer companyId1 = bean.getCompanyId1();
+			//------插入新用户信息
+			vipcustomer.setCompanyId(companyId1);
+			vipcustomer.setId(null);
+			vipcustomer.setCreateUser(null);
+			vipcustomer.setCreateTime(DateUtil.getSysCurrentDate());
+			vipcustomer.setUpdateTime(DateUtil.getSysCurrentDate());
+			vipcustomer.setUpdateUser(null);
+			mapper.insertSelective(vipcustomer);
+			//----------获取用户订单信息
+			TLtnCustomerExample example = new TLtnCustomerExample();
+			example.createCriteria().andCompanyIdEqualTo(bean.getCompanyId()).andPhonenumbEqualTo(vipcustomer.getCustomerPhone());
+			List<TLtnCustomer> customerlist = customerMapper.selectByExample(example);
+			for (TLtnCustomer customer : customerlist) {
+				Integer orderid = customer.getId();
+				//------更新用户订单信息为转入门店信息
+				customer.setCompanyId(companyId1);
+				customer.setId(null);
+				customer.setCreateuser(null);
+				customer.setCounsoler(null);
+				customer.setTherapeutist(null);
+				customer.setUpdateuser(null);
+				customerMapper.insertSelective(customer);
+				//------根据订单ID查询被转诊用户之前的项目信息
+				TCustomerConsumptonAmountExample ccaexample = new TCustomerConsumptonAmountExample();
+				ccaexample.createCriteria().andCustomerIdEqualTo(orderid);
+				List<TCustomerConsumptonAmount> ccaclist = consumptonAmountMapper.selectByExample(ccaexample);
+				for (TCustomerConsumptonAmount ccac : ccaclist) {
+					Integer ccacid = ccac.getId();
+					//TODO 查询项目修改项目为对应公司的项目ID
+					TProject project = projectMapper.selectByPrimaryKey(ccac.getProjectId().longValue());
+					TProjectExample proexample = new TProjectExample();
+					proexample.createCriteria().andCompanyIdEqualTo(companyId1).andProjectNameEqualTo(project.getProjectName()).andProjectModelEqualTo(project.getProjectModel());
+					List<TProject> prolist = projectMapper.selectByExample(proexample);
+					if(prolist.size()>0) {
+						TProject project2 = prolist.get(0);
+						ccac.setProjectId(project2.getId().intValue());
+					}
+					ccac.setId(null);
+					ccac.setCustomerId(customer.getId());
+					ccac.setCreateuser(null);
+					ccac.setUpdateuser(null);
+					consumptonAmountMapper.insertSelective(ccac);
+					//TODO 查询产品修改产品为转诊门店的产品ID
+					TConsumptonProjectExample examplecp = new TConsumptonProjectExample();
+					examplecp.createCriteria().andConsumptonAmountIdEqualTo(ccacid);
+					List<TConsumptonProject> listcp = consumptonProjectMapper.selectByExample(examplecp);
+					for (TConsumptonProject cp : listcp) {
+						cp.setConsumptonAmountId(ccac.getId());
+						cp.setCreateuser(null);
+						cp.setUpdateuser(null);
+						cp.setId(null);
+						consumptonProjectMapper.insertSelective(cp);
+					}
+				}
+			}
+			
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】转诊操作失败，事务回滚！错误信息如下：\n"+e.getMessage(),e);
+		}
+		return false;
 	}
 }

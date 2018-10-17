@@ -352,40 +352,45 @@
    <select id="queryMapBeanList" parameterType="java.util.HashMap" resultType="java.util.Map">
        select r.id as companyid,r.name as companyName from t_company r where r.status = 1 order by r.id
    </select>
-   <select id="queryRootIn" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.Map">
+   <select id="queryRootIn" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.LinkedHashMap">
        select * from v_root_in a where 1=1 
        <if test="record.id!=null">
          and a.companyid=#{record.id}
        </if>
    </select>
-   <select id="querySex" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.Map">
+   <select id="querySex" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.LinkedHashMap">
        select * from v_sex a where 1=1
        <if test="record.id!=null">
          and a.companyid=#{record.id}
        </if>
    </select>
-   <select id="queryUserStatus" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.Map">
+   <select id="queryUserStatus" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.LinkedHashMap">
        select * from v_user_status a where 1=1
        <if test="record.id!=null">
          and a.companyid=#{record.id}
        </if>
    </select>
-   <select id="queryCosmetologist" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.Map">
+   <select id="queryCosmetologist" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.LinkedHashMap">
        select * from v_cosmetologist a where 1=1
        <if test="record.id!=null">
          and a.companyid=#{record.id}
        </if>
+       ORDER BY a.sort asc,a.id asc
    </select>
-   <select id="queryCounsoler" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.Map">
+   <select id="queryCounsoler" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.LinkedHashMap">
        select * from v_counsoler a where 1=1
        <if test="record.id!=null">
          and a.companyid=#{record.id}
        </if>
+       ORDER BY a.sort asc,a.id asc
    </select>
-   <select id="queryProjectInventory" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.Map">
+   <select id="queryProjectInventory" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.LinkedHashMap">
        select * from v_project_inventory a where 1=1
        <if test="record.id!=null">
          and a.companyid=#{record.id}
+       </if>
+       <if test="record.q!=null and record.q!=''">
+         and (a.name like concat('%',#{record.q},'%') or a.spell like concat('%',#{record.q},'%'))
        </if>
    </select>
     <select id="getView" parameterType="com.gasq.bdp.logn.model.TCompany" resultType="java.util.LinkedHashMap"  statementType="STATEMENT">
@@ -397,6 +402,9 @@
        </if>
        <if test="record.pid!=null">
          and a.pid=${record.pid}
+       </if>
+       <if test="record.sortName!=null and record.sortName!=''">
+         order by ${record.sortName}
        </if>
    </select>
    
@@ -484,9 +492,6 @@
 			GROUP BY datetime,tsu.nickname
 	) temp GROUP BY temp.datetime,temp.nickname
 	order by datetime desc,total_amont desc
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
   </select>
   
    <select id="countSubscribeReport" parameterType="java.util.Map" resultType="java.util.Map">
@@ -600,9 +605,6 @@
 		GROUP BY DATE_FORMAT(til.create_time, '%Y%m'),ti.id,ti.companyid
 	</if>
 	ORDER BY datetime desc,currentInventoryNumbs desc,companyName
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
   </select>
   
   <select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
@@ -744,121 +746,6 @@
 	ORDER BY rownum
   </select>
   
-  
-  <select id="countConsumptionReportByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
-  	select count(*) from(
-	  	SELECT
-	  	<if test="datetype!=null and datetype!=''">
-			<if test="datetype==1">
-				DATE_FORMAT(a.createTime, '%Y') datetime,
-			</if>
-			<if test="datetype==2">
-				DATE_FORMAT(a.createTime, '%Y%m') datetime,
-			</if>
-			<if test="datetype==3">
-				DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
-			</if>
-		</if>
-		<if test="datetype==null or datetype==''">
-			DATE_FORMAT(a.createTime, '%Y%m%d') datetime,
-		</if>
-			(sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 0,ifnull(b.total_amount, 0),0),0)) / 10000) c_total_amount,
-			(sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 1,ifnull(b.total_amount, 0),0),0)) / 10000) f_total_amount,
-			sum(ifnull(b.total_amount, 0)) / 10000 AS total_amont,
-			sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 0, 1, 0),0)) CHUZHEN,
-			sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 1, 1, 0),0)) FUZHEN,
-			sum(IF (a.`status` = 99,1,0)) employeeWastageOrder,
-			count(a.id) employeeTotalOrder,
-			tsu.nickname
-		FROM
-			t_ltn_customer a
-		LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_customer_consumpton_amount b LEFT JOIN t_ltn_customer b1 ON b.customer_id = b1.id WHERE b1.`status` = 1 GROUP BY b.customer_id) b on a.id = b.id
-		LEFT JOIN t_sys_user tsu on a.counsoler = tsu.id
-		where 1 = 1
-		<if test="starttime!=null and starttime!=''">
-			and DATE_FORMAT(a.createTime, '%Y-%m-%d') &gt;= #{starttime}
-		</if>
-		<if test="endtime!=null and endtime!=''">
-			and DATE_FORMAT(a.createTime, '%Y-%m-%d') &lt;= #{endtime}
-		</if>
-		<if test="companyid!=null">
-			and a.company_id = #{companyid}
-		</if>
-		<if test="datetype!=null and datetype!=''">
-			<if test="datetype==1">
-				GROUP BY DATE_FORMAT(a.createTime, '%Y'),a.counsoler,tsu.nickname
-			</if>
-			<if test="datetype==2">
-				GROUP BY DATE_FORMAT(a.createTime, '%Y%m'),a.counsoler,tsu.nickname
-			</if>
-			<if test="datetype==3">
-				GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d'),a.counsoler,tsu.nickname
-			</if>
-		</if>
-		<if test="datetype==null or datetype==''">
-			GROUP BY DATE_FORMAT(a.createTime, '%Y%m%d'),a.counsoler,tsu.nickname
-		</if>
-		order by datetime desc,total_amont desc
-	) temp 
-  </select>
-  
-  <select id="countSubscribeReportByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
-  	select count(*) from (
-	  	SELECT
-	  	<if test="datetype!=null and datetype!=''">
-			<if test="datetype==1">
-				DATE_FORMAT(tcs.create_time, '%Y') datetime,
-			</if>
-			<if test="datetype==2">
-				DATE_FORMAT(tcs.create_time, '%Y%m') datetime,
-			</if>
-			<if test="datetype==3">
-				DATE_FORMAT(tcs.create_time, '%Y%m%d') datetime,
-			</if>
-		</if>
-		<if test="datetype==null or datetype==''">
-			DATE_FORMAT(tcs.create_time, '%Y%m%d') datetime,
-		</if>
-			tsu.nickname,
-			tc.`name` as companyname,
-			count(tcs.id) totalOrder,
-			sum(if(tcs.`status`=1,1,0)) secuessOrder,
-			sum(if(tcs.`status`=99,1,0)) wastageOrder,
-			sum(if(tcs.`status`=0,1,0)) unfinishedOrder
-		FROM
-			t_customer_subscribe tcs
-		LEFT JOIN t_sys_user tsu ON tcs.create_user = tsu.username
-		INNER JOIN t_company tc ON tcs.company_id = tc.id
-		LEFT JOIN v_root_in vri on tcs.root_in = vri.`value` and vri.companyid = tcs.company_id
-		LEFT JOIN v_sex vs on tcs.sex=vs.`value`  and vs.companyid = tcs.company_id
-		LEFT JOIN v_subscribe vss on tcs.`status` = vss.`value` and vss.companyid= tcs.company_id
-		where 1 = 1
-		<if test="starttime!=null and starttime!=''">
-			and DATE_FORMAT(tcs.create_time, '%Y-%m-%d') &gt;= #{starttime}
-		</if>
-		<if test="endtime!=null and endtime!=''">
-			and DATE_FORMAT(tcs.create_time, '%Y-%m-%d') &lt;= #{endtime}
-		</if>
-		<if test="companyid!=null">
-			and tcs.company_id = #{companyid}
-		</if>
-		<if test="datetype!=null and datetype!=''">
-			<if test="datetype==1">
-				GROUP BY DATE_FORMAT(tcs.create_time, '%Y'),tsu.nickname,tcs.company_id
-			</if>
-			<if test="datetype==2">
-				GROUP BY DATE_FORMAT(tcs.create_time, '%Y%m'),tsu.nickname,tcs.company_id
-			</if>
-			<if test="datetype==3">
-				GROUP BY DATE_FORMAT(tcs.create_time, '%Y%m%d'),tsu.nickname,tcs.company_id
-			</if>
-		</if>
-		<if test="datetype==null or datetype==''">
-			GROUP BY DATE_FORMAT(tcs.create_time, '%Y%m%d'),tsu.nickname,tcs.company_id
-		</if>
-	) temp
-  </select>
-  
   <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
 	SELECT
 		p.id,p.`code`,p.`name`,p.remark,p.`status`,p.province_id as provinceId,p.city_id as cityId,p.county_id as countyId,p.createTime,p.createUser,p.updateTime,p.updateUser,
@@ -876,28 +763,6 @@
 		and p.status=#{status}
 	</if>
 	order by p.updateTime desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
-</select>
-<select id="countCompanyByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
-	select count(*) from(
-		SELECT
-			p.id,p.`code`,p.`name`,p.remark,p.`status`,p.province_id as provinceId,p.city_id as cityId,p.county_id as countyId,p.createTime,p.createUser,p.updateTime,p.updateUser,
-			CONCAT(tp.`name`,tc.`name`,tcy.`name`,ifnull(p.detail_address,'')) as address,p.detail_address as detailAddress
-		FROM
-			`t_company` p
-		LEFT JOIN t_province tp ON p.province_id = tp.id
-		LEFT JOIN t_city tc ON p.city_id = tc.id
-		LEFT JOIN t_county tcy ON p.county_id = tcy.id
-		where 1=1 
-		<if test="name !=null and name!=''">
-			and p.name like concat('%',#{name},'%')
-		</if>
-		<if test="status !=null">
-			and p.status=#{status}
-		</if>
-	) temp
 </select>
 
 <select id="queryCountBusinessAnalysisDataDetail" parameterType="java.util.HashMap" resultType="java.util.Map">
@@ -994,105 +859,8 @@
 			GROUP BY a.company_id,datetime desc,vri.`name`,vcp.text
 		ORDER BY companyName,datetime desc,rootInName,professionName
 		) temp GROUP BY temp.companyName,temp.rootInName,temp.datetime,temp.professionName
+		order by datetime
 </select>
-<select id="countBusinessAnalysisDataDetailByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
-	select count(*) from(
-		SELECT temp.datetime,temp.companyName,temp.rootInName,temp.professionName,sum(temp.numbs) numbs,sum(temp.total_amount)total_amount,FORMAT(avg(temp.total_amount_avg),2) total_amount_avg from (
-		SELECT	
-					<if test="datetype!=null and datetype!=''">
-					<if test="datetype==1">
-						DATE_FORMAT(b.createTime, '%Y') datetime,
-					</if>
-					<if test="datetype==2">
-						DATE_FORMAT(b.createTime, '%Y%m') datetime,
-					</if>
-					<if test="datetype==3">
-						DATE_FORMAT(b.createTime, '%Y%m%d') datetime,
-					</if>
-				</if>
-				<if test="datetype==null or datetype==''">
-					DATE_FORMAT(b.createTime, '%Y%m%d') datetime,
-				</if>
-					a.`name` as rootInName,
-					tc.name as companyName,
-					count(DISTINCT b.phonenumb) numbs,
-					sum(ifnull(c.total_amount,0)) total_amount,
-					avg(ifnull(c.total_amount,0)) total_amount_avg,
-					vcp.text as professionName
-				FROM
-					v_root_in a
-				LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in AND a.companyid = b.company_id and b.status=1
-				LEFT JOIN t_customer_consumpton_amount c on b.id=c.customer_id
-				LEFT JOIN v_customer_profession vcp on b.profession = vcp.`value`
-				 
-				INNER JOIN t_company tc ON a.companyid = tc.id and tc.`status`=1
-				where 1=1 
-					<if test="starttime!=null and starttime!=''">
-					and DATE_FORMAT(b.createTime, '%Y-%m-%d') &gt;= #{starttime}
-					</if>
-					<if test="endtime!=null and endtime!=''">
-					and DATE_FORMAT(b.createTime, '%Y-%m-%d') &lt;= #{endtime}
-					</if>
-					<if test="companyid!=null">
-					and a.companyid = #{companyid}
-					</if>
-					<if test="datetype!=null and datetype!=''">
-						<if test="datetype==1">
-							GROUP BY companyname,DATE_FORMAT(b.createTime, '%Y'),a.name,vcp.text
-						</if>
-						<if test="datetype==2">
-							GROUP BY companyname,DATE_FORMAT(b.createTime, '%Y%m'),a.name,vcp.text
-						</if>
-						<if test="datetype==3">
-							GROUP BY companyname,DATE_FORMAT(b.createTime, '%Y%m%d'),a.name,vcp.text
-						</if>
-					</if>
-					<if test="datetype==null or datetype==''">
-						GROUP BY companyname,DATE_FORMAT(b.createTime, '%Y%m%d'),a.name,vcp.text
-					</if>	
-		UNION all
-		SELECT 
-			<if test="datetype!=null and datetype!=''">
-					<if test="datetype==1">
-						DATE_FORMAT(tcpl.create_time,'%Y') datetime,
-					</if>
-					<if test="datetype==2">
-						DATE_FORMAT(tcpl.create_time,'%Y%m') datetime,
-					</if>
-					<if test="datetype==3">
-						DATE_FORMAT(tcpl.create_time,'%Y%m%d') datetime,
-					</if>
-				</if>
-				<if test="datetype==null or datetype==''">
-					DATE_FORMAT(tcpl.create_time,'%Y%m%d') datetime,
-				</if>
-			vri.name as rootInName,
-			tc.name as companyName,
-			count(tcpl.id) numbs,0 as total_amount,
-			0 as total_amount_avg,
-			vcp.text as professionName 
-			from t_ltn_customer a 
-			INNER JOIN t_customer_porject tcp on a.id = tcp.order_id and DATE_FORMAT(a.createTime,'%Y-%m-%d')&lt; DATE_FORMAT(tcp.create_time, '%Y-%m-%d')
-			INNER JOIN t_customer_project_log tcpl on tcp.id=tcpl.cp_id
-			LEFT JOIN v_customer_profession vcp on a.profession = vcp.`value`
-			INNER JOIN t_company tc ON a.company_id = tc.id and tc.`status`=1
-			LEFT JOIN v_root_in vri on a.root_in = vri.`value` and a.company_id=vri.companyid
-			where a.`status`=1 
-			<if test="starttime!=null and starttime!=''">
-				and DATE_FORMAT(tcpl.create_time, '%Y-%m-%d') &gt;= #{starttime}
-			</if>
-			<if test="endtime!=null and endtime!=''">
-				and DATE_FORMAT(tcpl.create_time, '%Y-%m-%d') &lt;= #{endtime}
-			</if>
-			<if test="companyid!=null">
-				and a.company_id=#{companyid}
-			</if>
-			GROUP BY a.company_id,datetime desc,vri.`name`,vcp.text
-		ORDER BY companyName,datetime desc,rootInName,professionName
-		) temp GROUP BY temp.companyName,temp.rootInName,temp.datetime,temp.professionName
-	) temp
-</select>
-
 
 <select id="queryCountProjectsOrderCost" parameterType="java.util.HashMap" resultType="java.util.Map">
 	SELECT 
@@ -1218,6 +986,7 @@
 	ORDER BY tc.id
 </select>
 <select id="queryIndexUserCount" parameterType="java.lang.Integer" resultType="java.util.Map">
+select * from (
 	SELECT tsr.role_name,tsr.role_sign,'counsoler' as rtype,temp.nickname,temp.image_path,sum(temp.c_total_amount)c_total_amount,sum(temp.f_total_amount)f_total_amount,sum(temp.total_amont)total_amont,sum(temp.CHUZHEN)CHUZHEN,sum(temp.FUZHEN)FUZHEN,sum(temp.employeeWastageOrder)employeeWastageOrder,sum(temp.employeeTotalOrder)employeeTotalOrder from (
 			SELECT
 				(sum(IF (a.`status` = 1,IF (a.chu_fu_zhen = 0,ifnull(b.total_amount, 0),0),0))) c_total_amount,
@@ -1294,6 +1063,8 @@
 		GROUP BY a.therapeutist,tsu.nickname,tsr.role_name,tsr.role_sign
 		ORDER BY employeeTotalOrder desc,c_total_amount desc
 		limit 7
+	) ttemp LEFT JOIN t_sys_role tsr1 on ttemp.role_sign = tsr1.role_sign
+ORDER BY tsr1.sort
 </select>
 
 <select id="queryIndexCompanyCount" parameterType="java.lang.Integer" resultType="java.util.Map">
@@ -1315,4 +1086,125 @@
 			GROUP BY datetime
 		ORDER BY datetime asc
 </select>
+<select id="queryProjectTypeReport" parameterType="java.util.Map" resultType="java.util.Map">
+	SELECT
+		vpm.`name`,
+		count(tpcca.orderid) procounts
+	FROM
+		t_project tp
+	LEFT JOIN (
+		SELECT
+			DISTINCT tcca.project_id,
+			tc.id as orderid,
+			tc.company_id
+		FROM
+			t_ltn_customer tc
+		LEFT JOIN t_customer_consumpton_amount tcca ON tc.id = tcca.customer_id
+		WHERE 1=1
+			<if test="companyid!=null">
+				and tc.company_id = #{companyid}
+			</if>
+			<if test="starttime!=null and starttime!=''">
+				AND tc.createTime BETWEEN #{starttime}
+				<if test="endtime!=null and endtime!=''">
+					AND #{endtime}
+				</if>
+				<if test="endtime=='' or endtime==null">
+					AND now()
+				</if>
+			</if>
+		GROUP BY
+			tcca.project_id,tc.company_id,tc.id
+	) tpcca ON tp.id = tpcca.project_id and tpcca.company_id=tp.company_id
+	LEFT JOIN v_project_model vpm ON tp.project_model = vpm.`value`
+	AND tp.company_id = vpm.companyid
+	INNER JOIN t_company tcp on tp.company_id=tcp.id and tcp.`status`=1
+	WHERE 
+		tp.`status` = 1
+		<if test="companyid!=null">
+			and tp.company_id = #{companyid}
+		</if>
+	GROUP BY
+		vpm.name,tp.company_id
+	ORDER BY
+		procounts DESC
+</select>
+<select id="queryProjectTypeChangeReport" parameterType="java.util.Map" resultType="java.util.Map">
+	SELECT 
+	sum(if(temp3.project_model=1,1,0)) as p1,
+	sum(if(temp3.project_model=2,1,0)) as p2,
+	sum(if(temp3.project_model=3,1,0)) as p3,
+	sum(if(temp3.project_model=5,1,0)) as p4,
+	sum(if(temp3.project_model=6,1,0)) as p5,
+	sum(if(temp3.project_model=7,1,0)) as p6,
+	sum(if(temp3.project_model=8,1,0)) as p7
+	 from (
+		SELECT
+				DISTINCT tcca.project_id,
+				tc.id as orderid,
+				tc.phonenumb,
+				tc.company_id,
+				4 as project_model
+			FROM
+				t_ltn_customer tc
+			INNER JOIN t_customer_consumpton_amount tcca ON tc.id = tcca.customer_id
+		INNER JOIN t_project tp on tcca.project_id = tp.id and tp.project_model=4
+			WHERE
+				1=1
+			<if test="companyid!=null">
+				and tc.company_id = #{companyid}
+			</if>
+			<if test="starttime!=null and starttime!=''">
+				AND tc.createTime BETWEEN #{starttime}
+				<if test="endtime!=null and endtime!=''">
+					AND #{endtime}
+				</if>
+				<if test="endtime=='' or endtime==null">
+					AND now()
+				</if>
+			</if>
+			GROUP BY
+				tcca.project_id,tc.company_id,tc.id,tc.phonenumb
+	) temp2 INNER JOIN (
+		SELECT temp1.*,tcca.project_id,tp.project_model from (
+			SELECT tlc.id,tlc.phonenumb,tlc.customername,tlc.createTime,tlc.company_id from t_ltn_customer tlc INNER JOIN (
+				SELECT
+						DISTINCT tcca.project_id,
+						tc.id as orderid,
+						tc.phonenumb,
+						tc.company_id,
+						tc.createTime,
+						4 as projecttype
+					FROM
+						t_ltn_customer tc
+					INNER JOIN t_customer_consumpton_amount tcca ON tc.id = tcca.customer_id
+				INNER JOIN t_project tp on tcca.project_id = tp.id and tp.project_model=4
+					WHERE
+						1=1
+					<if test="companyid!=null">
+						and tc.company_id = #{companyid}
+					</if>
+					<if test="starttime!=null and starttime!=''">
+						AND tc.createTime BETWEEN #{starttime}
+						<if test="endtime!=null and endtime!=''">
+							AND #{endtime}
+						</if>
+						<if test="endtime=='' or endtime==null">
+							AND now()
+						</if>
+					</if>
+					GROUP BY
+						tcca.project_id,tc.company_id,tc.id,tc.phonenumb
+			) temp on temp.phonenumb=tlc.phonenumb and temp.company_id=tlc.company_id and tlc.createTime &lt; temp.createTime and tlc.id&lt;&gt;temp.orderid 
+			where 1=1 
+				<if test="starttime!=null and starttime!=''">
+				  and tlc.createTime &gt; #{starttime}
+				</if>
+		) temp1 INNER JOIN t_customer_consumpton_amount tcca ON temp1.id = tcca.customer_id
+		INNER JOIN t_project tp on tcca.project_id = tp.id 
+		GROUP BY temp1.phonenumb,temp1.company_id,temp1.id,tcca.project_id
+	)temp3 on temp2.company_id=temp3.company_id and temp2.phonenumb=temp3.phonenumb and temp2.project_model&lt;&gt;temp3.project_model
+	GROUP BY temp2.company_id
+</select>
+
 </mapper>

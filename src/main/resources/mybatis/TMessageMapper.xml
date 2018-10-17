@@ -337,29 +337,5 @@
 		and p.type=#{type}
 	</if>
 	order by p.update_time desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
-</select>
-<select id="countMessageByBean" parameterType="java.util.Map" resultType="java.lang.Integer">
-	select count(*) from(
-		SELECT
-			p.id
-		FROM
-			`t_message` p
-		LEFT JOIN v_vip_customer_status vs on p.`status`=vs.`value` and p.company_id=vs.companyid
-		LEFT JOIN v_message_type vmt on p.type= vmt.`value`
-		INNER JOIN t_company tc on p.company_id = tc.id and tc.`status`=1
-		where 1=1 
-		<if test="name !=null and name!=''">
-			and p.name like concat('%',#{name},'%')
-		</if>
-		<if test="status !=null">
-			and p.status=#{status}
-		</if>
-		<if test="type !=null">
-			and p.type=#{type}
-		</if>
-	) temp
 </select>
 </mapper>

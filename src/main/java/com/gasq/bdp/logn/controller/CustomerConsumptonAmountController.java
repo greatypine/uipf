@@ -1,7 +1,5 @@
 package com.gasq.bdp.logn.controller;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +22,9 @@ import org.springframework.web.client.RestTemplate;
 import com.alibaba.fastjson.JSONObject;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
-import com.gasq.bdp.logn.model.TLtnCustomer;
 import com.gasq.bdp.logn.model.TCustomerConsumptonAmount;
+import com.gasq.bdp.logn.model.TLtnCustomer;
+import com.gasq.bdp.logn.provider.Ilogger;
 import com.gasq.bdp.logn.service.CustomerConsumptonAmountService;
 import com.gasq.bdp.logn.service.CustomerService;
 
@@ -47,48 +46,40 @@ public class CustomerConsumptonAmountController {
     //错误信
     Map<String,Object> map = new HashMap<String,Object>();
     
+    @Ilogger(value="查询列表用户消费订单信息列表")
     @ApiOperation(value="查询列表用户消费金额信息列表", notes="查询列表用户消费金额信息列表")
     @ApiImplicitParam(name = "bean", value = "sql实体对象TLtnCustomer", required = false, dataType = "TLtnCustomer")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryCustomerList",method=RequestMethod.POST)
 	public Map<String, Object> queryCustomerList(TLtnCustomer bean) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费订单信息列表！");
 		try {
 			map = customerService.queryPagingList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费订单信息列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
-    
+    @Ilogger(value="查询列表用户消费金额信息列表")
     @ApiOperation(value="查询列表用户消费金额信息列表", notes="查询列表用户消费金额信息列表")
     @ApiImplicitParam(name = "bean", value = "sql实体对象TCustomerConsumptonAmount", required = false, dataType = "TCustomerConsumptonAmount")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryCustomerAmountList",method=RequestMethod.POST)
 	public Map<String, Object> queryCustomerAmountList(TCustomerConsumptonAmount bean) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费金额信息列表！");
 		try {
 			map = customerConsumptonAmountService.queryPagingList(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表用户消费金额信息列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
-    
+    @Ilogger(value="新增或修改用户消费金额信息列表")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdateCust",method=RequestMethod.POST)
 	public Map<String, Object> saveOrUpdateCust(TLtnCustomer bean) {
-		Instant start = Instant.now();
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求新增或修改用户消费金额信息列表！");
 		try {
 			map = customerService.saveOrUpdate(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求新增或修改用户消费金额信息列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -98,73 +89,60 @@ public class CustomerConsumptonAmountController {
 	/**
 	 * 接诊
 	 */
+    @Ilogger(value="执行接诊")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_RECEPTIONIST,RoleSign.Test,RoleSign.Q_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdateTFMCust",method=RequestMethod.POST)
 	public boolean saveOrUpdateTFMCust(TLtnCustomer bean) {
-		Instant start = Instant.now();
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求开始执行接诊！");
 		try {
 			Boolean b = customerService.saveOrUpdateTFMCust(bean);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求开始执行接诊结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return b;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
 		return false;
 	 }
-    
+    @Ilogger(value="保存或修改客户消费金额")
 //	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdateCustAmount",method=RequestMethod.POST)
 	public Integer saveOrUpdateCustAmount(TCustomerConsumptonAmount bean) {
-		Instant start = Instant.now();
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求保存或修改客户消费金额！");
 		try {
 			Integer i = customerConsumptonAmountService.saveOrUpdate(bean).getId();
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求保存或修改客户消费金额结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return i;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
 		return null;
 	 }
-    
+    @Ilogger(value="删除改客户消费金额")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER},logical=Logical.OR)
 	@RequestMapping(value = "/deleteCust",method=RequestMethod.POST)
 	public boolean deleteCust(Integer id) {
-		Instant start = Instant.now();
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除改客户消费金额！");
 		try {
 			Boolean f = customerService.delete(id);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除改客户消费金额结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return f;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
 		return false;
 	 }
+    @Ilogger(value="退款客户消费订单")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER},logical=Logical.OR)
 	@RequestMapping(value = "/refundCust",method=RequestMethod.POST)
 	public boolean refundCust(Integer id) {
-		Instant start = Instant.now();
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求退款客户消费订单！");
 		try {
 			Boolean f = customerService.refundCust(id);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求退款客户消费订单结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return f;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
 		return false;
 	 }
-	
+    @Ilogger(value="删除客户消费订单")
 //	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/deleteCustAmount",method=RequestMethod.POST)
 	public boolean deleteCustAmount(Integer id) {
-		Instant start = Instant.now();
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除客户消费订单！");
 		try {
 			Boolean f =  customerConsumptonAmountService.delete(id);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除客户消费订单结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return f;
 		} catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -174,31 +152,29 @@ public class CustomerConsumptonAmountController {
 	/**
 	 * return total_amount/one_total_amount
 	 */
+    @Ilogger(value="统计用户消费金额")
     @ApiOperation(value="统计用户消费金额", notes="统计用户消费金额")
     @ApiImplicitParam(name = "bean", value = "sql实体对象queryAmountSum", required = false, dataType = "queryAmountSum")
 //    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/queryAmountSum",method=RequestMethod.POST)
 	public Map<String, Object> queryAmountSum(TLtnCustomer bean) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求统计用户消费金额！");
 		try {
 			map = customerService.queryAmountSum(bean);
 			if(map==null) {
 				map = new HashMap<String,Object>();
 				map.put("total_amount", 0);
 			}
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求统计用户消费金额结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return map;
 	 }
+    @Ilogger(value="提交用户消费订单")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION},logical=Logical.OR)
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/commit",method=RequestMethod.POST)
 	public Map<String, Object> commit(TLtnCustomer customer) {
-    	Instant start = Instant.now();
     	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求提交用户消费订单！");
 		try {
 			logger.info("开始请求结算...");
@@ -227,7 +203,6 @@ public class CustomerConsumptonAmountController {
 					throw new Exception(response.get("mess").toString());
 				}
 			}
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求提交用户消费订单结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			map.put("status", false);
@@ -235,18 +210,15 @@ public class CustomerConsumptonAmountController {
 		}
     	return map;
 	 }
-    
+    @Ilogger(value="普通结算用户消费订单")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION},logical=Logical.OR)
    	@RequestMapping(value = "/ptcommit",method=RequestMethod.POST)
    	public Map<String, Object> ptcommit(TLtnCustomer customer) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求普通结算用户消费订单！");
    		try {
    			logger.info("开始进行普通结算...");
    			customer.setStatus(1);
    			customer.setType(1);
    			map = customerService.saveOrUpdate(customer);
-   			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求普通结算用户消费订单结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
    		}catch (Exception e) {
    			map.put("status", false);
@@ -254,28 +226,23 @@ public class CustomerConsumptonAmountController {
    		}
        	return map;
    	 }
-	
+    @Ilogger(value="查询统计就诊报表")
 //    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/countConsumptionReport",method=RequestMethod.POST)
 	public Map<String, Object> countConsumptionReport(Integer companyid,String datetype,String starttime,String endtime) {
-		Instant start = Instant.now();
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计就诊报表！");
 		try {
 			map = customerService.countConsumptionReport(companyid,datetype,starttime,endtime);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计就诊报表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
 	 }
+    @Ilogger(value="查询统计就诊报表列表")
 	@RequestMapping(value = "/queryCountConsumptionReportList",method=RequestMethod.POST)
 	public Map<String, Object> queryCountConsumptionReportList(Integer companyid,String datetype,String starttime,String endtime) {
-		Instant start = Instant.now();
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计就诊报表列表！");
 		try {
 			map = customerService.queryCountConsumptionReportList(companyid,datetype,starttime,endtime);
-			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询统计就诊报表列表结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
 		}catch (Exception e) {
 			logger.info(e.getMessage(),e);
@@ -287,14 +254,11 @@ public class CustomerConsumptonAmountController {
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION},logical=Logical.OR)
    	@RequestMapping(value = "/hycommit",method=RequestMethod.POST)
    	public Map<String, Object> hycommit(TLtnCustomer customer) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求提交客户消费订单！");
    		try {
    			logger.info("开始进行会员结算...");
    			customer.setStatus(1);
    			customer.setType(3);
    			map = customerService.saveOrUpdate(customer);
-   			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求提交客户消费订单结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
    		}catch (Exception e) {
    			map.put("status", false);
@@ -306,12 +270,9 @@ public class CustomerConsumptonAmountController {
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER},logical=Logical.OR)
    	@RequestMapping(value = "/orderBack",method=RequestMethod.POST)
    	public Map<String, Object> orderBack(TLtnCustomer customer) {
-    	Instant start = Instant.now();
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求订单回退！");
    		try {
    			logger.info("开始进行订单回退操作...");
    			map = customerService.orderBack(customer);
-   			logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求订单回退结束！总用时："+Duration.between(start, Instant.now()).getSeconds()+"秒！");
 			return map;
    		}catch (Exception e) {
    			map.put("status", false);

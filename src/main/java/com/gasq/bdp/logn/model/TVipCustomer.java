@@ -65,8 +65,17 @@ public class TVipCustomer extends ParamsObject{
     
     private Integer messid;
     
+    private Integer companyId1;//转诊公司
 
-    public Integer getMesstype() {
+    public Integer getCompanyId1() {
+		return companyId1;
+	}
+
+	public void setCompanyId1(Integer companyId1) {
+		this.companyId1 = companyId1;
+	}
+
+	public Integer getMesstype() {
 		return messtype;
 	}
 

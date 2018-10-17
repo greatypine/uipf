@@ -243,31 +243,5 @@
 		and til.create_time &gt;= #{createTime}
 	</if>
 	order by til.create_time desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
-</select>
-<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
-	select count(*) from(
-		SELECT
-			til.id,DATE_FORMAT(til.create_time,'%Y-%m-%d %H:%i:%s')as createTime,vipt.text as optionName,til.option_type as optionType,tsu.nickname as createUser,
-		ti.company_id as companyId,tsu1.nickname as subscribe_create_user,ti.customer_name as customerName,ti.customer_phone customerPhone,ti.project,ti.remark,ti.root_in as rootIn,
-		ti.sex,ti.`status`,vsb.text as statusName,vs.text as sexName,vri.`name` as rootInName,DATE_FORMAT(ti.subscribe_date,'%Y-%m-%d %H:%i:%s') as subscribe_date
-		FROM
-			t_customer_subscribe_log til
-		LEFT JOIN t_customer_subscribe ti ON til.cs_id = ti.id
-		LEFT JOIN v_subcribe_option_type vipt ON til.option_type = vipt.`value`
-		LEFT JOIN t_sys_user tsu on til.create_user=tsu.username
-		LEFT JOIN t_sys_user tsu1 on ti.create_user=tsu1.username
-		LEFT JOIN v_root_in vri on ti.root_in=vri.`value` and ti.company_id=vri.companyid
-		LEFT JOIN v_sex vs on ti.sex = vs.`value` and ti.company_id = vs.companyid
-		LEFT JOIN v_subscribe vsb on ti.`status`=vsb.`value` and ti.company_id=vsb.companyid
-		<if test="companyid !=null">
-			and ti.company_id=#{companyid}
-		</if>
-		<if test="createTime !=null">
-			and til.create_time &gt;= #{createTime}
-		</if>
-	) temp
 </select>
 </mapper>

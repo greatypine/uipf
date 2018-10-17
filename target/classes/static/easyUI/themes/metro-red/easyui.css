@@ -2519,6 +2519,7 @@
   margin: 0;
   padding: 0;
   list-style-type: none;
+  padding-top:5px;
 }
 .tree li {
   white-space: nowrap;
@@ -2529,7 +2530,7 @@
   padding: 0;
 }
 .tree-node {
-  height: 18px;
+  height: 25px;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -2863,7 +2864,7 @@
 }
 .l-btn,
 .l-btn-disabled:hover {
-  color: #fff;
+  color: #f6c1bc;
 }
 .l-btn-plain,
 .l-btn-selected {

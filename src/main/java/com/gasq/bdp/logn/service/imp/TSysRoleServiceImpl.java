@@ -3,7 +3,6 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,8 @@ import com.gasq.bdp.logn.model.TSysRoleExample.Criteria;
 import com.gasq.bdp.logn.model.TSysRolePermission;
 import com.gasq.bdp.logn.model.TSysRolePermissionExample;
 import com.gasq.bdp.logn.service.TSysRoleService;
-import com.gasq.bdp.logn.utils.CommonUtils;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author 巨伟刚
@@ -58,41 +58,27 @@ public class TSysRoleServiceImpl implements TSysRoleService {
 		return mapper.selectByPrimaryKey((long)id);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, Object> queryPagingList(TSysRole bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		TSysRoleExample example = new TSysRoleExample();
-		Criteria c = example.createCriteria();
 		if(bean.getDescription()!=null && !"".equals(bean.getDescription())) {
-			c.andDescriptionLike("%"+bean.getDescription()+"%");
+			result.put("description", bean.getDescription());
 		}
 		if(bean.getRoleSign()!=null && !"".equals(bean.getRoleSign())) {
-			c.andRoleSignEqualTo(bean.getRoleSign());
+			result.put("roleSign", bean.getRoleSign());
 		}
 		if(bean.getId()!=null) {
-			c.andIdEqualTo(bean.getId());
+			result.put("id", bean.getId());
 		}
 		if(bean.getRoleName()!=null && !"".equals(bean.getRoleName())) {
-			c.andRoleNameEqualTo(bean.getRoleName());
+			result.put("roleName", bean.getRoleName());
 		}
-		example.setOrderByClause(" id asc ");
-		int count = (int) mapper.countByExample(example);
-		List<Map<String,Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
-		Map<String,Object> params = CommonUtils.json2Map(CommonUtils.bean2Json(bean));
-		params.put("index", start);
-		params.put("pageSize", number);
-		if(count>0) {
-			list = mapper.queryPagingList(params);
-		}else {
-			list = new ArrayList<Map<String,Object>>(); 
-		}
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<Map<String, Object>> listmaps = mapper.queryPagingList(result);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

@@ -442,7 +442,7 @@
 		opts.onBeforeSelect = function(){
 			return false;
 		};
-		dg.datagrid('clearSelections')
+		dg.datagrid('clearSelections');
 	}
 
 	function disableCellEditing(target){

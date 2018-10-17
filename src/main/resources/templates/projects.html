@@ -35,7 +35,7 @@
 		<form id="projectdlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>
-	    			<td class="tdname">产品名称：</td>
+	    			<td class="tdname">项目名称：</td>
 	    			<td class="tdnamebox">
 	    				<input id="projectName" name="projectName" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
 	    			</td>
@@ -71,17 +71,23 @@
 	    			</td>
 	    		</tr>
 	    		<tr>
-	    			<td class="tdname">产品金额：</td>
+	    			<td class="tdname">项目金额：</td>
 	    			<td class="tdnamebox">
 	    				<input id="money" name="money" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2"/>
 	    			</td>
-	    			<td class="tdname">产品折扣：</td>
+	    			<td class="tdname">项目折扣：</td>
 	    			<td class="tdnamebox"><input name="discount" id="discount" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2,max:1,prompt:'最大为1 eg:85折=0.85'"/></td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">拼音缩写：</td>
+	    			<td class="tdnamebox">
+	    				<input id="spell" name="spell" class="easyui-textbox" style="width: 100%;" data-options="required:true,prompt:'中午拼音首字母（小写）'"/>
+	    			</td>
 	    		</tr>
 	    		<tr>
 	    			<td class="tdname" colspan="1">描述：</td>
 	    			<td class="tdnamebox" colspan="3">
-	    				<input id="remark" name="remark" data-options="multiline:false,required:false" class="easyui-textbox" style="width: 100%;"/>
+	    				<input id="remark" name="remark" data-options="multiline:false,required:false" class="easyui-textbox" style="width: 100%;height:50px;"/>
 	    			</td>
 	    		</tr>
 	    	</table>

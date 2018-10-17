@@ -241,8 +241,5 @@
 	</if>
 	GROUP BY id
 	order by id asc
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
 </select>
 </mapper>

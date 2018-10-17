@@ -3,7 +3,6 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.gasq.bdp.logn.mapper.TScoreExchangeMapper;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TScoreExchange;
@@ -19,6 +19,8 @@ import com.gasq.bdp.logn.model.TScoreExchangeExample;
 import com.gasq.bdp.logn.model.TScoreExchangeExample.Criteria;
 import com.gasq.bdp.logn.service.TScoreExchangeService;
 import com.gasq.bdp.logn.utils.DateUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author Ju_weigang
@@ -108,20 +110,12 @@ public class TScoreExchangeServiceImpl implements TScoreExchangeService {
 			c.andRecomCodeLike("%"+bean.getRecomCode()+"%");
 		}
 		example.setOrderByClause(" id desc ");
-		int count = (int) exchangeMapper.countByExample(example);
-		List<TScoreExchange> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
-		RowBounds rowBounds = new RowBounds(start, bean.getRows());
-		if(count>0) {
-			list = exchangeMapper.selectByExampleWithRowbounds(example, rowBounds);
-		}else {
-			list = new ArrayList<TScoreExchange>(); 
-		}
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<TScoreExchange> listmaps = exchangeMapper.selectByExample(example);
+		PageInfo<TScoreExchange> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

@@ -62,4 +62,8 @@ public interface CommonService {
 
 	Map<String, Object> queryWorkforceList(TWorkforcemanagement bean);
 
+	Map<String, Object> queryProjectTypeReport(Integer companyid, String starttime, String endtime);
+
+	Map<String, Object> queryProjectTypeChangeReport(Integer companyid, String starttime, String endtime);
+
 }

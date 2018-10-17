@@ -12,6 +12,7 @@
     <result column="counsoler" jdbcType="INTEGER" property="counsoler" />
     <result column="therapeutist" jdbcType="INTEGER" property="therapeutist" />
     <result column="remindTime" jdbcType="DATE" property="remindtime" />
+    <result column="cure_time" jdbcType="DATE" property="cureTime" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="root_in" jdbcType="INTEGER" property="rootIn" />
@@ -85,8 +86,8 @@
   </sql>
   <sql id="Base_Column_List">
     id, company_id, chu_fu_zhen, customername, phonenumb, sex, card_id, counsoler, therapeutist, 
-    remindTime, status, type, root_in, profession, subscribe_id, createUser, updateUser, 
-    createTime, updateTime, importTime, importUser, remark
+    remindTime, cure_time, status, type, root_in, profession, subscribe_id, createUser, 
+    updateUser, createTime, updateTime, importTime, importUser, remark
   </sql>
   <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TLtnCustomerExample" resultMap="BaseResultMap">
     select
@@ -118,25 +119,25 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.gasq.bdp.logn.model.TLtnCustomer">
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TLtnCustomer">
     insert into t_ltn_customer (id, company_id, chu_fu_zhen, 
       customername, phonenumb, sex, 
       card_id, counsoler, therapeutist, 
-      remindTime, status, type, 
-      root_in, profession, subscribe_id, 
-      createUser, updateUser, createTime, 
-      updateTime, importTime, importUser, 
-      remark)
+      remindTime, cure_time, status, 
+      type, root_in, profession, 
+      subscribe_id, createUser, updateUser, 
+      createTime, updateTime, importTime, 
+      importUser, remark)
     values (#{id,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{chuFuZhen,jdbcType=INTEGER}, 
       #{customername,jdbcType=VARCHAR}, #{phonenumb,jdbcType=VARCHAR}, #{sex,jdbcType=INTEGER}, 
       #{cardId,jdbcType=VARCHAR}, #{counsoler,jdbcType=INTEGER}, #{therapeutist,jdbcType=INTEGER}, 
-      #{remindtime,jdbcType=DATE}, #{status,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, 
-      #{rootIn,jdbcType=INTEGER}, #{profession,jdbcType=INTEGER}, #{subscribeId,jdbcType=INTEGER}, 
-      #{createuser,jdbcType=VARCHAR}, #{updateuser,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
-      #{updatetime,jdbcType=TIMESTAMP}, #{importtime,jdbcType=TIMESTAMP}, #{importuser,jdbcType=VARCHAR}, 
-      #{remark,jdbcType=VARCHAR})
+      #{remindtime,jdbcType=DATE}, #{cureTime,jdbcType=DATE}, #{status,jdbcType=INTEGER}, 
+      #{type,jdbcType=INTEGER}, #{rootIn,jdbcType=INTEGER}, #{profession,jdbcType=INTEGER}, 
+      #{subscribeId,jdbcType=INTEGER}, #{createuser,jdbcType=VARCHAR}, #{updateuser,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}, #{importtime,jdbcType=TIMESTAMP}, 
+      #{importuser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id"  parameterType="com.gasq.bdp.logn.model.TLtnCustomer">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TLtnCustomer">
     insert into t_ltn_customer
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -168,6 +169,9 @@
       </if>
       <if test="remindtime != null">
         remindTime,
+      </if>
+      <if test="cureTime != null">
+        cure_time,
       </if>
       <if test="status != null">
         status,
@@ -236,6 +240,9 @@
       </if>
       <if test="remindtime != null">
         #{remindtime,jdbcType=DATE},
+      </if>
+      <if test="cureTime != null">
+        #{cureTime,jdbcType=DATE},
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
@@ -314,6 +321,9 @@
       <if test="record.remindtime != null">
         remindTime = #{record.remindtime,jdbcType=DATE},
       </if>
+      <if test="record.cureTime != null">
+        cure_time = #{record.cureTime,jdbcType=DATE},
+      </if>
       <if test="record.status != null">
         status = #{record.status,jdbcType=INTEGER},
       </if>
@@ -367,6 +377,7 @@
       counsoler = #{record.counsoler,jdbcType=INTEGER},
       therapeutist = #{record.therapeutist,jdbcType=INTEGER},
       remindTime = #{record.remindtime,jdbcType=DATE},
+      cure_time = #{record.cureTime,jdbcType=DATE},
       status = #{record.status,jdbcType=INTEGER},
       type = #{record.type,jdbcType=INTEGER},
       root_in = #{record.rootIn,jdbcType=INTEGER},
@@ -412,6 +423,9 @@
       </if>
       <if test="remindtime != null">
         remindTime = #{remindtime,jdbcType=DATE},
+      </if>
+      <if test="cureTime != null">
+        cure_time = #{cureTime,jdbcType=DATE},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
@@ -463,6 +477,7 @@
       counsoler = #{counsoler,jdbcType=INTEGER},
       therapeutist = #{therapeutist,jdbcType=INTEGER},
       remindTime = #{remindtime,jdbcType=DATE},
+      cure_time = #{cureTime,jdbcType=DATE},
       status = #{status,jdbcType=INTEGER},
       type = #{type,jdbcType=INTEGER},
       root_in = #{rootIn,jdbcType=INTEGER},
@@ -491,7 +506,7 @@
       order by ${orderByClause}
     </if>
   </select>
-    <select id="queryPagingList" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
+      <select id="queryPagingList" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
  		SELECT
 			a.id,
 			a.company_id as companyId,
@@ -503,6 +518,7 @@
 			a.therapeutist,
 			a.customername,
 			DATE_FORMAT(a.remindtime,'%Y-%m-%d')remindtime,
+			DATE_FORMAT(a.cure_time,'%Y-%m-%d')cureTime,
 			a.createUser,
 			a.updateUser,
 			a.createTime,
@@ -521,7 +537,10 @@
 			a.profession,
 			vcp.text as professionName,
 			a.root_in as rootIn,
-			vri.name as rootInName
+			vri.name as rootInName,
+			ttti.treatment_time as treatmentOptionTime,
+			ttti.day treatmentOptionDay,
+			vtt.text as treatmentOptionTimeName
 		from t_ltn_customer a 
 		LEFT JOIN v_root_in vri on a.root_in = vri.value and vri.companyid=a.company_id
 		LEFT JOIN v_customer_profession vcp on a.profession=vcp.value
@@ -533,6 +552,8 @@
 		left join t_company c on a.company_id = c.id
 		left join v_sex vs on a.sex=vs.value and vs.companyid=a.company_id
 		LEFT JOIN v_customer_order_status vcos on a.`status`= vcos.`value`
+		LEFT JOIN t_therapist_treatment_time_info ttti on a.id = ttti.order_id and ttti.`status`=1
+		left join v_treatment_time vtt on ttti.treatment_time = vtt.value
 		where 1=1 
  		<if test="record.companyId &gt; 0 and record.companyId!=null">
 			and a.company_id=#{record.companyId}
@@ -571,11 +592,8 @@
  		<if test="record.rootIn!=null">
  			and a.root_in = #{record.rootIn}
  		</if>
- 		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text,vcp.text,vri.name
+ 		GROUP BY a.id,a.company_id,vct.text,vs.text,u2.id,vcos.text,vcp.text,vri.name,ttti.id,vtt.text
 		order by a.createtime desc 
-		<if test="record.rows !=null and record.page!=null">
-			limit #{record.page},#{record.rows}
-		</if>
  </select>
  
   <select id="queryAmountSum" parameterType="com.gasq.bdp.logn.model.TLtnCustomer" resultType="java.util.Map">
@@ -877,6 +895,7 @@
 			a.therapeutist,
 			a.customername,
 			DATE_FORMAT(a.remindtime,'%Y-%m-%d')remindtime,
+			DATE_FORMAT(a.cure_time,'%Y-%m-%d')cureTime,
 			a.createUser,
 			a.updateUser,
 			a.createTime,

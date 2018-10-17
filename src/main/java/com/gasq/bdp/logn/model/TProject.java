@@ -13,6 +13,8 @@ public class TProject extends ParamsObject{
 
     private String projectName;
 
+    private String spell;
+
     private BigDecimal money;
 
     private Boolean status;
@@ -55,6 +57,14 @@ public class TProject extends ParamsObject{
 
     public void setProjectName(String projectName) {
         this.projectName = projectName == null ? null : projectName.trim();
+    }
+
+    public String getSpell() {
+        return spell;
+    }
+
+    public void setSpell(String spell) {
+        this.spell = spell == null ? null : spell.trim();
     }
 
     public BigDecimal getMoney() {

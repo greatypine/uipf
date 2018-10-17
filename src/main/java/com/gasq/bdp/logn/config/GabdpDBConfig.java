@@ -47,7 +47,8 @@ public class GabdpDBConfig {
          dataSource.setMaxActive(Integer.parseInt(env.getProperty("spring.datasource.maxActive").toString())); 
          dataSource.setMaxWait(Integer.parseInt(env.getProperty("spring.datasource.maxWait").toString())); 
          dataSource.setTimeBetweenEvictionRunsMillis(Integer.parseInt(env.getProperty("spring.datasource.timeBetweenEvictionRunsMillis").toString())); 
-         dataSource.setMinEvictableIdleTimeMillis(Integer.parseInt(env.getProperty("spring.datasource.minEvictableIdleTimeMillis").toString())); 
+         dataSource.setMinEvictableIdleTimeMillis(Integer.parseInt(env.getProperty("spring.datasource.minEvictableIdleTimeMillis").toString()));
+         dataSource.setMaxEvictableIdleTimeMillis(Integer.parseInt(env.getProperty("spring.datasource.maxEvictableIdleTimeMillis").toString()));
          dataSource.setValidationQuery(env.getProperty("spring.datasource.validationQuery")); 
          dataSource.setTestWhileIdle(Boolean.parseBoolean(env.getProperty("spring.datasource.testWhileIdle").toString())); 
          dataSource.setTestOnBorrow(Boolean.parseBoolean(env.getProperty("spring.datasource.testOnBorrow").toString())); 

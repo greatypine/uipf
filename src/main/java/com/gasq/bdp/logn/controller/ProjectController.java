@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.gasq.bdp.logn.model.RoleSign;
-import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TProject;
+import com.gasq.bdp.logn.provider.Ilogger;
 import com.gasq.bdp.logn.service.TSysProjectService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -29,12 +31,12 @@ public class ProjectController {
     //错误信息
     Map<String,Object> paramMap = new HashMap<String,Object>();
     
+    @Ilogger(value="查询列表项目配置信息列表")
     @ApiOperation(value="查询列表项目配置信息列表", notes="查询列表项目配置信息列表")
     @ApiImplicitParam(name = "bean", value = "项目实体对象TProject", required = false, dataType = "TProject")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
 	@RequestMapping(value = "/queryList",method=RequestMethod.POST)
 	public Map<String, Object> queryList(TProject bean) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询列表项目配置信息列表！");
 		try {
 			return projectService.queryPagingList(bean);
 		}catch (Exception e) {
@@ -42,13 +44,12 @@ public class ProjectController {
 		}
     	return null;
 	 }
-    
+    @Ilogger(value="查询项目对象列表")
     @ApiOperation(value="查询项目对象列表", notes="查询项目对象列表")
     @ApiImplicitParam(name = "bean", value = "项目实体对象TProject", required = false, dataType = "TProject")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/queryBeanList",method=RequestMethod.POST)
 	public List<TProject> queryBeanList(TProject bean) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求查询项目对象列表！");
 		try {
 			return projectService.selectByExample(bean);
 		}catch (Exception e) {
@@ -56,13 +57,12 @@ public class ProjectController {
 		}
     	return null;
 	 }
-    
+    @Ilogger(value="添加或更新项目配置信息")
     @ApiOperation(value="添加或更新项目配置信息", notes="添加或更新项目配置信息（管理员、操作、测试）")
     @ApiImplicitParam(name = "bean", value = "项目实体对象TProject", required = true, dataType = "TProject")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Test},logical=Logical.OR)
 	@RequestMapping(value = "/saveOrUpdate",method=RequestMethod.POST)
 	public boolean saveOrUpdate(TProject bean) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求添加或更新项目配置信息！");
 		try {
 			return projectService.saveOrUpdate(bean);
 		} catch (Exception e) {
@@ -70,13 +70,12 @@ public class ProjectController {
 		}
 		return false;
 	 }
-    
+    @Ilogger(value="删除项目配置信息")
     @ApiOperation(value="删除项目配置信息", notes="删除项目配置信息（管理员、操作）")
     @ApiImplicitParam(name = "id", value = "项目实体id", required = true, dataType = "Integer", paramType="query")
 	@RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION},logical=Logical.OR)
 	@RequestMapping(value = "/delete",method=RequestMethod.POST)
 	public boolean delete(int id) {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求删除项目配置信息！");
 		try {
 			return projectService.delete(id);
 		} catch (Exception e) {
@@ -85,7 +84,7 @@ public class ProjectController {
 		return false;
 	 }
     
-    
+    @Ilogger(value="查询列表项目配置信息列表")
     @ApiOperation(value="查询列表项目配置信息列表", notes="查询列表项目配置信息列表")
     @ApiImplicitParam(name = "bean", value = "项目实体对象TProject", required = false, dataType = "TProject")
 	@GetMapping(value = "/queryProjectList")

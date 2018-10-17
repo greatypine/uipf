@@ -335,28 +335,5 @@
 		and p.companyid=#{companyid}
 	</if>
 	order by p.create_time desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
-</select>
-<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
-		SELECT
-			count(*)
-		FROM
-			`t_sys_views` p
-		INNER JOIN t_company tc on p.companyid=tc.id and tc.`status`=1
-		where 1=1 
-		<if test="name !=null and name!=''">
-			and p.name like concat('%',#{name},'%')
-		</if>
-		<if test="status !=null">
-			and p.status=#{status}
-		</if>
-		<if test="type !=null">
-			and p.type=#{type}
-		</if>
-		<if test="companyid !=null">
-			and p.companyid=#{companyid}
-		</if>
 </select>
 </mapper>

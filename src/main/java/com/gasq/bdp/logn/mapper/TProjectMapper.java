@@ -34,6 +34,4 @@ public interface TProjectMapper {
     int updateByPrimaryKey(TProject record);
 
 	List<Map<String, Object>> queryPagingList(Map<String, Object> params);
-
-	Integer countByBean(Map<String, Object> params);
 }

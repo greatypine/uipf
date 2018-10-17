@@ -1,6 +1,17 @@
 var indexOption;
 var leftMenusTree;
 var reports;
+var colors = ["darkseagreen","thistle","pink","lightgrey","powderblue","antiquewhite","plum","thistle"];
+if(!cu.isPC()){
+	$("#airreprot").remove();
+	$("#glyphicontime").remove();
+	$("#companyandtime").remove();
+	$("#indexSubscribeQuery").remove();
+	$("#indexworkforceManagementQuery").remove();
+	$("#indexcompanyreport").css("width","100%");
+	$("#indexwest").css("width","30%");
+	$("#indexwest").css("indexcenter","70%");
+}
 $(function(){
 	init();
 });
@@ -44,14 +55,14 @@ function initdata(){
 		indexOption.changepwd();
 	});
 	var wh = $(window).height();
-	if(wh>1100){
-		$("#north").css("height","4%");
-	}else if(wh>900 && wh<1100){
-		$("#north").css("height","5%");
-	}else if(wh >700 && wh <900){
-		$("#north").css("height","6%");
-	}else if(wh <700){
-		$("#north").css("height","7%");
+	if(cu.isPC()){
+		if(wh>1100){
+			$("#north").css("height","4%");
+		}else if(wh>900 && wh<1100){
+			$("#north").css("height","5%");
+		}else if(wh >700 && wh <900){
+			$("#north").css("height","6%");
+		}
 	}
 	$(".l-btn-text").css({"font-size":"16px","padding-top":"5px"});
 }
@@ -231,38 +242,38 @@ function IndexOption(){
 	this.createCardHtml = function(i,data,data1){
 		var html = "";
 		if(data!=null){
-			html ='<li class="card card-'+i+'"><img src="'+content+'/'+data.image_path+'"/>'
+			html ='<li class="card card-'+i+'" style="background-color:'+colors[i]+'"><img src="'+content+'/'+data.image_path+'"/>'
 				html+='<div class="content">'
-					html+='<h1>'+data.nickname+'</h1>'
-					html+='<p>咨询总人数：'+data.employeeTotalOrder+'</p>'
-					html+='<p>咨询初诊人数：'+data.CHUZHEN+'</p>'
-					html+='<p>咨询复诊人数：'+data.FUZHEN+'</p>'
-					html+='<p>咨询流失人数：'+data.employeeWastageOrder+'</p>'
-					html+='<p>咨询总金额：'+data.total_amont+'</p>'
-					html+='<p>咨询初诊金额：'+data.c_total_amount+'</p>'
-					html+='<p>咨询复诊金额：'+data.f_total_amount+'</p>'
+					html+='<h1><i class="fa fa-user-o"></i>&nbsp;'+data.nickname+'</h1>'
+					html+='<p style="padding-top:3px;"><i class="fa fa-support"></i>&nbsp;咨询总人数：'+data.employeeTotalOrder+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;咨询初诊人数：'+data.CHUZHEN+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;咨询复诊人数：'+data.FUZHEN+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;咨询流失人数：'+data.employeeWastageOrder+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;咨询总金额：'+data.total_amont+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;咨询初诊金额：'+data.c_total_amount+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;咨询复诊金额：'+data.f_total_amount+'</p>'
 					if(data1!=null){
-						html+='<p>治疗总人数：'+data1.employeeTotalOrder+'</p>'
-						html+='<p>治疗初诊人数：'+data1.CHUZHEN+'</p>'
-						html+='<p>治疗复诊人数：'+data1.FUZHEN+'</p>'
-						html+='<p>治疗流失人数：'+data1.employeeWastageOrder+'</p>'
-						html+='<p>治疗总金额：'+data1.total_amont+'</p>'
-						html+='<p>治疗初诊金额：'+data1.c_total_amount+'</p>'
-						html+='<p>治疗复诊金额：'+data1.f_total_amount+'</p>'
+						html+='<p><i class="fa fa-support"></i>&nbsp;治疗总人数：'+data1.employeeTotalOrder+'</p>'
+						html+='<p><i class="fa fa-support"></i>&nbsp;治疗初诊人数：'+data1.CHUZHEN+'</p>'
+						html+='<p><i class="fa fa-support"></i>&nbsp;治疗复诊人数：'+data1.FUZHEN+'</p>'
+						html+='<p><i class="fa fa-support"></i>&nbsp;治疗流失人数：'+data1.employeeWastageOrder+'</p>'
+						html+='<p><i class="fa fa-support"></i>&nbsp;治疗总金额：'+data1.total_amont+'</p>'
+						html+='<p><i class="fa fa-support"></i>&nbsp;治疗初诊金额：'+data1.c_total_amount+'</p>'
+						html+='<p><i class="fa fa-support"></i>&nbsp;治疗复诊金额：'+data1.f_total_amount+'</p>'
 					}
 				html+='</div>'
 			html+='</li>'
 		}else{
-			html ='<li class="card card-'+i+'"><img src="'+content+'/'+data1.image_path+'"/>'
+			html ='<li class="card card-'+i+'" style="background-color:'+colors[i]+'"><img src="'+content+'/'+data1.image_path+'"/>'
 				html+='<div class="content">'
-					html+='<h1>'+data1.nickname+'</h1>'
-					html+='<p>治疗总人数：'+data1.employeeTotalOrder+'</p>'
-					html+='<p>治疗初诊人数：'+data1.CHUZHEN+'</p>'
-					html+='<p>治疗复诊人数：'+data1.FUZHEN+'</p>'
-					html+='<p>治疗流失人数：'+data1.employeeWastageOrder+'</p>'
-					html+='<p>治疗总金额：'+data1.total_amont+'</p>'
-					html+='<p>治疗初诊金额：'+data1.c_total_amount+'</p>'
-					html+='<p>治疗复诊金额：'+data1.f_total_amount+'</p>'
+					html+='<h1><i class="fa fa-user-o"></i>&nbsp;'+data1.nickname+'</h1>'
+					html+='<p style="padding-top:3px;"><i class="fa fa-support"></i>&nbsp;治疗总人数：'+data1.employeeTotalOrder+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;治疗初诊人数：'+data1.CHUZHEN+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;治疗复诊人数：'+data1.FUZHEN+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;治疗流失人数：'+data1.employeeWastageOrder+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;治疗总金额：'+data1.total_amont+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;治疗初诊金额：'+data1.c_total_amount+'</p>'
+					html+='<p><i class="fa fa-support"></i>&nbsp;治疗复诊金额：'+data1.f_total_amount+'</p>'
 				html+='</div>'
 			html+='</li>'
 		}
@@ -322,10 +333,10 @@ function IndexOption(){
 			ed = day+7;
 		}
 		month = (Number(month)<10)?'0'+Number(month):month;
-		var clun = {field:'username',title:'姓名',width:'17.5%',align:'center'};
+		var clun = {field:'username',title:'姓名',width:'14%',align:'center'};
 		cls.push(clun);
 		for (var i = 0; i < 7; i++) {
-			var cl = {field:'day'+(sd),title:year+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+			var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
 	        	if(val=='休'){
 	        		return '<font color="FF0033"><b>'+val+'<b></font>';
 	        	}else if(val=='早'){

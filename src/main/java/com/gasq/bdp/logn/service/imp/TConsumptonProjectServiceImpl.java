@@ -4,7 +4,6 @@
 package com.gasq.bdp.logn.service.imp;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +21,10 @@ import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TConsumptonProject;
 import com.gasq.bdp.logn.model.TConsumptonProjectExample;
 import com.gasq.bdp.logn.model.TConsumptonProjectExample.Criteria;
+import com.gasq.bdp.logn.model.TCustomerConsumptonAmount;
 import com.gasq.bdp.logn.model.TInventory;
 import com.gasq.bdp.logn.model.TInventoryLog;
 import com.gasq.bdp.logn.model.TLtnCustomer;
-import com.gasq.bdp.logn.model.TCustomerConsumptonAmount;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.service.CustomerConsumptonAmountService;
 import com.gasq.bdp.logn.service.CustomerService;
@@ -33,6 +32,8 @@ import com.gasq.bdp.logn.service.TConsumptonProjectService;
 import com.gasq.bdp.logn.service.TInventoryLogService;
 import com.gasq.bdp.logn.service.TInventoryService;
 import com.gasq.bdp.logn.utils.DateUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author 巨伟刚
@@ -115,25 +116,19 @@ public class TConsumptonProjectServiceImpl implements TConsumptonProjectService 
 	@Override
 	public Map<String, Object> queryPagingList(TConsumptonProject bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String, Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
 		Map<String, Object> params= new  HashMap<String, Object>();
-		params.put("index", start);
-		params.put("pageSize", number);
 		if(bean.getConsumptonAmountId()!=null) {
 			params.put("consumptonAmountId", bean.getConsumptonAmountId());
 		}
 		if(bean.getProjectId()!=null) {
 			params.put("projectId", bean.getProjectId());
 		}
-		list = consumptonProjectMapper.queryPagingList(params);
-		if(list==null || list.size()<=0) list = new ArrayList<Map<String,Object>>(); 
-		Integer count = consumptonProjectMapper.countByBean(params);
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<Map<String, Object>> listmaps = consumptonProjectMapper.queryPagingList(params);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

@@ -25,7 +25,7 @@ function CountReport(){
 		        columns:[[
 				        {field:'datetime',title:'日期',width:"10%",align:'center'},
 				        {field:'companyName',title:'预约门店',width:"10%",align:'center'},
-				        {field:'name',title:'渠道名称',width:"10%",align:'center'},
+				        {field:'rootInName',title:'渠道名称',width:"10%",align:'center'},
 				        {field:'text',title:'客户职业',width:"10%",align:'center'},
 				        {field:'numbs',title:'就诊人数',width:"10%",align:'center'},
 				        {field:'total_amount',title:'消费总金额',width:"10%",align:'center',formatter:function(val,row){

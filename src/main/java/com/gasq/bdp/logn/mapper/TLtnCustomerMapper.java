@@ -1,13 +1,12 @@
 package com.gasq.bdp.logn.mapper;
 
+import com.gasq.bdp.logn.model.TLtnCustomer;
+import com.gasq.bdp.logn.model.TLtnCustomerExample;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
-
-import com.gasq.bdp.logn.model.TLtnCustomer;
-import com.gasq.bdp.logn.model.TLtnCustomerExample;
 
 public interface TLtnCustomerMapper {
     long countByExample(TLtnCustomerExample example);

@@ -10,7 +10,9 @@ $(function(){
 	}else{
 		$('#dlg-lock').dialog('close');
 	}
-	cu.showtime("currenttime");
+	if(cu.isPC()){
+		cu.showtime("currenttime");
+	}
 });
 $(document).keyup(function(event){
     switch(event.keyCode){
@@ -24,3 +26,6 @@ $(document).keyup(function(event){
             break;  
     }
 });
+
+cu.ph = $(window).height();
+cu.pw = $(window).width();

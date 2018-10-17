@@ -78,4 +78,8 @@ public interface TCompanyMapper {
 	List<Map<String, Object>> queryIndexUserCount(@Param("companyid") Integer companyid);
 
 	List<Map<String, Object>> queryIndexCompanyCount(@Param("companyid") Integer companyid);
+
+	List<Map<String, Object>> queryProjectTypeReport(Map<String, Object> map);
+
+	List<Map<String, Object>> queryProjectTypeChangeReport(Map<String, Object> map);
 }

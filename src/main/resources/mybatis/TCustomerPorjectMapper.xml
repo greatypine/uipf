@@ -351,27 +351,5 @@
 		and p.vip_id=#{vip_id}
 	</if>
 	order by p.create_time desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
-</select>
-<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
-	select count(*) from (
-		SELECT
-			p.id,p.vip_id as vipId,p.project_id as projectId,tp.project_name as projectName,p.total_project_nums as totalProjectNums
-			,tvc.customer_name as customerName,tvc.customer_phone customerPhone,p.project_nums as projectNums,p.create_time,tsu1.nickname as updateUser,p.update_time
-			,p.project_type as projectType,vpt.`name` as projectTypeName,p.deadline
-		FROM
-			`t_customer_porject` p
-		left join t_sys_user tsu on p.create_user=tsu.username
-		left join t_sys_user tsu1 on p.update_user=tsu1.username
-		LEFT JOIN t_project tp on p.project_id= tp.id
-		LEFT JOIN t_vip_customer tvc on p.vip_id=tvc.id
-		LEFT JOIN v_project_type vpt on p.project_type=vpt.`value`
-		where 1=1   
-		<if test="vip_id !=null">
-			and p.vip_id=#{vip_id}
-		</if>
-	) temp
 </select>
 </mapper>

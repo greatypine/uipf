@@ -67,7 +67,7 @@ function MyProject(){
 			    	$("#project_table").datagrid("selectRow", index);
 			    },
 				onDblClickRow:function(index,row){
-					$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","更新产品");
+					$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","更新项目");
 					row.status = row.status==true?1:0;
 					if(cu.hasRoles("sadmin,generalManager,q_area_shopManager")){
 						project.initClearCombobox("companyId");
@@ -113,7 +113,7 @@ function MyProject(){
 		}
 		project.initClearCombobox("projectModel");
 		project.initClearCombobox("projectType");
-		$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","添加产品");
+		$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","添加项目");
 	};
 	this.clear = function(){
 		$("#projectform").form("clear");

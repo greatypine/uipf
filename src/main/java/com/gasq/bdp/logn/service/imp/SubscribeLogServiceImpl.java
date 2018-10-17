@@ -3,13 +3,14 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.gasq.bdp.logn.mapper.TCustomerSubscribeLogMapper;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
@@ -19,6 +20,8 @@ import com.gasq.bdp.logn.model.TCustomerSubscribeLogExample.Criteria;
 import com.gasq.bdp.logn.service.SubscribeLogService;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 @Service
 public class SubscribeLogServiceImpl implements SubscribeLogService {
@@ -65,14 +68,7 @@ public class SubscribeLogServiceImpl implements SubscribeLogService {
 	@Override
 	public Map<String, Object> queryPagingList(TCustomerSubscribeLog bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String, Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
 		Map<String, Object> params= new  HashMap<String, Object>();
-		params.put("index", start);
-		params.put("pageSize", number);
 		if(bean.getCompanyid()!=null) {
 			params.put("companyid", bean.getCompanyid());
 		}else {
@@ -83,11 +79,12 @@ public class SubscribeLogServiceImpl implements SubscribeLogService {
 		if(bean.getCreateTime()!=null) {
 			params.put("createTime", bean.getCreateTime());
 		}
-		list = subscribelogMapper.queryPagingList(params);
-		if(list==null) list = new ArrayList<Map<String,Object>>(); 
-		Integer count = subscribelogMapper.countByBean(params);
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<Map<String, Object>> listmaps = subscribelogMapper.queryPagingList(params);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

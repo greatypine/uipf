@@ -2,6 +2,8 @@ package com.gasq.bdp.logn.model;
 
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class TCustomerProjectLog extends ParamsObject{
     public TCustomerProjectLog() {
 		super();
@@ -28,9 +30,20 @@ public class TCustomerProjectLog extends ParamsObject{
 
     private String createUser;
 
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date createTime;
+    
+    private Integer companyid;
+    
+    public Integer getCompanyid() {
+		return companyid;
+	}
 
-    public Integer getId() {
+	public void setCompanyid(Integer companyid) {
+		this.companyid = companyid;
+	}
+
+	public Integer getId() {
         return id;
     }
 

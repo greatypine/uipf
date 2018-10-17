@@ -64,8 +64,79 @@
 .icon-lock{
 	background:url('icons/lock.png') no-repeat center center;
 }
+/* 卡 */
+.icon-card{
+	background:url('icons/card.png') no-repeat center center;
+}
+/* 分销 */
+.icon-fenxiao{
+	background:url('icons/fenxiao.png') no-repeat center center;
+}
+/* 支付 */
+.icon-pay{
+	background:url('icons/pay.png') no-repeat center center;
+}
+/* 会员 */
+.icon-vip{
+	background:url('icons/vip.png') no-repeat center center;
+}
+/* 金钱 */
+.icon-monery{
+	background:url('icons/monery.png') no-repeat center center;
+}
+/* 更多 */
 .icon-more{
 	background:url('icons/more.png') no-repeat center center;
+}
+/* 菜单 */
+.icon-menu{
+	background:url('icons/menu.png') no-repeat center center;
+}
+/* 维护 */
+.icon-maintenance{
+	background:url('icons/maintenance.png') no-repeat center center;
+}
+/* 系统用户角色管理 */
+.icon-systemusers{
+	background:url('icons/systemusers.png') no-repeat center center;
+}
+/* 客户消费管理 */
+.icon-ccac{
+	background:url('icons/ccac.png') no-repeat center center;
+}
+/* 业务统计 */
+.icon-chart_count{
+	background:url('icons/chart_count.png') no-repeat center center;
+}
+/* 活动管理 */
+.icon-huodong{
+	background:url('icons/huodong.png') no-repeat center center;
+}
+/* 项目管理 */
+.icon-projects{
+	background:url('icons/projects.png') no-repeat center center;
+}
+
+/* 产品库存管理 */
+.icon-inventory{
+	background:url('icons/inventory.png') no-repeat center center;
+}
+
+/* 日志管理 */
+.icon-logs{
+	background:url('icons/logs.png') no-repeat center center;
+}
+/* 顾客信息管理 */
+.icon-customer{
+	background:url('icons/customer.png') no-repeat center center;
+}
+/* 公司管理 */
+.icon-company{
+	background:url('icons/company.png') no-repeat center center;
+}
+/* 设备管理 */
+.icon-equipment{
+	background:url('icons/equipment.png') no-repeat center center;
 }
 
 .icon-list{
@@ -95,4 +166,122 @@
 }
 .icon-large-chart{
 	background:url('icons/large_chart.png') no-repeat center center;
+}
+
+/* 用户维护 */
+.icon-user{
+	background:url('icons/user.png') no-repeat center center;
+}
+/* 角色维护 */
+.icon-group{
+	background:url('icons/group.png') no-repeat center center;
+}
+/* 客户消费维护 */
+.icon-xiaofei{
+	background:url('icons/xiaofei.png') no-repeat center center;
+}
+/* 角色维护 */
+.icon-tree_option{
+	background:url('icons/tree_option.png') no-repeat center center;
+}
+/* 公司业务统计 */
+.icon-companyCount{
+	background:url('icons/companyCount.png') no-repeat center center;
+}
+/*积分兑换 */
+.icon-jifenduihuan{
+	background:url('icons/jifenduihuan.png') no-repeat center center;
+}
+/* 项目维护*/
+.icon-projects_option{
+	background:url('icons/projects_option.png') no-repeat center center;
+}
+/* 权限维护 */
+.icon-permissiont{
+	background:url('icons/permissiont.png') no-repeat center center;
+}
+/* 客户预约 */
+.icon-customer_subcrible{
+	background:url('icons/customer_subcrible.png') no-repeat center center;
+}
+/* 产品库存维护 */
+.icon-inventory_option{
+	background:url('icons/inventory_option.png') no-repeat center center;
+}
+/* 产品操作日志*/
+.icon-project_logs{
+	background:url('icons/project_logs.png') no-repeat center center;
+}
+/* 预约日志 */
+.icon-subscrible_log{
+	background:url('icons/subscrible_log.png') no-repeat center center;
+}
+/* 会员用户信息 */
+.icon-vipcustomer{
+	background:url('icons/vipcustomer.png') no-repeat center center;
+}
+
+/* 员工订单统计 */
+.icon-order_count{
+	background:url('icons/order_count.png') no-repeat center center;
+}
+/* 预约订单统计 */
+.icon-subscrible_count{
+	background:url('icons/subscrible_count.png') no-repeat center center;
+}
+/* 产品库存统计 */
+.icon-count_inventory{
+	background:url('icons/count_inventory.png') no-repeat center center;
+}
+/* 公司维护 */
+.icon-company_option{
+	background:url('icons/company_option.png') no-repeat center center;
+}
+/* 设备维护 */
+.icon-equipment_option{
+	background:url('icons/equipment_option.png') no-repeat center center;
+}
+/* 分销用户查询 */
+.icon-fenxiao_user{
+	background:url('icons/fenxiao_user.png') no-repeat center center;
+}
+/* 消息管理 */
+.icon-message{
+	background:url('icons/message.png') no-repeat center center;
+}
+/* 消息维护 */
+.icon-message_option{
+	background:url('icons/message_option.png') no-repeat center center;
+}
+/* 渠道统计 */
+.icon-rootincount{
+	background:url('icons/rootincount.png') no-repeat center center;
+}
+/* 用户消息留言 */
+.icon-usermessage{
+	background:url('icons/usermessage.png') no-repeat center center;
+}
+/* 订单回退 */
+.icon-return{
+	background:url('icons/return.png') no-repeat center center;
+}
+/* 排班管理 */
+.icon-workforce{
+	background:url('icons/workforce.png') no-repeat center center;
+}
+/* 排班查询 */
+.icon-iquery{
+	background:url('icons/iquery.png') no-repeat center center;
+}
+/* 密码 */
+.icon-password{
+	background:url('icons/password.png') no-repeat center center;
+}
+/* 流程 */
+.icon-flow_chart{
+	background:url('icons/flow_chart.png') no-repeat center center;
+}
+/* 项目类型统计 */
+.icon-countproject{
+	background:url('icons/countproject.png') no-repeat center center;
 }

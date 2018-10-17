@@ -4,6 +4,7 @@
   list-style-type: none;
 }
 .tree li {
+  padding:1px;
   white-space: nowrap;
 }
 .tree li ul {

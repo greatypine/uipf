@@ -3,7 +3,6 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,8 @@ import com.gasq.bdp.logn.utils.ActiveMQUtil;
 import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author 巨伟刚
@@ -131,17 +132,13 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 	@Override
 	public Map<String, Object> queryPagingList(TCustomerSubscribe bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String, Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
 		Map<String, Object> params= new  HashMap<String, Object>();
-		params.put("index", start);
-		params.put("pageSize", number);
 		params.put("companyid", SystemUserInfo.getSystemUser().getUser().getCompanyid());
 		if(bean.getCustomerName()!=null) {
 			params.put("customername", bean.getCustomerName());
+		}
+		if(bean.getCustomerPhone()!=null) {
+			params.put("customerphone", bean.getCustomerPhone());
 		}
 		if(bean.getStatus()!=null) {
 			params.put("status", bean.getStatus());
@@ -156,12 +153,13 @@ public class CustomerSubscribeServiceImpl implements CustomerSubscribeService {
 				params.put("companyid", SystemUserInfo.getSystemUser().getCompany().getId());
 			}
 		}
-		list = customerSubscribeMapper.queryPagingList(params);
-		if(list==null) list = new ArrayList<Map<String,Object>>(); 
-		Integer count = customerSubscribeMapper.countByBean(params);
-		result.put("rows",list);
-		result.put("total",count);
-		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询预约信息列表完成！查询条数："+count+",查询参数："+CommonUtils.bean2Json(params));
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<Map<String, Object>> listmaps = customerSubscribeMapper.queryPagingList(params);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
+		logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】查询预约信息列表完成！查询条数："+pageinfo.getTotal()+",查询参数："+CommonUtils.bean2Json(params));
 		return result;
 	}
 

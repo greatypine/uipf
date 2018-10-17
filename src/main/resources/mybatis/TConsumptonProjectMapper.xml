@@ -284,24 +284,5 @@
 		and p.project_id=#{projectId}
 	</if>
 	order by p.updateTime desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
-</select>
-<select id="countByBean" parameterType="java.util.HashMap" resultType="java.lang.Integer">
-	select count(*) from (
-	 	SELECT
-			p.id,p.consumpton_amount_id as consumptonAmountId,p.numbs,ti.`code`,ti.`name`,ti.factory,ti.inventory,ti.price,ti.`status`,ti.units,p.createUser,p.createTime,ti.name as projectName,p.updateTime,p.updateUser
-		FROM
-			`t_consumpton_project` p
-		LEFT JOIN t_inventory ti on p.project_id=ti.id
-		where 1=1  
-		<if test="consumptonAmountId !=null">
-			and p.consumpton_amount_id =#{consumptonAmountId}
-		</if>
-		<if test="projectId !=null">
-			and p.project_id=#{projectId}
-		</if>
-	) temp
 </select>
 </mapper>

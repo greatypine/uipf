@@ -11,6 +11,12 @@ function initData(){
 	$(".companylist").combobox({
 		url:content+'/company/queryMapBeanList'
 	});
+	$(".projectType").combobox({
+		url:content+'/common/getView?viewname=v_project_type&id='+user.user.companyid
+	});
+	$(".projectModel").combobox({
+		url:content+'/common/getView?viewname=v_project_model&id='+user.user.companyid
+	});
 }
 function MyProject(){
 	this.initCompant = function(){
@@ -25,7 +31,7 @@ function MyProject(){
 				},
 		        columns:[[
 		        	 	{field:'id',title:'编号',hidden:true},
-				        {field:'projectName',title:'名称',width:"18%"},
+				        {field:'projectName',title:'名称',width:"15%"},
 				        {field:'status',title:'状态',width:"5%",align:'center',formatter:function(val,row){
 				        	if(val==0){
 					        	return '<font color="FF0033">关闭</font>'
@@ -33,14 +39,17 @@ function MyProject(){
 					        	return '<font color="33CC33">开启</font>'
 					        }
 				        }},
-				        {field:'imageUrl',title:'商品地址',width:"14%",align:'left',hidden:true},
 				        {field:'companyName',title:'所属公司',width:"10%",align:'center'},
-				        {field:'money',title:'金额',width:"8%",align:'center'},
+				        {field:'money',title:'金额',width:"6%",align:'center'},
 				        {field:'discount',title:'折扣',width:"5%",align:'center',formatter:function(val,row){
 				        	if(val=="" || val==null || val=="null") val = 0;
 				        	if(Number(val)==1) return "没折扣";
 				        	return Number(val)*100+"折"
 				        }},
+				        {field:'projectModelName',title:'项目分类',width:"8%",align:'center'},
+				        {field:'projectTypeName',title:'消费类型',width:"8%",align:'center'},
+				        {field:'projectNums',title:'次数',width:"8%",align:'center'},
+				        {field:'deadline',title:'期限（月）',width:"8%",align:'center'},
 				        {field:'companyId',title:'数据库',width:"5%",align:'center',hidden:true},
 				        {field:'createuser',title:'创建人',width:"8%",align:'center'},
 				        {field:'createtime',title:'创建时间',width:"13%",align:'center',formatter:function(val,row){
@@ -58,8 +67,13 @@ function MyProject(){
 			    	$("#project_table").datagrid("selectRow", index);
 			    },
 				onDblClickRow:function(index,row){
-					$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","更新产品");
+					$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","更新项目");
 					row.status = row.status==true?1:0;
+					if(cu.hasRoles("sadmin,generalManager,q_area_shopManager")){
+						project.initClearCombobox("companyId");
+					}
+					project.initClearCombobox("projectModel");
+					project.initClearCombobox("projectType");
 					$("#projectdlg-fm").form("clear").form("load",row);
 				},
 				onSelect:function(index,row){
@@ -70,13 +84,19 @@ function MyProject(){
 			});
 	};
 	this.query = function(){
-		var name = $("#queryname").val();
+		var companyid = cu.hasRoles("sadmin,q_area_shopManager,generalManager,h_option")?$("#querycompanyid").combobox("getValue"):null;
+		var name = $("#queryname").textbox("getValue");
+		var pm = ($("#querypm").combobox("getValue")<0)?null:$("#querypm").combobox("getValue");
+		var pt = ($("#querypt").combobox("getValue")<0)?null:$("#querypt").combobox("getValue");
 		var status = ($("#querystatus").combobox("getValue")<0)?null:$("#querystatus").combobox("getValue");
 		var createTime = ($("#querycreateTime").datebox('getValue')=="")?null:$("#querycreateTime").datebox('getValue');
 		var params = {};
 		if(name!="") {params.projectName = name;}
+		params.projectModel = pm;
+		params.projectType = pt;
 		params.status = status;
 		if(createTime!="" && createTime!=null) {params.createtime = createTime;}
+		params.companyId = companyid;
 		project_table.datagrid("load",params);
 	};
 	this.getParams = function(){
@@ -88,8 +108,15 @@ function MyProject(){
 	this.add = function(){
 		$("#projectdlg-fm").form("clear");
 		project.initClearCombobox("status");
-		project.initClearCombobox("companyId");
-		$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","添加产品");
+		if(cu.hasRoles("sadmin,generalManager,q_area_shopManager")){
+			project.initClearCombobox("companyId");
+		}
+		project.initClearCombobox("projectModel");
+		project.initClearCombobox("projectType");
+		$("#projectdlg").dialog("open").dialog("center").dialog("setTitle","添加项目");
+	};
+	this.clear = function(){
+		$("#projectform").form("clear");
 	};
 	this.initClearCombobox = function(id){
 		var data = $('#'+id).combobox('getData');
@@ -97,6 +124,7 @@ function MyProject(){
 		$('#'+id).combobox('loadData',data);
 	};
 	this.complate = function(){
+		$('#basecomplate').linkbutton('disable');
 		$('#projectdlg-fm').form('submit',{
 			url:content+"/project/saveOrUpdate",
 			onSubmit:function(){
@@ -113,7 +141,11 @@ function MyProject(){
 					$.messager.alert('提示','操作失败','warning');
 					$.messager.progress('close');
 				}
-			}
+				$('#basecomplate').linkbutton('enable');
+			},error:function(XMLHttpRequest,textStatus,errorThrown){
+                $.messager.alert('提示',"操作失败！","error");
+                $('#basecomplate').linkbutton('enable');
+            }
 		});
 	};
 	this.onDateDiffSelect = function(date){
@@ -126,6 +158,7 @@ function MyProject(){
 			$.messager.confirm('提示信息', '你确认要删除此项配置吗?', function(r){
 				if (r){
 					$.ajax({
+						async: false,
 						data :{id:row.id},
 						url : content+"/project/delete",
 						error : function(data) {

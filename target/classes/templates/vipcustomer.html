@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:include="include :: linkresource('首页')"></head>
 	<link type="text/css" th:href="@{/static/css/index/user.css}" rel="stylesheet" media="screen"/>
+	<script type="text/javascript" th:src="@{/static/easyUI/datagrid-detailview.js}"></script>
 <body>
 <div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
 	<table id="systemvipcustomer_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
@@ -10,8 +11,11 @@
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="systemvipcustomer.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemvipcustomer.add()">添加</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_receptionist,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="systemvipcustomer.remove()">删除</a>
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,q_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemvipcustomer.add()">添加</a>
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,h_admin,h_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-message" plain="true" onclick="systemvipcustomer.sendMessByEmail()">消息推送</a>
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,q_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-xiaofei" plain="true" onclick="systemvipcustomer.createConsumptonOrder()">生成就诊订单</a>
+			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-xiaofei" plain="true" onclick="systemvipcustomer.openTransferTreatment()">转诊</a>
+			<a shiro:hasAnyRoles="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="systemvipcustomer.remove()">删除</a>
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="systemvipcustomer.clear()">清空</a>
 		</div>
 		<div id="cron_bar">
@@ -94,8 +98,114 @@
 		</form>
 	</div>
 	<div id="systemvipcustomer_dlg-buttons">
-		<a shiro:hasAnyRoles="sadmin,q_admin,h_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.complate()" style="width: 90px">确认</a> 
+		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin,q_option" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.complate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#systemvipcustomerdlg-fm').form('clear');$('#systemvipcustomerdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="productsdlg" class="easyui-dialog"  data-options="modal:true" style="width: 85%; overflow: hidden;height: 50%;" closed="true" buttons="#productsdlg-buttons">
+		<table id="project_dg" class="easyui-datagrid" style="width: 100%;padding: 1%;height: auto;"
+			data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:5" pagination="true">
+		</table>
+	</div>
+	<div id="productsdlg-buttons">
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#productsdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="commentsdlg" class="easyui-dialog"  data-options="modal:true" style="width: 85%; overflow: hidden;height: 50%;" closed="true" buttons="#commentsdlg-buttons">
+		<table id="comments_dg" class="easyui-datagrid" style="width: 100%;padding: 1%;height: auto;"
+			data-options="singleSelect: true,rownumbers:true,fit:true,toolbar:'#comments_option'" pagination="true">
+		</table>
+		<div id="comments_option" style="padding: 5px; height: auto">
+			<div style="margin-bottom: 5px">
+				<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,h_option,q_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemvipcustomer.addcomment()">添加</a> 
+				<a shiro:hasAnyRoles="sadmin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="systemvipcustomer.removecomment()">删除</a>
+			</div>
+		</div>
+	</div>
+	<div id="commentsdlg-buttons">
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#commentsdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="customercommentdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#customercommentdlg-buttons">
+		<form id="customercommentdlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname" colspan="1">描述：</td>
+	    			<td class="tdnamebox" colspan="4">
+	    				<input id="remark" name="remark" data-options="multiline:true,required:true" class="easyui-textbox" style="width: 100%;"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+			<input id="id" name="id" value="" type="hidden" />
+			<input id="vipId" name="vipId" value="" type="hidden" />
+		</form>
+	</div>
+	<div id="customercommentdlg-buttons">
+		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin,q_option" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.customerCommentComplate()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#customercommentdlg-fm').form('clear');$('#customercommentdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	
+	<div id="projectsdlg" class="easyui-dialog"  data-options="modal:true" style="width: 85%; overflow: hidden;height: 50%;" closed="true" buttons="#projectsdlg-buttons">
+		<table id="projects_dg" class="easyui-datagrid" style="width: 100%;padding: 1%;height: auto;"
+			data-options="singleSelect: true,rownumbers:true,fit:true,toolbar:'#projects_option'" pagination="true">
+		</table>
+		<div id="projects_option" style="padding: 5px; height: auto">
+			<div style="margin-bottom: 5px">
+				<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,q_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemvipcustomer.addcomment()">添加</a> 
+				<a shiro:hasAnyRoles="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="systemvipcustomer.removecomment()">删除</a>
+			</div>
+		</div>
+	</div>
+	<div id="projectsdlg-buttons">
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#projectsdlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="smessagedlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#smessagedlg-buttons">
+		<form id="smessagedlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+	    		<tr>
+	    			<td class="tdname">消息类型：</td>
+	    			<td class="tdnamebox">
+	    				<input name="messtype" id="messtype" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text'"/>
+	    			</td>
+	    			<td class="tdname">消息类容：</td>
+	    			<td class="tdnamebox">
+	    				<input name="messid" id="messid" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text'"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+		</form>
+	</div>
+	<div id="smessagedlg-buttons">
+		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin,q_option" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.exeSendMessByEmail()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#smessagedlg-fm').form('clear');$('#smessagedlg').dialog('close')" style="width: 90px">关闭</a>
+	</div>
+	<div id="transferTreatmentdlg" class="easyui-dialog" data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#transferTreatmentdlg-buttons">
+		<form id="transferTreatmentdlg-fm" th:method="post" style="margin: 0; padding: 1%">
+			<table cellpadding="5" style="width: 100%">
+				<tr>
+	    			<td class="tdname">客户姓名：</td>
+	    			<td class="tdnamebox">
+	    				<input name="customerName" class="easyui-textbox" style="width: 100%;" data-options="required:true,editable:false,disabled:true"/>
+	    			</td>
+	    			<td class="tdname">客户电话：</td>
+	    			<td class="tdnamebox">
+	    				<input name="customerPhone" class="easyui-textbox" style="width: 100%;" data-options="required:true,editable:false,disabled:true"/>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="tdname">现在门店：</td>
+	    			<td class="tdnamebox">
+	    				<input name="companyId" class="easyui-combobox companylist" style="width: 100%;" data-options="required:true,editable:false,valueField:'companyid',textField:'companyName',disabled:true"/>
+	    			</td>
+	    			<td class="tdname">转移门店：</td>
+	    			<td class="tdnamebox">
+	    				<input name="companyId1" class="easyui-combobox companylist" style="width: 100%;" data-options="required:true,editable:false,valueField:'companyid',textField:'companyName'"/>
+	    			</td>
+	    		</tr>
+	    	</table>
+	    	<input name="id" value="" type="hidden"/>
+		</form>
+	</div>
+	<div id="transferTreatmentdlg-buttons">
+		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.transferTreatment()" style="width: 90px">确认</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#transferTreatmentdlg-fm').form('clear');$('#transferTreatmentdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 </body>
 <script type="text/javascript" th:src="@{/static/js/index/vipcustomer.js}"></script>

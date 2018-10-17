@@ -3,18 +3,20 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.ibatis.session.RowBounds;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.gasq.bdp.logn.mapper.TSysPermissionMapper;
 import com.gasq.bdp.logn.model.TSysPermission;
 import com.gasq.bdp.logn.model.TSysPermissionExample;
 import com.gasq.bdp.logn.model.TSysPermissionExample.Criteria;
 import com.gasq.bdp.logn.service.TSysPermissionService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author 巨伟刚
@@ -78,20 +80,12 @@ public class TSysPermissionServiceImpl implements TSysPermissionService {
 			c.andPermissionSignEqualTo(bean.getPermissionSign());
 		}
 		example.setOrderByClause(" id asc ");
-		int count = (int) mapper.countByExample(example);
-		List<TSysPermission> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
-		RowBounds rowBounds = new RowBounds(start, bean.getRows());
-		if(count>0) {
-			list = mapper.selectByExampleWithRowbounds(example, rowBounds);
-		}else {
-			list = new ArrayList<TSysPermission>(); 
-		}
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<TSysPermission> listmaps = mapper.selectByExample(example);
+		PageInfo<TSysPermission> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

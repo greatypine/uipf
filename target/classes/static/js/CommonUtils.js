@@ -1,8 +1,21 @@
+Array.prototype.indexOf = function (val) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+    }
+    return -1;
+};
+
+Array.prototype.remove = function (val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
+
 function CommonUtils(){
 	this.DATE_FULL_FORMAT = "yyyy-MM-dd hh:mm:ss";
 	this.DATE_DAY_FORMAT = "yyyy-MM-dd";
 	this.DATE_MONTH_FORMAT = "yyyy-MM";
-	
 	/**
 	 * 计算两个时间之间的天数 ：取正整
 	 */
@@ -52,6 +65,39 @@ function CommonUtils(){
 		}
 	};
 	/**
+	 * 返回yyyy年
+	 */
+	this.getCurrentYear = function(){
+		var t = new Date();
+		var y = t.getFullYear();
+        return y;
+	};
+	/**
+	 * 返回mm年
+	 */
+	this.getCurrentMonth = function(){
+		var t = new Date();
+        var m = t.getMonth() + 1;
+        return (m < 10 ? '0' + m : m);
+	};
+	/**
+	 * 返回dd日
+	 */
+	this.getCurrentDay = function(){
+		var t = new Date();
+		var d = t.getDate();
+        return d;
+	};
+	/**
+	 * 返回当前年月yyyy-mm
+	 */
+	this.getCurrentDateMonth = function(){
+		var t = new Date();
+		var y = t.getFullYear();
+        var m = t.getMonth() + 1;
+        return y+"-"+(m < 10 ? '0' + m : m);
+	};
+	/**
 	 * 返回yyyy-mm-dd hh:mm:ss格式
 	 */
 	this.getCurrentDateTime = function(){
@@ -65,7 +111,7 @@ function CommonUtils(){
         return y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d) + ' ' + (h < 10 ? '0' + h : h) + ':' + (i < 10 ? '0' + i : i) + ':' + (s < 10 ? '0' + s : s);
 	};
 	/**
-	 * 返回yyyy-mm-dd hh:mm:ss格式
+	 * 返回yyyy-mm-dd格式
 	 */
 	this.getCurrentDate = function(){
 		var t = new Date();
@@ -89,6 +135,18 @@ function CommonUtils(){
 		var m=d.getMonth()+1;
 		return d.getFullYear()+'-'+m+'-'+d.getDate();
      };
+     /**
+ 	 * 增加days天数
+ 	 */
+ 	this.month_add = function(date,months){
+ 		if(months==null || months==undefined || months =="") return null;
+ 		var d = null;
+ 		if(date == null) d = new Date();
+ 		else d=new Date(date);
+ 		d.setMonth(d.getMonth()+months);
+ 		var m=d.getMonth()+1;
+ 		return d.getFullYear()+'-'+m+'-'+d.getDate();
+      };
 	/**
 	 * @param value:时间戳
 	 * @param type : type为1时带时间yyyy-MM-dd hh:mm:ss,type为0时不带时间yyyy-MM-dd
@@ -113,6 +171,22 @@ function CommonUtils(){
         	return y + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d);
         }
 	}
+	/**
+	 * 获取某月的最后一天
+	 */
+	this.getLastMonthDay = function(year,month){
+		var date = null;
+		var day;
+		if(year!="" && month!=""){
+			if(month<10)month="0"+month
+			date = new Date(year,month,0);
+			day = date.getDate();
+		}else{
+			date = new Date();
+			day = new Date(date.getFullYear(), date.getMonth()-1, 0).getDate();
+		}
+		return day;
+	}
 	
 	/**
 	 *根据用户角色标记判断用户是否有角色
@@ -126,7 +200,7 @@ function CommonUtils(){
 			for (var i = 0; i < roles.length; i++) {
 				var flags = flag.split(",");
 				for ( var role in flags) {
-					if(roles[i].roleSign==role) return true;
+					if(roles[i].roleSign==flags[role]) return true;
 				}
 			}
 		}
@@ -197,9 +271,9 @@ function CommonUtils(){
 		$.messager.show({
 			title:'信息提示！',
 			msg:mess,
-			width:350,
-			height:100,
-			timeout:10000,
+			width:400,
+			height:150,
+			timeout:20000,
 			showType:'show'
 		});
 		cu.warnVoice();
@@ -210,6 +284,55 @@ function CommonUtils(){
 	this.warnVoice = function(){
 		$('#newMessageDIV').html('<audio autoplay="autoplay"><source src="'+content+'/static/voice/warn.wav" type="audio/wav"/><source src="'+content+'/static/voice/warn.wav" type="audio/mpeg"/></audio>');
 	};
+	
+	this.replaceAll = function(s,s1,s2){
+		var ns = s.replace(new RegExp(s1,"gm"),s2);
+		return ns;
+	};
+	this.unlockSubmit = function (){
+	    var passwd = $("#unlock_passwd").textbox("getValue");
+	    if(passwd=="" ||passwd==null){return ;}
+	    $.ajax({
+	        url: content + '/systemuser/unlockSubmit',
+	        type: 'POST',
+	        dataType: 'json',
+	        data: {
+	            'password': passwd,
+	            'username':user.user.username
+	        },
+	        success: function(data){
+	            if(data || data =='true'){
+	                $('#dlg-lock').dialog('close');
+	                $.cookie('lock_flag', false);
+	            }else{
+	            	$.messager.alert('提示','解锁出错！',"error");
+	            }
+	        },
+	        error: function(){
+	            $.messager.alert('提示','解锁出错！',"error");
+	        }
+	    });
+	};
+	
+	this.showtime = function(id){
+		$("#"+id).html(new Date().toLocaleString());
+		setTimeout("cu.showtime('currenttime')",1000);
+	}
+	
+	this.getParentWindow = function(){
+        var c = window;
+        while(c!= c.parent){
+        	c = c.parent;
+        }
+        return c;
+    }
+	this.isPC = function(){
+		if(/Android|webOS|iPhone|ipad|BlackBerry/i.test(navigator.userAgent)) {
+			return false;
+		}else{
+			return true;
+		}
+	}
 }
 $.fn.serializeJson=function(){
     var serializeObj={};

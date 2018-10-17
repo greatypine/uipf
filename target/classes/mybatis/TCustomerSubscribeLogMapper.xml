@@ -236,15 +236,12 @@
 	LEFT JOIN v_root_in vri on ti.root_in=vri.`value` and ti.company_id=vri.companyid
 	LEFT JOIN v_sex vs on ti.sex = vs.`value` and ti.company_id = vs.companyid
 	LEFT JOIN v_subscribe vsb on ti.`status`=vsb.`value` and ti.company_id=vsb.companyid
-	<if test="optioner !=null and optioner!=''">
-		and tsu.nickname like concat('%',#{optioner},'%')
-	</if>
 	<if test="companyid !=null">
 		and ti.company_id=#{companyid}
 	</if>
-	order by til.create_time desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
+	<if test="createTime !=null">
+		and til.create_time &gt;= #{createTime}
 	</if>
+	order by til.create_time desc 
 </select>
 </mapper>

@@ -38,8 +38,18 @@ public class TCompany extends ParamsObject{
     
     private Integer pid;
     
+    private String sortName;
     
-    public Integer getPid() {
+    
+	public String getSortName() {
+		return sortName;
+	}
+
+	public void setSortName(String sortName) {
+		this.sortName = sortName;
+	}
+
+	public Integer getPid() {
 		return pid;
 	}
 

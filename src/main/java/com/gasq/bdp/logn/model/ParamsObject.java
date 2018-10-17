@@ -28,4 +28,13 @@ public abstract class ParamsObject extends BaseBean{
 	private static final long serialVersionUID = 1L;
 	private Integer page;
 	private Integer rows;
+	private String q;
+	public String getQ() {
+		return q;
+	}
+	public void setQ(String q) {
+		this.q = q;
+	}
+	
+	
 }

@@ -2,8 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:include="include :: linkresource('首页')">
 </head>
-<link type="text/css" th:href="@{/static/css/jquerycard/default.css}" rel="stylesheet" media="screen"/>
-<link type="text/css" th:href="@{/static/css/jquerycard/styles.css}" rel="stylesheet" media="screen"/>
 <body>
 <div id="newMessageDIV" style="display:none"></div>
 <!-- 一键锁定屏幕解锁对话框 模态对话框 -->
@@ -19,36 +17,36 @@
 </div>
 
 	<div class="easyui-layout" data-options="fit:true" style="width:100%;height: 100%;" border="false">
-		<div data-options="region:'north',split:false" id="north" style="background: #f6c1bc;overflow: hidden;">
+		<div data-options="region:'north',split:false" id="north" style="overflow: hidden;">
 	        <div class="head head-right" style="float: right;padding-top: 8px;padding-right: 10px;font-size: 16px;color:#404040;padding: 5px;">
-	        	<div id="airreprot" style="width: 250px;height: 30px;float: left;margin-top: 7px;pointer-events: none;"><iframe width="250" height="30" frameborder="no" scrolling="no" border="0" marginwidth="0" marginheight="0" src="http://i.tianqi.com/index.php?c=code&id=10"></iframe></div>
-	        	<span class="glyphicon glyphicon-time" style="top: 5px;"></span><label id="currenttime" style="padding-left: 5px;position: relative;top: 3px;"></label>
+<!-- 	        	<div id="airreprot" style="width: 250px;height: 30px;float: left;margin-top: 7px;pointer-events: none;"><iframe width="250" height="30" frameborder="no" scrolling="no" border="0" marginwidth="0" marginheight="0" src="http://i.tianqi.com/index.php?c=code&id=10"></iframe></div> -->
+	        	<span id="glyphicontime" class="glyphicon glyphicon-time" style="top: 5px;"></span><label id="currenttime" style="padding-left: 5px;position: relative;top: 3px;"></label>
                 <a href="javascript:void(0)" class="easyui-menubutton" data-options="menu:'#mm_user'"><span class="glyphicon glyphicon-user"></span><label style="padding-left: 5px;" th:text="${session.user.role[0].roleName}"></label>&nbsp;&nbsp;★&nbsp;&nbsp;<label th:text="${session.user.user.nickname}"></label></a>
                 <div id="mm_user" style="width: 200px;">
                     <div data-options="iconCls:'icon-undo'" class="loginOut">安全退出</div>
                 </div>
 	        </div>
 	        <span id="companyandtime" class="head-left" style="float: left;color:#404040;font-size: 24px;padding: 5px;">
-	        	<img alt="痘院士" th:src="@{/static/images/index_logo.png}" width="40" height="35" title="痘院士" style="margin-top: -4px;"/>
-	        	<label th:text="${session.user.company.name}"></label>-客户消费信息平台
+	        	<img alt="蕾特恩" th:src="@{/static/images/index_logo.png}" width="180" height="45" title="痘院士" style="margin-top: -4px;"/>
+	        	<label id="companyname" th:text="${session.user.company.name}"></label>
 	        </span>
 		</div>
-		<div data-options="region:'west',split:false" title="系统菜单" style="width:15%;height: 95%;">
+		<div id="indexwest" data-options="region:'west',split:false" title="系统菜单" style="width:15%;height: 95%;">
 			<ul class="easyui-tree" id="myTree"> </ul>
 		</div>
-		<div data-options="region:'center',split:false" style="width:85%;height: 95%;" border="false">
+		<div id="indexcenter" data-options="region:'center',split:false" style="width:85%;height: 95%;" border="false">
 			<div id="cnt-tabs" class="easyui-tabs tabs-pill tab-color-darkblue" data-options="fit:true" style="width:100%;height: 100%;">
 				<div shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,q_counselor,q_option,q_receptionist" title="主页" data-options="closable:false" style="width:100%;height: 100%;background-color: #fafafa;">
 					<div class="easyui-layout" style="width: 100%;height: 30%;" border="false">
-						<div shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager" data-options="region:'west',split:false" style="width: 50%;height: 100%;padding: 0;margin: 0;border: 0px;" border="false">
+						<div id="indexcompanyreport" shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager" data-options="region:'west',split:false" style="width: 50%;height: 100%;padding: 0;margin: 0;border: 0px;" border="false">
 							<div id="indexreport" style="width: 100%;height: 100%;"></div>
 						</div>
-						<div shiro:hasAnyRoles="q_admin,q_counselor,q_option,q_receptionist" data-options="region:'west',split:false" style="width: 50%;height: 100%;padding: 0;margin: 0;border: 0px;" border="false">
+						<div id="indexSubscribeQuery" shiro:hasAnyRoles="q_admin,q_counselor,q_option,q_receptionist" data-options="region:'west',split:false" style="width: 50%;height: 100%;padding: 0;margin: 0;border: 0px;" border="false">
 							<table id="subscribeQuery_table" class="easyui-datagrid" title="预约列表" border="false" style="width: 100%; height: 100%;"
 								data-options="singleSelect: true,rownumbers:true,fit:true,iconCls:'icon-customer_subcrible'" >
 							</table>
 						</div>
-						<div data-options="region:'east',split:false" style="width: 50%;height: 100%;padding: 0;margin: 0;border: 0px;" border="false">
+						<div id="indexworkforceManagementQuery" data-options="region:'east',split:false" style="width: 50%;height: 100%;padding: 0;margin: 0;border: 0px;" border="false">
 							<table id="workforceManagementQuery_table" class="easyui-datagrid" title="门店排班表" border="false" style="width: 100%; height: 100%;"
 								data-options="singleSelect: true,rownumbers:true,fit:true,iconCls:'icon-workforce'" >
 							</table>
@@ -87,6 +85,9 @@
 		</div>
 	</div>
 </body>
+<link type="text/css" th:href="@{/static/css/jquerycard/default.css}" rel="stylesheet" media="screen"/>
+<link type="text/css" th:href="@{/static/css/jquerycard/styles.css}" rel="stylesheet" media="screen"/>
+<link type="text/css" th:href="@{/static/css/index/index.css}" rel="stylesheet" media="screen"/>
 <script type="text/javascript" th:src="@{/static/echarts/echarts.min.js}"></script>
 <script type="text/javascript" th:src="@{/static/echarts/ReprotTheme.js}"></script>
 <script type="text/javascript" th:src="@{/static/js/index/reports.js}"></script>

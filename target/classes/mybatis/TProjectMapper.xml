@@ -4,9 +4,14 @@
   <resultMap id="BaseResultMap" type="com.gasq.bdp.logn.model.TProject">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="project_name" jdbcType="VARCHAR" property="projectName" />
+    <result column="spell" jdbcType="VARCHAR" property="spell" />
     <result column="money" jdbcType="DECIMAL" property="money" />
     <result column="status" jdbcType="BIT" property="status" />
     <result column="discount" jdbcType="DOUBLE" property="discount" />
+    <result column="project_model" jdbcType="INTEGER" property="projectModel" />
+    <result column="project_type" jdbcType="INTEGER" property="projectType" />
+    <result column="project_nums" jdbcType="INTEGER" property="projectNums" />
+    <result column="deadline" jdbcType="INTEGER" property="deadline" />
     <result column="company_id" jdbcType="INTEGER" property="companyId" />
     <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -74,8 +79,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, project_name, money, status, discount, company_id, image_url, remark, createTime, 
-    updateTime, createUser, updateUser
+    id, project_name, spell, money, status, discount, project_model, project_type, project_nums, 
+    deadline, company_id, image_url, remark, createTime, updateTime, createUser, updateUser
   </sql>
   <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.TProjectExample" resultMap="BaseResultMap">
     select
@@ -108,18 +113,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.gasq.bdp.logn.model.TProject">
-    insert into t_project (id, project_name, money, 
-      status, discount, company_id, 
-      image_url, remark, createTime, 
-      updateTime, createUser, updateUser
-      )
-    values (#{id,jdbcType=BIGINT}, #{projectName,jdbcType=VARCHAR}, #{money,jdbcType=DECIMAL}, 
-      #{status,jdbcType=BIT}, #{discount,jdbcType=DOUBLE}, #{companyId,jdbcType=INTEGER}, 
-      #{imageUrl,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
-      #{updatetime,jdbcType=TIMESTAMP}, #{createuser,jdbcType=VARCHAR}, #{updateuser,jdbcType=VARCHAR}
-      )
+    insert into t_project (id, project_name, spell, 
+      money, status, discount, 
+      project_model, project_type, project_nums, 
+      deadline, company_id, image_url, 
+      remark, createTime, updateTime, 
+      createUser, updateUser)
+    values (#{id,jdbcType=BIGINT}, #{projectName,jdbcType=VARCHAR}, #{spell,jdbcType=VARCHAR}, 
+      #{money,jdbcType=DECIMAL}, #{status,jdbcType=BIT}, #{discount,jdbcType=DOUBLE}, 
+      #{projectModel,jdbcType=INTEGER}, #{projectType,jdbcType=INTEGER}, #{projectNums,jdbcType=INTEGER}, 
+      #{deadline,jdbcType=INTEGER}, #{companyId,jdbcType=INTEGER}, #{imageUrl,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}, 
+      #{createuser,jdbcType=VARCHAR}, #{updateuser,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.gasq.bdp.logn.model.TProject">
+  <insert id="insertSelective" parameterType="com.gasq.bdp.logn.model.TProject">
     insert into t_project
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -127,6 +134,9 @@
       </if>
       <if test="projectName != null">
         project_name,
+      </if>
+      <if test="spell != null">
+        spell,
       </if>
       <if test="money != null">
         money,
@@ -136,6 +146,18 @@
       </if>
       <if test="discount != null">
         discount,
+      </if>
+      <if test="projectModel != null">
+        project_model,
+      </if>
+      <if test="projectType != null">
+        project_type,
+      </if>
+      <if test="projectNums != null">
+        project_nums,
+      </if>
+      <if test="deadline != null">
+        deadline,
       </if>
       <if test="companyId != null">
         company_id,
@@ -166,6 +188,9 @@
       <if test="projectName != null">
         #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="spell != null">
+        #{spell,jdbcType=VARCHAR},
+      </if>
       <if test="money != null">
         #{money,jdbcType=DECIMAL},
       </if>
@@ -174,6 +199,18 @@
       </if>
       <if test="discount != null">
         #{discount,jdbcType=DOUBLE},
+      </if>
+      <if test="projectModel != null">
+        #{projectModel,jdbcType=INTEGER},
+      </if>
+      <if test="projectType != null">
+        #{projectType,jdbcType=INTEGER},
+      </if>
+      <if test="projectNums != null">
+        #{projectNums,jdbcType=INTEGER},
+      </if>
+      <if test="deadline != null">
+        #{deadline,jdbcType=INTEGER},
       </if>
       <if test="companyId != null">
         #{companyId,jdbcType=INTEGER},
@@ -213,6 +250,9 @@
       <if test="record.projectName != null">
         project_name = #{record.projectName,jdbcType=VARCHAR},
       </if>
+      <if test="record.spell != null">
+        spell = #{record.spell,jdbcType=VARCHAR},
+      </if>
       <if test="record.money != null">
         money = #{record.money,jdbcType=DECIMAL},
       </if>
@@ -221,6 +261,18 @@
       </if>
       <if test="record.discount != null">
         discount = #{record.discount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.projectModel != null">
+        project_model = #{record.projectModel,jdbcType=INTEGER},
+      </if>
+      <if test="record.projectType != null">
+        project_type = #{record.projectType,jdbcType=INTEGER},
+      </if>
+      <if test="record.projectNums != null">
+        project_nums = #{record.projectNums,jdbcType=INTEGER},
+      </if>
+      <if test="record.deadline != null">
+        deadline = #{record.deadline,jdbcType=INTEGER},
       </if>
       <if test="record.companyId != null">
         company_id = #{record.companyId,jdbcType=INTEGER},
@@ -252,9 +304,14 @@
     update t_project
     set id = #{record.id,jdbcType=BIGINT},
       project_name = #{record.projectName,jdbcType=VARCHAR},
+      spell = #{record.spell,jdbcType=VARCHAR},
       money = #{record.money,jdbcType=DECIMAL},
       status = #{record.status,jdbcType=BIT},
       discount = #{record.discount,jdbcType=DOUBLE},
+      project_model = #{record.projectModel,jdbcType=INTEGER},
+      project_type = #{record.projectType,jdbcType=INTEGER},
+      project_nums = #{record.projectNums,jdbcType=INTEGER},
+      deadline = #{record.deadline,jdbcType=INTEGER},
       company_id = #{record.companyId,jdbcType=INTEGER},
       image_url = #{record.imageUrl,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR},
@@ -272,6 +329,9 @@
       <if test="projectName != null">
         project_name = #{projectName,jdbcType=VARCHAR},
       </if>
+      <if test="spell != null">
+        spell = #{spell,jdbcType=VARCHAR},
+      </if>
       <if test="money != null">
         money = #{money,jdbcType=DECIMAL},
       </if>
@@ -280,6 +340,18 @@
       </if>
       <if test="discount != null">
         discount = #{discount,jdbcType=DOUBLE},
+      </if>
+      <if test="projectModel != null">
+        project_model = #{projectModel,jdbcType=INTEGER},
+      </if>
+      <if test="projectType != null">
+        project_type = #{projectType,jdbcType=INTEGER},
+      </if>
+      <if test="projectNums != null">
+        project_nums = #{projectNums,jdbcType=INTEGER},
+      </if>
+      <if test="deadline != null">
+        deadline = #{deadline,jdbcType=INTEGER},
       </if>
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=INTEGER},
@@ -308,9 +380,14 @@
   <update id="updateByPrimaryKey" parameterType="com.gasq.bdp.logn.model.TProject">
     update t_project
     set project_name = #{projectName,jdbcType=VARCHAR},
+      spell = #{spell,jdbcType=VARCHAR},
       money = #{money,jdbcType=DECIMAL},
       status = #{status,jdbcType=BIT},
       discount = #{discount,jdbcType=DOUBLE},
+      project_model = #{projectModel,jdbcType=INTEGER},
+      project_type = #{projectType,jdbcType=INTEGER},
+      project_nums = #{projectNums,jdbcType=INTEGER},
+      deadline = #{deadline,jdbcType=INTEGER},
       company_id = #{companyId,jdbcType=INTEGER},
       image_url = #{imageUrl,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
@@ -334,12 +411,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
+   <select id="queryPagingList" parameterType="java.util.HashMap" resultType="java.util.Map">
 	SELECT
-		p.id,p.company_id as companyId,p.discount,p.money,p.image_url imageUrl,p.project_name projectName,p.remark,p.`status`,p.createuser,tc.`name` as companyName,p.createtime
+		p.id,p.spell,p.company_id as companyId,p.project_nums as projectNums,p.discount,p.money,p.image_url imageUrl,p.project_name projectName,p.remark,p.`status`,p.createuser,tc.`name` as companyName,p.createtime,
+		p.project_type as projectType,vpt.`name` as projectTypeName,p.deadline,vpm.name as projectModelName,p.project_model as projectModel
 	FROM
 		`t_project` p
-	LEFT JOIN t_company tc on p.company_id=tc.id
+	INNER JOIN t_company tc on p.company_id=tc.id and tc.`status`=1
+	LEFT JOIN v_project_type vpt on p.project_type=vpt.`value` and p.company_id=vpt.companyid
+	LEFT JOIN v_project_model vpm on p.project_model=vpm.`value` and p.company_id=vpm.companyid
 	where 1=1 
 	<if test="projectname !=null and projectname!=''">
 		and p.project_name like concat('%',#{projectname},'%')
@@ -347,15 +427,21 @@
 	<if test="status !=null">
 		and p.status=#{status}
 	</if>
+	<if test="projectModel !=null">
+		and p.project_model=#{projectModel}
+	</if>
+	<if test="projectType !=null">
+		and p.project_type=#{projectType}
+	</if>
 	<if test="discount !=null">
 		and p.discount=#{discount}
+	</if>
+	<if test="companyid !=null">
+		and p.company_id=#{companyid}
 	</if>
 	<if test="remark !=null">
 		and p.remark like concat('%',#{remark},'%')
 	</if>
 	order by p.updatetime desc 
-	<if test="index !=null and pageSize!=null">
-		limit #{index},#{pageSize}
-	</if>
 </select>
 </mapper>

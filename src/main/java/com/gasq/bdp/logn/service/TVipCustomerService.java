@@ -24,4 +24,6 @@ public interface TVipCustomerService {
 
 	boolean createConsumptonOrder(TVipCustomer bean);
 
+	boolean transferTreatment(TVipCustomer bean) throws Exception;
+
 }

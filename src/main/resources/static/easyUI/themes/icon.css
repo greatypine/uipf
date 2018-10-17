@@ -277,3 +277,11 @@
 .icon-password{
 	background:url('icons/password.png') no-repeat center center;
 }
+/* 流程 */
+.icon-flow_chart{
+	background:url('icons/flow_chart.png') no-repeat center center;
+}
+/* 项目类型统计 */
+.icon-countproject{
+	background:url('icons/countproject.png') no-repeat center center;
+}

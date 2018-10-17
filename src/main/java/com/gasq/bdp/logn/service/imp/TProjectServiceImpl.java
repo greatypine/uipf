@@ -3,7 +3,6 @@
  */
 package com.gasq.bdp.logn.service.imp;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,8 @@ import com.gasq.bdp.logn.model.TProjectExample.Criteria;
 import com.gasq.bdp.logn.service.TSysProjectService;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.WorkFlowUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
 /**
  * @author 巨伟刚
@@ -89,6 +90,14 @@ public class TProjectServiceImpl implements TSysProjectService {
 		if(StringUtils.isNotBlank(bean.getRemark())) {
 			c.andRemarkLike("%"+bean.getRemark()+"%");
 		}
+		if(bean.getQ()!=null && !"".equals(bean.getQ())) {
+			if(!bean.getQ().equals(" ")) {
+				c.andProjectNameLike("%"+bean.getQ()+"%");
+				Criteria c1 = example.createCriteria();
+				c1.andSpellLike("%"+bean.getQ()+"%");
+				example.or(c1);
+			}
+		}
 		example.setOrderByClause(" id asc ");
 		return projectMapper.selectByExample(example);
 	}
@@ -101,14 +110,7 @@ public class TProjectServiceImpl implements TSysProjectService {
 	@Override
 	public Map<String, Object> queryPagingList(TProject bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
-		List<Map<String, Object>> list = null;
-		int start = 0;
-		int intPage = ( bean.getPage()==0) ? 1 : bean.getPage();
-		int number = (bean.getRows()==0) ? 10 : bean.getRows();
-		start = (intPage - 1) * number;
 		Map<String, Object> params= new  HashMap<String, Object>();
-		params.put("index", start);
-		params.put("pageSize", number);
 		if(bean.getProjectName()!=null) {
 			params.put("projectname", bean.getProjectName());
 		}
@@ -137,11 +139,12 @@ public class TProjectServiceImpl implements TSysProjectService {
 				params.put("companyid", SystemUserInfo.getSystemUser().getCompany().getId());
 			}
 		}
-		list = projectMapper.queryPagingList(params);
-		if(list==null) list = new ArrayList<Map<String,Object>>(); 
-		Integer count = projectMapper.countByBean(params);
-		result.put("rows",list);
-		result.put("total",count);
+		PageHelper.startPage(bean.getPage(), bean.getRows());
+		List<Map<String, Object>> listmaps = projectMapper.queryPagingList(params);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		result.clear();
+		result.put("rows",listmaps);
+		result.put("total",pageinfo.getTotal());
 		return result;
 	}
 

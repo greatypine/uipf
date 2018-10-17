@@ -12,7 +12,7 @@
     <!-- 彩色日志格式 -->
     <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}" />
     <!-- Console 输出设置 -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="STDOUTCOLOR" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
             <charset>utf8</charset>
@@ -21,12 +21,12 @@
     
     
     <!-- 不带彩色的日志在控制台输出时候的设置 -->
-    <!-- <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> 
-             格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 
+<!--              格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符  -->
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>   
         </encoder> 
-    </appender> -->
+    </appender>
     <!-- 按照每天生成日志文件 -->   
     <appender name="FILE"  class="ch.qos.logback.core.rolling.RollingFileAppender">   
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -58,9 +58,9 @@
     <logger name="java.sql.PreparedStatement" level="DEBUG"/> -->
     
     <!-- 日志输出级别 -->
-    <root level="DEBUG">
+    <root level="info">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
+<!--         <appender-ref ref="FILE" /> -->
     </root> 
      <!--日志异步到数据库 -->  
     <!-- <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
