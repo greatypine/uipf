@@ -66,4 +66,6 @@ public interface CommonService {
 
 	Map<String, Object> queryProjectTypeChangeReport(Integer companyid, String starttime, String endtime);
 
+	Map<String, Object> queryStoreReport(Integer companyid, String endtime, Integer page, Integer rows);
+
 }

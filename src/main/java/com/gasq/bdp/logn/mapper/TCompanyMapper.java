@@ -82,4 +82,6 @@ public interface TCompanyMapper {
 	List<Map<String, Object>> queryProjectTypeReport(Map<String, Object> map);
 
 	List<Map<String, Object>> queryProjectTypeChangeReport(Map<String, Object> map);
+
+	List<Map<String, Object>> queryStoreReport(Map<String, Object> map);
 }

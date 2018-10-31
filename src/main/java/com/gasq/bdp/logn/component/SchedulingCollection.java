@@ -316,13 +316,13 @@ public class SchedulingCollection {
 //							Integer userid = Integer.parseInt(map.get("id").toString());
 							Boolean disabled = Boolean.parseBoolean(map.get("disabled").toString());
 							if(!disabled) {
-//								for (int i = 0; i < 7; i++) {
+								for (int i = 0; i < 30; i++) {
 									TTherapistTreatmentTimeQuery tttq = new TTherapistTreatmentTimeQuery();
 									tttq.setCompanyid(tCompany.getId());
 									tttq.setCycle(DateUtil.dateToString(DateUtil.getDiyDateTime(DateUtil.getSysCurrentDate(), 7)));
 									tttq.setUsername(nickname);
 									tttqs.add(tttq);
-//								}
+								}
 							}
 						}
 						treatmentTimeQueryMapper.insertBatch(tttqs);

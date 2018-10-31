@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="linkresource(title)">
+	<title>客户消费信息平台</title>
+	<link rel="shortcut icon" th:href="@{/static/easyUI/themes/icons/Flower.ico}"/>
+<!-- 	<link rel="shortcut icon" th:href="@{/static/images/index_logo.png}"/> -->
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" type="text/css" th:href="@{/static/bootstrap/css/bootstrap.min.css}"/>
+<!-- 	<link rel="stylesheet" type="text/css" th:href="@{/static/css/font.css}"/> -->
+	<link rel="stylesheet" type="text/css" th:href="@{/static/css/weadmin.css}"/>
+	<link rel="stylesheet" th:href="@{/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css}">
+	<script type="text/javascript" th:src="@{/static/Jquery/jquery.min.js}"></script>
+	<script type="text/javascript" th:src="@{/static/layui/layui.js}" charset="utf-8"></script>
+	<script type="text/javascript" th:src="@{/static/js/CommonUtils.js}"></script>
+	<script th:inline="javascript">
+		var path=[[${path}]];
+		var content=[[${content}]];
+		var user = [[${session.user}]];
+	</script>
+	<script type="text/javascript" th:src="@{/static/js/ltn/include.js}"></script>
+</head>
+</html>

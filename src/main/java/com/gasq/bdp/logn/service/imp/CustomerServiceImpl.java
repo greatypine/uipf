@@ -195,6 +195,14 @@ public class CustomerServiceImpl implements CustomerService {
 			String statuss = String.join(",",bean.getStatus().toString());
 			bean.setStatuss(statuss.split(","));
 		}
+		if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+			if(WorkFlowUtil.hasAnyRoles(RoleSign.Q_COUNELOR)) {
+				bean.setCounsoler(SystemUserInfo.getSystemUser().getUser().getId().intValue());
+			}
+			if(WorkFlowUtil.hasAnyRoles(RoleSign.Q_OPTION)) {
+				bean.setTherapeutist(SystemUserInfo.getSystemUser().getUser().getId().intValue());
+			}
+		}
 		PageHelper.startPage(bean.getPage(), bean.getRows());
 		List<Map<String, Object>> listmaps = customerMapper.queryPagingList(bean);
 		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
@@ -250,7 +258,9 @@ public class CustomerServiceImpl implements CustomerService {
 			int oldtime = 0;
 			if(bean.getId()!=null) {
 				TLtnCustomer ltnCustomer = customerMapper.selectByPrimaryKey(bean.getId());
-				oldttid = ltnCustomer.getTherapeutist().longValue();
+				if(ltnCustomer.getTherapeutist()!=null && ltnCustomer.getTherapeutist().intValue()!=0){
+					oldttid = ltnCustomer.getTherapeutist().longValue();
+				}
 				bean.setUpdateuser(user.getUsername());
 				customerMapper.updateByPrimaryKeySelective(bean);
 				logger.info("更改修改用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+",消费记录！");
@@ -261,155 +271,78 @@ public class CustomerServiceImpl implements CustomerService {
 				logger.info("成功添加用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"消费记录！");
 			}
 			//---------------------------开始处理治疗师时间段-------------------
-			logger.info("开始处理治疗师时间段！");
-			if(bean.getTreatmentTime()==null || bean.getId()!=null) {
-				TTherapistTreatmentTimeInfoExample tttiexample = new TTherapistTreatmentTimeInfoExample();
-				tttiexample.createCriteria().andOrderIdEqualTo(bean.getId());
-				treatmentTimeInfoMapper.deleteByExample(tttiexample);
-			}
-			long ttticount = 0L;
-			if(bean.getChuFuZhen()==0) {//初诊
-				TTherapistTreatmentTimeInfoExample tttiexample1 = new TTherapistTreatmentTimeInfoExample();
-				Criteria c = tttiexample1.createCriteria();
-				c.andStatusEqualTo(true).andDayEqualTo(bean.getCureTime()).andUserIdEqualTo(bean.getTherapeutist()).andChuFuZhenEqualTo(bean.getChuFuZhen().shortValue());
-				ttticount = treatmentTimeInfoMapper.countByExample(tttiexample1);
-				//检查info中是否有（当天、出诊、所选治疗师）的信息
-				if(ttticount<=0) {//如果没有
+			if(type==null) {
+				TTherapistTreatmentTimeInfo oldtreatmentTimeInfo = null;
+				logger.info("开始处理治疗师时间段！");
+				if(bean.getId()!=null) {
 					TTherapistTreatmentTimeInfoExample tttiexample = new TTherapistTreatmentTimeInfoExample();
-					tttiexample.createCriteria().andStatusEqualTo(true).andDayEqualTo(bean.getCureTime()).andOrderIdEqualTo(bean.getId());
-					List<TTherapistTreatmentTimeInfo> tttilist = treatmentTimeInfoMapper.selectByExample(tttiexample);
-					//查询当天中这个订单对应的治疗时间短信息
-					if(tttilist.size()>0) {//如果有 则先删除之前的订单 在创建一个新的信息
-						treatmentTimeInfoMapper.deleteByExample(tttiexample);
-						TTherapistTreatmentTimeInfo treatmentTimeInfo1 = new TTherapistTreatmentTimeInfo();
-						treatmentTimeInfo1.setCompanyid(user.getCompanyid());
-						treatmentTimeInfo1.setCreateTime(DateUtil.getSysCurrentDate());
-						treatmentTimeInfo1.setCreateUser(user.getNickname());
-						treatmentTimeInfo1.setTreatmentTime(bean.getTreatmentTime());
-						treatmentTimeInfo1.setOrderId(bean.getId());
-						treatmentTimeInfo1.setDay(bean.getCureTime());
-						treatmentTimeInfo1.setUserId(bean.getTherapeutist());
-						treatmentTimeInfo1.setStatus(true);
-						treatmentTimeInfo1.setChuFuZhen(bean.getChuFuZhen().shortValue());
-						treatmentTimeInfoMapper.insertSelective(treatmentTimeInfo1);
-					}else {//如果没有则直接创建一个时间短信息
-						TTherapistTreatmentTimeInfo treatmentTimeInfo = new TTherapistTreatmentTimeInfo();
-						treatmentTimeInfo.setCompanyid(user.getCompanyid());
-						treatmentTimeInfo.setCreateTime(DateUtil.getSysCurrentDate());
-						treatmentTimeInfo.setCreateUser(user.getNickname());
-						treatmentTimeInfo.setTreatmentTime(bean.getTreatmentTime());
-						treatmentTimeInfo.setOrderId(bean.getId());
-						treatmentTimeInfo.setDay(bean.getCureTime());
-						treatmentTimeInfo.setUserId(bean.getTherapeutist());
-						treatmentTimeInfo.setStatus(true);
-						treatmentTimeInfo.setChuFuZhen(bean.getChuFuZhen().shortValue());
-						treatmentTimeInfoMapper.insertSelective(treatmentTimeInfo);
-					}
-					//---------------------更新排班查询表-----------------
-					if(oldttid!=bean.getTherapeutist() && (oldtime==0 || oldtime == bean.getTreatmentTime())) {//如果订单之前的治疗师和当前要修改的订单治疗师不相同
-						//----在查询排班表里先删除上一个指定人的时间段
-						TTherapistTreatmentTimeQueryExample tttqexample1 = new TTherapistTreatmentTimeQueryExample();
-						TSysUser tu1 = userMapper.selectByPrimaryKey(oldttid);
-						tttqexample1.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu1.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime())).andCreateUserIsNull();
-						List<TTherapistTreatmentTimeQuery> tttqlist1 = treatmentTimeQueryMapper.selectByExample(tttqexample1);
-						if(tttqlist1.size()>0) {
-							TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist1.get(0);
-							setHaveNoValTime(bean.getTreatmentTime(), treatmentTimeQuery);
-							treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
-							treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
-							treatmentTimeQuery.setUpdateUser(user.getNickname());
-							treatmentTimeQueryMapper.updateByPrimaryKey(treatmentTimeQuery);
-						}else {
-							TTherapistTreatmentTimeQuery treatmentTimeQuery = new TTherapistTreatmentTimeQuery();
-							setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
-							treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
-							treatmentTimeQuery.setCreateUser(user.getNickname());
-							treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
-							treatmentTimeQuery.setUpdateUser(null);
-							treatmentTimeQuery.setCycle(DateUtil.dateToString(bean.getCureTime()));
-							treatmentTimeQuery.setId(null);
-							treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
-						}
-					}
-					//更新当前修改过的治疗师时间段
-					//更新排班表里的时间
-					TTherapistTreatmentTimeQueryExample tttqexample = new TTherapistTreatmentTimeQueryExample();
-					TSysUser tu = userMapper.selectByPrimaryKey(bean.getTherapeutist().longValue());
-					tttqexample.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime())).andCreateUserIsNull();
-					List<TTherapistTreatmentTimeQuery> tttqlist = treatmentTimeQueryMapper.selectByExample(tttqexample);
-					if(tttqlist.size()>0) {
-						TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist.get(0);
-						setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
-						treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
-						treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
-						treatmentTimeQuery.setUpdateUser(user.getNickname());
-						treatmentTimeQueryMapper.updateByPrimaryKey(treatmentTimeQuery);
-					}else {
-						TTherapistTreatmentTimeQuery treatmentTimeQuery = new TTherapistTreatmentTimeQuery();
-						setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
-						treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
-						treatmentTimeQuery.setCreateUser(user.getNickname());
-						treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
-						treatmentTimeQuery.setUpdateUser(null);
-						treatmentTimeQuery.setCycle(DateUtil.dateToString(bean.getCureTime()));
-						treatmentTimeQuery.setId(null);
-						treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
-					}
-				}else {//如果有info信息
-					//再根据当前订单查询info
-					c.andOrderIdEqualTo(bean.getId());
-					List<TTherapistTreatmentTimeInfo> list = treatmentTimeInfoMapper.selectByExample(tttiexample1);
-					//查询当天、治疗师、出诊、当前订单的信息
-					if(list.size()>0) {//如果有
-						TTherapistTreatmentTimeInfo treatmentTimeInfo = list.get(0);
-						oldtime = treatmentTimeInfo.getTreatmentTime();
-						if(bean.getTreatmentTime()!=oldtime) {//如果所操作的订单治疗时间段和info数据库中的时间段不一样 
-							//则更新当前时间段
+					tttiexample.createCriteria().andOrderIdEqualTo(bean.getId());
+					List<TTherapistTreatmentTimeInfo> list = treatmentTimeInfoMapper.selectByExample(tttiexample);
+					if(list.size()>0) oldtreatmentTimeInfo = list.get(0);
+					treatmentTimeInfoMapper.deleteByExample(tttiexample);
+				}
+				long ttticount = 0L;
+				if(bean.getChuFuZhen()==0) {//初诊
+					TTherapistTreatmentTimeInfoExample tttiexample1 = new TTherapistTreatmentTimeInfoExample();
+					Criteria c = tttiexample1.createCriteria();
+					c.andStatusEqualTo(true).andDayEqualTo(bean.getCureTime()).andUserIdEqualTo(bean.getTherapeutist()).andChuFuZhenEqualTo(bean.getChuFuZhen().shortValue());
+					ttticount = treatmentTimeInfoMapper.countByExample(tttiexample1);
+					//检查info中是否有（当天、出诊、所选治疗师）的信息
+					if(ttticount<=0) {//如果没有
+						TTherapistTreatmentTimeInfoExample tttiexample = new TTherapistTreatmentTimeInfoExample();
+						tttiexample.createCriteria().andStatusEqualTo(true).andDayEqualTo(bean.getCureTime()).andOrderIdEqualTo(bean.getId());
+						List<TTherapistTreatmentTimeInfo> tttilist = treatmentTimeInfoMapper.selectByExample(tttiexample);
+						//查询当天中这个订单对应的治疗时间短信息
+						if(tttilist.size()>0) {//如果有 则先删除之前的订单 在创建一个新的信息
+							treatmentTimeInfoMapper.deleteByExample(tttiexample);
+							TTherapistTreatmentTimeInfo treatmentTimeInfo1 = new TTherapistTreatmentTimeInfo();
+							treatmentTimeInfo1.setCompanyid(user.getCompanyid());
+							treatmentTimeInfo1.setCreateTime(DateUtil.getSysCurrentDate());
+							treatmentTimeInfo1.setCreateUser(user.getNickname());
+							treatmentTimeInfo1.setTreatmentTime(bean.getTreatmentTime());
+							treatmentTimeInfo1.setOrderId(bean.getId());
+							treatmentTimeInfo1.setDay(bean.getCureTime());
+							treatmentTimeInfo1.setUserId(bean.getTherapeutist());
+							treatmentTimeInfo1.setStatus(true);
+							treatmentTimeInfo1.setChuFuZhen(bean.getChuFuZhen().shortValue());
+							treatmentTimeInfoMapper.insertSelective(treatmentTimeInfo1);
+						}else {//如果没有则直接创建一个时间短信息
+							TTherapistTreatmentTimeInfo treatmentTimeInfo = new TTherapistTreatmentTimeInfo();
+							treatmentTimeInfo.setCompanyid(user.getCompanyid());
+							treatmentTimeInfo.setCreateTime(DateUtil.getSysCurrentDate());
+							treatmentTimeInfo.setCreateUser(user.getNickname());
 							treatmentTimeInfo.setTreatmentTime(bean.getTreatmentTime());
-							treatmentTimeInfoMapper.updateByPrimaryKeySelective(treatmentTimeInfo);
-							
-							//再更新排班表里的时间段
-							//---------------------更新排班查询表-----------------
-							if(oldtime!=0) {
+							treatmentTimeInfo.setOrderId(bean.getId());
+							treatmentTimeInfo.setDay(bean.getCureTime());
+							treatmentTimeInfo.setUserId(bean.getTherapeutist());
+							treatmentTimeInfo.setStatus(true);
+							treatmentTimeInfo.setChuFuZhen(bean.getChuFuZhen().shortValue());
+							treatmentTimeInfoMapper.insertSelective(treatmentTimeInfo);
+							if(oldtreatmentTimeInfo!=null) {
 								TTherapistTreatmentTimeQueryExample tttqexample = new TTherapistTreatmentTimeQueryExample();
 								TSysUser tu = userMapper.selectByPrimaryKey(bean.getTherapeutist().longValue());
 								tttqexample.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime())).andCreateUserIsNull();
 								List<TTherapistTreatmentTimeQuery> tttqlist = treatmentTimeQueryMapper.selectByExample(tttqexample);
 								if(tttqlist.size()>0) {
 									TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist.get(0);
-									setHaveNoValTime(oldtime, treatmentTimeQuery);
+									setHaveNoValTime(oldtreatmentTimeInfo.getTreatmentTime(), treatmentTimeQuery);
 									setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
 									treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
 									treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
 									treatmentTimeQuery.setUpdateUser(user.getNickname());
 									treatmentTimeQueryMapper.updateByPrimaryKey(treatmentTimeQuery);
-								}else {
-									TTherapistTreatmentTimeQuery treatmentTimeQuery = new TTherapistTreatmentTimeQuery();
-									setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
-									treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
-									treatmentTimeQuery.setCreateUser(user.getNickname());
-									treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
-									treatmentTimeQuery.setUpdateUser(null);
-									treatmentTimeQuery.setCycle(DateUtil.dateToString(bean.getCureTime()));
-									treatmentTimeQuery.setId(null);
-									treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
 								}
 							}
 						}
-					}else {//如果没有 直接插入info 在更新排班表中的时间段
-						//更改治疗师
-						//首先删除以前的info信息
-						TTherapistTreatmentTimeInfoExample tttiexample = new TTherapistTreatmentTimeInfoExample();
-						tttiexample.createCriteria().andStatusEqualTo(true).andDayEqualTo(bean.getCureTime()).andOrderIdEqualTo(bean.getId()).andUserIdEqualTo((int)oldttid);
-						int dc = treatmentTimeInfoMapper.deleteByExample(tttiexample);
-						if(dc>0) {
-							//---------------------更新排班查询表-----------------
-							TTherapistTreatmentTimeQueryExample tttqexample = new TTherapistTreatmentTimeQueryExample();
-							TSysUser tu = userMapper.selectByPrimaryKey(oldttid);
-							tttqexample.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime())).andCreateUserIsNull();
-							List<TTherapistTreatmentTimeQuery> tttqlist = treatmentTimeQueryMapper.selectByExample(tttqexample);
-							if(tttqlist.size()>0) {
-								TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist.get(0);
+						//---------------------更新排班查询表-----------------
+						if(oldttid!=bean.getTherapeutist() && (oldtime==0 || oldtime == bean.getTreatmentTime())) {//如果订单之前的治疗师和当前要修改的订单治疗师不相同
+							//----在查询排班表里先删除上一个指定人的时间段
+							TTherapistTreatmentTimeQueryExample tttqexample1 = new TTherapistTreatmentTimeQueryExample();
+							TSysUser tu1 = userMapper.selectByPrimaryKey(oldttid);
+							tttqexample1.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu1.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime())).andCreateUserIsNull();
+							List<TTherapistTreatmentTimeQuery> tttqlist1 = treatmentTimeQueryMapper.selectByExample(tttqexample1);
+							if(tttqlist1.size()>0) {
+								TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist1.get(0);
 								setHaveNoValTime(bean.getTreatmentTime(), treatmentTimeQuery);
 								treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
 								treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
@@ -427,24 +360,14 @@ public class CustomerServiceImpl implements CustomerService {
 								treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
 							}
 						}
-						TTherapistTreatmentTimeInfo treatmentTimeInfo = new TTherapistTreatmentTimeInfo();
-						treatmentTimeInfo.setCompanyid(user.getCompanyid());
-						treatmentTimeInfo.setCreateTime(DateUtil.getSysCurrentDate());
-						treatmentTimeInfo.setCreateUser(user.getNickname());
-						treatmentTimeInfo.setTreatmentTime(bean.getTreatmentTime());
-						treatmentTimeInfo.setOrderId(bean.getId());
-						treatmentTimeInfo.setDay(bean.getCureTime());
-						treatmentTimeInfo.setUserId(bean.getTherapeutist());
-						treatmentTimeInfo.setStatus(true);
-						treatmentTimeInfo.setChuFuZhen(bean.getChuFuZhen().shortValue());
-						treatmentTimeInfoMapper.insertSelective(treatmentTimeInfo);
-						//---------------------更新排班查询表-----------------
-						TTherapistTreatmentTimeQueryExample tttqexample2 = new TTherapistTreatmentTimeQueryExample();
-						TSysUser tu2 = userMapper.selectByPrimaryKey(bean.getTherapeutist().longValue());
-						tttqexample2.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu2.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime())).andCreateUserIsNull();
-						List<TTherapistTreatmentTimeQuery> tttqlist2 = treatmentTimeQueryMapper.selectByExample(tttqexample2);
-						if(tttqlist2.size()>0) {
-							TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist2.get(0);
+						//更新当前修改过的治疗师时间段
+						//更新排班表里的时间
+						TTherapistTreatmentTimeQueryExample tttqexample = new TTherapistTreatmentTimeQueryExample();
+						TSysUser tu = userMapper.selectByPrimaryKey(bean.getTherapeutist().longValue());
+						tttqexample.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime())).andCreateUserIsNull();
+						List<TTherapistTreatmentTimeQuery> tttqlist = treatmentTimeQueryMapper.selectByExample(tttqexample);
+						if(tttqlist.size()>0) {
+							TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist.get(0);
 							setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
 							treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
 							treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
@@ -461,52 +384,159 @@ public class CustomerServiceImpl implements CustomerService {
 							treatmentTimeQuery.setId(null);
 							treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
 						}
-					}
+					}else {//如果有info信息
+						//再根据当前订单查询info
+						c.andOrderIdEqualTo(bean.getId());
+						List<TTherapistTreatmentTimeInfo> list = treatmentTimeInfoMapper.selectByExample(tttiexample1);
+						//查询当天、治疗师、出诊、当前订单的信息
+						if(list.size()>0) {//如果有
+							TTherapistTreatmentTimeInfo treatmentTimeInfo = list.get(0);
+							oldtime = treatmentTimeInfo.getTreatmentTime();
+							if(bean.getTreatmentTime()!=oldtime) {//如果所操作的订单治疗时间段和info数据库中的时间段不一样 
+								//则更新当前时间段
+								treatmentTimeInfo.setTreatmentTime(bean.getTreatmentTime());
+								treatmentTimeInfoMapper.updateByPrimaryKeySelective(treatmentTimeInfo);
+								
+								//再更新排班表里的时间段
+								//---------------------更新排班查询表-----------------
+								if(oldtime!=0) {
+									TTherapistTreatmentTimeQueryExample tttqexample = new TTherapistTreatmentTimeQueryExample();
+									TSysUser tu = userMapper.selectByPrimaryKey(bean.getTherapeutist().longValue());
+									tttqexample.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime())).andCreateUserIsNull();
+									List<TTherapistTreatmentTimeQuery> tttqlist = treatmentTimeQueryMapper.selectByExample(tttqexample);
+									if(tttqlist.size()>0) {
+										TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist.get(0);
+										setHaveNoValTime(oldtime, treatmentTimeQuery);
+										setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
+										treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
+										treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
+										treatmentTimeQuery.setUpdateUser(user.getNickname());
+										treatmentTimeQueryMapper.updateByPrimaryKey(treatmentTimeQuery);
+									}else {
+										TTherapistTreatmentTimeQuery treatmentTimeQuery = new TTherapistTreatmentTimeQuery();
+										setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
+										treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
+										treatmentTimeQuery.setCreateUser(user.getNickname());
+										treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
+										treatmentTimeQuery.setUpdateUser(null);
+										treatmentTimeQuery.setCycle(DateUtil.dateToString(bean.getCureTime()));
+										treatmentTimeQuery.setId(null);
+										treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
+									}
+								}
+							}
+						}else {//如果没有 直接插入info 在更新排班表中的时间段
+							//更改治疗师
+							//首先删除以前的info信息
+							TTherapistTreatmentTimeInfoExample tttiexample = new TTherapistTreatmentTimeInfoExample();
+							tttiexample.createCriteria().andStatusEqualTo(true).andDayEqualTo(bean.getCureTime()).andOrderIdEqualTo(bean.getId()).andUserIdEqualTo((int)oldttid);
+							int dc = treatmentTimeInfoMapper.deleteByExample(tttiexample);
+							if(dc>0) {
+								//---------------------更新排班查询表-----------------
+								TTherapistTreatmentTimeQueryExample tttqexample = new TTherapistTreatmentTimeQueryExample();
+								TSysUser tu = userMapper.selectByPrimaryKey(oldttid);
+								tttqexample.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime())).andCreateUserIsNull();
+								List<TTherapistTreatmentTimeQuery> tttqlist = treatmentTimeQueryMapper.selectByExample(tttqexample);
+								if(tttqlist.size()>0) {
+									TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist.get(0);
+									setHaveNoValTime(bean.getTreatmentTime(), treatmentTimeQuery);
+									treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
+									treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
+									treatmentTimeQuery.setUpdateUser(user.getNickname());
+									treatmentTimeQueryMapper.updateByPrimaryKey(treatmentTimeQuery);
+								}else {
+									TTherapistTreatmentTimeQuery treatmentTimeQuery = new TTherapistTreatmentTimeQuery();
+									setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
+									treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
+									treatmentTimeQuery.setCreateUser(user.getNickname());
+									treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
+									treatmentTimeQuery.setUpdateUser(null);
+									treatmentTimeQuery.setCycle(DateUtil.dateToString(bean.getCureTime()));
+									treatmentTimeQuery.setId(null);
+									treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
+								}
+							}
+							TTherapistTreatmentTimeInfo treatmentTimeInfo = new TTherapistTreatmentTimeInfo();
+							treatmentTimeInfo.setCompanyid(user.getCompanyid());
+							treatmentTimeInfo.setCreateTime(DateUtil.getSysCurrentDate());
+							treatmentTimeInfo.setCreateUser(user.getNickname());
+							treatmentTimeInfo.setTreatmentTime(bean.getTreatmentTime());
+							treatmentTimeInfo.setOrderId(bean.getId());
+							treatmentTimeInfo.setDay(bean.getCureTime());
+							treatmentTimeInfo.setUserId(bean.getTherapeutist());
+							treatmentTimeInfo.setStatus(true);
+							treatmentTimeInfo.setChuFuZhen(bean.getChuFuZhen().shortValue());
+							treatmentTimeInfoMapper.insertSelective(treatmentTimeInfo);
+							//---------------------更新排班查询表-----------------
+							TTherapistTreatmentTimeQueryExample tttqexample2 = new TTherapistTreatmentTimeQueryExample();
+							TSysUser tu2 = userMapper.selectByPrimaryKey(bean.getTherapeutist().longValue());
+							tttqexample2.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu2.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime())).andCreateUserIsNull();
+							List<TTherapistTreatmentTimeQuery> tttqlist2 = treatmentTimeQueryMapper.selectByExample(tttqexample2);
+							if(tttqlist2.size()>0) {
+								TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist2.get(0);
+								setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
+								treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
+								treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
+								treatmentTimeQuery.setUpdateUser(user.getNickname());
+								treatmentTimeQueryMapper.updateByPrimaryKey(treatmentTimeQuery);
+							}else {
+								TTherapistTreatmentTimeQuery treatmentTimeQuery = new TTherapistTreatmentTimeQuery();
+								setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
+								treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
+								treatmentTimeQuery.setCreateUser(user.getNickname());
+								treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
+								treatmentTimeQuery.setUpdateUser(null);
+								treatmentTimeQuery.setCycle(DateUtil.dateToString(bean.getCureTime()));
+								treatmentTimeQuery.setId(null);
+								treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
+							}
+						}
 //						result.put("status", false);
 //						result.put("mess", "用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"，操作失败！所选的时间段已经有约，请重新选择！");
 //						logger.error("用户："+bean.getCustomername()+"，手机:"+bean.getPhonenumb()+"，操作失败！所选的时间段已经有约，请重新选择！");
 //						TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+					}
+				}else {//复诊 可以添加不考虑是否有其他人预约
+					TTherapistTreatmentTimeInfo treatmentTimeInfo = new TTherapistTreatmentTimeInfo();
+					treatmentTimeInfo.setCompanyid(user.getCompanyid());
+					treatmentTimeInfo.setCreateTime(DateUtil.getSysCurrentDate());
+					treatmentTimeInfo.setCreateUser(user.getNickname());
+					treatmentTimeInfo.setTreatmentTime(bean.getTreatmentTime());
+					treatmentTimeInfo.setOrderId(bean.getId());
+					treatmentTimeInfo.setDay(bean.getCureTime());
+					treatmentTimeInfo.setUserId(bean.getTherapeutist());
+					treatmentTimeInfo.setStatus(true);
+					treatmentTimeInfo.setChuFuZhen(bean.getChuFuZhen().shortValue());
+					treatmentTimeInfoMapper.insertSelective(treatmentTimeInfo);
+					//复诊直接添加一条新数据 createuser为当前操作人
+					TTherapistTreatmentTimeQueryExample tttqexample = new TTherapistTreatmentTimeQueryExample();
+					TSysUser tu = userMapper.selectByPrimaryKey(bean.getTherapeutist().longValue());
+					tttqexample.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime()));
+					List<TTherapistTreatmentTimeQuery> tttqlist = treatmentTimeQueryMapper.selectByExample(tttqexample);
+					if(tttqlist.size()>0) {
+						TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist.get(0);
+						setTimeValEmpty(treatmentTimeQuery);
+						setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
+						treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
+						treatmentTimeQuery.setCreateUser(user.getNickname());
+						treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
+						treatmentTimeQuery.setUpdateUser(user.getNickname());
+						treatmentTimeQuery.setId(null);
+						treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
+					}else {
+						TTherapistTreatmentTimeQuery treatmentTimeQuery = new TTherapistTreatmentTimeQuery();
+						setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
+						treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
+						treatmentTimeQuery.setCreateUser(user.getNickname());
+						treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
+						treatmentTimeQuery.setUpdateUser(user.getNickname());
+						treatmentTimeQuery.setCycle(DateUtil.dateToString(bean.getCureTime()));
+						treatmentTimeQuery.setId(null);
+						treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
+					}
 				}
-			}else {//复诊 可以添加不考虑是否有其他人预约
-				TTherapistTreatmentTimeInfo treatmentTimeInfo = new TTherapistTreatmentTimeInfo();
-				treatmentTimeInfo.setCompanyid(user.getCompanyid());
-				treatmentTimeInfo.setCreateTime(DateUtil.getSysCurrentDate());
-				treatmentTimeInfo.setCreateUser(user.getNickname());
-				treatmentTimeInfo.setTreatmentTime(bean.getTreatmentTime());
-				treatmentTimeInfo.setOrderId(bean.getId());
-				treatmentTimeInfo.setDay(bean.getCureTime());
-				treatmentTimeInfo.setUserId(bean.getTherapeutist());
-				treatmentTimeInfo.setStatus(true);
-				treatmentTimeInfo.setChuFuZhen(bean.getChuFuZhen().shortValue());
-				treatmentTimeInfoMapper.insertSelective(treatmentTimeInfo);
-				//复诊直接添加一条新数据 createuser为当前操作人
-				TTherapistTreatmentTimeQueryExample tttqexample = new TTherapistTreatmentTimeQueryExample();
-				TSysUser tu = userMapper.selectByPrimaryKey(bean.getTherapeutist().longValue());
-				tttqexample.createCriteria().andCompanyidEqualTo(user.getCompanyid()).andUsernameEqualTo(tu.getNickname()).andCycleEqualTo(DateUtil.getDateStr(bean.getCureTime()));
-				List<TTherapistTreatmentTimeQuery> tttqlist = treatmentTimeQueryMapper.selectByExample(tttqexample);
-				if(tttqlist.size()>0) {
-					TTherapistTreatmentTimeQuery treatmentTimeQuery = tttqlist.get(0);
-					setTimeValEmpty(treatmentTimeQuery);
-					setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
-					treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
-					treatmentTimeQuery.setCreateUser(user.getNickname());
-					treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
-					treatmentTimeQuery.setUpdateUser(user.getNickname());
-					treatmentTimeQuery.setId(null);
-					treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
-				}else {
-					TTherapistTreatmentTimeQuery treatmentTimeQuery = new TTherapistTreatmentTimeQuery();
-					setHaveValTime(bean.getTreatmentTime(), treatmentTimeQuery);
-					treatmentTimeQuery.setCreateTime(DateUtil.getSysCurrentDate());
-					treatmentTimeQuery.setCreateUser(user.getNickname());
-					treatmentTimeQuery.setUpdateTime(DateUtil.getSysCurrentDate());
-					treatmentTimeQuery.setUpdateUser(user.getNickname());
-					treatmentTimeQuery.setCycle(DateUtil.dateToString(bean.getCureTime()));
-					treatmentTimeQuery.setId(null);
-					treatmentTimeQueryMapper.insertSelective(treatmentTimeQuery);
-				}
+				logger.info("结束处理治疗师时间段！");
 			}
-			logger.info("结束处理治疗师时间段！");
 			//---------------------------结束处理治疗师时间段-------------------
 			if(type!=null) {
 				if(type<3 && bean.getStatus()==1) {//普通线下（移动）支付

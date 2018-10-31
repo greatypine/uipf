@@ -567,6 +567,9 @@
  		<if test="record.therapeutist !='' and record.therapeutist!=null">
 			and a.therapeutist = #{record.therapeutist}
  		</if>
+ 		<if test="record.counsoler !='' and record.counsoler!=null">
+			and a.counsoler = #{record.counsoler}
+ 		</if>
  		<if test="record.chuFuZhen !='' and record.chuFuZhen!=null">
 			and a.chu_fu_zhen = #{record.chuFuZhen}
  		</if>

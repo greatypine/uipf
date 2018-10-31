@@ -444,4 +444,12 @@ public class IndexController {
 		mmap.addAttribute("content", request.getContextPath());
 		return "countProjectType";
 	}
+	@Ilogger(value="进入门店报表统计界面",flag=EnableDetail.CLOSE)
+	@RequestMapping("/goStoreReport")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER}, logical = Logical.OR)
+	public String goStoreReport(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		return "countStoreAnalysis";
+	}
 }

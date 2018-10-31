@@ -16,6 +16,18 @@ function CommonUtils(){
 	this.DATE_FULL_FORMAT = "yyyy-MM-dd hh:mm:ss";
 	this.DATE_DAY_FORMAT = "yyyy-MM-dd";
 	this.DATE_MONTH_FORMAT = "yyyy-MM";
+	
+	/**
+	 * 是否为Null
+	 * @param object
+	 * @returns {Boolean}
+	 */ 
+	this.isNull = function(object){ 
+	    if(object == null || typeof object == "undefined"){ 
+	        return true; 
+	    } 
+	    return false; 
+	};
 	/**
 	 * 计算两个时间之间的天数 ：取正整
 	 */
@@ -63,6 +75,26 @@ function CommonUtils(){
 		}else{
 			return null;
 		}
+	};
+	/**
+	 * 根据日期字符串获取星期几
+	 * @param dateString 日期字符串（如：2016-12-29），为空时为用户电脑当前日期
+	 * @returns {String}
+	 */
+	this.getWeek = function(dateString){
+	    var date;
+	    if(this.isNull(dateString)){
+	        date = new Date();
+	    }else{
+	    	if(dateString.indexOf("-")==-1){
+	    		dateString = dateString.subString(0,4)+"-"+dateString.subString(4,6)+"-"+dateString.subString(6,dateString.length);
+	    	}
+	        var dateArray = dateString.split("-");
+	        date = new Date(dateArray[0], parseInt(dateArray[1] - 1), dateArray[2]);
+	    }
+	    //var weeks = new Array("日", "一", "二", "三", "四", "五", "六");
+	    //return "星期" + weeks[date.getDay()];
+	    return "星期" + "日一二三四五六".charAt(date.getDay());
 	};
 	/**
 	 * 返回yyyy年
@@ -187,6 +219,17 @@ function CommonUtils(){
 		}
 		return day;
 	}
+	/**
+	 * 格式化数字
+	 * @params val:要格式化的数值
+	 * @params places：要格式化保留的位数
+	 * @params flag:返回格式化数字的前缀符号
+	 * @return eg:￥0.00
+	 */
+	this.formatNumber = function(val,places,flag){
+		if(this.ISNULL(val)) return flag+0.00;
+		return (val!=0)?flag+(Number(val)).toFixed(places):flag+0.00
+	}
 	
 	/**
 	 *根据用户角色标记判断用户是否有角色
@@ -230,42 +273,23 @@ function CommonUtils(){
 		$('#'+id).datagrid("unselectAll");
 		$('#'+id).datagrid("clearSelections");
 	};
-	
+	function disableFormAllControl(ff) {
+		$("input[textboxname]", ff).each(function( i, n) {
+			$(n).textbox( 'disable'); }
+		); 
+		$("input[switchbuttonname]", ff). each( function( i, n) {
+				$( n). switchbutton( 'disable'); }
+		); 
+		$(".easyui-linkbutton",ff). each( function( i, n) {
+			$(n). linkbutton( 'disable'); }
+		); 
+	}
 	this.disableForm = function(formId,isDisabled) {
-	    var attr="disable";
-	    if(!isDisabled){
-	       attr="enable";
-	    }
-	    $("form[id='"+formId+"'] :text").attr("disabled",isDisabled);
-	    $("form[id='"+formId+"'] textarea").attr("disabled",isDisabled);
-	    $("form[id='"+formId+"'] select").attr("disabled",isDisabled);
-	    $("form[id='"+formId+"'] :radio").attr("disabled",isDisabled);
-	    $("form[id='"+formId+"'] :checkbox").attr("disabled",isDisabled);
-	    if(isDisabled)$("#"+formId+" .textbox-addon-right").hide();
-	    else $("#"+formId+" .textbox-addon-right").show();
-	    //禁用jquery easyui中的下拉选（使用input生成的combox）
-	  
-	    $("#" + formId + " input[class='combobox-f combo-f']").each(function () {
-	        if (this.id) {alert("input"+this.id);
-	            $("#" + this.id).combobox(attr);
-	        }
-	    });
-	      
-	    //禁用jquery easyui中的下拉选（使用select生成的combox）  
-	    $("#" + formId + " select[class='combobox-f combo-f']").each(function () {
-	        if (this.id) {
-	        alert(this.id);  
-	            $("#" + this.id).combobox(attr);
-	        }  
-	    });  
-	      
-	    //禁用jquery easyui中的日期组件dataBox  
-	    $("#" + formId + " input[class='datebox-f combo-f']").each(function () {  
-	        if (this.id) {  
-	        alert(this.id)  
-	            $("#" + this.id).datebox(attr);  
-	        }  
-	    });  
+	    $("#"+formId+" .easyui-textbox").textbox({disabled: isDisabled});
+	    $("#"+formId+" .easyui-numberbox").numberbox({disabled: isDisabled});
+	    $("#"+formId+" .easyui-datebox").datebox({disabled: isDisabled});
+	    $("#"+formId+" .easyui-datetimebox").datetimebox({disabled: isDisabled});
+	    $("#"+formId+" .easyui-combobox").combobox({disabled: isDisabled});
 	};
 	this.bottomRight = function(mess){
 		$.messager.show({
@@ -332,6 +356,55 @@ function CommonUtils(){
 		}else{
 			return true;
 		}
+	}
+	/**
+	 * 自动合并单元格
+	 * @param1 table_id : 表格id
+	 * @param2 field_arr : 要合并字段的数组
+	 * @param3 judge : 判断字段（不一样则不合并）
+	 */
+	this.autoMergeCells = function(table_id,field_arr,judge){  
+	    var rows = $("#"+table_id).datagrid("getRows");  
+	    if(this.ISNULL(field_arr)||this.ISNULL(rows)){  
+	        return;  
+	    }  
+	    for (var i = 1; i < rows.length; i++) {  
+	        for (var k = 0; k < field_arr.length; k++) {  
+	            var field = field_arr[k]; //要排序的字段  
+	            if(rows[i][field] == rows[i-1][field]){ //相邻的上下两行  
+	                var rowspan = 2;  
+	                for (var j = 2; i-j >= 0; j++) { //判断上下多行内容一样  
+	                    if(rows[i][field] != rows[i-j][field]){  
+	                        break;  
+	                    }else{  
+	                        if(this.ISNOTNULL(judge)){  
+	                            if(rows[i][judge] != rows[i-j][judge]){  
+	                                break;  
+	                            }  
+	                        }  
+	                        rowspan = j+1;  
+	                    }  
+	                }  
+	                $("#"+table_id).datagrid('mergeCells',{ //合并  
+	                    index: i-rowspan+1,  
+	                    field: field,  
+	                    rowspan: rowspan  
+	                });  
+	            }  
+	        }  
+	    }  
+	}  
+	this.ISNOTNULL = function(obj) {  
+	    if (typeof (obj) == "undefined" || obj === "" || obj == null || obj == "null" ) {  
+	        return false;  
+	    }  
+	    return true;  
+	}  
+	this.ISNULL = function(obj) {  
+	    if ( typeof (obj) == "undefined" || obj === "" || obj == null || obj == "null") {  
+	        return true;  
+	    }  
+	    return false;  
 	}
 }
 $.fn.serializeJson=function(){

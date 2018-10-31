@@ -531,4 +531,85 @@ public class CommonServiceImpl implements CommonService {
 		map.put("total",pageinfo.getTotal());
 		return map;
 	}
+	@Override
+	public Map<String, Object> queryStoreReport(Integer companyid,String endtime, Integer page,Integer rows) {
+		Map<String, Object> map = new  HashMap<String, Object>();
+		String[] ets = endtime.split("-");
+		String starttime = ets[0]+"-"+ets[1]+"-01";
+		map.put("starttime", starttime);
+		map.put("endtime", endtime);
+		if(companyid!=null) {
+			map.put("companyid", companyid);
+		}else {
+			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+				map.put("companyid",SystemUserInfo.getSystemUser().getCompany().getId());
+			}else {
+				map.put("companyid", null);
+			}
+		}
+		PageHelper.startPage(page, rows);
+		List<Map<String, Object>> listmaps = companyMapper.queryStoreReport(map);
+		PageInfo<Map<String, Object>> pageinfo = new PageInfo<>(listmaps);
+		if(listmaps==null || listmaps.size()<=0) return null;
+		int t_CHUZHEN_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("t_CHUZHEN")==null?"0":f.get("t_CHUZHEN").toString())).sum();
+		int t_liushi_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("t_LIUSHI")==null?"0":f.get("t_LIUSHI").toString())).sum();
+		int t_FUZHEN_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("t_FUZHEN")==null?"0":f.get("t_FUZHEN").toString())).sum();
+		double t_c_total_amount_count = new BigDecimal(listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("t_c_total_amount")==null?"0":f.get("t_c_total_amount").toString())).sum()).setScale(2,BigDecimal.ROUND_HALF_DOWN).doubleValue();
+		double t_f_total_amount_count = new BigDecimal(listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("t_f_total_amount")==null?"0":f.get("t_f_total_amount").toString())).sum()).setScale(2,BigDecimal.ROUND_HALF_DOWN).doubleValue();
+		double t_total_amount_count = new BigDecimal(listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("t_total_amount")==null?"0":f.get("t_total_amount").toString())).sum()).setScale(2,BigDecimal.ROUND_HALF_DOWN).doubleValue();
+		
+		int y_CHUZHEN_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("y_CHUZHEN")==null?"0":f.get("y_CHUZHEN").toString())).sum();
+		int y_LIUSHI_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("y_LIUSHI")==null?"0":f.get("y_LIUSHI").toString())).sum();
+		int y_FUZHEN_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("y_FUZHEN")==null?"0":f.get("y_FUZHEN").toString())).sum();
+		double y_c_total_amount_count = new BigDecimal(listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("y_c_total_amount")==null?"0":f.get("y_c_total_amount").toString())).sum()).setScale(2,BigDecimal.ROUND_HALF_DOWN).doubleValue();
+		double y_f_total_amount_count = new BigDecimal(listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("y_f_total_amount")==null?"0":f.get("y_f_total_amount").toString())).sum()).setScale(2,BigDecimal.ROUND_HALF_DOWN).doubleValue();
+		double y_total_amount_count = new BigDecimal(listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("y_total_amount")==null?"0":f.get("y_total_amount").toString())).sum()).setScale(2,BigDecimal.ROUND_HALF_DOWN).doubleValue();
+		double y_avg_total_amount = new BigDecimal(listmaps.stream().mapToDouble(f->Double.parseDouble(f.get("y_avg_total_amount")==null?"0":f.get("y_avg_total_amount").toString())).sum()).setScale(2,BigDecimal.ROUND_HALF_DOWN).doubleValue();
+		
+		int ziranlaikequdao_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("ziranlaikequdao")==null?"0":f.get("ziranlaikequdao").toString())).sum();
+		int laogukejieshao_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("laogukejieshao")==null?"0":f.get("laogukejieshao").toString())).sum();
+		int meituan_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("meituan")==null?"0":f.get("meituan").toString())).sum();
+		int dazhong_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("dazhong")==null?"0":f.get("dazhong").toString())).sum();
+		int douyin_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("douyin")==null?"0":f.get("douyin").toString())).sum();
+		int xinyang_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("xinyang")==null?"0":f.get("xinyang").toString())).sum();
+		int xinlangweibo_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("xinlangweibo")==null?"0":f.get("xinlangweibo").toString())).sum();
+		int pengyoujieshao_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("pengyoujieshao")==null?"0":f.get("pengyoujieshao").toString())).sum();
+		int luguo_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("luguo")==null?"0":f.get("luguo").toString())).sum();
+		int zhuandian_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("zhuandian")==null?"0":f.get("zhuandian").toString())).sum();
+		int other_count = listmaps.stream().mapToInt(f->Integer.parseInt(f.get("other")==null?"0":f.get("other").toString())).sum();
+		map.clear();
+		List<Map<String,Object>> footer =  new ArrayList<>();
+		Map<String,Object> footerp = new HashMap<>();
+		footerp.put("companyName", "合计：");
+		footerp.put("t_CHUZHEN", t_CHUZHEN_count);
+		footerp.put("t_LIUSHI", t_liushi_count);
+		footerp.put("t_FUZHEN", t_FUZHEN_count);
+		footerp.put("t_c_total_amount", t_c_total_amount_count);
+		footerp.put("t_f_total_amount", t_f_total_amount_count);
+		footerp.put("t_total_amount", t_total_amount_count);
+		footerp.put("y_CHUZHEN", y_CHUZHEN_count);
+		footerp.put("y_LIUSHI", y_LIUSHI_count);
+		footerp.put("y_FUZHEN", y_FUZHEN_count);
+		footerp.put("y_c_total_amount", y_c_total_amount_count);
+		footerp.put("y_f_total_amount", y_f_total_amount_count);
+		footerp.put("y_total_amount", y_total_amount_count);
+		footerp.put("y_avg_total_amount", y_avg_total_amount);
+		footerp.put("ziranlaikequdao", ziranlaikequdao_count);
+		footerp.put("laogukejieshao", laogukejieshao_count);
+		footerp.put("meituan", meituan_count);
+		footerp.put("dazhong", dazhong_count);
+		footerp.put("douyin", douyin_count);
+		footerp.put("xinyang", xinyang_count);
+		footerp.put("xinlangweibo", xinlangweibo_count);
+		footerp.put("pengyoujieshao", pengyoujieshao_count);
+		footerp.put("luguo", luguo_count);
+		footerp.put("zhuandian", zhuandian_count);
+		footerp.put("other", other_count);
+		footer.add(footerp);
+		map.clear();
+		map.put("footer",footer);
+		map.put("rows",listmaps);
+		map.put("total",pageinfo.getTotal());
+		return map;
+	}
 }

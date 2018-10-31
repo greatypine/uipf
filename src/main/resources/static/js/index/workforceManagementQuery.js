@@ -30,10 +30,11 @@ function initData(){
 	});
 	$('#queryyear').combobox('setValue', cu.getCurrentYear());
 	$('#querymonth').combobox('setValue', cu.getCurrentMonth());
-	$('#queryyear').combobox('select', cu.getCurrentYear());
-	$('#querymonth').combobox('select', Number(cu.getCurrentMonth()));
+//	$('#queryyear').combobox('select', cu.getCurrentYear());
+//	$('#querymonth').combobox('select', Number(cu.getCurrentMonth()));
 //	dgedit = new DGedit();
 	workforceManagementQuery.initCompant();
+	workforceManagementQuery.query();
 }
 function MyworkforceManagementQuery(){
 	this.initCompant = function(){
@@ -49,6 +50,10 @@ function MyworkforceManagementQuery(){
 		        queryParams:{
 		        	cycle:$('#queryyear').combobox("getValue")+(Number(month)<10)?"0"+month:month
 				},
+				frozenColumns:[[
+					{field:'id',title:'编号',hidden:true},
+					{field:'username',title:'用户名',width:"5%",align:'center'}
+				]],
 		        columns:[columns],
 				onDblClickRow:function(index,row){
 				},
@@ -74,11 +79,9 @@ function MyworkforceManagementQuery(){
 			return "";
 		}
 		var ld = cu.getLastMonthDay(year,month);
-		var w = Math.floor(100%(ld+1));
-		var clun = {field:'username',title:'姓名',width:(w+'%'),align:'center'};
-		cls.push(clun);
+		var w = 120;
 		for (var i = 0; i < ld; i++) {
-			var cl = {field:'day'+(i+1),title:year+month+((i<10)?['0'+(i+1)]:i+1),width:(w+'%'),align:'center',formatter:function(val,row){
+			var cl = {field:'day'+(i+1),title:year+month+((i<10)?['0'+(i+1)]:i+1)+"("+cu.getWeek(year+"-"+month+"-"+((i<10)?['0'+(i+1)]:i+1))+")",width:(w+"px"),align:'center',formatter:function(val,row){
 	        	if(val=='休'){
 	        		return '<font color="FF0033"><b>'+val+'<b></font>';
 	        	}else if(val=='早'){

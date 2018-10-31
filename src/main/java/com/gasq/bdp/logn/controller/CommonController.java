@@ -319,6 +319,18 @@ public class CommonController {
 		}
     	return null;
 	 }
+    @Ilogger("查询门店统报表列表")
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER},logical=Logical.OR)
+    @RequestMapping(value = "/queryStoreReport",method=RequestMethod.POST)
+	public Map<String, Object> queryStoreReport(Integer companyid,String endtime,Integer page,Integer rows) {
+    	try {
+			Map<String, Object> map = commonService.queryStoreReport(companyid,endtime, page, rows);
+			return map;
+		}catch (Exception e) {
+			logger.info(e.getMessage(),e);
+		}
+    	return null;
+	 }
     @Ilogger("首页前台系统用户信息统计")
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR },logical=Logical.OR)
     @RequestMapping(value = "/queryIndexUserCount",method=RequestMethod.POST)

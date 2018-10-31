@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gasq.bdp.logn.mapper.FSkuclassMapper">
+  <resultMap id="BaseResultMap" type="com.gasq.bdp.logn.model.FSkuclass">
+    <id column="id" jdbcType="CHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="content_name" jdbcType="VARCHAR" property="contentName" />
+    <result column="eshop_id" jdbcType="CHAR" property="eshopId" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="tag_level1_name" jdbcType="VARCHAR" property="tagLevel1Name" />
+    <result column="tag_level1_id" jdbcType="CHAR" property="tagLevel1Id" />
+    <result column="tag_level2_name" jdbcType="VARCHAR" property="tagLevel2Name" />
+    <result column="tag_level2_id" jdbcType="CHAR" property="tagLevel2Id" />
+    <result column="tag_level3_name" jdbcType="VARCHAR" property="tagLevel3Name" />
+    <result column="tag_level3_id" jdbcType="CHAR" property="tagLevel3Id" />
+    <result column="tag_level4_name" jdbcType="VARCHAR" property="tagLevel4Name" />
+    <result column="tag_level4_id" jdbcType="CHAR" property="tagLevel4Id" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, content_name, eshop_id, role_name, tag_level1_name, tag_level1_id, tag_level2_name, 
+    tag_level2_id, tag_level3_name, tag_level3_id, tag_level4_name, tag_level4_id
+  </sql>
+  <select id="selectByExample" parameterType="com.gasq.bdp.logn.model.FSkuclassExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from f_skuclass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from f_skuclass
+    where id = #{id,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from f_skuclass
+    where id = #{id,jdbcType=CHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.gasq.bdp.logn.model.FSkuclassExample">
+    delete from f_skuclass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.gasq.bdp.logn.model.FSkuclass">
+    insert into f_skuclass (id, name, content_name, 
+      eshop_id, role_name, tag_level1_name, 
+      tag_level1_id, tag_level2_name, tag_level2_id, 
+      tag_level3_name, tag_level3_id, tag_level4_name, 
+      tag_level4_id)
+    values (#{id,jdbcType=CHAR}, #{name,jdbcType=VARCHAR}, #{contentName,jdbcType=VARCHAR}, 
+      #{eshopId,jdbcType=CHAR}, #{roleName,jdbcType=VARCHAR}, #{tagLevel1Name,jdbcType=VARCHAR}, 
+      #{tagLevel1Id,jdbcType=CHAR}, #{tagLevel2Name,jdbcType=VARCHAR}, #{tagLevel2Id,jdbcType=CHAR}, 
+      #{tagLevel3Name,jdbcType=VARCHAR}, #{tagLevel3Id,jdbcType=CHAR}, #{tagLevel4Name,jdbcType=VARCHAR}, 
+      #{tagLevel4Id,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.gasq.bdp.logn.model.FSkuclass">
+    insert into f_skuclass
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="contentName != null">
+        content_name,
+      </if>
+      <if test="eshopId != null">
+        eshop_id,
+      </if>
+      <if test="roleName != null">
+        role_name,
+      </if>
+      <if test="tagLevel1Name != null">
+        tag_level1_name,
+      </if>
+      <if test="tagLevel1Id != null">
+        tag_level1_id,
+      </if>
+      <if test="tagLevel2Name != null">
+        tag_level2_name,
+      </if>
+      <if test="tagLevel2Id != null">
+        tag_level2_id,
+      </if>
+      <if test="tagLevel3Name != null">
+        tag_level3_name,
+      </if>
+      <if test="tagLevel3Id != null">
+        tag_level3_id,
+      </if>
+      <if test="tagLevel4Name != null">
+        tag_level4_name,
+      </if>
+      <if test="tagLevel4Id != null">
+        tag_level4_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=CHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="contentName != null">
+        #{contentName,jdbcType=VARCHAR},
+      </if>
+      <if test="eshopId != null">
+        #{eshopId,jdbcType=CHAR},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="tagLevel1Name != null">
+        #{tagLevel1Name,jdbcType=VARCHAR},
+      </if>
+      <if test="tagLevel1Id != null">
+        #{tagLevel1Id,jdbcType=CHAR},
+      </if>
+      <if test="tagLevel2Name != null">
+        #{tagLevel2Name,jdbcType=VARCHAR},
+      </if>
+      <if test="tagLevel2Id != null">
+        #{tagLevel2Id,jdbcType=CHAR},
+      </if>
+      <if test="tagLevel3Name != null">
+        #{tagLevel3Name,jdbcType=VARCHAR},
+      </if>
+      <if test="tagLevel3Id != null">
+        #{tagLevel3Id,jdbcType=CHAR},
+      </if>
+      <if test="tagLevel4Name != null">
+        #{tagLevel4Name,jdbcType=VARCHAR},
+      </if>
+      <if test="tagLevel4Id != null">
+        #{tagLevel4Id,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.gasq.bdp.logn.model.FSkuclassExample" resultType="java.lang.Long">
+    select count(*) from f_skuclass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update f_skuclass
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=CHAR},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.contentName != null">
+        content_name = #{record.contentName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.eshopId != null">
+        eshop_id = #{record.eshopId,jdbcType=CHAR},
+      </if>
+      <if test="record.roleName != null">
+        role_name = #{record.roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tagLevel1Name != null">
+        tag_level1_name = #{record.tagLevel1Name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tagLevel1Id != null">
+        tag_level1_id = #{record.tagLevel1Id,jdbcType=CHAR},
+      </if>
+      <if test="record.tagLevel2Name != null">
+        tag_level2_name = #{record.tagLevel2Name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tagLevel2Id != null">
+        tag_level2_id = #{record.tagLevel2Id,jdbcType=CHAR},
+      </if>
+      <if test="record.tagLevel3Name != null">
+        tag_level3_name = #{record.tagLevel3Name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tagLevel3Id != null">
+        tag_level3_id = #{record.tagLevel3Id,jdbcType=CHAR},
+      </if>
+      <if test="record.tagLevel4Name != null">
+        tag_level4_name = #{record.tagLevel4Name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tagLevel4Id != null">
+        tag_level4_id = #{record.tagLevel4Id,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update f_skuclass
+    set id = #{record.id,jdbcType=CHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      content_name = #{record.contentName,jdbcType=VARCHAR},
+      eshop_id = #{record.eshopId,jdbcType=CHAR},
+      role_name = #{record.roleName,jdbcType=VARCHAR},
+      tag_level1_name = #{record.tagLevel1Name,jdbcType=VARCHAR},
+      tag_level1_id = #{record.tagLevel1Id,jdbcType=CHAR},
+      tag_level2_name = #{record.tagLevel2Name,jdbcType=VARCHAR},
+      tag_level2_id = #{record.tagLevel2Id,jdbcType=CHAR},
+      tag_level3_name = #{record.tagLevel3Name,jdbcType=VARCHAR},
+      tag_level3_id = #{record.tagLevel3Id,jdbcType=CHAR},
+      tag_level4_name = #{record.tagLevel4Name,jdbcType=VARCHAR},
+      tag_level4_id = #{record.tagLevel4Id,jdbcType=CHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.gasq.bdp.logn.model.FSkuclass">
+    update f_skuclass
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="contentName != null">
+        content_name = #{contentName,jdbcType=VARCHAR},
+      </if>
+      <if test="eshopId != null">
+        eshop_id = #{eshopId,jdbcType=CHAR},
+      </if>
+      <if test="roleName != null">
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="tagLevel1Name != null">
+        tag_level1_name = #{tagLevel1Name,jdbcType=VARCHAR},
+      </if>
+      <if test="tagLevel1Id != null">
+        tag_level1_id = #{tagLevel1Id,jdbcType=CHAR},
+      </if>
+      <if test="tagLevel2Name != null">
+        tag_level2_name = #{tagLevel2Name,jdbcType=VARCHAR},
+      </if>
+      <if test="tagLevel2Id != null">
+        tag_level2_id = #{tagLevel2Id,jdbcType=CHAR},
+      </if>
+      <if test="tagLevel3Name != null">
+        tag_level3_name = #{tagLevel3Name,jdbcType=VARCHAR},
+      </if>
+      <if test="tagLevel3Id != null">
+        tag_level3_id = #{tagLevel3Id,jdbcType=CHAR},
+      </if>
+      <if test="tagLevel4Name != null">
+        tag_level4_name = #{tagLevel4Name,jdbcType=VARCHAR},
+      </if>
+      <if test="tagLevel4Id != null">
+        tag_level4_id = #{tagLevel4Id,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.gasq.bdp.logn.model.FSkuclass">
+    update f_skuclass
+    set name = #{name,jdbcType=VARCHAR},
+      content_name = #{contentName,jdbcType=VARCHAR},
+      eshop_id = #{eshopId,jdbcType=CHAR},
+      role_name = #{roleName,jdbcType=VARCHAR},
+      tag_level1_name = #{tagLevel1Name,jdbcType=VARCHAR},
+      tag_level1_id = #{tagLevel1Id,jdbcType=CHAR},
+      tag_level2_name = #{tagLevel2Name,jdbcType=VARCHAR},
+      tag_level2_id = #{tagLevel2Id,jdbcType=CHAR},
+      tag_level3_name = #{tagLevel3Name,jdbcType=VARCHAR},
+      tag_level3_id = #{tagLevel3Id,jdbcType=CHAR},
+      tag_level4_name = #{tagLevel4Name,jdbcType=VARCHAR},
+      tag_level4_id = #{tagLevel4Id,jdbcType=CHAR}
+    where id = #{id,jdbcType=CHAR}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.gasq.bdp.logn.model.FSkuclassExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from f_skuclass
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

@@ -30,10 +30,11 @@ function initData(){
 	});
 	$('#queryyear').combobox('setValue', cu.getCurrentYear());
 	$('#querymonth').combobox('setValue', cu.getCurrentMonth());
-	$('#queryyear').combobox('select', cu.getCurrentYear());
-	$('#querymonth').combobox('select', Number(cu.getCurrentMonth()));
+//	$('#queryyear').combobox('select', cu.getCurrentYear());
+//	$('#querymonth').combobox('select', Number(cu.getCurrentMonth()));
 //	dgedit = new DGedit();
 	workforceManagement.initCompant();
+	workforceManagement.query();
 }
 function MyworkforceManagement(){
 	this.initCompant = function(){
@@ -49,6 +50,11 @@ function MyworkforceManagement(){
 		        queryParams:{
 		        	cycle:$('#queryyear').combobox("getValue")+(Number(month)<10)?"0"+month:month
 				},
+				frozenColumns:[[
+					{field:'id',title:'编号',hidden:true},
+					{field:'ck',checkbox:true },
+					{field:'username',title:'用户名',width:"5%",align:'center'}
+				]],
 		        columns:[columns],
 				onDblClickRow:function(index,row){
 				},
@@ -87,11 +93,9 @@ function MyworkforceManagement(){
 			return "";
 		}
 		var ld = cu.getLastMonthDay(year,month);
-		var w = Math.floor(100%(ld+1));
-		var clun = {field:'username',title:'姓名',width:(w+'%'),align:'center'};
-		cls.push(clun);
+		var w = 120;
 		for (var i = 0; i < ld; i++) {
-			var cl = {field:'day'+(i+1),title:year+month+((i<10)?['0'+(i+1)]:i+1),width:(w+'%'),align:'center',
+			var cl = {field:'day'+(i+1),title:year+month+((i<10)?['0'+(i+1)]:i+1)+"("+cu.getWeek(year+"-"+month+"-"+((i<10)?['0'+(i+1)]:i+1))+")",width:(w+"px"),align:'center',
 					editor:{
 						type:'combobox',
 						options:{
@@ -128,6 +132,8 @@ function MyworkforceManagement(){
 		var month = ($("#querymonth").combobox("getValue")<0)?null:$("#querymonth").combobox("getValue");
 		var params = {};
 		if(companyid!="") {params.companyid = companyid;}
+		params.year = year;
+		params.month = month;
 		if(year!="" && month!="") {params.cycle = year+((Number(month)<10)?"0"+Number(month):month);}
 		return params;
 	};
@@ -145,7 +151,35 @@ function MyworkforceManagement(){
 		$("#userctbbx").combobox("setValues",ids);
 		$('#fyear').combobox('setValue', cu.getCurrentYear());
 		$('#fmonth').combobox('setValue', cu.getCurrentMonth());
-		$("#workforceManagementdlg").dialog("open").dialog("center").dialog("setTitle","添加公司");
+		$("#workforceManagementdlg").dialog("open").dialog("center").dialog("setTitle","添加排班人员");
+	};
+	this.addUser = function(){
+		$("#workforceManagementdlg-fm").form("clear");
+		var dgdata = $("#workforceManagement_table").datagrid("getData");
+		var rows = dgdata.rows;
+		var data = $('#userctbbx').combobox('getData');
+		var companyid = user.user.companyid;
+		if(rows.length>0 && data.length>0){
+			companyid = data[0].companyid;
+			for (var i = 0,l = data.length; i < l; i++) {
+				data[i]["disabled"] = false;
+				for (var j = 0,y=rows.length; j <y; j++) {
+					if(data[i].nickname==rows[j].username){
+						data[i]["disabled"] = true;
+						break;
+					}
+				}
+			}
+		}
+		$('#userctbbx').combobox('clear');//清空选中项 
+		$('#userctbbx').combobox('loadData',data);
+		$("#fyear").combobox({disabled: true});
+		$("#fmonth").combobox({disabled: true});
+		$("#companyid").combobox({disabled: true});
+		$('#fmonth').combobox('setValue', cu.getCurrentMonth());
+		$('#fyear').combobox('setValue', cu.getCurrentYear());
+		$('#companyid').combobox('setValue', companyid);
+		$("#workforceManagementdlg").dialog("open").dialog("center").dialog("setTitle","添加排班人员");
 	};
 	this.initClearCombobox = function(id){
 		var data = $('#'+id).combobox('getData');
@@ -225,35 +259,44 @@ function MyworkforceManagement(){
 		});
 		
 	}
+	
 	this.remove = function(){
 		var params = workforceManagement.getParams();
-		$.messager.confirm('提示信息', '你确认要删除《'+params.year+'年'+params.month+'月》排班信息吗?', function(r){
-			if (r){
-				$.messager.progress();
-				$.ajax({
-					data :params,
-					type:"POST",
-					url : content+"/workforceManagement/delete",
-					error : function(data) {
-						$.messager.alert('提示信息','服务器连接超时请重试!','error'); 
-						return false;
-					},
-					success : function(data) {
-						$.messager.progress('close');
-						if(data){//成功
-							$.messager.alert('提示信息','删除成功!');
-							$('#workforceManagement_table').datagrid('reload');
-						}else{
-							$.messager.alert('提示信息','删除失败!','warning');
+		var rows = $('#workforceManagement_table').datagrid('getChecked');
+		if(rows){
+			var row = rows[0];
+			$.messager.confirm('提示信息', '你确认要删除《'+params.year+'年'+params.month+'月'+row.username+'》的排班信息吗?', function(r){
+				if (r){
+					params.id = row.id;
+					params.username = row.username;
+					$.messager.progress();
+					$.ajax({
+						data :params,
+						type:"POST",
+						url : content+"/workforceManagement/delete",
+						error : function(data) {
+							$.messager.alert('提示信息','服务器连接超时请重试!','error'); 
+							return false;
+						},
+						success : function(data) {
+							$.messager.progress('close');
+							if(data){//成功
+								$.messager.alert('提示信息','删除成功!');
+								$('#workforceManagement_table').datagrid('reload');
+							}else{
+								$.messager.alert('提示信息','删除失败!','warning');
+							}
+						},
+						error:function(){
+							$.messager.progress('close');
+			                $.messager.alert('提示',"操作失败！","error");
 						}
-					},
-					error:function(){
-						$.messager.progress('close');
-		                $.messager.alert('提示',"操作失败！","error");
-					}
-				});
-			}
-		});
+					});
+				}
+			});
+		}else{
+			$.messager.alert('提示','请先选中要操作的数据！','error');
+		}
 	};
 	this.exportData = function(){
 		var params = workforceManagement.getParams();

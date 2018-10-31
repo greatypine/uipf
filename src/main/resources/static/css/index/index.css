@@ -1,0 +1,12 @@
+#cardcontent{
+    color: currentColor;
+    font-size: 12px;
+/*     background: url(../../images/tit-bg.png) no-repeat left top; */
+}
+/* .ul.cards-split{ */
+/* 	margin:0; */
+/* 	height: 480px; */
+/* } */
+.card-content{
+	padding: 0;
+}

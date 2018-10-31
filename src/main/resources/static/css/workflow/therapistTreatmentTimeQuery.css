@@ -1,0 +1,12 @@
+.tdname{
+	width:18%;
+	padding-left:1%;
+}
+.tdnamebox{
+	width:32%;
+}
+.datagrid-view2 .datagrid-row td{
+    color: currentColor;
+    font-size: 15px;
+    background: url(../../images/tit-bg.png) no-repeat left top;
+}

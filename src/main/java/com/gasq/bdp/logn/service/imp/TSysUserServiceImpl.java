@@ -169,15 +169,21 @@ public class TSysUserServiceImpl implements TSysUserService {
 					uxb.setPassword(bean.getPassword());
 					uxmapper.insertSelective(uxb);
 				}
-				if(!userex.getPassword().equals(bean.getPassword())) {//密码不相等
-					String pwd = bean.getPassword();
-					String md5pwd = CommonUtils.change2MD5(pwd);
-					bean.setPassword(md5pwd);
-					userex.setUserId(bean.getId());
-					userex.setPassword(pwd);
-					uxmapper.updateByPrimaryKeySelective(userex);
+				if(StringUtils.isNotBlank(bean.getPassword())) {
+					if(!userex.getPassword().equals(bean.getPassword())) {//密码不相等
+						String pwd = bean.getPassword();
+						String md5pwd = CommonUtils.change2MD5(pwd);
+						bean.setPassword(md5pwd);
+						userex.setUserId(bean.getId());
+						userex.setPassword(pwd);
+						uxmapper.updateByPrimaryKeySelective(userex);
+					}else {
+						String pwd = bean.getPassword();
+						String md5pwd = CommonUtils.change2MD5(pwd);
+						bean.setPassword(md5pwd);
+					}
 				}else {
-					String pwd = bean.getPassword();
+					String pwd = userex.getPassword();
 					String md5pwd = CommonUtils.change2MD5(pwd);
 					bean.setPassword(md5pwd);
 				}

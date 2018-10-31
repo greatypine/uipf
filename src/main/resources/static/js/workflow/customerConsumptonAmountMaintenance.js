@@ -87,24 +87,24 @@ if(!cu.isPC()){
         {field:'counsolerName',title:'咨询师',width:"4%",align:'center'},
         {field:'therapeutistName',title:'治疗师',width:"4%",align:'center'},
         {field:'treatmentOptionDay',title:'治疗日期',width:"5%",align:'center'},
-        {field:'treatmentOptionTimeName',title:'治疗时间段',width:"5%",align:'center'},
-        {field:'typeName',title:'结算类型',width:"4%",align:'center'},
+        {field:'treatmentOptionTimeName',title:'治疗时间段',width:"6%",align:'center'},
+        {field:'typeName',title:'结算类型',width:"5%",align:'center'},
         {field:'totalConsumptonAmount',title:'总消费金额',width:"6%",align:'center',formatter:function(val,row){
         	return (val!=0 && val!=null)?"￥"+val:"￥"+0.00;
         }},
         {field:'remindtime',title:'回访时间',width:"5%",align:'center'},
         {field:'subscribeName',title:'预约人',width:"4%",align:'center'},
-        {field:'comments',title:'就诊照片',width:"5%",align:'center',
+        {field:'comments',title:'就诊照片',width:"6%",align:'center',
         	formatter:function(value, row, index){
         	return '<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_option" href="javascripte:void(0)" onClick="ccac.uploadImg('+index+')" class="imageslinkbtn" data-options="plain:true">上传</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="javascripte:void(0)" onClick="ccac.viewImages('+index+')" class="imageslinkbtn" data-options="plain:true">预览</a>';
         }},
-        {field:'createTime',title:'接诊时间',width:"9%",align:'center',formatter:function(val,row){
+        {field:'createTime',title:'接诊时间',width:"10%",align:'center',formatter:function(val,row){
         	return CU.DateTimeFormatter(val,1);
         }},
 //	        {field:'updateTime',title:'完成时间',width:"10%",align:'center',formatter:function(val,row){
 //	        	return CU.DateTimeFormatter(val,1);
 //	        }},
-        {field:'remark',title:'描述',width:"14%",align:'left'}
+        {field:'remark',title:'描述',width:"10%",align:'left'}
         ]];
 	iccolumns = [[
 	 	{field:'projectName',title:'套餐名称',width:"12%",align:'left'},
@@ -141,15 +141,6 @@ $(function(){
 	initData();
 });
 function initData(){
-	if(user.user.companyid==1){
-		$("#jiesuanpt").hide();
-		$("#export").hide();
-		$("#jiesuanhy").hide();
-		$("#orderback").linkbutton('disable');
-		$("#consumpton_project_list").hide();
-		$("#ccacdetaildlg").css("height","45%");
-	}
-	
 	if(cu.hasRoles("sadmin,q_area_shopManager,generalManager,q_admin")){
 		$('#remindtime').datebox().datebox('calendar').calendar({
 			validator: function(date){
@@ -181,27 +172,31 @@ function initData(){
 			}
 		});
 	}
-	
-	$(".therapeutist").combobox({
-		url:content+'/common/queryCosmetologist?id='+user.user.companyid,
-		onSelect: function(row){
-			if (row != null) {
-				var cfz = $("#chuFuZhen").combobox("getValue");
-				var cureTime = $("#cureTime").datebox("getValue");
-				if(cfz==null || cfz==""){
-//					$.messager.alert('提示信息','请先填写初复诊!','warning');
-					return ;
-				}
-				if(cureTime==null || cureTime==""){
-//					$.messager.alert('提示信息','请先填写治疗日期!','warning');
-					return ;
-				}
-				$("#treatmentTime").combobox({
-					url:content+'/ttti/queryZLSList?userId='+row.id+'&companyid='+user.user.companyid+'&status='+1+"&chuFuZhen="+cfz+"&day="+cureTime
-				});
-			}
-		}
+	$("#userid").combobox({
+		url:content+'/common/queryCosmetologist?id='+user.user.companyid
 	});
+	$("#therapeutist").combobox({
+		url:content+'/common/queryCosmetologist?id='+user.user.companyid
+//		,
+//		onSelect: function(row){
+//			if (row != null) {
+//				var cfz = $("#chuFuZhen").combobox("getValue");
+//				var cureTime = $("#cureTime").datebox("getValue");
+//				if(cfz==null || cfz==""){
+////					$.messager.alert('提示信息','请先填写初复诊!','warning');
+//					return ;
+//				}
+//				if(cureTime==null || cureTime==""){
+////					$.messager.alert('提示信息','请先填写治疗日期!','warning');
+//					return ;
+//				}
+//				$("#treatmentTime").combobox({
+//					url:content+'/ttti/queryZLSList?userId='+row.id+'&companyid='+user.user.companyid+'&status='+1+"&chuFuZhen="+cfz+"&day="+cureTime
+//				});
+//			}
+//		}
+	});
+
 	$('#cureTime').datebox({
 		onSelect: function(date){
 			var cfz = $("#chuFuZhen").combobox("getValue");
@@ -453,7 +448,6 @@ function CustomerConsumptonAmount(){
 				    	project_dg.datagrid("load",{"consumptonAmountId":row.id});
 				    	$("#consumptonAmountId").val($("#ccacdid").val());
 				    	$("#baseproductcomplate").hide();
-				    	ccac.customerAmountEdit(row);
 				    	var row1 = $("#ccac_table").datagrid("getSelected");
 	                	if(row1.status==1 || row1.status==99 || cu.hasRoles("h_option")){
 	                		$("#baseproductcomplate").hide();
@@ -464,6 +458,7 @@ function CustomerConsumptonAmount(){
 	                		cu.disableForm("ccacdetaildlg-fm",false);
 	                		$("#project_tb .easyui-linkbutton").linkbutton('enable');
 	                	}
+	                	ccac.customerAmountEdit(row);
 	                	ccac.customerId = row.customerId;
 			        },
 			        onSelect:function(index,row){
@@ -483,8 +478,7 @@ function CustomerConsumptonAmount(){
 					cu.initClearCombobox("therapeutist");
 					cu.initClearCombobox("rootIn");
 					cu.initClearCombobox("profession");
-					$("#ccacdlg-fm").form("clear").form("load",row);
-					$("#treatmentTime").combobox("setValue",row.treatmentOptionTime);
+//					cu.initClearCombobox("treatmentTime");
 					var st = row.status;
 					if(st==1){
 						cu.disableForm("ccacdlg-fm",true);
@@ -496,6 +490,15 @@ function CustomerConsumptonAmount(){
 						cu.disableForm("ccacdlg-fm",false);
 						$("#basecomplate").show();
 					}
+					$("#ccacdlg-fm").form("clear").form("load",row);
+					
+					$("#treatmentTime").combobox({
+						url:content+'/ttti/queryZLSList?userId='+row.therapeutist+'&companyid='+user.user.companyid+'&status='+1+"&chuFuZhen="+row.chuFuZhen+"&day="+row.treatmentOptionDay,
+						onLoadSuccess:function(){
+							$("#treatmentTime").combobox("setValue",row.treatmentOptionTime);
+							$("#treatmentTime").combobox("setText",row.treatmentOptionTimeName);
+						}
+					});
 				},
 				onSelect:function(index,row){
 					ccac.index = index;
@@ -561,7 +564,7 @@ function CustomerConsumptonAmount(){
 			var endTime = ($("#queryendTime").datebox('getValue')=="")?null:$("#queryendTime").datebox('getValue');
 			var rootIn = ($("#queryrootIn").combobox("getValue")<=0)?null:$("#queryrootIn").combobox("getValue")==""?null:$("#queryrootIn").combobox("getValue");
 			var therapeutist = ($("#userid").combobox("getValue")<=0)?null:$("#userid").combobox("getValue")==""?null:$("#userid").combobox("getValue");
-			var chuFuZhen = ($("#queryChuFuZhen").combobox('getValue')<=0)?null:$("#queryChuFuZhen").combobox("getValue")==""?null:$("#queryChuFuZhen").combobox("getValue");
+			var chuFuZhen = ($("#queryChuFuZhen").combobox('getValue')<0)?null:$("#queryChuFuZhen").combobox("getValue")==""?null:$("#queryChuFuZhen").combobox("getValue");
 			var status = $("#querystatus").combobox('getValue');
 			params.status = status;
 			params.rootIn = rootIn;
@@ -574,6 +577,7 @@ function CustomerConsumptonAmount(){
 		params.customername = customername;
 		params.companyId = companyid;
 		if(status==-1) params.status=null;
+		if(params.phonenumb!='' || params.customername!='')  params.createtime=null;
 		return params;
 	}
 	this.getParams = function(){
@@ -586,6 +590,7 @@ function CustomerConsumptonAmount(){
 		$('#ccac_table').datagrid("unselectAll");
 		$("#ccacdlg").dialog("open").dialog("center").dialog("setTitle","添加客户消费记录");
 		$("#ccacdlg-fm").form("clear");
+		$("#basecomplate").show();
 		cu.disableForm("ccacdlg-fm",false);
 		cu.initClearCombobox("sex");
 		cu.initClearCombobox("chuFuZhen");
@@ -659,17 +664,13 @@ function CustomerConsumptonAmount(){
 				$.messager.progress('close');
 				if(result!=null && result!=""){
 //					$('#ccacdetaildlg-fm').form('clear');
-					cu.disableForm("ccacdetaildlg-fm",false);
+//					cu.disableForm("ccacdetaildlg-fm",false);
 					$('#ccac_table').datagrid('reload');
 					$("#consumptonAmountId").val(result);
 					$("#ccacdid").val(result);
 //					$("#baseproductcomplate").hide();
 					$.messager.alert('提示','操作成功');
 					$('#ccac_table').datagrid('reload');
-					if(user.user.companyid==1){
-						$('#ccacdetaildlg').dialog('close');
-						cu.clearSelected("ccac_table");
-					}
 				}else{
 					$.messager.alert('提示','操作失败','warning');
 				}
@@ -973,9 +974,6 @@ function CustomerConsumptonAmount(){
 		}
 	};
 	this.customerAmountAdd = function(index){
-		if(user.user.companyid==1){
-			$("#consumpton_project_list").hide();
-		}
 		$("#ccacdetaildlg-fm").form("clear");
 		$("#ccacdetaildlg").dialog("open").dialog("center").dialog("setTitle","添加消费记录");
 		var row=$('#ccac_table').datagrid('getSelected');
