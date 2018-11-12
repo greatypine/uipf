@@ -68,4 +68,6 @@ public interface CommonService {
 
 	Map<String, Object> queryStoreReport(Integer companyid, String endtime, Integer page, Integer rows);
 
+	void doCreateTherapistTreatmentTime();
+
 }

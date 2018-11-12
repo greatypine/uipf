@@ -1,7 +1,7 @@
 var indexOption;
 var leftMenusTree;
 var reports;
-var colors = ["darkseagreen","thistle","pink","lightgrey","powderblue","antiquewhite","plum","thistle"];
+var colors = ["darkseagreen","thistle","pink","thistle","powderblue","antiquewhite","lightgrey","plum"];
 if(!cu.isPC()){
 	$("#airreprot").remove();
 	$("#glyphicontime").remove();
@@ -30,6 +30,7 @@ function init(){
 		indexOption.getSubscribeReceptionInfo();//查询监听预约接诊情况
 	}
 	if(cu.hasRoles("sadmin,generalManager,q_area_shopManager")){
+		//注释
 		indexOption.initQCardInfo();
 		indexOption.initQReport();
 		indexOption.initWFCompant();
@@ -317,6 +318,7 @@ function IndexOption(){
 				}
 			});
 	};
+	//----------
 	this.getcolumns = function(){
 		var cls = new Array();
 		var year = cu.getCurrentYear();
@@ -325,34 +327,303 @@ function IndexOption(){
 		var ld = cu.getLastMonthDay(year,month);
 		var sd = 0;
 		var ed = 0;
+		var clun = {field:'username',title:'姓名',width:'14%',align:'center'};
+		cls.push(clun);
 		if(ld-day<=7){
-			sd = ld-7;
-			ed = ld;
+			var nextmonth = cu.month_add(new Date(),1);
+			sd = day;
+			if(ld-day==0){//月末
+				var edate = new Date(nextmonth);
+				var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+					if(val=='休'){
+			    		return '<font color="FF0033"><b>'+val+'<b></font>';
+			    	}else if(val=='早'){
+			    		return '<font color="#009933">'+val+'</font>';
+			    	}else if(val=='中'){
+			    		return '<font color="#CC9933">'+val+'</font>';
+			    	}else if(val=='晚'){
+			    		return '<font color="#660033">'+val+'</font>';
+			    	}
+				}};
+				cls.push(cl);
+				year = edate.getFullYear();
+				month = edate.getMonth();
+				ed = 1;
+				sd = 1;
+				month = (Number(month)<10)?'0'+Number(month):month;
+				for (var i = 0; i < 6; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+			}else if(ld-day==1){
+				var edate = new Date(nextmonth);
+				for (var i = 0; i < 2; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+				year = edate.getFullYear();
+				month = edate.getMonth();
+				ed = 2;
+				sd = 1;
+				month = (Number(month)<10)?'0'+Number(month):month;
+				for (var i = 0; i < 5; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+				
+			}else if(ld-day==2){
+				var edate = new Date(nextmonth);
+				for (var i = 0; i < 3; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+				year = edate.getFullYear();
+				month = edate.getMonth();
+				ed = 3;
+				sd = 1;
+				month = (Number(month)<10)?'0'+Number(month):month;
+				for (var i = 0; i < 4; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+			}else if(ld-day==3){
+				var edate = new Date(nextmonth);
+				for (var i = 0; i < 4; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+				year = edate.getFullYear();
+				month = edate.getMonth();
+				ed = 4;
+				sd = 1;
+				month = (Number(month)<10)?'0'+Number(month):month;
+				for (var i = 0; i < 3; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+			}else if(ld-day==4){
+				var edate = new Date(nextmonth);
+				for (var i = 0; i < 5; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+				year = edate.getFullYear();
+				month = edate.getMonth();
+				ed = 5;
+				sd = 1;
+				month = (Number(month)<10)?'0'+Number(month):month;
+				for (var i = 0; i < 2; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+			}else if(ld-day==5){
+				var edate = new Date(nextmonth);
+				for (var i = 0; i < 6; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+				year = edate.getFullYear();
+				month = edate.getMonth();
+				ed = 6;
+				sd = 1;
+				month = (Number(month)<10)?'0'+Number(month):month;
+				for (var i = 0; i < 1; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+			}else if(ld-day==6){
+				var edate = new Date(nextmonth);
+				for (var i = 0; i < 7; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+				year = edate.getFullYear();
+				month = edate.getMonth();
+				ed = 7;
+				sd = 1;
+				month = (Number(month)<10)?'0'+Number(month):month;
+				for (var i = 0; i < 0; i++) {
+					var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+						if(val=='休'){
+				    		return '<font color="FF0033"><b>'+val+'<b></font>';
+				    	}else if(val=='早'){
+				    		return '<font color="#009933">'+val+'</font>';
+				    	}else if(val=='中'){
+				    		return '<font color="#CC9933">'+val+'</font>';
+				    	}else if(val=='晚'){
+				    		return '<font color="#660033">'+val+'</font>';
+				    	}
+					}};
+					cls.push(cl);
+					sd++;
+				}
+			}
 		}else{
 			sd = day;
 			ed = day+7;
-		}
-		month = (Number(month)<10)?'0'+Number(month):month;
-		var clun = {field:'username',title:'姓名',width:'14%',align:'center'};
-		cls.push(clun);
-		for (var i = 0; i < 7; i++) {
-			var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
-	        	if(val=='休'){
-	        		return '<font color="FF0033"><b>'+val+'<b></font>';
-	        	}else if(val=='早'){
-	        		return '<font color="#009933">'+val+'</font>';
-	        	}else if(val=='中'){
-	        		return '<font color="#CC9933">'+val+'</font>';
-	        	}else if(val=='晚'){
-	        		return '<font color="#660033">'+val+'</font>';
-	        	}
-	        }};
-			cls.push(cl);
-			sd++;
+			month = (Number(month)<10)?'0'+Number(month):month;
+			for (var i = 0; i < 7; i++) {
+				var cl = {field:'day'+(sd),title:year+""+month+((sd<10)?['0'+(sd)]:sd),width:'12.5%',align:'center',formatter:function(val,row){
+					if(val=='休'){
+			    		return '<font color="FF0033"><b>'+val+'<b></font>';
+			    	}else if(val=='早'){
+			    		return '<font color="#009933">'+val+'</font>';
+			    	}else if(val=='中'){
+			    		return '<font color="#CC9933">'+val+'</font>';
+			    	}else if(val=='晚'){
+			    		return '<font color="#660033">'+val+'</font>';
+			    	}
+				}};
+				cls.push(cl);
+				sd++;
+			}
 		}
 //		console.log(cls);
 		return cls;
 	};
+	this.formatval = function(val){
+		if(val=='休'){
+    		return '<font color="FF0033"><b>'+val+'<b></font>';
+    	}else if(val=='早'){
+    		return '<font color="#009933">'+val+'</font>';
+    	}else if(val=='中'){
+    		return '<font color="#CC9933">'+val+'</font>';
+    	}else if(val=='晚'){
+    		return '<font color="#660033">'+val+'</font>';
+    	}
+	}
 	this.initSBCompant = function(){
 		$('#subscribeQuery_table').datagrid({
 		        url: content+"/common/querySubscribeList",

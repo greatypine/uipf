@@ -31,7 +31,7 @@
 		</div>
 	</div>
 </div>
-	<div id="systemvipcustomerdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#systemvipcustomer_dlg-buttons">
+	<div id="systemvipcustomerdlg" class="easyui-dialog"  data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#systemvipcustomer_dlg-buttons">
 		<form id="systemvipcustomerdlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>
@@ -99,7 +99,7 @@
 		</form>
 	</div>
 	<div id="systemvipcustomer_dlg-buttons">
-		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin,q_option" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.complate()" style="width: 90px">确认</a> 
+		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin,q_option,q_receptionist" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.complate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#systemvipcustomerdlg-fm').form('clear');$('#systemvipcustomerdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 	<div id="productsdlg" class="easyui-dialog"  data-options="modal:true" style="width: 85%; overflow: hidden;height: 50%;" closed="true" buttons="#productsdlg-buttons">
@@ -124,7 +124,7 @@
 	<div id="commentsdlg-buttons">
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#commentsdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
-	<div id="customercommentdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#customercommentdlg-buttons">
+	<div id="customercommentdlg" class="easyui-dialog"  data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#customercommentdlg-buttons">
 		<form id="customercommentdlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>
@@ -139,7 +139,7 @@
 		</form>
 	</div>
 	<div id="customercommentdlg-buttons">
-		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin,q_option" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.customerCommentComplate()" style="width: 90px">确认</a> 
+		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin,q_option,q_receptionist" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.customerCommentComplate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#customercommentdlg-fm').form('clear');$('#customercommentdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 	
@@ -149,7 +149,7 @@
 		</table>
 		<div id="projects_option" style="padding: 5px; height: auto">
 			<div style="margin-bottom: 5px">
-				<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,q_option" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemvipcustomer.addcomment()">添加</a> 
+				<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_receptionist,q_admin,q_option,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="systemvipcustomer.addcomment()">添加</a> 
 				<a shiro:hasAnyRoles="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="systemvipcustomer.removecomment()">删除</a>
 			</div>
 		</div>
@@ -157,7 +157,7 @@
 	<div id="projectsdlg-buttons">
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#projectsdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
-	<div id="smessagedlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#smessagedlg-buttons">
+	<div id="smessagedlg" class="easyui-dialog"  data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#smessagedlg-buttons">
 		<form id="smessagedlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>
@@ -174,10 +174,10 @@
 		</form>
 	</div>
 	<div id="smessagedlg-buttons">
-		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin,q_option" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.exeSendMessByEmail()" style="width: 90px">确认</a> 
+		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,h_admin,q_option,q_receptionist" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.exeSendMessByEmail()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#smessagedlg-fm').form('clear');$('#smessagedlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
-	<div id="transferTreatmentdlg" class="easyui-dialog" data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#transferTreatmentdlg-buttons">
+	<div id="transferTreatmentdlg" class="easyui-dialog" data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#transferTreatmentdlg-buttons">
 		<form id="transferTreatmentdlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 				<tr>
@@ -205,7 +205,7 @@
 		</form>
 	</div>
 	<div id="transferTreatmentdlg-buttons">
-		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.transferTreatment()" style="width: 90px">确认</a> 
+		<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin,q_receptionist" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="systemvipcustomer.transferTreatment()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#transferTreatmentdlg-fm').form('clear');$('#transferTreatmentdlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 </body>

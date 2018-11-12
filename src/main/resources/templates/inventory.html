@@ -12,7 +12,7 @@
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="inventory.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="inventory.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="inventory.add()">添加</a> 
 			<a id="append" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="inventory.append()">入库</a>
 			<a id="delivery" shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="inventory.delivery()">出库</a> 
 			<a shiro:hasAnyRoles="sadmin,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="inventory.remove()">删除</a>
@@ -33,7 +33,7 @@
 		</div>
 	</div>
 </div>
-	<div id="inventorydlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#inventory_dlg-buttons">
+	<div id="inventorydlg" class="easyui-dialog"  data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#inventory_dlg-buttons">
 		<form id="inventorydlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>
@@ -89,7 +89,7 @@
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#inventorydlg-fm').form('clear');$('#inventorydlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 	
-	<div id="modifyInventorydlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#modifyInventory_dlg-buttons">
+	<div id="modifyInventorydlg" class="easyui-dialog"  data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#modifyInventory_dlg-buttons">
 		<form id="modifyInventorydlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>

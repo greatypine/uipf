@@ -12,7 +12,7 @@
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="company.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager,q_admin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="company.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="company.add()">添加</a> 
 			<a shiro:hasAnyRoles="sadmin" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="company.remove()">删除</a>
 		</div>
 		<div id="cron_bar">
@@ -22,7 +22,7 @@
 		</div>
 	</div>
 </div>
-	<div id="companydlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#company_dlg-buttons">
+	<div id="companydlg" class="easyui-dialog"  data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#company_dlg-buttons">
 		<form id="companydlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>
@@ -72,7 +72,7 @@
 		</form>
 	</div>
 	<div id="company_dlg-buttons">
-		<a  shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="company.complate()" style="width: 90px">确认</a> 
+		<a  shiro:hasAnyRoles="sadmin" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="company.complate()" style="width: 90px">确认</a> 
 		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#companydlg-fm').form('clear');$('#companydlg').dialog('close')" style="width: 90px">关闭</a>
 	</div>
 	

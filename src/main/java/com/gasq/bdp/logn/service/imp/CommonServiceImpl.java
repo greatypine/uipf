@@ -13,14 +13,20 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gasq.bdp.logn.mapper.TCompanyMapper;
+import com.gasq.bdp.logn.mapper.TTherapistTreatmentTimeQueryMapper;
 import com.gasq.bdp.logn.mapper.TWorkforcemanagementMapper;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TCompany;
+import com.gasq.bdp.logn.model.TCompanyExample;
+import com.gasq.bdp.logn.model.TTherapistTreatmentTimeQuery;
 import com.gasq.bdp.logn.model.TWorkforcemanagement;
 import com.gasq.bdp.logn.service.CommonService;
 import com.gasq.bdp.logn.utils.CommonUtils;
@@ -37,31 +43,38 @@ import com.github.pagehelper.PageInfo;
  */
 @Service
 public class CommonServiceImpl implements CommonService {
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired TCompanyMapper companyMapper;
 	@Autowired TWorkforcemanagementMapper workforcemanagementMapper;
-
+	@Autowired TTherapistTreatmentTimeQueryMapper treatmentTimeQueryMapper;
+	
 	@Override
 	public List<Map<String, Object>> queryRootIn(TCompany bean) {
+		bean.setId(SystemUserInfo.getSystemUser().getCompany().getId());
 		return companyMapper.queryRootIn(bean);
 	}
 
 	@Override
 	public List<Map<String, Object>> querySex(TCompany bean) {
+		bean.setId(SystemUserInfo.getSystemUser().getCompany().getId());
 		return companyMapper.querySex(bean);
 	}
 
 	@Override
 	public List<Map<String, Object>> queryUserStatus(TCompany bean) {
+		bean.setId(SystemUserInfo.getSystemUser().getCompany().getId());
 		return companyMapper.queryUserStatus(bean);
 	}
 
 	@Override
 	public List<Map<String, Object>> queryCosmetologist(TCompany bean) {
+		bean.setId(SystemUserInfo.getSystemUser().getCompany().getId());
 		return companyMapper.queryCosmetologist(bean);
 	}
 
 	@Override
 	public List<Map<String, Object>> queryCounsoler(TCompany bean) {
+		bean.setId(SystemUserInfo.getSystemUser().getCompany().getId());
 		return companyMapper.queryCounsoler(bean);
 	}
 
@@ -70,6 +83,7 @@ public class CommonServiceImpl implements CommonService {
 		if(bean.getQ().equals(" ")) {
 			bean.setQ(null);
 		}
+		bean.setId(SystemUserInfo.getSystemUser().getCompany().getId());
 		return companyMapper.queryProjectInventory(bean);
 	}
 
@@ -445,32 +459,150 @@ public class CommonServiceImpl implements CommonService {
 			int sday = 0;
 			int eday = 0;
 			if(lengthOfMonth-dayOfMonth<=7) {
-				sday = lengthOfMonth-7;
-				eday = lengthOfMonth;
+				if(lengthOfMonth-dayOfMonth==0) {//月末
+					handleNextMonthWF(list1, list, dayOfMonth, lengthOfMonth, bean.getCycle(), params,1,6);
+//					sday = dayOfMonth;
+//					eday = lengthOfMonth;
+//					for (Map<String, Object> map : list) {
+//						Map<String, Object> map1 = new HashMap<>();
+//						Set<Entry<String, Object>> entrySet = map.entrySet();
+//						for (Entry<String, Object> entry : entrySet) {
+//							String key = entry.getKey();
+//							if(key.startsWith("day")) {
+//								Integer ik = Integer.parseInt(key.replace("day", ""));
+//								if(ik>=sday && ik<=eday) {
+//									map1.put(entry.getKey(), entry.getValue());
+//								}
+//							}else {
+//								map1.put(entry.getKey(), entry.getValue());
+//							}
+//						}
+//						list1.add(map1);
+//					}
+//					
+//					String cycle = bean.getCycle();
+//					String year = cycle.substring(0, 4);
+//					String month = cycle.substring(4,cycle.length());
+//					if(Integer.parseInt(month)<12) month = Integer.parseInt(month)+1+"";
+//					else {
+//						month="01";
+//						year = Integer.parseInt(year)+1+"";
+//					}
+//					String nextdate = year+month;
+//					params.put("cycle", nextdate);
+//					List<Map<String, Object>> listnextmonth = workforcemanagementMapper.queryPagingList(params);
+//					sday = 1;
+//					eday = 6;
+//					for (Map<String, Object> map : listnextmonth) {
+//						String username = map.get("username").toString();
+//						int companyid = Integer.parseInt(map.get("companyid").toString());
+//						for (Map<String, Object> bmap : list1) {
+//							String busername = bmap.get("username").toString();
+//							int bcompanyid = Integer.parseInt(bmap.get("companyid").toString());
+//							if(busername.equals(username) && bcompanyid==companyid) {
+//								Set<Entry<String, Object>> entrySet = map.entrySet();
+//								for (Entry<String, Object> entry : entrySet) {
+//									String key = entry.getKey();
+//									if(key.startsWith("day")) {
+//										Integer ik = Integer.parseInt(key.replace("day", ""));
+//										if(ik>=sday && ik<=eday) {
+//											bmap.put(entry.getKey(), entry.getValue());
+//										}
+//									}
+//								}
+//							}
+//						}
+//					}
+				}else if(lengthOfMonth-dayOfMonth==1) {
+					handleNextMonthWF(list1, list, dayOfMonth, lengthOfMonth, bean.getCycle(), params,1,5);
+				}else if(lengthOfMonth-dayOfMonth==2) {
+					handleNextMonthWF(list1, list, dayOfMonth, lengthOfMonth, bean.getCycle(), params,1,4);
+				}else if(lengthOfMonth-dayOfMonth==3) {
+					handleNextMonthWF(list1, list, dayOfMonth, lengthOfMonth, bean.getCycle(), params,1,3);
+				}else if(lengthOfMonth-dayOfMonth==4) {
+					handleNextMonthWF(list1, list, dayOfMonth, lengthOfMonth, bean.getCycle(), params,1,2);
+				}else if(lengthOfMonth-dayOfMonth==5) {
+					handleNextMonthWF(list1, list, dayOfMonth, lengthOfMonth, bean.getCycle(), params,1,1);
+				}else if(lengthOfMonth-dayOfMonth==6) {
+					handleNextMonthWF(list1, list, dayOfMonth, lengthOfMonth, bean.getCycle(), params,1,0);
+				}
 			}else {
 				sday = dayOfMonth;
 				eday = dayOfMonth+7;
-			}
-			for (Map<String, Object> map : list) {
-				Map<String, Object> map1 = new HashMap<>();
-				Set<Entry<String, Object>> entrySet = map.entrySet();
-				for (Entry<String, Object> entry : entrySet) {
-					String key = entry.getKey();
-					if(key.startsWith("day")) {
-						Integer ik = Integer.parseInt(key.replace("day", ""));
-						if(ik>=sday && ik<=eday) {
+				for (Map<String, Object> map : list) {
+					Map<String, Object> map1 = new HashMap<>();
+					Set<Entry<String, Object>> entrySet = map.entrySet();
+					for (Entry<String, Object> entry : entrySet) {
+						String key = entry.getKey();
+						if(key.startsWith("day")) {
+							Integer ik = Integer.parseInt(key.replace("day", ""));
+							if(ik>=sday && ik<=eday) {
+								map1.put(entry.getKey(), entry.getValue());
+							}
+						}else {
 							map1.put(entry.getKey(), entry.getValue());
 						}
-					}else {
-						map1.put(entry.getKey(), entry.getValue());
 					}
+					list1.add(map1);
 				}
-				list1.add(map1);
 			}
 		}
 		result.put("rows",list1);
 		result.put("total",0);
 		return result;
+	}
+	
+	private void handleNextMonthWF(List<Map<String, Object>> list1,List<Map<String, Object>> list,int dayOfMonth,int lengthOfMonth,String cycle,Map<String,Object> params,int nextday,int beforeday) {
+		int sday = dayOfMonth;
+		int eday = lengthOfMonth;
+		for (Map<String, Object> map : list) {
+			Map<String, Object> map1 = new HashMap<>();
+			Set<Entry<String, Object>> entrySet = map.entrySet();
+			for (Entry<String, Object> entry : entrySet) {
+				String key = entry.getKey();
+				if(key.startsWith("day")) {
+					Integer ik = Integer.parseInt(key.replace("day", ""));
+					if(ik>=sday && ik<=eday) {
+						map1.put(entry.getKey(), entry.getValue());
+					}
+				}else {
+					map1.put(entry.getKey(), entry.getValue());
+				}
+			}
+			list1.add(map1);
+		}
+		String year = cycle.substring(0, 4);
+		String month = cycle.substring(4,cycle.length());
+		if(Integer.parseInt(month)<12) month = Integer.parseInt(month)+1+"";
+		else {
+			month="01";
+			year = Integer.parseInt(year)+1+"";
+		}
+		String nextdate = year+month;
+		params.put("cycle", nextdate);
+		List<Map<String, Object>> listnextmonth = workforcemanagementMapper.queryPagingList(params);
+		sday = nextday;
+		eday = beforeday;
+		for (Map<String, Object> map : listnextmonth) {
+			String username = map.get("username").toString();
+			int companyid = Integer.parseInt(map.get("companyid").toString());
+			for (Map<String, Object> bmap : list1) {
+				String busername = bmap.get("username").toString();
+				int bcompanyid = Integer.parseInt(bmap.get("companyid").toString());
+				if(busername.equals(username) && bcompanyid==companyid) {
+					Set<Entry<String, Object>> entrySet = map.entrySet();
+					for (Entry<String, Object> entry : entrySet) {
+						String key = entry.getKey();
+						if(key.startsWith("day")) {
+							Integer ik = Integer.parseInt(key.replace("day", ""));
+							if(ik>=sday && ik<=eday) {
+								bmap.put(entry.getKey(), entry.getValue());
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -612,4 +744,50 @@ public class CommonServiceImpl implements CommonService {
 		map.put("total",pageinfo.getTotal());
 		return map;
 	}
+	@Override
+	public void doCreateTherapistTreatmentTime() {
+    	logger.info("定时器【预约订单关闭】后台开始运行........................");
+    	try {
+    		TCompanyExample cmpexample = new TCompanyExample();
+    		cmpexample.createCriteria().andStatusEqualTo(true);
+    		List<TCompany> complist = companyMapper.selectByExample(cmpexample);
+    		int day = 30;
+    		if(complist.size()>0) {
+    			for (TCompany tCompany : complist) {
+    				String cycleMax = treatmentTimeQueryMapper.selectTTQCycleMax(tCompany.getId());
+    				long diffday = 0;
+    				if(StringUtils.isBlank(cycleMax)) {
+    					diffday = 0;
+    				}else {
+    					diffday = DateUtil.datesub(DateUtil.parseStr(cycleMax, DateUtil.DATE_DEFAULT_FORMAT), DateUtil.getSysCurrentDate());
+    				}
+    				if(diffday-day>0) continue;
+    				tCompany.setViewname("v_cosmetologist");
+    				tCompany.setSortName("sort");
+					List<Map<String, Object>> vcs = this.getView(tCompany);
+					if(vcs.size()>=0) {
+						List<TTherapistTreatmentTimeQuery> tttqs = new ArrayList<TTherapistTreatmentTimeQuery>();
+						for (Map<String, Object> map : vcs) {
+							String nickname = map.get("nickname").toString();
+//    							Integer userid = Integer.parseInt(map.get("id").toString());
+							Boolean disabled = Boolean.parseBoolean(map.get("disabled").toString());
+							if(!disabled) {
+								for (int i = 0; i <= day; i++) {
+									TTherapistTreatmentTimeQuery tttq = new TTherapistTreatmentTimeQuery();
+									tttq.setCompanyid(tCompany.getId());
+									tttq.setCycle(DateUtil.dateToString(DateUtil.getDiyDateTime(DateUtil.getSysCurrentDate(), i)));
+									tttq.setUsername(nickname);
+									tttqs.add(tttq);
+								}
+							}
+						}
+						treatmentTimeQueryMapper.insertBatch(tttqs);
+					}
+				}
+    		}
+		} catch (Exception e) {
+			logger.info("定时器【预约订单关闭】运行失败,错误信息如下："+e.getMessage(),e);
+		}
+    	logger.info("定时器【预约订单关闭】后台运行完毕");
+    }
 }

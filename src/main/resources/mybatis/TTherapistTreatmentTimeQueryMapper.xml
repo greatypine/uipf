@@ -814,4 +814,10 @@
 	GROUP BY a.companyid,a.cycle,a.username,a.id,twm.days,vtt1.text,vtt2.text,vtt3.text,vtt4.text,vtt5.text,vtt6.text,vtt7.text,vtt8.text,vtt9.text,vtt10.text,vtt11.text,vtt12.text,vtt13.text,vtt14.text,vtt15.text,vtt16.text,vtt17.text,vtt18.text,vtt19.text,vtt20.text,vtt21.text,vtt22.text,vtt23.text,vtt24.text,vct.sort
 	ORDER BY vct.sort
 </select>
+
+<select id="selectTTQCycleMax" parameterType="java.lang.Integer" resultType="java.lang.String">
+	SELECT max(cycle) maxcycle FROM `t_therapist_treatment_time_query` a
+	INNER JOIN t_company tc on a.companyid=tc.id
+	where a.companyid=#{companyid}
+</select>
 </mapper>

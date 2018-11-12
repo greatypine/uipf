@@ -814,7 +814,7 @@
 		a.*,tc.name as companyName
 	FROM
 		t_workforceManagement a 
-		LEFT JOIN t_company tc on a.companyid = tc.id
+		INNER JOIN t_company tc on a.companyid = tc.id and tc.`status`=1
 		LEFT JOIN v_cosmetologist vc on a.username = vc.nickname and vc.companyid=a.companyid
 	where 1=1 
 	<if test="cycle !=null and cycle!=''">
@@ -823,7 +823,7 @@
 	<if test="companyid!=null">
 		and a.companyid=#{companyid}
 	</if>
-	order by vc.nickname desc 
+	order by vc.sort 
 </select>
 
 <select id="queryExportDataList" parameterType="com.gasq.bdp.logn.model.TWorkforcemanagement" resultType="java.util.LinkedHashMap"  statementType="STATEMENT">
@@ -890,6 +890,6 @@
 	<if test="record.companyid!=null">
 		and a.companyid=${record.companyid}
 	</if>
-	order by vc.nickname desc 
+	order by vc.sort 
 </select>
 </mapper>

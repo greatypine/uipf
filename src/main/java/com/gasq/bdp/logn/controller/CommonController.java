@@ -406,4 +406,11 @@ public class CommonController {
 		}
     	return null;
 	 }
+    
+    @Ilogger("初始化所有公司治疗师预约数据")
+    @RequiresRoles(value={RoleSign.SADMIN},logical=Logical.OR)
+    @RequestMapping(value = "/doCreateTherapistTreatmentTime",method=RequestMethod.GET)
+	public void doCreateTherapistTreatmentTime() {
+    	commonService.doCreateTherapistTreatmentTime();
+    }
 }

@@ -1271,9 +1271,9 @@ ORDER BY tsr1.sort
 				tcls._count LIUSHI
 			FROM
 				t_ltn_customer a
-			LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_customer_consumpton_amount b GROUP BY b.customer_id) b on a.id = b.id
-			INNER JOIN t_customer_porject tcp on a.id = tcp.order_id and tcp.update_time is null and DATE_FORMAT(a.createTime,'%Y-%m-%d')=DATE_FORMAT(tcp.create_time, '%Y-%m-%d')
-			LEFT JOIN(SELECT count(a1.id)_count,a1.company_id from t_ltn_customer a1 where a1.`status`=99 and DATE_FORMAT(a1.createTime, '%Y-%m-%d') &gt;= '2018-10-01' and DATE_FORMAT(a1.createTime, '%Y-%m-%d') &lt;= #{endtime} GROUP BY a1.company_id) tcls on a.company_id=tcls.company_id	
+			LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id,DATE_FORMAT(b.createTime,'%Y-%m') dtime from t_customer_consumpton_amount b GROUP BY b.customer_id,DATE_FORMAT(b.createTime,'%Y-%m')) b on a.id = b.id and b.dtime = DATE_FORMAT(CURDATE(), '%Y-%m')
+			INNER JOIN t_customer_porject tcp on a.id = tcp.order_id and tcp.update_time is null and (DATE_FORMAT(tcp.create_time, '%Y-%m-%d') &gt;= #{starttime} and DATE_FORMAT(tcp.create_time, '%Y-%m-%d') &lt;= #{endtime})
+			LEFT JOIN(SELECT count(a1.id)_count,a1.company_id from t_ltn_customer a1 where a1.`status`=99 and DATE_FORMAT(a1.createTime, '%Y-%m-%d') &gt;= #{starttime} and DATE_FORMAT(a1.createTime, '%Y-%m-%d') &lt;= #{endtime} GROUP BY a1.company_id) tcls on a.company_id=tcls.company_id	
 			where a.status=1
 					and DATE_FORMAT(a.createTime, '%Y-%m-%d') &gt;= #{starttime}
 					and DATE_FORMAT(a.createTime, '%Y-%m-%d') &lt;= #{endtime}
@@ -1325,15 +1325,15 @@ ORDER BY tsr1.sort
 						count(DISTINCT b.phonenumb) numbs
 					FROM
 						v_root_in a
-					LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in AND a.companyid = b.company_id and b.status=1
+					LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in and b.status=1
 					LEFT JOIN t_customer_consumpton_amount c on b.id=c.customer_id
 					LEFT JOIN v_customer_profession vcp on b.profession = vcp.`value`
-					INNER JOIN t_company tc ON a.companyid = tc.id and tc.`status`=1
-					INNER JOIN t_customer_porject tcp on b.id = tcp.order_id and tcp.update_time is null and DATE_FORMAT(b.createTime,'%Y-%m-%d')=DATE_FORMAT(tcp.create_time, '%Y-%m-%d')
+					INNER JOIN t_company tc ON b.company_id = tc.id and tc.`status`=1
+					INNER JOIN t_customer_porject tcp on b.id = tcp.order_id and tcp.update_time is null and (DATE_FORMAT(tcp.create_time, '%Y-%m-%d') &gt;= #{starttime} and DATE_FORMAT(tcp.create_time, '%Y-%m-%d') &lt;= #{endtime})
 					where 1=1 
 					and DATE_FORMAT(b.createTime, '%Y%m') = DATE_FORMAT(#{starttime}, '%Y%m')
 					<if test="companyid!=null">
-						and tc.company_id = #{companyid}
+						and tc.id = #{companyid}
 					</if>
 					GROUP BY tc.id,a.name,vcp.text
 			UNION all
@@ -1351,7 +1351,7 @@ ORDER BY tsr1.sort
 				where a.`status`=1 
 					and DATE_FORMAT(tcpl.create_time, '%Y%m') = DATE_FORMAT(#{starttime}, '%Y%m')
 					<if test="companyid!=null">
-						and tc.company_id = #{companyid}
+						and tc.id = #{companyid}
 					</if>
 				GROUP BY a.company_id,vri.`name`,vcp.text
 			) temp GROUP BY temp.companyName,temp.companyid

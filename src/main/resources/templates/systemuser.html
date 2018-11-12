@@ -27,11 +27,11 @@
 		</div>
 	</div>
 </div>
-	<div id="systemuserdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#systemuser_dlg-buttons">
+	<div id="systemuserdlg" class="easyui-dialog"  data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#systemuser_dlg-buttons">
 		<form id="systemuserdlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
-	    		<tr shiro:hasAnyRoles="sadmin,q_admin,q_area_shopManager,h_admin">
-	    			<td class="tdname">角色名称：</td>
+	    		<tr shiro:hasAnyRoles="sadmin,q_admin,q_area_shopManager,h_admin,generalManager">
+	    			<td class="tdname">用户名：</td>
 	    			<td class="tdnamebox">
 	    				<input id="username" name="username" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
 	    			</td>
@@ -40,8 +40,8 @@
 	    				<input id="password" name="password" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
 	    			</td>
 	    		</tr>
-	    		<tr shiro:hasAnyRoles="h_option,q_receptionist,q_counselor,generalManager">
-	    			<td class="tdname">角色名称：</td>
+	    		<tr shiro:hasAnyRoles="h_option,q_receptionist,q_counselor">
+	    			<td class="tdname">用户名：</td>
 	    			<td class="tdnamebox" colspan="3">
 	    				<input id="username" name="username" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
 	    			</td>

@@ -706,6 +706,25 @@ public class DateUtil {
     	double min=between/60;
     	return min;
     }
+    
+    /**
+	 * 两个日期做减法，返回相差天数
+	 * 
+	 * @throws ParseException
+	 * @throws ParseException
+	 */
+	public static long datesub(Date date1, Date date2) throws ParseException {
+		@SuppressWarnings("unused")
+		long l = date1.getTime() - date2.getTime() > 0 ? date1.getTime()
+				- date2.getTime() : date2.getTime() - date1.getTime();
+		// 日期相减得到相差的日期
+		long day = (date1.getTime() - date2.getTime()) / (24 * 60 * 60 * 1000) > 0 ? (date1
+				.getTime() - date2.getTime()) / (24 * 60 * 60 * 1000)
+				: (date2.getTime() - date1.getTime()) / (24 * 60 * 60 * 1000);
+
+		return day + 1;
+	}
+    
     /**
      * localDate转Date
      */

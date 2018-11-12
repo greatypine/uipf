@@ -36,4 +36,6 @@ public interface TTherapistTreatmentTimeQueryMapper {
 	List<Map<String, Object>> queryPagingList(Map<String, Object> params);
 
 	void insertBatch(@Param("list") List<TTherapistTreatmentTimeQuery> beans);
+
+	String selectTTQCycleMax(@Param("companyid") Integer companyid);
 }

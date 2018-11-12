@@ -1,4 +1,5 @@
 package com.gasq.bdp.logn.service;
+import com.gasq.bdp.logn.iexception.WorkFlowStateException;
 import com.gasq.bdp.logn.model.TCompany;
 import com.gasq.bdp.logn.model.TCompanyExample;
 import java.util.List;
@@ -14,7 +15,7 @@ public interface TCompanyService {
 
     Map<String, Object> queryPagingList(TCompany bean);
 
-	boolean saveOrUpdate(TCompany bean);
+	boolean saveOrUpdate(TCompany bean) throws WorkFlowStateException;
 
 	boolean delete(int id);
 

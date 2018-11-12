@@ -18,6 +18,7 @@ import com.gasq.bdp.logn.iexception.WorkFlowStateException;
 import com.gasq.bdp.logn.mapper.TCompanyMapper;
 import com.gasq.bdp.logn.mapper.TSysPermissionMapper;
 import com.gasq.bdp.logn.mapper.TSysRoleMapper;
+import com.gasq.bdp.logn.mapper.TSysRoleMenuMapper;
 import com.gasq.bdp.logn.mapper.TSysUserExtMapper;
 import com.gasq.bdp.logn.mapper.TSysUserMapper;
 import com.gasq.bdp.logn.mapper.TSysUserRoleMapper;
@@ -26,6 +27,8 @@ import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TSysPermission;
 import com.gasq.bdp.logn.model.TSysRole;
+import com.gasq.bdp.logn.model.TSysRoleMenuExample;
+import com.gasq.bdp.logn.model.TSysRoleMenuKey;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TSysUserExample;
 import com.gasq.bdp.logn.model.TSysUserExample.Criteria;
@@ -54,6 +57,7 @@ public class TSysUserServiceImpl implements TSysUserService {
 	@Autowired TSysRoleMapper rolemapper;
 	@Autowired TCompanyMapper companymapper;
 	@Autowired TSysUserRoleMapper sysUserRoleMapper;
+	@Autowired TSysRoleMenuMapper roleMenuMapper;
 
 	@Override
 	@Transactional(rollbackFor=Exception.class)
@@ -188,6 +192,30 @@ public class TSysUserServiceImpl implements TSysUserService {
 					bean.setPassword(md5pwd);
 				}
 				mapper.updateByPrimaryKeySelective(bean);
+				if(StringUtils.isNotBlank(bean.getRoleids())){
+					String[] roleids = bean.getRoleids().split(",");
+					for (String rid : roleids) {
+						TSysUserRole urbean = new TSysUserRole();
+						urbean.setRoleId(Long.parseLong(rid));
+						urbean.setUserId(bean.getId());
+						sysUserRoleMapper.insert(urbean);
+						TSysRoleMenuExample example1 = new TSysRoleMenuExample();
+						example1.createCriteria().andCompanyidEqualTo(bean.getCompanyid()).andRoleidEqualTo(Integer.parseInt(rid));
+						List<TSysRoleMenuKey> list = roleMenuMapper.selectByExample(example1);
+						if(list.size()>0) break;
+						else {
+							TSysRoleMenuExample example11 = new TSysRoleMenuExample();
+							example1.createCriteria().andCompanyidEqualTo(1).andRoleidEqualTo(Integer.parseInt(rid));
+							List<TSysRoleMenuKey> list1 = roleMenuMapper.selectByExample(example11);
+							for (TSysRoleMenuKey menuKey : list1) {
+								menuKey.setCompanyid(bean.getCompanyid());
+								menuKey.setId(null);
+								roleMenuMapper.insert(menuKey);
+							}
+						}
+					}
+					
+				}
 			}else {
 				if(countuser>0) return 1;
 				bean.setCreateTime(DateUtil.getSysCurrentDate());
@@ -199,14 +227,26 @@ public class TSysUserServiceImpl implements TSysUserService {
 				uxb.setUserId(bean.getId());
 				uxb.setPassword(pwd);
 				uxmapper.insertSelective(uxb);
-			}
-			if(StringUtils.isNotBlank(bean.getRoleids())){
-				String[] roleids = bean.getRoleids().split(",");
-				for (String rid : roleids) {
-					TSysUserRole urbean = new TSysUserRole();
-					urbean.setRoleId(Long.parseLong(rid));
-					urbean.setUserId(bean.getId());
-					sysUserRoleMapper.insert(urbean);
+				if(StringUtils.isNotBlank(bean.getRoleids())){
+					String[] roleids = bean.getRoleids().split(",");
+					for (String rid : roleids) {
+						TSysUserRole urbean = new TSysUserRole();
+						urbean.setRoleId(Long.parseLong(rid));
+						urbean.setUserId(bean.getId());
+						sysUserRoleMapper.insert(urbean);
+						TSysRoleMenuExample example = new TSysRoleMenuExample();
+						example.createCriteria().andCompanyidEqualTo(bean.getCompanyid()).andRoleidEqualTo(Integer.parseInt(rid));
+						roleMenuMapper.deleteByExample(example);
+						TSysRoleMenuExample example1 = new TSysRoleMenuExample();
+						example1.createCriteria().andCompanyidEqualTo(1).andRoleidEqualTo(Integer.parseInt(rid));
+						List<TSysRoleMenuKey> list = roleMenuMapper.selectByExample(example1);
+						for (TSysRoleMenuKey menuKey : list) {
+							menuKey.setCompanyid(bean.getCompanyid());
+							menuKey.setId(null);
+							roleMenuMapper.insert(menuKey);
+						}
+					}
+					
 				}
 			}
 			return 0;

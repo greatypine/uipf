@@ -36,7 +36,7 @@ function initData(){
 	workforceManagementQuery.initCompant();
 	workforceManagementQuery.query();
 }
-function MyworkforceManagementQuery(){
+function MyworkforceManagementQuery(params){
 	this.initCompant = function(){
 		var columns = this.getcolumns();
 		var month = $('#querymonth').combobox("getValue");
@@ -47,9 +47,7 @@ function MyworkforceManagementQuery(){
 		        rownumbers:true,
 		        loadMsg:'正在加载，请稍后...',
 		        collapsible:false,
-		        queryParams:{
-		        	cycle:$('#queryyear').combobox("getValue")+(Number(month)<10)?"0"+month:month
-				},
+		        queryParams:params,
 				frozenColumns:[[
 					{field:'id',title:'编号',hidden:true},
 					{field:'username',title:'用户名',width:"5%",align:'center'}
@@ -105,6 +103,9 @@ function MyworkforceManagementQuery(){
 		if(companyid!="") {params.companyid = companyid;}
 		if(year!="" && month!="") {params.cycle = year+((Number(month)<10)?"0"+month:month);}
 		workforceManagementQuery_table.datagrid("load",params);
+//		var params = workforceManagement.getParams();
+//		workforceManagement_table.datagrid("load",params);
+//		workforceManagement.initCompant(params);
 	};
 	this.getParams = function(){
 		return $("workforceManagementQueryform").serializeJson();
