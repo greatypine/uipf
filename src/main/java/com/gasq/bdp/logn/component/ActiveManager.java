@@ -8,6 +8,7 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.ScheduledMessage;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsMessagingTemplate;
@@ -38,10 +39,12 @@ public class ActiveManager {
      * @desc 即时发送
      */
     public void sendBack(Destination destination,String data) {
+    	if(destination==null || StringUtils.isBlank(data)) return ;
         this.jmsMessagingTemplate.convertAndSend(destination, data);
     }
     
     public void sendForeEnd(String topic, String message) {
+    	if(StringUtils.isBlank(topic) || StringUtils.isBlank(message)) return ;
     	ActiveMQUtil.sendMessage(tcp, topic, message);
     }
 
@@ -49,6 +52,7 @@ public class ActiveManager {
      * @desc 延时发送
      */
     public void delaySendBack(String text, String queueName, Long time) {
+    	if(StringUtils.isBlank(text) || StringUtils.isBlank(queueName)) return ;
         //获取连接工厂
         ConnectionFactory connectionFactory = this.jmsMessagingTemplate.getConnectionFactory();
         try {

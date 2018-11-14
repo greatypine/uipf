@@ -37,7 +37,6 @@ import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TSysUserExt;
 import com.gasq.bdp.logn.provider.EnableDetail;
 import com.gasq.bdp.logn.provider.Ilogger;
-import com.gasq.bdp.logn.service.CustomerSubscribeService;
 import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.service.TCustomerImagesService;
 import com.gasq.bdp.logn.service.TSysMenuService;
@@ -46,9 +45,11 @@ import com.gasq.bdp.logn.utils.ActiveMQUtil;
 import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.UserthreadLocal;
-import com.gasq.bdp.logn.utils.WorkFlowUtil;
+
+import io.swagger.annotations.Api;
 
 @Controller
+@Api(value="跳转controller",tags={"系统页面跳转"})
 public class IndexController {
 	protected Logger logger = Logger.getLogger(this.getClass());
 	@Autowired TSysMenuService menuService;
@@ -56,7 +57,6 @@ public class IndexController {
 	@Autowired ActiveManager activeManager;
 	@Autowired EmailManager emailService;
 	@Autowired TCustomerImagesService customerImagesService;
-	@Autowired CustomerSubscribeService customerSubscribeService;
 	// 错误信息
 	Map<String, Object> paramMap = new HashMap<String, Object>();
 
@@ -71,14 +71,6 @@ public class IndexController {
 		return "ltn/login";
 	}
 	
-	@Ilogger(value="添加或更新设备配置信息",flag=EnableDetail.CLOSE)
-	@RequestMapping("/gotimmer")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN, RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION, RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String geTimmer(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "cron_timmer";
-	}
 	@Ilogger(value="进入角色管理界面！",flag=EnableDetail.CLOSE)
 	@RequestMapping("/goRole")
 	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN, RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION, RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
@@ -102,14 +94,6 @@ public class IndexController {
 		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
 		mmap.addAttribute("content", request.getContextPath());
 		return "menu";
-	}
-	@Ilogger(value="进入工作流管理界面！",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goworkflow")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN, RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION, RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goworkflow(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path", request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "workflow";
 	}
 
 	/**
@@ -165,7 +149,7 @@ public class IndexController {
 			String mess = "用户："+systemUser.getUser().getNickname()+" 在"+DateUtil.getAllCurrentDate()+"登录成功!";
 			SecurityUtils.getSubject().getSession().setAttribute("user", systemUser);
 			logger.info(mess);
-			if(WorkFlowUtil.hasNoAnyRoles(RoleSign.SADMIN)){
+			if(CommonUtils.hasNoAnyRoles(RoleSign.SADMIN)){
 				activeManager.sendBack(ActiveMQUtil.getTopicDestination(systemUser.getUser().getCompanyid()+InitProperties.Moniter_USER), mess);
 			}
 			return "redirect:/homepage";
@@ -223,54 +207,7 @@ public class IndexController {
 	public String getDefaultMap(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
 		return "map_areadata";
 	}
-	@Ilogger(value="进入客户消费管理界面！",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goCustomerConsumptonAmountMaintenance")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN, RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION, RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goCustomerConsumptonAmountMaintenance(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "customerConsumptonAmountMaintenance";
-	}
-	@Ilogger(value="进入消费统计界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goCount")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goCount(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "countConSumptionInfo";
-	}
-	@Ilogger(value="进入员工订单统计界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goEmployeeTreatCount")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goEmployeeTreatCount(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "countEmployeeTreat";
-	}
-	@Ilogger(value="进入积分兑换界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goScoreExchange")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goScoreExchange(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "score_exchange";
-	}
-	@Ilogger(value="进入微信用户管理界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goWechatUser")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goWechatUser(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "wechat_user";
-	}
-	@Ilogger(value="进入项目管理界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goProjects")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goProjects(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "projects";
-	}
+	
 	@Ilogger(value="进入权限管理界面",flag=EnableDetail.CLOSE)
 	@RequestMapping("/goPermission")
 	@RequiresRoles(value = { RoleSign.SADMIN})
@@ -279,78 +216,7 @@ public class IndexController {
 		mmap.addAttribute("content", request.getContextPath());
 		return "permission";
 	}
-	@Ilogger(value="进入客户预约管理界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/customerSubscribe")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String customerSubscribe(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "customerSubscribe";
-	}
-	@Ilogger(value="进入商品库存管理界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goInventory")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goInventory(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "inventory";
-	}
-	@Ilogger(value="进入商品库存日志管理界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goInventoryLog")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goInventoryLog(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "inventorylog";
-	}
-	@Ilogger(value="进入预约日志管理界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goSubscribeLog")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION,RoleSign.H_ADMIN }, logical = Logical.OR)
-	public String goSubscribeLog(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "subscribelog";
-	}
-	@Ilogger(value="进入会员用户管理界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goVipCustomer")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION,RoleSign.H_ADMIN,RoleSign.H_OPTION  }, logical = Logical.OR)
-	public String goVipCustomer(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "vipcustomer";
-	}
-	@Ilogger(value="进入会员用户查询管理界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/vipcQueryConsumpton")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String vipcQueryConsumpton(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "vipcustomerquery";
-	}
-	@Ilogger(value="进入预约订单统计界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goCountBackEployeeOrder")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.QUERY, RoleSign.Test }, logical = Logical.OR)
-	public String goCountBackEployeeOrder(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "countBackEmployee";
-	}
-	@Ilogger(value="进入产品库存统计界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goCountInventory")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR }, logical = Logical.OR)
-	public String goCountInventory(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "countInventory";
-	}
-	@Ilogger(value="进入设备管理界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goEquipment")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN, RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION, RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goEquipment(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "equipment";
-	}
+	
 	@Ilogger(value="进入公司管理界面",flag=EnableDetail.CLOSE)
 	@RequestMapping("/goCompany")
 	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION }, logical = Logical.OR)
@@ -359,22 +225,7 @@ public class IndexController {
 		mmap.addAttribute("content", request.getContextPath());
 		return "company";
 	}
-	@Ilogger(value="进入消息管理界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goMessage")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goMessage(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "message";
-	}
-	@Ilogger(value="进入渠道统计界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goRootInCount")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_ADMIN,RoleSign.H_OPTION }, logical = Logical.OR)
-	public String goRootInCount(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "countBusinessAnalysis";
-	}
+
 	@Ilogger(value="进入就诊图片预览界面",flag=EnableDetail.CLOSE)
 	@GetMapping("/goViewImages")
 	public String goViewImages(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr,Integer orderId,String customerPhone) {
@@ -396,60 +247,13 @@ public class IndexController {
 		mmap.addAttribute("image", userExt.getImagePath());
 		return "viewimages";
 	}
-	@Ilogger(value="进入【排班管理】界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goWrokforceManagement")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER}, logical = Logical.OR)
-	public String goWorkforceManagement(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+	
+	@Ilogger(value="进入缓存管理",flag=EnableDetail.CLOSE)
+	@RequestMapping("/goCacheOption")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION }, logical = Logical.OR)
+	public String goCacheOption(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
 		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
 		mmap.addAttribute("content", request.getContextPath());
-		return "workforceManagement";
-	}
-	@Ilogger(value="进入【排班查询】界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goWrokforceManagementQuery")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION}, logical = Logical.OR)
-	public String goWrokforceManagementQuery(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "workforceManagementQuery";
-	}
-	@Ilogger(value="进入【视图管理】界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goViewManager")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION,RoleSign.H_ADMIN,RoleSign.H_OPTION}, logical = Logical.OR)
-	public String goViewManager(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "viewManager";
-	}
-	@Ilogger(value="进入用户产品日志",flag=EnableDetail.CLOSE)
-	@RequestMapping("/customerprojectlog")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goCustomerprojectlog(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "customerprojectlog";
-	}
-	@Ilogger(value="进入治疗师预约查询界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goTherapistTreatmentTimeQuery")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goTherapistTreatmentTime(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "therapistTreatmentTimeQuery";
-	}
-	@Ilogger(value="进入项目类型消费统计界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goProjecttype")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.QUERY, RoleSign.Test,RoleSign.Q_OPTION }, logical = Logical.OR)
-	public String goProjecttype(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "countProjectType";
-	}
-	@Ilogger(value="进入门店报表统计界面",flag=EnableDetail.CLOSE)
-	@RequestMapping("/goStoreReport")
-	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER}, logical = Logical.OR)
-	public String goStoreReport(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "countStoreAnalysis";
+		return "cacheoption";
 	}
 }

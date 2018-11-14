@@ -3,6 +3,7 @@
 <head th:include="include :: linkresource('首页')"></head>
 	<link type="text/css" th:href="@{/static/css/workflow/shell.css}" rel="stylesheet" media="screen"/>
 	<script type="text/javascript" th:src="@{/static/easyUI/datagrid-detailview.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/index/hiddenELE.js}"></script>
 <body>
 <div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
 	<table id="project_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
@@ -11,8 +12,8 @@
 	<div id="tb_cron_option" style="padding: 5px; height: auto">
 		<div style="margin-bottom: 5px">
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="project.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="project.add()">添加</a> 
-			<a shiro:hasAnyRoles="sadmin,generalManager,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="project.remove()">删除</a>
+			<a shiro:hasAnyRoles="sadmin,q_admin,q_area_shopManager,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="project.add()">添加</a> 
+			<a shiro:hasAnyRoles="sadmin,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="project.remove()">删除</a>
 			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="project.clear()">清空</a>
 		</div>
 		<div id="cron_bar">
@@ -31,7 +32,7 @@
 		</div>
 	</div>
 </div>
-	<div id="projectdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#project_dlg-buttons">
+	<div id="projectdlg" class="easyui-dialog"  data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#project_dlg-buttons">
 		<form id="projectdlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
 	    		<tr>

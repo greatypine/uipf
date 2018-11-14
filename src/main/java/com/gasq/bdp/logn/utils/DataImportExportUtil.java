@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,8 +22,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import com.gasq.bdp.logn.model.TSysDataColumns;
 
 public class DataImportExportUtil {
 	
@@ -135,7 +134,7 @@ public class DataImportExportUtil {
 	
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static List<Map> paramsJsonImportHandle(List<TSysDataColumns> columns,List<Map> rst){
+	public static List<Map> paramsJsonImportHandle(List<String> columns,List<Map> rst){
 		List<Map> rst1 = new ArrayList<Map>();
 		Map map = null;
 		for (Map map2 : rst) {
@@ -143,8 +142,8 @@ public class DataImportExportUtil {
 			Set<Entry> set = map2.entrySet();
 			for (Entry entry : set) {
 				String key = entry.getKey().toString();
-				for (TSysDataColumns column : columns) {
-					if(key.equals(column.getCode())) {
+				for (String column : columns) {
+					if(key.equals(column)) {
 						if(entry.getValue() instanceof Date) {
 							map.put(key, DateUtil.formatTime((Date)entry.getValue()));
 						}else {

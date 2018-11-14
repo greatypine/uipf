@@ -5,7 +5,7 @@ package com.gasq.bdp.logn.utils;
 
 import com.gasq.bdp.logn.iexception.InterfaceTypeException;
 import com.gasq.bdp.logn.service.DataImport;
-import com.gasq.bdp.logn.service.imp.CVSImport;
+import com.gasq.bdp.logn.service.imp.CSVImport;
 import com.gasq.bdp.logn.service.imp.ExcelImport;
 import com.gasq.bdp.logn.service.imp.JsonImport;
 import com.gasq.bdp.logn.service.imp.TxtImport;
@@ -67,7 +67,7 @@ public enum DataImportType {
 	    	break;
 	    	case 3: c = SpringApplicationUtils.getBean(TxtImport.class);
 	    	break;
-	    	case 4: c = SpringApplicationUtils.getBean(CVSImport.class);
+	    	case 4: c = SpringApplicationUtils.getBean(CSVImport.class);
 	    	break;
 		}
     	return c;

@@ -14,6 +14,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gasq.bdp.logn.iexception.WorkFlowJobException;
+import com.gasq.bdp.logn.model.SystemUserInfo;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CommonUtils {
 	protected static Logger logger = Logger.getLogger(CommonUtils.class);
@@ -547,6 +549,50 @@ public class CommonUtils {
         bos.close();
         return fileName;
     }
+    
+    /**
+	 * 检查是否有某一个权限 格式：eg：q_admin,sadmin
+	 */
+	public static Boolean hasAnyRoles(CharSequence... elements) {
+		Object[] array = SystemUserInfo.getSystemUser().getRole().stream().map(r->r.getRoleSign()).toArray();
+		List<Object> asList = Arrays.asList(array);
+		for (CharSequence r : elements) {
+			if(asList.contains(r)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * 检查是否没有某一个权限 格式：eg：q_admin,sadmin
+	 */
+	public static Boolean hasNoAnyRoles(CharSequence... elements) {
+		Object[] array = SystemUserInfo.getSystemUser().getRole().stream().map(r->r.getRoleSign()).toArray();
+		List<Object> asList = Arrays.asList(array);
+		for (CharSequence r : elements) {
+			if(asList.contains(r)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	/**
+	 * 检查是否有某一组权限 格式：eg：q_admin,sadmin
+	 */
+	public static Boolean hasAllRoles(CharSequence... elements) {
+		Object[] array = SystemUserInfo.getSystemUser().getRole().stream().map(r->r.getRoleSign()).toArray();
+		List<Object> asList = Arrays.asList(array);
+		boolean f = true;
+		for (CharSequence r : elements) {
+			if(asList.contains(r)) {
+				f = true;
+			}else {
+				f = false;
+				break;
+			}
+		}
+		return f;
+	}
     /**
      * 使用示例
      * @param args

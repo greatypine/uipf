@@ -3,13 +3,8 @@ package com.gasq.bdp.logn.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class TProject extends ParamsObject{
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	private Long id;
+public class TProject {
+    private Long id;
 
     private String projectName;
 

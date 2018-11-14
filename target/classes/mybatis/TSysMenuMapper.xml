@@ -286,7 +286,8 @@
   </select>
  <select id="selectMenuBeanByRole" parameterType="java.util.Map" resultType="java.util.Map">
  	<if test="pid != -1">
-		SELECT tsm.id,tsm.text,tsm.`code`,tsm.`view`,tsm.jsp,tsm.state,tsm.`status`,tsm.companyid,tsm.`view` as iconCls,tsm.parendId from t_sys_menu tsm INNER JOIN t_sys_role_menu tsrm on tsm.id = tsrm.menuid 
+		SELECT tsm.id,tsm.text,tsm.`code`,tsm.`view`,tsm.jsp,tsm.state,tsm.`status`,tsm.companyid,tsm.`view` as iconCls,tsm.parendId from t_sys_menu tsm 
+		INNER JOIN t_sys_role_menu tsrm on tsm.id = tsrm.menuid  and tsm.companyid = tsrm.companyid
 		where 1=1 
  			and tsm.status=1
 		<if test="pid!=null and pid >=0 ">
@@ -314,7 +315,7 @@
 		SELECT a.id,a.text,a.`code`,a.jsp,a.state,a.`status`,a.`view` as iconCls,a.companyid,a.parendId,GROUP_CONCAT(b.roleid) as roleids,
 			if((
 				SELECT count(1) from t_sys_role_menu c 
-					INNER JOIN t_sys_menu m on c.menuid=m.id 
+					INNER JOIN t_sys_menu m on c.menuid=m.id  and m.companyid = c.companyid
 					where 1=1 
 					<if test="roleid!=null">
 			 			and c.roleid=#{roleid,jdbcType=INTEGER}
@@ -328,7 +329,7 @@
 					 and c.menuid=a.id
 				)&gt;0,true,false) checked 
 		FROM `t_sys_menu` a
-		INNER JOIN t_sys_role_menu b on a.id = b.menuid
+		INNER JOIN t_sys_role_menu b on a.id = b.menuid and a.companyid = b.companyid
 		where 1=1
 		<if test="pid!=null">
  			and a.parendId=#{pid,jdbcType=INTEGER}
@@ -348,7 +349,7 @@
 	SELECT a.id,a.text,a.`code`,a.jsp,a.state,a.`status`,a.companyid,a.`view` as iconCls,a.parendId,
 		if((
 			SELECT count(1) from t_sys_role_menu c 
-				INNER JOIN t_sys_menu m on c.menuid=m.id 
+				INNER JOIN t_sys_menu m on c.menuid=m.id  and m.companyid = c.companyid
 				where 1=1 and m.status=1
 				<if test="roleid!=null">
 		 			and c.roleid=#{roleid,jdbcType=INTEGER}

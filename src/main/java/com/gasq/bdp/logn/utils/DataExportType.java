@@ -5,7 +5,7 @@ package com.gasq.bdp.logn.utils;
 
 import com.gasq.bdp.logn.iexception.InterfaceTypeException;
 import com.gasq.bdp.logn.service.DataExport;
-import com.gasq.bdp.logn.service.imp.CVSExport;
+import com.gasq.bdp.logn.service.imp.CSVExport;
 import com.gasq.bdp.logn.service.imp.ExcelExport;
 import com.gasq.bdp.logn.service.imp.JsonExport;
 import com.gasq.bdp.logn.service.imp.TxtExport;
@@ -18,7 +18,7 @@ import com.gasq.bdp.logn.service.imp.TxtExport;
  */
 public enum DataExportType {
 
-	Excel(1),Json(2),Txt(3),Cvs(4);
+	Excel(1),Json(2),Txt(3),Csv(4);
 	
 	private final int value;
 	
@@ -42,7 +42,7 @@ public enum DataExportType {
 			result = "txt导出";
 			break;
 		case 4:
-			result = "cvs导出";
+			result = "csv导出";
 			break;
 		default:
 			break;
@@ -67,7 +67,7 @@ public enum DataExportType {
 	    	break;
 	    	case 3: c = SpringApplicationUtils.getBean(TxtExport.class);
 	    	break;
-	    	case 4: c = SpringApplicationUtils.getBean(CVSExport.class);
+	    	case 4: c = SpringApplicationUtils.getBean(CSVExport.class);
 	    	break;
 		}
     	return c;
@@ -78,7 +78,7 @@ public enum DataExportType {
     		case 1: return Excel;
 	    	case 2: return Json;
 	    	case 3: return Txt;
-	    	case 4: return Cvs;
+	    	case 4: return Csv;
     		default : throw new InterfaceTypeException(" is wrong InterfaceType:'"+v+"'! ");
     	}
     }

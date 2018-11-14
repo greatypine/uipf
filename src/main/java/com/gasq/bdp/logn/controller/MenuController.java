@@ -17,11 +17,13 @@ import com.gasq.bdp.logn.model.TSysMenu;
 import com.gasq.bdp.logn.service.TSysMenuService;
 import com.gasq.bdp.logn.utils.CommonUtils;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(value = "/menu")
+@Api(value="菜单controller",tags={"菜单管理接口"})
 public class MenuController {
 	protected Logger logger = Logger.getLogger(this.getClass());
     @Autowired

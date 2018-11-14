@@ -19,7 +19,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.gasq.bdp.logn.iexception.WorkFlowJobException;
-import com.gasq.bdp.logn.model.TSysDataColumns;
 
 
 public class ImportExcelUtil {
@@ -35,7 +34,7 @@ public class ImportExcelUtil {
 	 * @throws IOException 
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static List<Map> getBankListByExcel(List<TSysDataColumns> columns, String fileName,Integer startindex) throws WorkFlowJobException{
+	public static List<Map> getBankListByExcel(List<String> columns, String fileName,Integer startindex) throws WorkFlowJobException{
 		if(startindex==null) startindex = 0;
 		InputStream is = null;
 		try {
@@ -73,8 +72,7 @@ public class ImportExcelUtil {
 			Map map1 = new HashMap();
 			if(columns!=null && columns.size()>0) {
 				int x = 0;
-				for (TSysDataColumns dataColumns : columns) {
-					String key = dataColumns.getCode();
+				for (String key : columns) {
 					map1.put(key, li.get(x));
 					x++;
 				}

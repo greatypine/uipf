@@ -16,14 +16,12 @@ import com.gasq.bdp.logn.service.DataExport;
  * @remark 
  */
 public class DataExportStrategyContains {
-
 	private DataExport dataExport;
 
 	public DataExportStrategyContains(DataExport dataExport) {
 		super();
 		this.dataExport = dataExport;
 	}
-
 	@SuppressWarnings("rawtypes")
 	public boolean export(List<Map> datalist,String filename) throws WorkFlowJobException {
 		return dataExport.export(datalist, filename);

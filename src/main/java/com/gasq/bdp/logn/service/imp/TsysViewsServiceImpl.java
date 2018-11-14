@@ -20,8 +20,8 @@ import com.gasq.bdp.logn.model.TSysBasecodeExample;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TSysViews;
 import com.gasq.bdp.logn.service.TsysViewsService;
+import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
-import com.gasq.bdp.logn.utils.WorkFlowUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -65,7 +65,7 @@ public class TsysViewsServiceImpl implements TsysViewsService {
 		if(bean.getCompanyid()!=null) {
 			params.put("companyid", bean.getCompanyid());
 		}else {
-			if(!WorkFlowUtil.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
+			if(!CommonUtils.hasAnyRoles(RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.Q_AREA_SHOPMANAGER)) {
 				params.put("companyid", SystemUserInfo.getSystemUser().getCompany().getId());
 			}
 		}

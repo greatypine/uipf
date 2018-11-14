@@ -7,10 +7,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
+
 import com.gasq.bdp.logn.iexception.WorkFlowJobException;
-import com.gasq.bdp.logn.model.TSysDataColumns;
 import com.gasq.bdp.logn.service.DataImport;
 import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DataImportExportUtil;
@@ -26,7 +27,7 @@ public class JsonImport implements DataImport {
 
 	@SuppressWarnings({"rawtypes"})
 	@Override
-	public List<Map> execute(List<TSysDataColumns> columns,String filename, Integer startIndex) throws WorkFlowJobException {
+	public List<Map> execute(List<String> columns,String filename, Integer startIndex) throws WorkFlowJobException {
 		List<Map> rst = new ArrayList<Map>();
 		List<Map> rst1 = new ArrayList<Map>();
 		try {

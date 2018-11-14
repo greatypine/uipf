@@ -13,37 +13,47 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gasq.bdp.logn.mapper.TSysUserExtMapper;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TCompany;
 import com.gasq.bdp.logn.model.TCustomerImages;
-import com.gasq.bdp.logn.model.TCustomerSubscribe;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TSysUserExt;
-import com.gasq.bdp.logn.model.TWorkforcemanagement;
 import com.gasq.bdp.logn.provider.Ilogger;
 import com.gasq.bdp.logn.service.CommonService;
-import com.gasq.bdp.logn.service.CustomerSubscribeService;
 import com.gasq.bdp.logn.service.TCustomerImagesService;
 import com.gasq.bdp.logn.utils.CommonUtils;
-import com.gasq.bdp.logn.utils.DateUtil;
+
+import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping(value = "/common")
+@Api(value="公共controller",tags={"公共页面管理"})
 public class CommonController {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired CommonService commonService;
 	@Autowired TCustomerImagesService customerImagesService;
 	@Autowired TSysUserExtMapper sysUserExtMapper;
-	@Autowired CustomerSubscribeService subscribeService;
+	
+	@Value("${uipf.serverUrlPrefix}")
+	private String wfServerUrlPrefix;
+	@Autowired
+	private RestTemplate restTemplate;
 	/**
      * 在配置文件中配置的文件保存路径
      */
@@ -148,83 +158,7 @@ public class CommonController {
             return markDVo;
         }
     }
-	/**
-	 * 用户来源
-	 */
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/queryRootIn",method=RequestMethod.POST)
-	public List<Map<String,Object>> queryRootIn(TCompany bean) {
-		try {
-			return commonService.queryRootIn(bean);
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/querySex",method=RequestMethod.POST)
-	public List<Map<String,Object>> querySex(TCompany bean) {
-		try {
-			return commonService.querySex(bean);
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    
-    /**
-     * 用户状态
-     */
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/queryUserStatus",method=RequestMethod.POST)
-	public List<Map<String,Object>> queryUserStatus(TCompany bean) {
-		try {
-			return commonService.queryUserStatus(bean);
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    /**
-     * 查询系统美容师
-     */
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/queryCosmetologist",method=RequestMethod.POST)
-	public List<Map<String,Object>> queryCosmetologist(TCompany bean) {
-		try {
-			return commonService.queryCosmetologist(bean);
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    /**
-     * 查询系统咨询师
-     */
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/queryCounsoler",method=RequestMethod.POST)
-	public List<Map<String,Object>> queryCounsoler(TCompany bean) {
-		try {
-			return commonService.queryCounsoler(bean);
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    /**
-     * 查询产品
-     */
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/queryProjectInventory",method=RequestMethod.POST)
-	public List<Map<String,Object>> queryProjectInventory(TCompany bean) {
-		try {
-			return commonService.queryProjectInventory(bean);
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
+	
     @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
     @RequestMapping(value = "/getView",method=RequestMethod.POST)
 	public List<Map<String,Object>> getView(TCompany bean) {
@@ -235,182 +169,37 @@ public class CommonController {
 		}
     	return null;
 	 }
-    @Ilogger("查询统计员工订单接诊报表数据")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/queryEmployeeTreatOrderReport",method=RequestMethod.POST)
-	public Map<String, Object> queryEmployeeTreatOrderReport(Integer type,Integer companyid,String datetype,String starttime,String endtime) {
-		try {
-			Map<String, Object> map = commonService.queryEmployeeTreatOrderReport(type,companyid,datetype,starttime,endtime);
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("查询统计员工订单接诊数据列表")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/queryEmployeeTreatOrderDataDetail",method=RequestMethod.POST)
-	public Map<String, Object> queryEmployeeTreatOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
-    	try {
-			Map<String, Object> map = commonService.queryEmployeeTreatOrderDataDetail(type,companyid,datetype,starttime,endtime,page,rows);
-			return map;
-    	}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("查询统计员工订单报表数据")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test },logical=Logical.OR)
-    @RequestMapping(value = "/queryBackEmployeeOrderReport",method=RequestMethod.POST)
-	public Map<String, Object> queryBackEmployeeOrderReport(Integer type,Integer companyid,String datetype,String starttime,String endtime) {
-    	try {
-			Map<String, Object> map = commonService.queryBackEmployeeOrderReport(type,companyid,datetype,starttime,endtime);
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("查询统计员工订单数据列表")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test },logical=Logical.OR)
-    @RequestMapping(value = "/queryBackEmployeeOrderDataDetail",method=RequestMethod.POST)
-	public Map<String, Object> queryBackEmployeeOrderDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
-    	try {
-			Map<String, Object> map = commonService.queryBackEmployeeOrderDataDetail(type,companyid,datetype,starttime,endtime,page,rows);
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("查询统计库存数据")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/queryCountInventory",method=RequestMethod.POST)
-	public Map<String, Object> queryCountInventory(Integer companyid,String datetype,Integer year,Integer month,Integer page,Integer rows) {
-		try {
-			Map<String, Object> map = commonService.queryCountInventory(companyid,datetype,year,month,page,rows);
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("查询统计库存饼图")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Q_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/queryCountInventoryPie",method=RequestMethod.POST)
-	public Map<String, Object> queryCountInventoryPie(Integer companyid,String datetype,Integer year,Integer month) {
-		try {
-			Map<String, Object> map = commonService.queryCountInventoryPie(companyid,datetype,year,month);
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("查询统计商业报表列表")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR },logical=Logical.OR)
-    @RequestMapping(value = "/queryCountBusinessAnalysisDataDetail",method=RequestMethod.POST)
-	public Map<String, Object> queryCountBusinessAnalysisDataDetail(Integer type,Integer companyid,String datetype,String starttime,String endtime,Integer page,Integer rows) {
-    	try {
-			Map<String, Object> map = commonService.queryCountBusinessAnalysisDataDetail(type, companyid, datetype, starttime, endtime, page, rows);
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("查询门店统报表列表")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER},logical=Logical.OR)
-    @RequestMapping(value = "/queryStoreReport",method=RequestMethod.POST)
-	public Map<String, Object> queryStoreReport(Integer companyid,String endtime,Integer page,Integer rows) {
-    	try {
-			Map<String, Object> map = commonService.queryStoreReport(companyid,endtime, page, rows);
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("首页前台系统用户信息统计")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR },logical=Logical.OR)
-    @RequestMapping(value = "/queryIndexUserCount",method=RequestMethod.POST)
-	public Map<String, Object> queryIndexUserCount() {
-    	try {
-			Map<String, Object> map = commonService.queryIndexUserCount();
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("首页前台门店信息统计")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR },logical=Logical.OR)
-    @RequestMapping(value = "/queryIndexCompanyCount",method=RequestMethod.POST)
-	public Map<String, Object> queryIndexCompanyCount() {
-    	try {
-			Map<String, Object> map = commonService.queryIndexCompanyCount();
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("首页前台门店排班信息统计")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_ADMIN,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR},logical=Logical.OR)
-    @RequestMapping(value = "/queryWorkforceList",method=RequestMethod.POST)
-	public Map<String, Object> queryWorkforceList() {
-    	try {
-    		TWorkforcemanagement bean = new TWorkforcemanagement();
-    		bean.setCycle(DateUtil.getDateStr(DateUtil.getSysCurrentDate(), DateUtil.DATE_TIME_FLAG_NO_DATE_FORMAT));
-    		bean.setCompanyid(SystemUserInfo.getSystemUser().getCompany().getId());
-			Map<String, Object> map = commonService.queryWorkforceList(bean);
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("首页前台门预约息统计")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_OPTION,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.H_ADMIN,RoleSign.H_OPTION },logical=Logical.OR)
-    @RequestMapping(value = "/querySubscribeList",method=RequestMethod.POST)
-	public List<TCustomerSubscribe> querySubscribeList() {
-    	try {
-			List<TCustomerSubscribe> map = subscribeService.querySubscribeList();
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("查询统计项目类型数据")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test },logical=Logical.OR)
-    @RequestMapping(value = "/queryProjectTypeReport",method=RequestMethod.POST)
-	public Map<String, Object> queryProjectTypeReport(Integer companyid,String starttime,String endtime) {
-    	try {
-			Map<String, Object> map = commonService.queryProjectTypeReport(companyid,starttime,endtime);
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
-    @Ilogger("查询统计项目类型转化数据")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.GENERALMANAGER,RoleSign.H_ADMIN,RoleSign.H_OPTION,RoleSign.Q_COUNELOR,RoleSign.Test },logical=Logical.OR)
-    @RequestMapping(value = "/queryProjectTypeChangeReport",method=RequestMethod.POST)
-	public Map<String, Object> queryProjectTypeChangeReport(Integer companyid,String starttime,String endtime) {
-    	try {
-			Map<String, Object> map = commonService.queryProjectTypeChangeReport(companyid,starttime,endtime);
-			return map;
-		}catch (Exception e) {
-			logger.info(e.getMessage(),e);
-		}
-    	return null;
-	 }
     
-    @Ilogger("初始化所有公司治疗师预约数据")
-    @RequiresRoles(value={RoleSign.SADMIN},logical=Logical.OR)
-    @RequestMapping(value = "/doCreateTherapistTreatmentTime",method=RequestMethod.GET)
-	public void doCreateTherapistTreatmentTime() {
-    	commonService.doCreateTherapistTreatmentTime();
-    }
+    @Ilogger(value="远程调用")
+    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION},logical=Logical.OR)
+	@RequestMapping(value = "/commit",method=RequestMethod.POST)
+	public Map<String, Object> commit() {
+    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求远程****接口！");
+    	Map<String,Object> map = new HashMap<>();
+		try {
+			logger.info("开始请求结算...");
+				final String url = wfServerUrlPrefix+"/consumAmount";
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+				//  封装参数，千万不要替换为Map与HashMap，否则参数无法传递
+				MultiValueMap<String, String> params= new LinkedMultiValueMap<String, String>();
+				//也支持中文
+				params.add("phonenumb","");
+				HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<MultiValueMap<String, String>>(params, headers);
+				//  执行HTTP请求
+				JSONObject response = restTemplate.postForObject(url,requestEntity,JSONObject.class);
+				if(response.get("isok").toString().equals("0")) {//成功
+					map.put("status", true);
+				}else {//失败
+					map.put("status", false);
+					logger.error("请求失败，失败原因" + response.get("mess").toString());
+					throw new Exception(response.get("mess").toString());
+				}
+			return map;
+		}catch (Exception e) {
+			map.put("status", false);
+			logger.error("请求失败，失败原因" + e.getMessage().toString(),e);
+		}
+    	return map;
+	 }
 }

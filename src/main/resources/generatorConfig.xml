@@ -18,19 +18,19 @@
 	        <property name="suppressAllComments" value="true"/>
 	        <property name="mergeable" value="false"></property>
 	    </commentGenerator>
-<!-- 		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.30.0.1:3306/gabdp-wf" userId="sjyx" password="Gnkjsjyx2017!" /> -->
-<!-- <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1:3306/wechat-wf" userId="root" password="123456" /> -->
-<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.144.165.77:3306/weChat-wf" userId="root" password="Dws@2018mysqldb_" />
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1:3306/gabdp-uipf" userId="root" password="123456" />
+<!-- <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1\:3306/wechat-wf" userId="root" password="123456" /> -->
+<!-- <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.144.165.77:3306/weChat-wf" userId="root" password="Dws@2018mysqldb_" /> -->
 		<!-- 类型转换 -->
         <javaTypeResolver>
             <!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） -->
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
 		<!-- 所生成的实体类的位置默认资源包src -->
-		<javaModelGenerator targetPackage="com.gasq.bdp.logn.model" targetProject="weChat-wf" ><property name="trimStrings" value="true"/></javaModelGenerator>
+		<javaModelGenerator targetPackage="com.gasq.bdp.logn.model" targetProject="uipf" ><property name="trimStrings" value="true"/></javaModelGenerator>
 		<!-- 所生成的sqlMap的影射文件的位置,默认资源包src -->
-		<sqlMapGenerator targetPackage="com.gasq.bdp.logn.mapper.xml" targetProject="weChat-wf" />
-		<javaClientGenerator targetPackage="com.gasq.bdp.logn.mapper" targetProject="weChat-wf" type="XMLMAPPER" />
+		<sqlMapGenerator targetPackage="com.gasq.bdp.logn.mapper.xml" targetProject="uipf" />
+		<javaClientGenerator targetPackage="com.gasq.bdp.logn.mapper" targetProject="uipf" type="XMLMAPPER" />
 <!-- 			<table schema="" tableName="t_sys_timer_workflow"> </table> -->
 <!-- 			<table schema="" tableName="t_sys_timer_schedule_workflow"> </table> -->
 <!-- 			<table schema="" tableName="t_sys_timer_scheduleconfig"> </table> -->
@@ -64,7 +64,7 @@
 <!-- <table schema="" tableName="t_company"></table>  -->
 <!-- <table schema="" tableName="t_message"></table>  -->
 <!-- 		<table schema="" tableName="t_sys_timer_job_hive"> </table> -->
-		<table schema="" tableName="t_ltn_customer"> </table>
+		<table schema="" tableName="t_project"> </table>
 <!-- <table schema="" tableName="t_vip_customer"> </table> -->
 <!-- <table schema="" tableName="t_vip_customer_log"> </table> -->
 <!-- <table schema="" tableName="t_customer_consumpton_log"> </table> -->

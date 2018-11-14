@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(value = "/systemuser")
-@Api("用户配置接口API")
+@Api(value="用户controller",tags={"用户管理接口"})
 public class UserController {
 	protected Logger logger = Logger.getLogger(this.getClass());
     @Autowired TSysUserService sysUserService;

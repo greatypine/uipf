@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping(value = "/company")
-@Api("公司配置接口API")
+@Api(value="公司controller",tags={"公司管理接口"})
 public class CompanyController {
 	protected Logger logger = Logger.getLogger(this.getClass());
     @Autowired TCompanyService companyService;

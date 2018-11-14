@@ -31,7 +31,8 @@ public class WebAppConfig extends WebMvcConfigurerAdapter{
 		registry.addResourceHandler("/**").addResourceLocations(ResourceUtils.FILE_URL_PREFIX + location);
 //		registry.addResourceHandler("/webapp/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/webapp/");
 		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+		registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
+		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 		super.addResourceHandlers(registry);
 	}
 	

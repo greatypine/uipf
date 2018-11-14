@@ -1070,7 +1070,7 @@ ORDER BY tsr1.sort
 <select id="queryIndexCompanyCount" parameterType="java.lang.Integer" resultType="java.util.Map">
 		SELECT
 				DATE_FORMAT(a.createTime, '%Y%m') datetime,
-				sum(b.total_amount)/10000 total_amount,
+				ifnull(sum(b.total_amount)/10000,0) total_amount,
 				count(DISTINCT a.phonenumb) newnumbs
 		FROM
 			t_ltn_customer a

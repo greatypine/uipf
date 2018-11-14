@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:include="include :: linkresource('首页')"></head>
 	<link type="text/css" th:href="@{/static/css/index/user.css}" rel="stylesheet" media="screen"/>
+	<script type="text/javascript" th:src="@{/static/js/index/hiddenELE.js}"></script>
 <body>
 <div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
 	<table id="systemuser_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
@@ -26,11 +27,11 @@
 		</div>
 	</div>
 </div>
-	<div id="systemuserdlg" class="easyui-dialog"  data-options="modal:true" style="width: 45%; overflow: hidden;" closed="true" buttons="#systemuser_dlg-buttons">
+	<div id="systemuserdlg" class="easyui-dialog"  data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#systemuser_dlg-buttons">
 		<form id="systemuserdlg-fm" th:method="post" style="margin: 0; padding: 1%">
 			<table cellpadding="5" style="width: 100%">
-	    		<tr shiro:hasAnyRoles="sadmin,q_admin,q_area_shopManager,h_admin">
-	    			<td class="tdname">角色名称：</td>
+	    		<tr shiro:hasAnyRoles="sadmin,q_admin,q_area_shopManager,h_admin,generalManager">
+	    			<td class="tdname">用户名：</td>
 	    			<td class="tdnamebox">
 	    				<input id="username" name="username" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
 	    			</td>
@@ -39,8 +40,8 @@
 	    				<input id="password" name="password" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
 	    			</td>
 	    		</tr>
-	    		<tr shiro:hasAnyRoles="h_option,q_receptionist,q_counselor,generalManager">
-	    			<td class="tdname">角色名称：</td>
+	    		<tr shiro:hasAnyRoles="h_option,q_receptionist,q_counselor">
+	    			<td class="tdname">用户名：</td>
 	    			<td class="tdnamebox" colspan="3">
 	    				<input id="username" name="username" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
 	    			</td>
@@ -48,7 +49,7 @@
 	    		<tr>
 	    			<td class="tdname">角色：</td>
 	    			<td class="tdnamebox">
-	    				<input id="roleids" name="roleids" class="easyui-combobox roleids" style="width: 100%;" data-options="required:true,multiple:true,editable:true,valueField:'roleid',textField:'roleName'"/>
+	    				<input id="roleids" name="roleids" class="easyui-combobox roleids" style="width: 100%;" data-options="required:true,multiple:false,editable:true,valueField:'roleid',textField:'roleName'"/>
 	    			</td>
 	    			<td class="tdname">状态：</td>
 	    			<td class="tdnamebox">

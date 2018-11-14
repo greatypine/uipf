@@ -39,18 +39,18 @@
             eternal="false"
             timeToIdleSeconds="120"
             timeToLiveSeconds="120"
-            overflowToDisk="true"
+            overflowToDisk="false"
             maxElementsOnDisk="10000000"
             diskPersistent="false"
             diskExpiryThreadIntervalSeconds="120"
             memoryStoreEvictionPolicy="LRU"
             />
 
-    <cache name="myCache"
+    <cache name="uipfCache"
            maxElementsInMemory="30000"
            eternal="false"
            timeToIdleSeconds="1800"
-           overflowToDisk="true"
+           overflowToDisk="false"
            memoryStoreEvictionPolicy="LRU"
            />         
 </ehcache>

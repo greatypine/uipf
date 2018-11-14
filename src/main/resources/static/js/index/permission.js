@@ -38,10 +38,7 @@ function systempermission(){
 			});
 	};
 	this.query = function(){
-		var name = $("#queryname").val();
-		var permissionName = $("#permissionName").textbox("getValue");
-		var params = {};
-		params.permissionName = permissionName;
+		var params = systempermission.getParams();
 		systempermission_table.datagrid("load",params);
 	};
 	this.getParams = function(){

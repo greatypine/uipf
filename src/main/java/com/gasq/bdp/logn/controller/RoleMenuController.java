@@ -16,8 +16,11 @@ import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.service.TSysRoleMenuService;
 import com.gasq.bdp.logn.utils.CommonUtils;
 
+import io.swagger.annotations.Api;
+
 @RestController
 @RequestMapping(value = "/rolemenu")
+@Api(value="角色菜单controller",tags={"角色菜单管理接口"})
 public class RoleMenuController {
 	protected Logger logger = Logger.getLogger(this.getClass());
     @Autowired

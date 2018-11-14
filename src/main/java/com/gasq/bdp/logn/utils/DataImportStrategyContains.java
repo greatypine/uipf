@@ -5,8 +5,8 @@ package com.gasq.bdp.logn.utils;
 
 import java.util.List;
 import java.util.Map;
+
 import com.gasq.bdp.logn.iexception.WorkFlowJobException;
-import com.gasq.bdp.logn.model.TSysDataColumns;
 import com.gasq.bdp.logn.service.DataImport;
 
 /**
@@ -25,7 +25,7 @@ public class DataImportStrategyContains {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public List<Map> execute(List<TSysDataColumns> columns,String filename, Integer startIndex) throws WorkFlowJobException {
+	public List<Map> execute(List<String> columns,String filename, Integer startIndex) throws WorkFlowJobException {
 		return dataImport.execute(columns, filename,startIndex);
 	}
 }

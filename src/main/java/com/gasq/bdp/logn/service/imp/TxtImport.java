@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
+
 import com.gasq.bdp.logn.iexception.WorkFlowJobException;
-import com.gasq.bdp.logn.model.TSysDataColumns;
 import com.gasq.bdp.logn.service.DataImport;
 
 /**
@@ -25,7 +26,7 @@ public class TxtImport implements DataImport {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public List<Map> execute(List<TSysDataColumns> columns,String filename, Integer startIndex) throws WorkFlowJobException {
+	public List<Map> execute(List<String> columns,String filename, Integer startIndex) throws WorkFlowJobException {
 		List<Map> rst = new ArrayList<Map>();
 		try {
 			List lines = FileUtils.readLines(new File(filename), "UTF-8");
@@ -35,8 +36,7 @@ public class TxtImport implements DataImport {
 					map = new HashMap();
 					int i = 0;
 					String[] linedata = object.toString().split(" ");
-					for (TSysDataColumns dataColumns : columns) {
-						String key = dataColumns.getCode();
+					for (String key : columns) {
 						map.put(key, linedata[i]);
 						i++;
 					}

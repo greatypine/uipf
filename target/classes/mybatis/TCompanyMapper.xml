@@ -1070,7 +1070,7 @@ ORDER BY tsr1.sort
 <select id="queryIndexCompanyCount" parameterType="java.lang.Integer" resultType="java.util.Map">
 		SELECT
 				DATE_FORMAT(a.createTime, '%Y%m') datetime,
-				sum(b.total_amount)/10000 total_amount,
+				ifnull(sum(b.total_amount)/10000,0) total_amount,
 				count(DISTINCT a.phonenumb) newnumbs
 		FROM
 			t_ltn_customer a
@@ -1206,5 +1206,157 @@ ORDER BY tsr1.sort
 	)temp3 on temp2.company_id=temp3.company_id and temp2.phonenumb=temp3.phonenumb and temp2.project_model&lt;&gt;temp3.project_model
 	GROUP BY temp2.company_id
 </select>
-
+<select id="queryStoreReport" parameterType="java.util.Map" resultType="java.util.LinkedHashMap">
+	SELECT tcy.`name` cityName,tc.`name` companyName,ifnull(tp1.t_CHUZHEN,0)t_CHUZHEN,ifnull(tp1.t_LIUSHI,0)t_LIUSHI,ifnull(tp1.t_FUZHEN,0)t_FUZHEN,ifnull(tp1.t_c_total_amount,0)t_c_total_amount,ifnull(tp1.t_f_total_amount,0)t_f_total_amount,ifnull(tp1.t_total_amount,0)t_total_amount
+	,ifnull(tp2.y_CHUZHEN,0)y_CHUZHEN,ifnull(tp2.y_LIUSHI,0)y_LIUSHI,ifnull(tp2.y_FUZHEN,0)y_FUZHEN,ifnull(tp2.y_c_total_amount,0)y_c_total_amount,ifnull(tp2.y_f_total_amount,0)y_f_total_amount,ifnull(tp2.y_total_amount,0)y_total_amount,ifnull(tp2.y_avg_total_amount,0)y_avg_total_amount
+	,ifnull(tp3.ziranlaikequdao,0)ziranlaikequdao,ifnull(tp3.laogukejieshao,0)laogukejieshao,ifnull(tp3.meituan,0)meituan,ifnull(tp3.dazhong,0)dazhong,ifnull(tp3.douyin,0)douyin,ifnull(tp3.xinyang,0)xinyang,ifnull(tp3.xinlangweibo,0)xinlangweibo
+	,ifnull(tp3.pengyoujieshao,0)pengyoujieshao,ifnull(tp3.luguo,0)luguo,ifnull(tp3.zhuandian,0)zhuandian,ifnull(tp3.other,0)other
+	 from t_company tc LEFT JOIN(
+		SELECT temp1.company_id,sum(ifnull(temp1.c_total_amount,0)) t_c_total_amount,sum(ifnull(temp1.f_total_amount,0)) t_f_total_amount,sum(ifnull(temp1.CHUZHEN,0)) t_CHUZHEN,sum(ifnull(temp1.FUZHEN,0)) t_FUZHEN,sum(ifnull(temp1.c_total_amount,0)+ifnull(temp1.f_total_amount,0)) t_total_amount,SUM(ifnull(temp1.LIUSHI,0)) as t_LIUSHI
+		from (
+				SELECT
+					a.company_id,
+					(
+						sum(if(a.chu_fu_zhen=0,ifnull(b.total_amount, 0),0))
+					) c_total_amount,
+					(
+						sum(if(a.chu_fu_zhen=1,ifnull(b.total_amount, 0),0))
+					) f_total_amount,
+					sum(IF(a.chu_fu_zhen=0,1,0)) CHUZHEN,
+					sum(IF(a.chu_fu_zhen=1,1,0)) FUZHEN,
+					tcls._count LIUSHI
+				FROM
+					t_ltn_customer a
+				LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id from t_customer_consumpton_amount b GROUP BY b.customer_id) b on a.id = b.id
+				INNER JOIN t_customer_porject tcp on a.id = tcp.order_id and tcp.update_time is null and DATE_FORMAT(a.createTime,'%Y-%m-%d')=DATE_FORMAT(tcp.create_time, '%Y-%m-%d')
+				LEFT JOIN(SELECT count(a1.id)_count,a1.company_id from t_ltn_customer a1 where a1.`status`=99 and DATE_FORMAT(a1.createTime, '%Y-%m-%d') = #{endtime} GROUP BY a1.company_id) tcls on a.company_id=tcls.company_id	
+			where a.status=1
+						and DATE_FORMAT(a.createTime, '%Y-%m-%d') = #{endtime}
+					GROUP BY company_id
+			 union ALL
+				SELECT 
+					a.company_id,
+					0 as c_total_amount,
+					0 as f_total_amount,
+					0 as CHUZHEN,
+					count(tcpl.id) FUZHEN,
+					0 AS LIUSHI
+					from t_ltn_customer a 
+					INNER JOIN t_customer_porject tcp on a.id = tcp.order_id  and DATE_FORMAT(a.createTime,'%Y-%m-%d')= DATE_FORMAT(tcp.update_time, '%Y-%m-%d')
+					INNER JOIN t_customer_project_log tcpl on tcp.id=tcpl.cp_id
+					INNER JOIN t_company tc ON a.company_id = tc.id and tc.`status`=1
+					where a.`status`=1 
+							and DATE_FORMAT(tcpl.create_time, '%Y-%m-%d') = #{endtime}
+							<if test="companyid!=null">
+								and a.company_id = #{companyid}
+							</if>
+					GROUP BY a.company_id
+			) temp1  GROUP BY temp1.company_id
+	) tp1 on tc.id= tp1.company_id
+	LEFT JOIN(
+		SELECT temp1.company_id,sum(ifnull(temp1.c_total_amount,0)) y_c_total_amount,sum(ifnull(temp1.f_total_amount,0)) y_f_total_amount,sum(ifnull(temp1.CHUZHEN,0)) y_CHUZHEN,sum(ifnull(temp1.FUZHEN,0)) y_FUZHEN,SUM(ifnull(temp1.LIUSHI,0)) y_LIUSHI,sum(ifnull(temp1.c_total_amount,0)+ifnull(temp1.f_total_amount,0)) y_total_amount 
+		,sum(ifnull(temp1.c_total_amount,0)+ifnull(temp1.f_total_amount,0))/sum(ifnull(temp1.CHUZHEN,0)+ifnull(temp1.FUZHEN,0)+ifnull(temp1.LIUSHI,0)) as y_avg_total_amount
+		from (
+			SELECT	
+				a.company_id,
+					DATE_FORMAT(a.createTime, '%Y%m') datetime,
+				(
+					sum(if(a.chu_fu_zhen=0,ifnull(b.total_amount, 0),0))
+				) c_total_amount,
+				(
+					sum(if(a.chu_fu_zhen=1,ifnull(b.total_amount, 0),0))
+				) f_total_amount,
+				sum(IF(a.chu_fu_zhen=0,1,0)) CHUZHEN,
+				sum(IF(a.chu_fu_zhen=1,1,0)) FUZHEN,
+				tcls._count LIUSHI
+			FROM
+				t_ltn_customer a
+			LEFT JOIN (select sum(b.total_amount)total_amount,b.customer_id as id,DATE_FORMAT(b.createTime,'%Y-%m') dtime from t_customer_consumpton_amount b GROUP BY b.customer_id,DATE_FORMAT(b.createTime,'%Y-%m')) b on a.id = b.id and b.dtime = DATE_FORMAT(CURDATE(), '%Y-%m')
+			INNER JOIN t_customer_porject tcp on a.id = tcp.order_id and tcp.update_time is null and (DATE_FORMAT(tcp.create_time, '%Y-%m-%d') &gt;= #{starttime} and DATE_FORMAT(tcp.create_time, '%Y-%m-%d') &lt;= #{endtime})
+			LEFT JOIN(SELECT count(a1.id)_count,a1.company_id from t_ltn_customer a1 where a1.`status`=99 and DATE_FORMAT(a1.createTime, '%Y-%m-%d') &gt;= #{starttime} and DATE_FORMAT(a1.createTime, '%Y-%m-%d') &lt;= #{endtime} GROUP BY a1.company_id) tcls on a.company_id=tcls.company_id	
+			where a.status=1
+					and DATE_FORMAT(a.createTime, '%Y-%m-%d') &gt;= #{starttime}
+					and DATE_FORMAT(a.createTime, '%Y-%m-%d') &lt;= #{endtime}
+					<if test="companyid!=null">
+						and a.company_id = #{companyid}
+					</if>
+				GROUP BY a.company_id,datetime
+		 union ALL
+			SELECT 
+				a.company_id,
+				DATE_FORMAT(a.createTime, '%Y%m') datetime,
+				0 as c_total_amount,
+				0 as f_total_amount,
+				0 as CHUZHEN,
+				count(tcpl.id) FUZHEN,
+				0 AS LIUSHI
+				from t_ltn_customer a 
+				INNER JOIN t_customer_porject tcp on a.id = tcp.order_id  and DATE_FORMAT(a.createTime,'%Y-%m-%d')&lt; DATE_FORMAT(tcp.update_time, '%Y-%m-%d')
+				INNER JOIN t_customer_project_log tcpl on tcp.id=tcpl.cp_id
+				INNER JOIN t_company tc ON a.company_id = tc.id and tc.`status`=1
+				where a.`status`=1 
+						and DATE_FORMAT(tcpl.create_time, '%Y-%m-%d') &gt;= #{starttime}
+						and DATE_FORMAT(tcpl.create_time, '%Y-%m-%d') &lt;= #{endtime}
+						<if test="companyid!=null">
+							and a.company_id = #{companyid}
+						</if>
+				GROUP BY a.company_id,datetime
+		) temp1  GROUP BY temp1.company_id,temp1.datetime
+		order by company_id desc
+	)tp2  on tc.id= tp2.company_id
+	LEFT JOIN(
+		SELECT temp.companyid,temp.companyName,
+		sum(if(temp.rootInName='自然来客渠道',temp.numbs,0)) as ziranlaikequdao,
+		sum(if(temp.rootInName='老顾客介绍',temp.numbs,0)) as laogukejieshao,
+		sum(if(temp.rootInName='美团',temp.numbs,0)) as meituan,
+		sum(if(temp.rootInName='大众',temp.numbs,0)) as dazhong,
+		sum(if(temp.rootInName='抖音',temp.numbs,0)) as douyin,
+		sum(if(temp.rootInName='新氧',temp.numbs,0)) as xinyang,
+		sum(if(temp.rootInName='新浪微博',temp.numbs,0)) as xinlangweibo,
+		sum(if(temp.rootInName='朋友介绍',temp.numbs,0)) as pengyoujieshao,
+		sum(if(temp.rootInName='路过',temp.numbs,0)) as luguo,
+		sum(if(temp.rootInName='转店',temp.numbs,0)) as zhuandian,
+		sum(if(temp.rootInName='其他',temp.numbs,0)) as other
+		from (
+			SELECT
+						tc.id as companyid,
+						a.`name` as rootInName,
+						tc.name as companyName,
+						count(DISTINCT b.phonenumb) numbs
+					FROM
+						v_root_in a
+					LEFT JOIN t_ltn_customer b ON a.`value` = b.root_in and b.status=1
+					LEFT JOIN t_customer_consumpton_amount c on b.id=c.customer_id
+					LEFT JOIN v_customer_profession vcp on b.profession = vcp.`value`
+					INNER JOIN t_company tc ON b.company_id = tc.id and tc.`status`=1
+					INNER JOIN t_customer_porject tcp on b.id = tcp.order_id and tcp.update_time is null and (DATE_FORMAT(tcp.create_time, '%Y-%m-%d') &gt;= #{starttime} and DATE_FORMAT(tcp.create_time, '%Y-%m-%d') &lt;= #{endtime})
+					where 1=1 
+					and DATE_FORMAT(b.createTime, '%Y%m') = DATE_FORMAT(#{starttime}, '%Y%m')
+					<if test="companyid!=null">
+						and tc.id = #{companyid}
+					</if>
+					GROUP BY tc.id,a.name,vcp.text
+			UNION all
+			SELECT 
+				a.company_id,
+				vri.name as rootInName,
+				tc.name as companyName,
+				count(tcpl.id) numbs
+				from t_ltn_customer a 
+				INNER JOIN t_customer_porject tcp on a.id = tcp.order_id and DATE_FORMAT(a.createTime,'%Y-%m-%d')&lt; DATE_FORMAT(tcp.update_time, '%Y-%m-%d')
+				INNER JOIN t_customer_project_log tcpl on tcp.id=tcpl.cp_id
+				LEFT JOIN v_customer_profession vcp on a.profession = vcp.`value`
+				INNER JOIN t_company tc ON a.company_id = tc.id and tc.`status`=1
+				LEFT JOIN v_root_in vri on a.root_in = vri.`value` and a.company_id=vri.companyid
+				where a.`status`=1 
+					and DATE_FORMAT(tcpl.create_time, '%Y%m') = DATE_FORMAT(#{starttime}, '%Y%m')
+					<if test="companyid!=null">
+						and tc.id = #{companyid}
+					</if>
+				GROUP BY a.company_id,vri.`name`,vcp.text
+			) temp GROUP BY temp.companyName,temp.companyid
+	) tp3  on tc.id= tp3.companyid
+	LEFT JOIN t_city tcy on tc.city_id=tcy.id
+	where tc.`status`=1
+</select>
 </mapper>

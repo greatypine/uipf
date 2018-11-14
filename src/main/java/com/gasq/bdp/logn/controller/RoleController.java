@@ -17,8 +17,11 @@ import com.gasq.bdp.logn.model.SystemUserInfo;
 import com.gasq.bdp.logn.model.TSysRole;
 import com.gasq.bdp.logn.service.TSysRoleService;
 
+import io.swagger.annotations.Api;
+
 @RestController
 @RequestMapping(value = "/role")
+@Api(value="角色controller",tags={"角色管理接口"})
 public class RoleController {
 	protected Logger logger = Logger.getLogger(this.getClass());
     @Autowired TSysRoleService roleService;
