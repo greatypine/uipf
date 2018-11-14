@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="include :: linkresource('首页')"></head>
+	<link type="text/css" th:href="@{/static/css/workflow/shell.css}" rel="stylesheet" media="screen"/>
+<body>
+	<div class="easyui-layout" data-options="fit:true" style="width:100%;height:100%;">
+		<table id="views-datagrid-cache-option" class="easyui-datagrid" style="width:100%;height:100%"
+				data-options="rownumbers:true,fit:true,singleSelect:true,toolbar:'#tb-role-option'">
+		</table>
+		<div id="tb-role-option" style="padding:5px;height:auto">
+			<div style="margin-bottom:5px">
+				<a id="cacheRemoveBykey" href="javascript:void(0);" class="easyui-linkbutton" data-options="disabled:true" iconCls="icon-cut" plain="true" onclick="cache.cacheRemoveBykey()">删除</a>
+				<a id="cacheRemove1" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="cache.cacheRemove(1)">清除社区地图缓存</a>
+			</div>
+			<div>
+				<form id="cachequeryform">
+				模块名称: <select id="cacheModel" class="easyui-combobox" name="name" style="width:200px;">
+							<option value="" selected="selected">请选择</option>
+						    <option value="uipfCache">用户信息平台</option>   
+						</select>
+				<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" onclick="cache.query()">查询</a>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" th:src="@{/static/js/index/cacheoption.js}"></script>
+</html>
