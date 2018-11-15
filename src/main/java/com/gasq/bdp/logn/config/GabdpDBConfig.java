@@ -1,7 +1,5 @@
 package com.gasq.bdp.logn.config;
 
-import java.sql.SQLException;
-
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -21,7 +19,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 
@@ -37,31 +35,33 @@ public class GabdpDBConfig {
     @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource dataSource() {
 //        return DataSourceBuilder.create().build();
-    	 DruidDataSource dataSource = new DruidDataSource();
-         dataSource.setUrl(env.getProperty("spring.datasource.url")); 
-         dataSource.setUsername(env.getProperty("spring.datasource.username")); 
-         dataSource.setPassword(env.getProperty("spring.datasource.password")); 
-         dataSource.setDriverClassName(env.getProperty("spring.datasource.driver-class-name")); 
-         dataSource.setInitialSize(Integer.parseInt(env.getProperty("spring.datasource.initialSize").toString())); 
-         dataSource.setMinIdle(Integer.parseInt(env.getProperty("spring.datasource.minIdle").toString())); 
-         dataSource.setMaxActive(Integer.parseInt(env.getProperty("spring.datasource.maxActive").toString())); 
-         dataSource.setMaxWait(Integer.parseInt(env.getProperty("spring.datasource.maxWait").toString())); 
-         dataSource.setTimeBetweenEvictionRunsMillis(Integer.parseInt(env.getProperty("spring.datasource.timeBetweenEvictionRunsMillis").toString())); 
-         dataSource.setMinEvictableIdleTimeMillis(Integer.parseInt(env.getProperty("spring.datasource.minEvictableIdleTimeMillis").toString()));
-         dataSource.setMaxEvictableIdleTimeMillis(Integer.parseInt(env.getProperty("spring.datasource.maxEvictableIdleTimeMillis").toString()));
-         dataSource.setValidationQuery(env.getProperty("spring.datasource.validationQuery")); 
-         dataSource.setTestWhileIdle(Boolean.parseBoolean(env.getProperty("spring.datasource.testWhileIdle").toString())); 
-         dataSource.setTestOnBorrow(Boolean.parseBoolean(env.getProperty("spring.datasource.testOnBorrow").toString())); 
-         dataSource.setTestOnReturn(Boolean.parseBoolean(env.getProperty("spring.datasource.testOnReturn").toString())); 
-         dataSource.setPoolPreparedStatements(Boolean.parseBoolean(env.getProperty("spring.datasource.poolPreparedStatements").toString())); 
-         dataSource.setConnectionProperties(env.getProperty("spring.datasource.connectionProperties"));
-         dataSource.setDefaultAutoCommit(true);
-         try { 
-         	dataSource.setFilters(env.getProperty("spring.datasource.filters")); 
-         } catch (SQLException e) { 
-         	logger.error("druid configuration initialization filter", e); 
-         } 
-         return dataSource; 
+//    	 DruidDataSource dataSource = new DruidDataSource();
+//         dataSource.setUrl(env.getProperty("spring.datasource.url")); 
+//         dataSource.setUsername(env.getProperty("spring.datasource.username")); 
+//         dataSource.setPassword(env.getProperty("spring.datasource.password")); 
+//         dataSource.setDriverClassName(env.getProperty("spring.datasource.driver-class-name")); 
+//         dataSource.setInitialSize(Integer.parseInt(env.getProperty("spring.datasource.initialSize").toString())); 
+//         dataSource.setMinIdle(Integer.parseInt(env.getProperty("spring.datasource.minIdle").toString())); 
+//         dataSource.setMaxActive(Integer.parseInt(env.getProperty("spring.datasource.maxActive").toString())); 
+//         dataSource.setMaxWait(Integer.parseInt(env.getProperty("spring.datasource.maxWait").toString())); 
+//         dataSource.setTimeBetweenEvictionRunsMillis(Integer.parseInt(env.getProperty("spring.datasource.timeBetweenEvictionRunsMillis").toString())); 
+//         dataSource.setMinEvictableIdleTimeMillis(Integer.parseInt(env.getProperty("spring.datasource.minEvictableIdleTimeMillis").toString()));
+//         dataSource.setMaxEvictableIdleTimeMillis(Integer.parseInt(env.getProperty("spring.datasource.maxEvictableIdleTimeMillis").toString()));
+//         dataSource.setValidationQuery(env.getProperty("spring.datasource.validationQuery")); 
+//         dataSource.setTestWhileIdle(Boolean.parseBoolean(env.getProperty("spring.datasource.testWhileIdle").toString())); 
+//         dataSource.setTestOnBorrow(Boolean.parseBoolean(env.getProperty("spring.datasource.testOnBorrow").toString())); 
+//         dataSource.setTestOnReturn(Boolean.parseBoolean(env.getProperty("spring.datasource.testOnReturn").toString())); 
+//         dataSource.setPoolPreparedStatements(Boolean.parseBoolean(env.getProperty("spring.datasource.poolPreparedStatements").toString())); 
+//         dataSource.setConnectionProperties(env.getProperty("spring.datasource.connectionProperties"));
+//         dataSource.setDefaultAutoCommit(true);
+//         try { 
+//         	dataSource.setFilters(env.getProperty("spring.datasource.filters")); 
+//         } catch (SQLException e) { 
+//         	logger.error("druid configuration initialization filter", e); 
+//         } 
+//         return dataSource;
+    	logger.debug("........................初始化系统数据库完成........................");
+    	return DruidDataSourceBuilder.create().build(); 
     }
     
     @Bean
@@ -95,34 +95,6 @@ public class GabdpDBConfig {
                 .getResources("classpath:mybatis/*.xml"));
         return factoryBean.getObject();
     }
-    
-//    @Primary
-//    @Bean(name = "gabdpSqlSessionFactory")
-//    public SqlSessionFactory sqlSessionFactory(@Qualifier("gabdpDataSource") DataSource dataSource) throws Exception {
-//        SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
-//        factoryBean.setDataSource(dataSource);
-//        factoryBean.setTypeAliasesPackage("com.gasq.bdp.logn.model");
-//      //分页插件
-//        PageInterceptor iterceptor = new PageInterceptor();
-//        Properties properties = new Properties();
-//        properties.setProperty("reasonable", "true");
-//        properties.setProperty("supportMethodsArguments", "true");
-//        properties.setProperty("returnPageInfo", "check");
-//        properties.setProperty("params", "count=countSql");
-//        iterceptor.setProperties(properties);
-//        PageInterceptor[] interceptors = new PageInterceptor[]{iterceptor};
-//        //添加插件
-//        factoryBean.setPlugins(interceptors);
-//        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-//        try {
-//        	factoryBean.setMapperLocations(resolver.getResources("classpath:mybatis/*.xml"));
-//        	factoryBean.setConfigLocation(resolver.getResource("classpath:mybatis-config.xml"));
-//            return factoryBean.getObject();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e);
-//        }
-//    }
     
     @Primary
     @Bean(name = "gabdpTransactionManager")
