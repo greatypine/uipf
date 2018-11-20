@@ -50,7 +50,7 @@ public class CommonController {
 	@Autowired TCustomerImagesService customerImagesService;
 	@Autowired TSysUserExtMapper sysUserExtMapper;
 	
-	@Value("${uipf.serverUrlPrefix}")
+	@Value("${uipf.rest.serverUrlPrefix}")
 	private String wfServerUrlPrefix;
 	@Autowired
 	private RestTemplate restTemplate;

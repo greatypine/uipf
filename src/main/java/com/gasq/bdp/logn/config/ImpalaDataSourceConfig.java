@@ -32,6 +32,8 @@ public class ImpalaDataSourceConfig {
         return dataSource;      
     }
 
+    
+    
     @Bean(name="impalaJdbcTemplate")
     public JdbcTemplate  secondaryJdbcTemplate(@Qualifier("impalaDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);

@@ -18,8 +18,10 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -57,6 +59,13 @@ public class IndexController {
 	@Autowired ActiveManager activeManager;
 	@Autowired EmailManager emailService;
 	@Autowired TCustomerImagesService customerImagesService;
+	
+	@Value("${shiro.cas.login}")
+	private String loginUrl;
+	
+	@Value("${shiro.cas.logout}")
+	private String logoutUrl;
+	
 	// 错误信息
 	Map<String, Object> paramMap = new HashMap<String, Object>();
 
@@ -68,7 +77,7 @@ public class IndexController {
 	public String homepage(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 		model.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
 		model.addAttribute("content", request.getContextPath());
-		return "ltn/login";
+		return "redirect:/homepage";
 	}
 	
 	@Ilogger(value="进入角色管理界面！",flag=EnableDetail.CLOSE)
@@ -155,7 +164,7 @@ public class IndexController {
 			return "redirect:/homepage";
 		} else {
 			token.clear();
-			return "redirect:/index";//
+			return loginUrl;
 		}
 	}
 
@@ -168,12 +177,39 @@ public class IndexController {
 	 */
 	@RequestMapping(value = "/homepage")
 	public String homepage(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
-		mmap.addAttribute("path",
-				request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
-		mmap.addAttribute("content", request.getContextPath());
-		return "index";
+		Subject currentUser = SecurityUtils.getSubject();
+		if(currentUser.isAuthenticated()) {
+			mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+			mmap.addAttribute("content", request.getContextPath());
+			Session session = SecurityUtils.getSubject().getSession();
+			Object sessionuser = session.getAttribute("user");
+			TSysUser user = null;
+			SystemUser systemUser = null;
+			String username = currentUser.getPrincipal().toString();
+			if(sessionuser!=null) {
+				systemUser = (SystemUser) sessionuser;
+				user = systemUser.getUser();
+			}else {
+				user = new TSysUser();
+				user.setUsername(username);
+				systemUser = userService.queryFullUser(user);
+			}
+			if(user==null) {
+				logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已不可用");
+				return loginUrl;
+			}
+//			request.getSession().setAttribute("user", systemUser);
+			String mess = "用户："+systemUser.getUser().getNickname()+" 在"+DateUtil.getAllCurrentDate()+"登录成功!";
+			SecurityUtils.getSubject().getSession().setAttribute("user", systemUser);
+			logger.info(mess);
+			if(CommonUtils.hasNoAnyRoles(RoleSign.SADMIN)){
+				activeManager.sendBack(ActiveMQUtil.getTopicDestination(systemUser.getUser().getCompanyid()+InitProperties.Moniter_USER), mess);
+			}
+			return "index";
+		}
+		return logoutUrl;
 	}
-
+	
 	/**
 	 * 用户登出
 	 * 

@@ -2,6 +2,7 @@ package com.gasq.bdp.logn;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
@@ -18,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 @ComponentScan(basePackages={"com.gasq.bdp.logn"})
 @EnableScheduling // 启用定时任务
 @EnableTransactionManagement
+@EnableAutoConfiguration
 //@EnableAsync
 public class Application{
 	// 启动的时候要注意，由于我们在controller中注入了RestTemplate，所以启动的时候需要实例化该类的一个实例  
