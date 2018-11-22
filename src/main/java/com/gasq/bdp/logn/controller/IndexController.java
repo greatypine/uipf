@@ -6,26 +6,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.ExcessiveAttemptsException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -35,10 +25,10 @@ import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.TCustomerImages;
-import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TSysUserExt;
 import com.gasq.bdp.logn.provider.EnableDetail;
 import com.gasq.bdp.logn.provider.Ilogger;
+import com.gasq.bdp.logn.service.CommonService;
 import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.service.TCustomerImagesService;
 import com.gasq.bdp.logn.service.TSysMenuService;
@@ -59,6 +49,7 @@ public class IndexController {
 	@Autowired ActiveManager activeManager;
 	@Autowired EmailManager emailService;
 	@Autowired TCustomerImagesService customerImagesService;
+	@Autowired CommonService commonService;
 	
 	@Value("${shiro.cas.login}")
 	private String loginUrl;
@@ -106,69 +97,6 @@ public class IndexController {
 	}
 
 	/**
-	 * 登录页面
-	 * 
-	 * @return
-	 */
-	@RequestMapping("/login")
-	public String index(@Valid TSysUser user, BindingResult bindingResult, ModelMap mmap, HttpServletRequest request,
-			RedirectAttributes redirectAttributes) {
-		if (bindingResult.hasErrors()) {
-			return "ltn/login";
-		}
-		String username = user.getUsername();
-		SystemUser systemUser = userService.queryFullUser(user);
-		if(systemUser.getUser()==null) {
-			logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已不可用");
-			redirectAttributes.addFlashAttribute("message", "账户已不可用");
-			return "redirect:/index";
-		}
-		boolean rememberMe = ServletRequestUtils.getBooleanParameter(request, "rememberMe", false);
-		UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(),CommonUtils.change2MD5(user.getPassword()),rememberMe);
-		// 获取当前的Subject
-		Subject currentUser = SecurityUtils.getSubject();
-		try {
-			// 在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查
-			// 每个Realm都能在必要时对提交的AuthenticationTokens作出反应
-			// 所以这一步在调用login(token)方法时,它会走到MyRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法
-			logger.info("对用户[" + username + "]进行登录验证..验证开始");
-			currentUser.login(token);
-			logger.info("对用户[" + username + "]进行登录验证..验证通过");
-		} catch (UnknownAccountException uae) {
-			logger.info("对用户[" + username + "]进行登录验证..验证未通过,未知账户");
-			redirectAttributes.addFlashAttribute("message", "未知账户");
-		} catch (IncorrectCredentialsException ice) {
-			logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误的凭证");
-			redirectAttributes.addFlashAttribute("message", "密码不正确");
-		} catch (LockedAccountException lae) {
-			logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已锁定");
-			redirectAttributes.addFlashAttribute("message", "账户已锁定");
-		} catch (ExcessiveAttemptsException eae) {
-			logger.info("对用户[" + username + "]进行登录验证..验证未通过,错误次数过多");
-			redirectAttributes.addFlashAttribute("message", "用户名或密码错误次数过多");
-		} catch (AuthenticationException ae) {
-			// 通过处理Shiro的运行时AuthenticationException就可以控制用户登录失败或密码错误时的情景
-			logger.info("对用户[" + username + "]进行登录验证..验证未通过,堆栈轨迹如下");
-			redirectAttributes.addFlashAttribute("message", "用户名或密码不正确");
-		}
-		// 验证是否登录成功
-		if (currentUser.isAuthenticated()) {
-			request.getSession().setAttribute("user", systemUser);
-			mmap.addAttribute("user", systemUser);
-			String mess = "用户："+systemUser.getUser().getNickname()+" 在"+DateUtil.getAllCurrentDate()+"登录成功!";
-			SecurityUtils.getSubject().getSession().setAttribute("user", systemUser);
-			logger.info(mess);
-			if(CommonUtils.hasNoAnyRoles(RoleSign.SADMIN)){
-				activeManager.sendBack(ActiveMQUtil.getTopicDestination(systemUser.getUser().getCompanyid()+InitProperties.Moniter_USER), mess);
-			}
-			return "redirect:/homepage";
-		} else {
-			token.clear();
-			return loginUrl;
-		}
-	}
-
-	/**
 	 * 用户登录
 	 * 
 	 * @param user
@@ -181,24 +109,18 @@ public class IndexController {
 		if(currentUser.isAuthenticated()) {
 			mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
 			mmap.addAttribute("content", request.getContextPath());
-			Session session = SecurityUtils.getSubject().getSession();
-			Object sessionuser = session.getAttribute("user");
-			TSysUser user = null;
+			Object sessionuser = SecurityUtils.getSubject().getSession().getAttribute("user");
 			SystemUser systemUser = null;
-			String username = currentUser.getPrincipal().toString();
-			if(sessionuser!=null) {
-				systemUser = (SystemUser) sessionuser;
-				user = systemUser.getUser();
+			if(sessionuser==null) {
+				systemUser = commonService.getCurrentUserInfo();
+				if(systemUser==null) {
+					logger.info("对用户[" + currentUser.toString() + "]进行登录验证失败！");
+					return loginUrl;
+				}
+				request.getSession().setAttribute("user", systemUser);
 			}else {
-				user = new TSysUser();
-				user.setUsername(username);
-				systemUser = userService.queryFullUser(user);
+				systemUser = (SystemUser) sessionuser;
 			}
-			if(user==null) {
-				logger.info("对用户[" + username + "]进行登录验证..验证未通过,账户已不可用");
-				return loginUrl;
-			}
-//			request.getSession().setAttribute("user", systemUser);
 			String mess = "用户："+systemUser.getUser().getNickname()+" 在"+DateUtil.getAllCurrentDate()+"登录成功!";
 			SecurityUtils.getSubject().getSession().setAttribute("user", systemUser);
 			logger.info(mess);

@@ -8,9 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
  
 /**
- * 缓存配置.
- * @author justin
- * @version v.0.1
+ * 
+ * @author princejwg
+ * @时间 2018年11月22日下午2:32:15
+ * @项目路径 com.gasq.bdp.logn.config
+ * @描述
  */
 @Configuration
 @EnableCaching//标注启动缓存.

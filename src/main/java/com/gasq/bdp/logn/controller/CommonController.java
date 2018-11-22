@@ -13,20 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSONObject;
 import com.gasq.bdp.logn.mapper.TSysUserExtMapper;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUserInfo;
@@ -34,7 +27,6 @@ import com.gasq.bdp.logn.model.TCompany;
 import com.gasq.bdp.logn.model.TCustomerImages;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TSysUserExt;
-import com.gasq.bdp.logn.provider.Ilogger;
 import com.gasq.bdp.logn.service.CommonService;
 import com.gasq.bdp.logn.service.TCustomerImagesService;
 import com.gasq.bdp.logn.utils.CommonUtils;
@@ -50,10 +42,6 @@ public class CommonController {
 	@Autowired TCustomerImagesService customerImagesService;
 	@Autowired TSysUserExtMapper sysUserExtMapper;
 	
-	@Value("${uipf.rest.serverUrlPrefix}")
-	private String wfServerUrlPrefix;
-	@Autowired
-	private RestTemplate restTemplate;
 	/**
      * 在配置文件中配置的文件保存路径
      */
@@ -168,38 +156,5 @@ public class CommonController {
 			logger.info(e.getMessage(),e);
 		}
     	return null;
-	 }
-    
-    @Ilogger(value="远程调用")
-    @RequiresRoles(value={RoleSign.SADMIN,RoleSign.Q_ADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_RECEPTIONIST,RoleSign.Q_COUNELOR,RoleSign.Test,RoleSign.Q_OPTION},logical=Logical.OR)
-	@RequestMapping(value = "/commit",method=RequestMethod.POST)
-	public Map<String, Object> commit() {
-    	logger.info("用户【"+SystemUserInfo.getSystemUser().getUser().getNickname()+"】请求远程****接口！");
-    	Map<String,Object> map = new HashMap<>();
-		try {
-			logger.info("开始请求结算...");
-				final String url = wfServerUrlPrefix+"/consumAmount";
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-				//  封装参数，千万不要替换为Map与HashMap，否则参数无法传递
-				MultiValueMap<String, String> params= new LinkedMultiValueMap<String, String>();
-				//也支持中文
-				params.add("phonenumb","");
-				HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<MultiValueMap<String, String>>(params, headers);
-				//  执行HTTP请求
-				JSONObject response = restTemplate.postForObject(url,requestEntity,JSONObject.class);
-				if(response.get("isok").toString().equals("0")) {//成功
-					map.put("status", true);
-				}else {//失败
-					map.put("status", false);
-					logger.error("请求失败，失败原因" + response.get("mess").toString());
-					throw new Exception(response.get("mess").toString());
-				}
-			return map;
-		}catch (Exception e) {
-			map.put("status", false);
-			logger.error("请求失败，失败原因" + e.getMessage().toString(),e);
-		}
-    	return map;
 	 }
 }

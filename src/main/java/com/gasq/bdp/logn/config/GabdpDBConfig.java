@@ -23,6 +23,13 @@ import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
 
+/**
+ * 
+ * @author princejwg
+ * @时间 2018年11月22日下午2:32:03
+ * @项目路径 com.gasq.bdp.logn.config
+ * @描述
+ */
 @Configuration
 @MapperScan(basePackages = {"com.gasq.bdp.logn.mapper"}, sqlSessionFactoryRef = "gabdpSqlSessionFactory")
 public class GabdpDBConfig {

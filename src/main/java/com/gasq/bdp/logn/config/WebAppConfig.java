@@ -17,6 +17,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gasq.bdp.logn.utils.MyBeanSerializerModifier;
 import com.google.common.collect.ImmutableList;
 
+/**
+ * 
+ * @author princejwg
+ * @时间 2018年11月22日下午2:32:32
+ * @项目路径 com.gasq.bdp.logn.config
+ * @描述
+ */
 @EnableWebMvc
 @Configuration
 public class WebAppConfig extends WebMvcConfigurerAdapter{
@@ -29,7 +36,6 @@ public class WebAppConfig extends WebMvcConfigurerAdapter{
 		registry.addResourceHandler("/templates/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/templates/");
 		registry.addResourceHandler("/static/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/static/");
 		registry.addResourceHandler("/**").addResourceLocations(ResourceUtils.FILE_URL_PREFIX + location);
-//		registry.addResourceHandler("/webapp/**").addResourceLocations(ResourceUtils.CLASSPATH_URL_PREFIX + "/webapp/");
 		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 		registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
 		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");

@@ -12,7 +12,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.alibaba.druid.pool.DruidDataSource;
-
+/**
+ * 
+ * @author princejwg
+ * @时间 2018年11月22日下午2:31:56
+ * @项目路径 com.gasq.bdp.logn.config
+ * @描述
+ */
 @Configuration
 public class ImpalaDataSourceConfig {
 	

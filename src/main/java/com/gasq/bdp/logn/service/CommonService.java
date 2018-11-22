@@ -6,6 +6,7 @@ package com.gasq.bdp.logn.service;
 import java.util.List;
 import java.util.Map;
 
+import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.TCompany;
 
 /**
@@ -17,5 +18,7 @@ import com.gasq.bdp.logn.model.TCompany;
 public interface CommonService {
 
 	List<Map<String, Object>> getView(TCompany bean);
+
+	SystemUser getCurrentUserInfo();
 
 }

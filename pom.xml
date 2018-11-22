@@ -462,7 +462,7 @@
 			<plugin>
 			     <groupId>org.apache.maven.plugins</groupId>
 			     <artifactId>maven-resources-plugin</artifactId>
-			     <configuration>                                                
+			     <configuration>                                          
 			       <useDefaultDelimiters>true</useDefaultDelimiters>
 			       <encoding>UTF-8</encoding>
 			    </configuration>

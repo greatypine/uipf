@@ -28,7 +28,11 @@ import com.gasq.bdp.logn.provider.MyShiroCasRealm;
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 
 /**
- * Created by willwu on 16-4-14.
+ * 
+ * @author princejwg
+ * @时间 2018年11月22日下午2:31:33
+ * @项目路径 com.gasq.bdp.logn.config
+ * @描述
  */
 @Configuration
 public class ShiroCasConfiguration {

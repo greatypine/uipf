@@ -9,6 +9,13 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * 
+ * @author princejwg
+ * @时间 2018年11月22日下午2:32:25
+ * @项目路径 com.gasq.bdp.logn.config
+ * @描述
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig{
