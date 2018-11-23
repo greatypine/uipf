@@ -1,24 +1,22 @@
 package com.gasq.bdp.logn.provider;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cas.CasRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.TSysPermission;
-import com.gasq.bdp.logn.model.TSysRole;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.service.CommonService;
 import com.gasq.bdp.logn.service.TSysPermissionService;
@@ -51,7 +49,7 @@ public class MyShiroCasRealm extends CasRealm{
         // 客户端回调地址
         setCasService(shiroServerUrlPrefix + casFilterUrlPattern);
     }
-
+	
     /**
      * 权限认证，为当前登录的Subject授予角色和权限
      * @see 经测试：本例中该方法的调用时机为需授权资源被访问时
@@ -64,7 +62,8 @@ public class MyShiroCasRealm extends CasRealm{
         //获取当前登录输入的用户名，等价于(String) principalCollection.fromRealm(getName()).iterator().next();
         String loginName = (String)super.getAvailablePrincipal(principalCollection); 
         //到数据库查是否有此对象
-        Object sessionuser = SecurityUtils.getSubject().getSession().getAttribute("user");
+        Subject currentUser = SecurityUtils.getSubject();
+        Object sessionuser = currentUser.getSession().getAttribute("user");
 		SystemUser systemUser = null;
 		if(sessionuser==null) {
 			systemUser = commonService.getCurrentUserInfo();
@@ -78,24 +77,23 @@ public class MyShiroCasRealm extends CasRealm{
 		}
         TSysUser user = systemUser.getUser();
         SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
-        List<TSysRole> urs = systemUser.getRole();
         Set<String> setrole = new HashSet<String>();
+        setrole.add(user.getGroupName());
         Set<String> setpermission = new HashSet<String>();
-        List<TSysPermission> permissionsall = new ArrayList<TSysPermission>();
-        Object[] rids = urs.stream().map(r->r.getId().intValue()).toArray();
-        String roleids = StringUtils.join(rids,",");
-        user.setRoleids(roleids);
-        for (TSysRole tSysRole : urs) {
-        	setrole.add(tSysRole.getRoleSign());
-        	List<TSysPermission> permissions = permissionService.selectPermissionsByRoleId(tSysRole.getId());
-        	permissionsall.addAll(permissions);
-        	for (TSysPermission permission : permissions) {
-        		setpermission.add(permission.getPermissionSign());
-			}
-		}
+        List<TSysPermission> permissions = null;
+        if(systemUser.getPromissions()!=null) {
+        	permissions = systemUser.getPromissions();
+        }else {
+        	TSysPermission bean = new TSysPermission();
+        	bean.setPermissionSign(user.getGroupName());
+        	permissions = permissionService.selectByExample(bean);
+        	systemUser.setPromissions(permissions);
+        }
+        for (TSysPermission permission : permissions) {
+        	setpermission.add(permission.getPermissionSign());
+        }
         info.setRoles(setrole);
         info.addStringPermissions(setpermission);
-        systemUser.setPromissions(permissionsall);
         return info;
     }
 
