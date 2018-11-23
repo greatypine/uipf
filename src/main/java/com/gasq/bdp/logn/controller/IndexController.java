@@ -124,10 +124,10 @@ public class IndexController {
 			String mess = "用户："+systemUser.getUser().getNickname()+" 在"+DateUtil.getAllCurrentDate()+"登录成功!";
 			SecurityUtils.getSubject().getSession().setAttribute("user", systemUser);
 			logger.info(mess);
-			if(CommonUtils.hasNoAnyRoles(RoleSign.SADMIN)){
-				activeManager.sendBack(ActiveMQUtil.getTopicDestination(systemUser.getUser().getCompanyid()+InitProperties.Moniter_USER), mess);
-			}
-			return "index";
+//			if(CommonUtils.hasNoAnyRoles(RoleSign.SADMIN)){
+//				activeManager.sendBack(ActiveMQUtil.getTopicDestination(systemUser.getUser().getCompanyid()+InitProperties.Moniter_USER), mess);
+//			}
+			return "projects";
 		}
 		return logoutUrl;
 	}
@@ -213,5 +213,14 @@ public class IndexController {
 		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
 		mmap.addAttribute("content", request.getContextPath());
 		return "cacheoption";
+	}
+	
+	@Ilogger(value="进入缓存管理",flag=EnableDetail.CLOSE)
+	@RequestMapping("/goProject")
+	@RequiresRoles(value = { RoleSign.SADMIN,RoleSign.Q_AREA_SHOPMANAGER,RoleSign.GENERALMANAGER,RoleSign.Q_OPTION }, logical = Logical.OR)
+	public String goProject(HttpServletRequest request, ModelMap mmap, RedirectAttributes attr) {
+		mmap.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
+		mmap.addAttribute("content", request.getContextPath());
+		return "projects";
 	}
 }

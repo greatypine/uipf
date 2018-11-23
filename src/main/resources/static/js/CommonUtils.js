@@ -404,55 +404,10 @@ function CommonUtils(){
 	    if ( typeof (obj) == "undefined" || obj === "" || obj == null || obj == "null") {  
 	        return true;  
 	    }  
-	    return false;  
+	    return false;
 	}
+	this.getParams = function(id){
+		var d = $("#"+id).serializeJSON();
+		return d;
+	};
 }
-$.fn.serializeJson=function(){
-    var serializeObj={};
-    var array=this.serializeArray();
-    var str=this.serialize();
-    $(array).each(function(){
-        if(serializeObj[this.name]){
-            if($.isArray(serializeObj[this.name])){
-                serializeObj[this.name].push(this.value);
-            }else{
-                serializeObj[this.name]=[serializeObj[this.name],this.value];
-            }
-        }else{
-            serializeObj[this.name]=this.value;
-        }
-    });
-    return serializeObj;
-};
-/**
- * From扩展
- * getData 获取数据接口
- * 
- * @param {Object} jq
- * @param {Object} params 设置为true的话，会把string型"true"和"false"字符串值转化为boolean型。
- */
-$.extend($.fn.form.methods, {
-    getData: function(jq, params){
-        var formArray = jq.serializeArray();
-        var oRet = {};
-        for (var i in formArray) {
-            if (typeof(oRet[formArray[i].name]) == 'undefined') {
-                if (params) {
-                    oRet[formArray[i].name] = (formArray[i].value == "true" || formArray[i].value == "false") ? formArray[i].value == "true" : formArray[i].value;
-                }
-                else {
-                    oRet[formArray[i].name] = formArray[i].value;
-                }
-            }
-            else {
-                if (params) {
-                    oRet[formArray[i].name] = (formArray[i].value == "true" || formArray[i].value == "false") ? formArray[i].value == "true" : formArray[i].value;
-                }
-                else {
-                    oRet[formArray[i].name] += "," + formArray[i].value;
-                }
-            }
-        }
-        return oRet;
-    }
-});

@@ -29,11 +29,32 @@ public abstract class ParamsObject extends BaseBean{
 	private Integer page;
 	private Integer rows;
 	private String q;
+	private Integer pageIndex;
+	private Integer start;
+	private Integer length;
 	public String getQ() {
 		return q;
 	}
 	public void setQ(String q) {
 		this.q = q;
+	}
+	public Integer getPageIndex() {
+		return pageIndex;
+	}
+	public void setPageIndex(Integer pageIndex) {
+		this.pageIndex = pageIndex;
+	}
+	public Integer getStart() {
+		return start;
+	}
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+	public Integer getLength() {
+		return length;
+	}
+	public void setLength(Integer length) {
+		this.length = length;
 	}
 	
 	

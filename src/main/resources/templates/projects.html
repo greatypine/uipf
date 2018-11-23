@@ -1,104 +1,93 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head th:include="include :: linkresource('首页')"></head>
-	<link type="text/css" th:href="@{/static/css/workflow/shell.css}" rel="stylesheet" media="screen"/>
-	<script type="text/javascript" th:src="@{/static/easyUI/datagrid-detailview.js}"></script>
-	<script type="text/javascript" th:src="@{/static/js/index/hiddenELE.js}"></script>
-<body>
-<div class="easyui-layout" data-options="fit:true"  style="width:100%;height: 100%;">
-	<table id="project_table" class="easyui-datagrid" style="width: 80%; height: 100%;"
-		data-options="singleSelect: true,rownumbers:true,fit:true,pageSize:30,toolbar:'#tb_cron_option'" pagination="true">
-	</table>
-	<div id="tb_cron_option" style="padding: 5px; height: auto">
-		<div style="margin-bottom: 5px">
-			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="project.query()">查询</a> 
-			<a shiro:hasAnyRoles="sadmin,q_admin,q_area_shopManager,q_receptionist" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="project.add()">添加</a> 
-			<a shiro:hasAnyRoles="sadmin,q_admin,q_area_shopManager" href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="project.remove()">删除</a>
-			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-clear" plain="true" onclick="project.clear()">清空</a>
-		</div>
-		<div id="cron_bar">
-			<form id="projectform">
-				<span shiro:hasAnyRoles="sadmin,q_area_shopManager,generalManager">门店：<input id="querycompanyid" name="companyid" class="easyui-combobox companylist" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'companyid',textField:'companyName'"/></span>
-				项目名称: <input id="queryname" name="projectname" class="easyui-textbox" style="width: 120px; height: 22px;"/>
-				项目名称: <input id="querypm" name="projectModel" class="easyui-combobox projectModel" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'value',textField:'name'"/>
-				项目名称: <input id="querypt" name="projectType" class="easyui-combobox projectType" style="width: 120px; height: 22px;" data-options="editable:false,valueField:'value',textField:'name'"/>
-				项目状态: <select id="querystatus" name="status" class="easyui-combobox" style="width: 120px; height: 22px;">
-							<option value="-1">请选择</option>
-							<option value="1">开启</option>
-							<option value="0">关闭</option>
-						</select>
-				创建时间: <input id="querycreateTime" name="createtime" class="easyui-datebox" style="width: 120px; height: 22px;"/>
-			</form>
-		</div>
+	<link type="text/css" th:href="@{/static/css/index/user.css}" rel="stylesheet" media="screen"/>
+	<link type="text/css" th:href="@{/static/dataTables/jquery.dataTables.min.css}" rel="stylesheet" media="screen"/>
+	<link type="text/css" th:href="@{/static/dataTables/dataTables.bootstrap.css}" rel="stylesheet" media="screen"/>
+	<script type="text/javascript" th:src="@{/static/dataTables/jquery.dataTables.min.js}"></script>
+	<script type="text/javascript" th:src="@{/static/dataTables/dataTables.bootstrap.js}"></script>
+	<script type="text/javascript" th:src="@{/static/js/index/reports.js}"></script>
+<body class="hold-transition skin-blue sidebar-mini">
+	<div id="process_div" style="display:none"></div>
+	<div id="process_div_pic" style="display:none"><img style="width:50px;height: 50px;" src="dist/img/376884043677306248.png"><i class="fa fa-refresh fa-spin"></i></div>
+	<!-- Site wrapper -->
+	<div class="wrapper">
+	 <header class="main-header">
+	    <nav class="navbar navbar-static-top">
+	      <div class="container">
+			<div class="logo_img pull-left">
+				<img src="dist/img/logo.png" height="30">
+				<img src="dist/img/title.png" height="20">
+			</div>
+			<div class="pull-left">
+				<div class="logo-lg">
+					<ul class="no-margin">
+						<li class="current"><em>退货订单档案</em></li>
+					</ul>
+				</div>
+			</div>
+	      </div>
+	    </nav>
+	  </header>
+  
+  <!-- =============================================== -->
+
+  <!-- Content Wrapper. Contains page content -->
+	  	<div class="content-wrapper">
+	      <!-- Main content -->
+		      <section class="content-header">
+		          <div class="box-header h4 text-light-blue">
+		          	<div class="pull-left "><strong>退货订单档案查询</strong></div>
+		          </div>
+		          <div class="box-body">
+				   	 <form id="searchDataReturnOrderTestForm">
+			          	<div class="clearfix search-criteria">
+			            	<div class="selectorLine clearfix no-border">
+				            	<div class="search-title">查询条件：</div>
+				            	<div class="search-con" style="overflow:visible;">
+					            	<div class="sl-v-list">
+						            	<div class="clearfix">
+							                <div class="form-group col-lg-3">
+							                <select class="form-control select2" id="citySelect"></select> 
+							                </div>
+							                <div class="form-group col-lg-3"><input id="store_id_manual" name="store_no" type="hidden" bidTableFlag="true" value=""/>
+								              <input type="text" class="form-control" name="projectName"  placeholder="门店" id="store_name_manual" />
+								              <div class="auto hidden" id="auto" style="width: 94%;z-index: 99999;"></div>
+								            </div>
+						                </div>
+						                <div class="clearfix">
+							                <div class="form-group col-lg-3"><input type="text" class="form-control" name="id" maxlength="24" placeholder="订单号（例：20180121xxxxxxxxxxxx）" id="ordersn_manual"/></div>
+							                <div class="form-group col-lg-3" title="退货时间"><input type="text" class="form-control pull-right" id="auto_date" name="createTime"  placeholder="点击选择日期" readonly="readonly"></div>
+						                </div>
+					                </div>
+				                </div>
+			                </div>
+			            </div>
+		            </form>
+		            <div class="clearfix">
+		              <!--<div class="col-lg-4" id="tianchong" style="padding-top: 25px;">
+		              </div>-->
+		                <div class="form-group col-lg-2 pull-right" style="padding-top: 25px;">
+		                    <button type="button" onclick="resetSerachParam(2)" style="border-color:#00a65a;background-color:#00a652" class="btn btn-block btn-primary">重置</button>
+		                </div>
+		                <div class="col-lg-2 pull-right" style="padding-top: 25px;" id="exportnormal">
+		                    <button type="button" id="export_manual_massOrder_button" onclick="export_manual_massOrder('normal')" class="btn btn-block btn-warning">导出</button>
+		                </div>
+		                <div class="col-lg-2 pull-right" style="padding-top: 25px;display:none" id="exportall">
+		                    <button type="button" id="export_manual_massOrder_button" onclick="export_manual_massOrder('all')" class="btn btn-block btn-warning">完整数据导出</button>
+		                </div>
+		                <div class="form-group col-lg-2 pull-right" style="padding-top: 25px;">
+		                    <button type="button" onclick="searchDataReturnOrderTest.query()" class="btn btn-block btn-primary">查询</button>
+		                </div>
+		            </div>
+		       </div>
+		     </section>
+	     </div>
+	     <div class="box-body">
+	       <div id="pmanual_body" class="tab-content"></div>
+	   </div>
 	</div>
-</div>
-	<div id="projectdlg" class="easyui-dialog"  data-options="modal:true" style="width: 65%; overflow: hidden;" closed="true" buttons="#project_dlg-buttons">
-		<form id="projectdlg-fm" th:method="post" style="margin: 0; padding: 1%">
-			<table cellpadding="5" style="width: 100%">
-	    		<tr>
-	    			<td class="tdname">项目名称：</td>
-	    			<td class="tdnamebox">
-	    				<input id="projectName" name="projectName" class="easyui-textbox" style="width: 100%;" data-options="required:true"/>
-	    			</td>
-	    			<td class="tdname">状态：</td>
-	    			<td class="tdnamebox">
-	    				<input name="status" id="status" class="easyui-combobox" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'text',data:[{value:1,text:'开启'},{value:0,text:'关闭'}]"/>
-	    			</td>
-	    		</tr>
-	    		<tr shiro:hasAnyRoles="sadmin,generalManager,q_area_shopManager">
-	    			<td class="tdname">公司：</td>
-	    			<td class="tdnamebox" colspan="3">
-	    				<input id="companyId" name="companyId" class="easyui-combobox companylist" style="width: 100%;" data-options="required:true,editable:false,valueField:'companyid',textField:'companyName'"/>
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			<td class="tdname">项目类型：</td>
-	    			<td class="tdnamebox">
-	    				<input id="projectModel" name="projectModel" class="easyui-combobox projectModel" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'name'"/>
-	    			</td>
-	    			<td class="tdname">消费类型：</td>
-	    			<td class="tdnamebox">
-	    				<input id="projectType" name="projectType" class="easyui-combobox projectType" style="width: 100%;" data-options="required:true,editable:false,valueField:'value',textField:'name'"/>
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			<td class="tdname">项目次数：</td>
-	    			<td class="tdnamebox">
-	    				<input id="projectNums" name="projectNums" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
-	    			</td>
-	    			<td class="tdname">项目期限：</td>
-	    			<td class="tdnamebox">
-	    				<input id="deadline" name="deadline" class="easyui-textbox" style="width: 100%;" data-options="required:false"/>
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			<td class="tdname">项目金额：</td>
-	    			<td class="tdnamebox">
-	    				<input id="money" name="money" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2"/>
-	    			</td>
-	    			<td class="tdname">项目折扣：</td>
-	    			<td class="tdnamebox"><input name="discount" id="discount" class="easyui-numberbox" style="width: 100%;" data-options="required:true,min:0,precision:2,max:1,prompt:'最大为1 eg:85折=0.85'"/></td>
-	    		</tr>
-	    		<tr>
-	    			<td class="tdname">拼音缩写：</td>
-	    			<td class="tdnamebox">
-	    				<input id="spell" name="spell" class="easyui-textbox" style="width: 100%;" data-options="required:true,prompt:'中午拼音首字母（小写）'"/>
-	    			</td>
-	    		</tr>
-	    		<tr>
-	    			<td class="tdname" colspan="1">描述：</td>
-	    			<td class="tdnamebox" colspan="3">
-	    				<input id="remark" name="remark" data-options="multiline:false,required:false" class="easyui-textbox" style="width: 100%;height:50px;"/>
-	    			</td>
-	    		</tr>
-	    	</table>
-			<input id="id" name="id" value="" type="hidden" />
-		</form>
-	</div>
-	<div id="project_dlg-buttons">
-		<a id="basecomplate" shiro:hasPermission="user:update" href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="project.complate()" style="width: 90px">确认</a> 
-		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#projectdlg-fm').form('clear');$('#projectdlg').dialog('close')" style="width: 90px">关闭</a>
-	</div>
+  <!-- /.content-wrapper -->
 </body>
 <script type="text/javascript" th:src="@{/static/js/index/projects.js}"></script>
 </html>
