@@ -1,11 +1,11 @@
 package com.gasq.bdp.logn.service;
+import java.util.List;
+import java.util.Map;
+
 import com.gasq.bdp.logn.iexception.WorkFlowStateException;
 import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TSysUserExt;
-
-import java.util.List;
-import java.util.Map;
 
 public interface TSysUserService {
 

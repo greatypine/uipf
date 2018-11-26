@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gasq.bdp.logn.component.ActiveManager;
-import com.gasq.bdp.logn.model.InitProperties;
 import com.gasq.bdp.logn.model.RoleSign;
 import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.TCustomerImages;
@@ -33,8 +32,6 @@ import com.gasq.bdp.logn.service.EmailManager;
 import com.gasq.bdp.logn.service.TCustomerImagesService;
 import com.gasq.bdp.logn.service.TSysMenuService;
 import com.gasq.bdp.logn.service.TSysUserService;
-import com.gasq.bdp.logn.utils.ActiveMQUtil;
-import com.gasq.bdp.logn.utils.CommonUtils;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.gasq.bdp.logn.utils.UserthreadLocal;
 
@@ -64,6 +61,7 @@ public class IndexController {
 	 * 首页
 	 * @return
 	 */
+	@Ilogger(value="进入首页！",flag=EnableDetail.CLOSE)
 	@RequestMapping("/index")
 	public String homepage(HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 		model.addAttribute("path",request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort());
