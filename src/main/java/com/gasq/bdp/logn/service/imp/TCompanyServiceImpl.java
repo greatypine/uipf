@@ -20,7 +20,6 @@ import com.gasq.bdp.logn.model.TCompany;
 import com.gasq.bdp.logn.model.TCompanyExample;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.model.TSysUserExample;
-import com.gasq.bdp.logn.provider.Ilogger;
 import com.gasq.bdp.logn.service.TCompanyService;
 import com.gasq.bdp.logn.utils.DateUtil;
 import com.github.pagehelper.PageHelper;
@@ -57,7 +56,6 @@ public class TCompanyServiceImpl implements TCompanyService {
 		return mapper.selectByPrimaryKey(id);
 	}
 
-	@Ilogger(value="分页查询公司信息")
 	@Override
 	public Map<String, Object> queryPagingList(TCompany bean) {
 		Map<String, Object> result= new  HashMap<String, Object>();
