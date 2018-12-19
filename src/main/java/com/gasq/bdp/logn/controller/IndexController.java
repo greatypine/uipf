@@ -122,10 +122,7 @@ public class IndexController {
 			String mess = "用户："+systemUser.getUser().getNickname()+" 在"+DateUtil.getAllCurrentDate()+"登录成功!";
 			SecurityUtils.getSubject().getSession().setAttribute("user", systemUser);
 			logger.info(mess);
-//			if(CommonUtils.hasNoAnyRoles(RoleSign.SADMIN)){
-//				activeManager.sendBack(ActiveMQUtil.getTopicDestination(systemUser.getUser().getCompanyid()+InitProperties.Moniter_USER), mess);
-//			}
-			return "projects";
+			return "index";
 		}
 		return logoutUrl;
 	}

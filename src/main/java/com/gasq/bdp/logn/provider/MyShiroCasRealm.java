@@ -1,4 +1,5 @@
 package com.gasq.bdp.logn.provider;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.gasq.bdp.logn.model.SystemUser;
 import com.gasq.bdp.logn.model.TSysPermission;
+import com.gasq.bdp.logn.model.TSysRole;
 import com.gasq.bdp.logn.model.TSysUser;
 import com.gasq.bdp.logn.service.CommonService;
 import com.gasq.bdp.logn.service.TSysPermissionService;
@@ -79,6 +81,12 @@ public class MyShiroCasRealm extends CasRealm{
         SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
         Set<String> setrole = new HashSet<String>();
         setrole.add(user.getGroupName());
+        TSysRole role = new TSysRole();
+        role.setRoleName(user.getCardId());
+        role.setRoleSign(user.getGroupName());
+        List<TSysRole> rols = new ArrayList<TSysRole>();
+        rols.add(role);
+        systemUser.setRole(rols);
         Set<String> setpermission = new HashSet<String>();
         List<TSysPermission> permissions = null;
         if(systemUser.getPromissions()!=null) {

@@ -22,6 +22,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gasq.bdp.logn.component.ImpalaOptions;
 import com.gasq.bdp.logn.mapper.TCompanyMapper;
 import com.gasq.bdp.logn.model.SystemUser;
+import com.gasq.bdp.logn.model.TStore;
 import com.gasq.bdp.logn.service.CommonService;
 import com.gasq.bdp.logn.utils.CommonUtils;
 
@@ -38,6 +39,10 @@ public class ApplicationTests {
     @Autowired
     ImpalaOptions impalaOptions;
     
+//    String ip = "http://123.56.204.170:9999";
+//    static String ip = "http://10.16.21.80:9999";
+    static String ip = "https://login-info.guoanshuju.com";
+    
 	@Test
 	public void readES() throws Exception {
 		List<Map<String, Object>> queryForList = impalaOptions.queryImpalaList("SELECT * from gabdp_user.t_city");
@@ -52,19 +57,19 @@ public class ApplicationTests {
 	}
 	@Test
 	public void test1RestTemplate() throws Exception {
-		final String url = "http://123.56.204.170:9999/systemuser/getCurrentUserInfo";
+		final String url = ip+"/systemuser/getCurrentUserInfo";
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-		params.add("username", "juwg");
-		params.add("password", "21232f297a57a5a743894a0e4a801fc3");
+		params.add("username", "testdz");
+		params.add("password", "e10adc3949ba59abbe56e057f20f883e");
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(params, headers);
 		ResponseEntity<SystemUser> responseEntity = restTemplate.postForEntity(url,request, SystemUser.class);
         System.out.println(responseEntity.getBody());
 	}
 	@Test
 	public void testUserSaveOrUpdate() throws Exception {
-		String url = "http://123.56.204.170:9999/systemuser/saveOrUpdate";
+		String url = ip+"/systemuser/saveOrUpdate";
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		TSysUser user = new TSysUser();
@@ -85,6 +90,47 @@ public class ApplicationTests {
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
 		params.add("username", "juwg");
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(params, headers);
+		ResponseEntity<Boolean> responseEntity = restTemplate.postForEntity(url, request, Boolean.class);
+        System.out.println(responseEntity.getBody());
+	}
+	
+	
+	@Test
+	public void testgetStoreInfo() throws Exception {
+		final String url = ip+"/store/getStoreInfo";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+		params.add("username", "testdz1");
+		params.add("password", "e10adc3949ba59abbe56e057f20f883e");
+		params.add("storeid", "34");
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(params, headers);
+		ResponseEntity<TStore> responseEntity = restTemplate.postForEntity(url,request, TStore.class);
+        System.out.println(responseEntity.getBody());
+	}
+	@Test
+	public void testsaveOrUpdateStore() throws Exception {
+		String url = ip+"/store/saveOrUpdate";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		TStore bean = new TStore();
+		bean.setStoreId((long)9900620);
+		bean.setName("尖山店test1");
+		HttpEntity<String> entity = new HttpEntity<String>(CommonUtils.BeanToJSON(bean), headers);
+		ResponseEntity<JSONObject> responseEntity = restTemplate.postForEntity(url, entity, JSONObject.class);
+        System.out.println(responseEntity.getBody());
+	}
+	
+	@Test
+	public void testStoreDelete() throws Exception {
+		String url = ip+"/store/delete";
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
+		params.add("username", "testdz1");
+		params.add("password", "e10adc3949ba59abbe56e057f20f883e");
+		params.add("storeid", "9900620");
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(params, headers);
 		ResponseEntity<Boolean> responseEntity = restTemplate.postForEntity(url, request, Boolean.class);
         System.out.println(responseEntity.getBody());
